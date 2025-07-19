@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Trash : MonoBehaviour, ICartItem
 {
+    [SerializeField] private TrashType trashType;
+    public TrashType TrashType => trashType;
+    
     public bool isCollected = false;
     Rigidbody rb;
     private Collider _collider;
@@ -49,7 +52,6 @@ public class Trash : MonoBehaviour, ICartItem
 
     public void Recycle()
     {
-        MoneyController.AddMoney(1);
         Destroy(gameObject);
     }
 }

@@ -1,0 +1,55 @@
+using System;
+using R3;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UpgradeButton : MonoBehaviour
+{
+    [SerializeField] private Image iconImage;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI costText;
+    [SerializeField] private Button button;
+    
+    private Upgrade _upgrade;
+    private IDisposable _subscription;
+    private MoneyController _moneyController;
+    
+    public void Init(Upgrade upgrade, MoneyController moneyController)
+    {
+        _upgrade = upgrade;
+        _moneyController = moneyController;
+
+        var d = Disposable.CreateBuilder();
+        upgrade.CurrentLevel.Subscribe(x => UpdateUI()).AddTo(ref d);
+        moneyController.CurrentMoney.Subscribe(x => UpdatePurchaseAvailability()).AddTo(ref d);
+        _subscription = d.Build();
+        
+        UpdateUI();
+        UpdatePurchaseAvailability();
+    }
+
+    private void UpdateUI()
+    {
+        iconImage.sprite = _upgrade.icon;
+        descriptionText.text = _upgrade.description;
+        costText.text = _upgrade.cost.ToString();
+    }
+
+    private void UpdatePurchaseAvailability()
+    {
+        bool available = _moneyController.CurrentMoney.Value >= _upgrade.cost;
+        button.interactable = available;
+    }
+
+    public void Purchase()
+    {
+        _moneyController.AddMoney(-_upgrade.cost);
+        _upgrade.BuyUpgrade();
+    }
+
+    private void OnDestroy()
+    {
+        _subscription?.Dispose();
+    }
+}

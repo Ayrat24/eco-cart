@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 using Random = UnityEngine.Random;
 
 public class Cart : MonoBehaviour
@@ -14,7 +15,15 @@ public class Cart : MonoBehaviour
 
     private bool _isEmptying;
     private CancellationTokenSource _cancellationTokenSource;
+    private TrashStats _trashStats;
+    private MoneyController _moneyController;
     
+    [Inject]
+    public void Initialize(TrashStats trashStats, MoneyController moneyController)
+    {
+        _trashStats = trashStats;
+        _moneyController = moneyController;
+    }
     
     private void Start()
     {
@@ -23,7 +32,7 @@ public class Cart : MonoBehaviour
 
     private void OnDestroy()
     {
-        _cancellationTokenSource.Dispose();
+        _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
         
         PlayerClickMovement.OnLeftClicked -= EmptyCart;
@@ -47,6 +56,11 @@ public class Cart : MonoBehaviour
         {
             await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
             item.Recycle();
+
+            if (item is Trash trash)
+            {
+                _moneyController.AddMoney(_trashStats.Upgrades[trash.TrashType].ScoreForCurrentUpgrade);
+            }
         }
         
         _cartItems.Clear();
