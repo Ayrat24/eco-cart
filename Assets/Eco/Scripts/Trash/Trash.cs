@@ -13,8 +13,10 @@ public class Trash : MonoBehaviour, ICartItem
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        _collider = GetComponent<Collider>();
+        rb = GetComponentInChildren<Rigidbody>();
+        _collider = GetComponentInChildren<Collider>();
+        
+        ChangeState(false);
     }
 
     public void OnPickUp(Transform parent, Vector3 localOffset)
@@ -22,10 +24,18 @@ public class Trash : MonoBehaviour, ICartItem
         if (isCollected) return;
         isCollected = true;
 
-        _collider.enabled = false;
+        ChangeState(true);
         rb.isKinematic = true;
         
         StartCoroutine(FlyToPosition(parent, localOffset));
+    }
+
+    private void ChangeState(bool inCart)
+    {
+        const int cartLayer = 8;
+        const int groundLayer = 7;
+        
+        _collider.gameObject.layer = inCart ? cartLayer : groundLayer;
     }
 
     IEnumerator FlyToPosition(Transform parent, Vector3 localOffset)
@@ -45,9 +55,10 @@ public class Trash : MonoBehaviour, ICartItem
 
     public void OnFallenOut()
     {
+        ChangeState(false);
         isCollected = false;
         transform.parent = null;
-        rb.AddExplosionForce(100, transform.position, 500f);
+        //rb.AddExplosionForce(100, transform.position, 500f);
     }
 
     public void Recycle()

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 532caf7c28db21b469e10047ea2ecfc8, type: 3}
-  m_Name: FoodUpgrade
+  m_Name: PlasticUpgrade
   m_EditorClassIdentifier: 
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   description: Food
   maxLevel: 15
   cost: 10
-  trashType: 0
+  trashType: 2
   ScoreForCurrentUpgrade: 1

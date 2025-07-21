@@ -3,5 +3,6 @@ public enum TrashType
 {
     Food,
     Paper,
-    Plastic
+    Plastic,
+    Glass
 }
