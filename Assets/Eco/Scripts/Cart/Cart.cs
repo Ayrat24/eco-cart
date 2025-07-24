@@ -5,14 +5,15 @@ using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
 using VContainer;
-using Random = UnityEngine.Random;
 
 public class Cart : MonoBehaviour
 {
     [SerializeField] private int maxItems = 10;
-    [SerializeField] float dropOffsetMaxValue = 0.2f;
     [SerializeField] BoxCollider boxCollider;
+    
     public Transform dropPoint;
+    public float dropOffsetMaxValue = 0.2f;
+    public bool IsFull => _cartItems.Count >= maxItems && !_isEmptying;
     
     private readonly HashSet<ICartItem> _cartItems = new();
     private readonly Dictionary<ICartItem, Collider> _cartItemColliders = new();
@@ -23,6 +24,7 @@ public class Cart : MonoBehaviour
     private CancellationTokenSource _cancellationTokenSource;
     private TrashStats _trashStats;
     private MoneyController _moneyController;
+    private IDisposable _subscription;
 
     private Collider[] _colliders = new Collider[100];
     private HashSet<Collider> _itemsInPhysicalBox = new ();
@@ -37,7 +39,7 @@ public class Cart : MonoBehaviour
     private void Start()
     {
         PlayerClickMovement.OnLeftClicked += EmptyCart;
-        Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
+        _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
     }
 
     private void AddItemToCollections(ICartItem item, Collider col)
@@ -117,6 +119,8 @@ public class Cart : MonoBehaviour
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
 
+        _subscription?.Dispose();
+        
         PlayerClickMovement.OnLeftClicked -= EmptyCart;
     }
 
@@ -160,20 +164,7 @@ public class Cart : MonoBehaviour
             return;
         }
 
-        Vector3 offset = new Vector3(Random.Range(0, dropOffsetMaxValue), 0, Random.Range(0, dropOffsetMaxValue));
         AddItemToCollections(cartItem, col);
-        cartItem.OnPickUp(dropPoint, offset);
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!other.TryGetComponent(out ICartItem cartItem))
-        {
-            return;
-        }
-
-        cartItem.OnFallenOut();
-        _cartItems.Remove(cartItem);
     }
     
     void OnDrawGizmos()

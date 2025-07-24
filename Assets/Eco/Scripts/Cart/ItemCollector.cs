@@ -1,110 +1,147 @@
-using System;
 using System.Collections.Generic;
 using R3;
-using Unity.Mathematics;
 using UnityEngine;
 
-public class ItemCollector : MonoBehaviour
+namespace Eco.Scripts.Cart
 {
-    [SerializeField] SphereCollider sphereCollider;
-    [SerializeField] LayerMask layerMask;
-    [SerializeField] Cart cart;
-
-    private readonly Collider[] _colliders = new Collider[20];
-    private readonly Queue<Collider> _colliderQueue = new();
-    private const int MaxQueueSize = 3;
-
-    private bool _skipScan;
-
-    private void Start()
+    public class ItemCollector : MonoBehaviour
     {
-        //sphereCollider.enabled = false;
-        sphereCollider.includeLayers = layerMask;
+        [SerializeField] SphereCollider sphereCollider;
+        [SerializeField] LayerMask layerMask;
+        [SerializeField] global::Cart cart;
 
-        var subscription = Observable.Interval(TimeSpan.FromSeconds(1f)).Subscribe(x =>
+        [SerializeField] private List<CollectorHand> hands;
+
+        private readonly Collider[] _colliders = new Collider[20];
+        private readonly Queue<Collider> _colliderQueue = new();
+        private const int MaxQueueSize = 5;
+
+        private void Start()
         {
-            if (_skipScan)
+            foreach (var hand in hands)
             {
-                _skipScan = false;
+                hand.Init(cart);
+            }
+            
+            sphereCollider.includeLayers = layerMask;
+
+            var subscription = Observable.IntervalFrame(10).Subscribe(x =>
+            {
+                if (cart.IsFull || !HasFreeHands())
+                {
+                    return;
+                }
+
+                ScanForItems();
+            });
+        }
+
+        private void ScanForItems()
+        {
+            Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
+            int count = Physics.OverlapSphereNonAlloc(center, sphereCollider.radius, _colliders, layerMask);
+
+            if (count == 0)
+            {
                 return;
             }
 
-            ScanForItems();
-        });
-    }
+            float shortestDistance = Mathf.Infinity;
+            Collider shortestCollider = null;
 
-    private void ScanForItems()
-    {
-        Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
-        int count = Physics.OverlapSphereNonAlloc(center, sphereCollider.radius, _colliders, layerMask);
-
-        if (count == 0)
-        {
-            return;
-        }
-
-        float shortestDistance = Mathf.Infinity;
-        Collider shortestCollider = null;
-
-        for (int i = 0; i < count; i++)
-        {
-            if (_colliderQueue.Contains(_colliders[i]))
+            for (int i = 0; i < count; i++)
             {
-                continue;
+                if (_colliderQueue.Contains(_colliders[i]))
+                {
+                    continue;
+                }
+
+                var distance = Vector3.Distance(_colliders[i].transform.position, transform.position);
+                if (distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    shortestCollider = _colliders[i];
+                }
             }
 
-            var distance = Vector3.Distance(_colliders[i].transform.position, transform.position);
-            if (distance < shortestDistance)
+            if (shortestCollider == null)
             {
-                shortestDistance = distance;
-                shortestCollider = _colliders[i];
+                return;
+            }
+
+            _colliderQueue.Enqueue(shortestCollider);
+
+            if (_colliderQueue.Count > MaxQueueSize)
+            {
+                _colliderQueue.Dequeue();
+            }
+
+            if (GetClosestFreeHand(shortestCollider.transform.parent.position, out var hand))
+            {
+                PickItem(hand, shortestCollider);
             }
         }
 
-        if (shortestCollider == null)
+        private void PickItem(CollectorHand hand, Collider other)
         {
-            return;
+            if (cart.IsFull)
+            {
+                return;
+            }
+
+            var item = other.GetComponentInParent<ICartItem>();
+            if (item != null)
+            {
+                hand.PlayAnimation(item, other);
+            }
         }
 
-        _colliderQueue.Enqueue(shortestCollider);
-
-        if (_colliderQueue.Count > MaxQueueSize)
+        private bool HasFreeHands()
         {
-            _colliderQueue.Dequeue();
+            foreach (var hand in hands)
+            {
+                if (hand.IsFree)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        PickItem(shortestCollider);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (_skipScan)
+        private bool GetClosestFreeHand(Vector3 itemPos, out CollectorHand freeHand)
         {
-            return;
+            freeHand = null;
+            float minDistance = float.MaxValue;
+            bool foundHand = false;
+
+            foreach (var hand in hands)
+            {
+                if (!hand.IsFree)
+                {
+                    continue;
+                }
+
+                var distance = Vector3.Distance(hand.Position, itemPos);
+
+                if (distance < minDistance)
+                {
+                    freeHand = hand;
+                    minDistance = distance;
+                    foundHand = true;
+                }
+            }
+
+            return foundHand;
         }
 
-        _skipScan = true;
-
-        PickItem(other);
-    }
-
-    private void PickItem(Collider other)
-    {
-        Debug.Log("Picking item");
-        var item = other.GetComponentInParent<ICartItem>();
-        if (item != null)
+        void OnDrawGizmos()
         {
-            Debug.Log("Picking item2");
-            cart.PickUpItem(item, other);
+            if (sphereCollider == null) return;
+
+            Gizmos.color = Color.magenta;
+            Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
+            Gizmos.DrawWireSphere(center, sphereCollider.radius);
         }
-    }
-
-    void OnDrawGizmos()
-    {
-        if (sphereCollider == null) return;
-
-        Gizmos.color = Color.magenta;
-        Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
-        Gizmos.DrawWireSphere(center, sphereCollider.radius);
     }
 }

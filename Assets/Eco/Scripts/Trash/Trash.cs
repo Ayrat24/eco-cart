@@ -19,15 +19,15 @@ public class Trash : MonoBehaviour, ICartItem
         ChangeState(false);
     }
 
-    public void OnPickUp(Transform parent, Vector3 localOffset)
+    public void OnPickUp(Transform parent)
     {
-        if (isCollected) return;
-        isCollected = true;
-
-        ChangeState(true);
-        rb.isKinematic = true;
+        if (isCollected)
+        {
+            return;
+        }
         
-        StartCoroutine(FlyToPosition(parent, localOffset));
+        isCollected = true;
+        transform.parent = parent;
     }
 
     private void ChangeState(bool inCart)
@@ -38,31 +38,25 @@ public class Trash : MonoBehaviour, ICartItem
         _collider.gameObject.layer = inCart ? cartLayer : groundLayer;
     }
 
-    IEnumerator FlyToPosition(Transform parent, Vector3 localOffset)
-    {
-        transform.SetParent(parent);
-        float duration = 0.5f;
-        float t = 0f;
-
-        Tween.LocalPosition(transform, localOffset, duration, Ease.Linear);
-
-        yield return new WaitForSeconds(duration);
-        transform.localPosition = localOffset;
-        
-        _collider.enabled = true;
-        rb.isKinematic = false;
-    }
-
     public void OnFallenOut()
     {
         ChangeState(false);
         isCollected = false;
         transform.parent = null;
-        //rb.AddExplosionForce(100, transform.position, 500f);
     }
 
     public void Recycle()
     {
         Destroy(gameObject);
+    }
+
+    public void SetInCartState(bool inCart)
+    {
+        ChangeState(true);
+    }
+
+    public void MakeKinematic(bool isKinematic)
+    {
+        rb.isKinematic = isKinematic;
     }
 }
