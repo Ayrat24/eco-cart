@@ -1788,6 +1788,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxItems: 1000
   boxCollider: {fileID: 1311370370}
+  itemLayers:
+    serializedVersion: 2
+    m_Bits: 384
   dropPoint: {fileID: 560632803}
   dropOffsetMaxValue: 0.1
 --- !u!65 &1311370370

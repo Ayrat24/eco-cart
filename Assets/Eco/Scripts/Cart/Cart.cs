@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Cart;
+using Eco.Scripts.Trash;
 using R3;
 using UnityEngine;
 using VContainer;
@@ -10,11 +13,13 @@ public class Cart : MonoBehaviour
 {
     [SerializeField] private int maxItems = 10;
     [SerializeField] BoxCollider boxCollider;
-    
+    [SerializeField] private LayerMask itemLayers;
+
     public Transform dropPoint;
     public float dropOffsetMaxValue = 0.2f;
-    public bool IsFull => _cartItems.Count >= maxItems && !_isEmptying;
-    
+    public bool IsFull => _cartItems.Count >= maxItems;
+    public bool CanAddItems => !IsFull && !_isEmptying;
+
     private readonly HashSet<ICartItem> _cartItems = new();
     private readonly Dictionary<ICartItem, Collider> _cartItemColliders = new();
     private readonly Dictionary<Collider, ICartItem> _cartColliderItems = new();
@@ -27,7 +32,8 @@ public class Cart : MonoBehaviour
     private IDisposable _subscription;
 
     private Collider[] _colliders = new Collider[100];
-    private HashSet<Collider> _itemsInPhysicalBox = new ();
+    private HashSet<Collider> _itemsInPhysicalBox = new();
+    private ItemCollector _itemCollector;
 
     [Inject]
     public void Initialize(TrashStats trashStats, MoneyController moneyController)
@@ -39,6 +45,11 @@ public class Cart : MonoBehaviour
     private void Start()
     {
         PlayerClickMovement.OnLeftClicked += EmptyCart;
+    }
+
+    public void Init(ItemCollector itemCollector)
+    {
+        _itemCollector = itemCollector;
         _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
     }
 
@@ -48,6 +59,7 @@ public class Cart : MonoBehaviour
         {
             _cartItemAddTime[item] = DateTime.Now;
         }
+
         _cartItems.Add(item);
         _cartItemColliders.Add(item, col);
         _cartColliderItems.Add(col, item);
@@ -67,14 +79,14 @@ public class Cart : MonoBehaviour
         _cartItemColliders.Clear();
         _cartItemAddTime.Clear();
     }
-    
+
     private void RemoveFallenOutItems()
     {
         if (_isEmptying)
         {
             return;
         }
-        
+
         Vector3 center = boxCollider.transform.TransformPoint(boxCollider.center);
         Vector3 halfExtents = Vector3.Scale(boxCollider.size * 0.5f, boxCollider.transform.lossyScale);
         int count = Physics.OverlapBoxNonAlloc(center, halfExtents, _colliders);
@@ -96,14 +108,15 @@ public class Cart : MonoBehaviour
                 continue;
             }
 
-            var item = col.GetComponentInParent<ICartItem>();
+            var item = col.GetComponent<ICartItem>();
             AddItemToCollections(item, col);
         }
-        
+
         _cartItems.RemoveWhere(item =>
         {
             var col = _cartItemColliders[item];
-            bool toRemove = !_itemsInPhysicalBox.Contains(col) && (DateTime.Now - _cartItemAddTime[item]).TotalSeconds > 1;
+            bool toRemove = !_itemsInPhysicalBox.Contains(col) &&
+                            (DateTime.Now - _cartItemAddTime[item]).TotalSeconds > 1;
             if (toRemove)
             {
                 item.OnFallenOut();
@@ -120,7 +133,7 @@ public class Cart : MonoBehaviour
         _cancellationTokenSource = null;
 
         _subscription?.Dispose();
-        
+
         PlayerClickMovement.OnLeftClicked -= EmptyCart;
     }
 
@@ -138,9 +151,15 @@ public class Cart : MonoBehaviour
     private async UniTask EmptyAsync(CancellationToken token)
     {
         _isEmptying = true;
-        foreach (var item in _cartItems)
+
+        await UniTask.WaitUntil(() => _itemCollector.AllHandsAreFree(), cancellationToken: token);
+        await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
+
+        var listItems = _cartItems.ToList();
+        for (var i = listItems.Count - 1; i >= 0; i--)
         {
-            await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
+            var item = listItems[i];
+            await UniTask.WaitForSeconds(0.05f, cancellationToken: token);
             item.Recycle();
 
             if (item is Trash trash)
@@ -150,7 +169,7 @@ public class Cart : MonoBehaviour
         }
 
         ClearItems();
-        
+
         _isEmptying = false;
 
         _cancellationTokenSource.Dispose();
@@ -159,14 +178,14 @@ public class Cart : MonoBehaviour
 
     public void PickUpItem(ICartItem cartItem, Collider col)
     {
-        if (_isEmptying || _cartItems.Contains(cartItem) || _cartItems.Count >= maxItems)
+        if (_cartItems.Contains(cartItem))
         {
             return;
         }
 
         AddItemToCollections(cartItem, col);
     }
-    
+
     void OnDrawGizmos()
     {
         if (boxCollider == null) return;

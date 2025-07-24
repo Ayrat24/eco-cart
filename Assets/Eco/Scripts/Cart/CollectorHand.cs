@@ -4,91 +4,94 @@ using Eco.Scripts.Utils;
 using PrimeTween;
 using UnityEngine;
 
-public class CollectorHand : MonoBehaviour
+namespace Eco.Scripts.Cart
 {
-    [SerializeField] string handName;
-
-    [SerializeField] Transform ikTarget;
-    [SerializeField] IKExtendBones ik;
-    [SerializeField] private Vector3 animationMiddlePoint;
-
-    [SerializeField] private float pickAnimationDuration;
-    [SerializeField] private float placeAnimationDuration;
-    [SerializeField] private float swingBackAnimationDuration;
-
-    private Vector3 _initialPosition;
-    private Transform _baseATargetParent;
-    private bool _animationInProgress;
-    private Cart _cart;
-
-    public Vector3 Position => ikTarget.TransformPoint(_initialPosition);
-    public bool IsFree => !_animationInProgress;
-
-    private void Start()
+    public class CollectorHand : MonoBehaviour
     {
-        _initialPosition = ikTarget.localPosition;
-        _baseATargetParent = ikTarget.parent;
-    }
+        [SerializeField] string handName;
 
-    public void Init(Cart cart)
-    {
-        _cart = cart;
-    }
+        [SerializeField] Transform ikTarget;
+        [SerializeField] IKExtendBones ik;
+        [SerializeField] private Vector3 animationMiddlePoint;
 
-    public void PlayAnimation(ICartItem item, Collider other)
-    {
-        PlayPickUpAnimationAsync(item, other).Forget();
-    }
+        [SerializeField] private float pickAnimationDuration;
+        [SerializeField] private float placeAnimationDuration;
+        [SerializeField] private float swingBackAnimationDuration;
 
-    private async UniTask PlayPickUpAnimationAsync(ICartItem item, Collider other)
-    {
-        _animationInProgress = true;
+        private Vector3 _initialPosition;
+        private Transform _baseATargetParent;
+        private bool _animationInProgress;
+        private global::Cart _cart;
 
-        //Step 1: Place hand on the item
-        ik.Target = ikTarget;
-        ikTarget.parent = other.transform;
-        ik.enabled = true;
+        public Vector3 Position => ikTarget.TransformPoint(_initialPosition);
+        public bool IsFree => !_animationInProgress;
 
-        Tween.LocalPosition(ikTarget, Vector3.zero, pickAnimationDuration);
-
-        await UniTask.Delay(TimeSpan.FromSeconds(pickAnimationDuration));
-
-        //Step 2 : Place hand above the drop point
-
-        item.MakeKinematic(true);
-        item.OnPickUp(_cart.dropPoint);
-        ik.Target = other.transform.parent;
-
-        //Tween.LocalPosition(other.transform.parent, Vector3.zero, placeAnimationDuration);
-
-        Vector3 pointA = other.transform.parent.localPosition;
-        Vector3 pointB = other.transform.parent.localPosition / 2 + animationMiddlePoint;
-        Vector3 pointC = Vector3.zero;
-        Tween.Custom(0f, 1f, placeAnimationDuration, ease: Ease.Linear, onValueChange: (t) =>
+        private void Start()
         {
-            // Quadratic Bezier formula: B(t) = (1−t)²*A + 2*(1−t)*t*B + t²*C
-            Vector3 pos = Mathf.Pow(1 - t, 2) * pointA +
-                          2 * (1 - t) * t * pointB +
-                          Mathf.Pow(t, 2) * pointC;
-            other.transform.parent.localPosition = pos;
-        });
+            _initialPosition = ikTarget.localPosition;
+            _baseATargetParent = ikTarget.parent;
+        }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(placeAnimationDuration));
+        public void Init(global::Cart cart)
+        {
+            _cart = cart;
+        }
 
-        _cart.PickUpItem(item, other);
-        item.SetInCartState(true);
-        item.MakeKinematic(false);
+        public void PlayAnimation(ICartItem item, Collider other)
+        {
+            PlayPickUpAnimationAsync(item, other).Forget();
+        }
 
-        //Step 3: Return hand to the body
+        private async UniTask PlayPickUpAnimationAsync(ICartItem item, Collider other)
+        {
+            _animationInProgress = true;
 
-        ikTarget.parent = _baseATargetParent;
-        ikTarget.position = other.transform.parent.position;
-        ik.Target = ikTarget;
+            //Step 1: Place hand on the item
+            ik.Target = ikTarget;
+            ikTarget.parent = other.transform;
+            ik.enabled = true;
 
-        Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration);
-        await UniTask.Delay(TimeSpan.FromSeconds(swingBackAnimationDuration));
+            Tween.LocalPosition(ikTarget, Vector3.zero, pickAnimationDuration);
 
-        ik.enabled = false;
-        _animationInProgress = false;
+            await UniTask.Delay(TimeSpan.FromSeconds(pickAnimationDuration));
+
+            //Step 2 : Place hand above the drop point
+
+            item.MakeKinematic(true);
+            item.OnPickUp(_cart.dropPoint);
+            ik.Target = other.transform;
+
+            //Tween.LocalPosition(other.transform.parent, Vector3.zero, placeAnimationDuration);
+
+            Vector3 pointA = other.transform.localPosition;
+            Vector3 pointB = other.transform.localPosition / 2 + animationMiddlePoint;
+            Vector3 pointC = Vector3.zero;
+            Tween.Custom(0f, 1f, placeAnimationDuration, ease: Ease.Linear, onValueChange: (t) =>
+            {
+                // Quadratic Bezier formula: B(t) = (1−t)²*A + 2*(1−t)*t*B + t²*C
+                Vector3 pos = Mathf.Pow(1 - t, 2) * pointA +
+                              2 * (1 - t) * t * pointB +
+                              Mathf.Pow(t, 2) * pointC;
+                other.transform.localPosition = pos;
+            });
+
+            await UniTask.Delay(TimeSpan.FromSeconds(placeAnimationDuration));
+
+            _cart.PickUpItem(item, other);
+            item.SetInCartState(true);
+            item.MakeKinematic(false);
+
+            //Step 3: Return hand to the body
+
+            ikTarget.parent = _baseATargetParent;
+            ikTarget.position = other.transform.parent.position;
+            ik.Target = ikTarget;
+
+            Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration);
+            await UniTask.Delay(TimeSpan.FromSeconds(swingBackAnimationDuration));
+
+            ik.enabled = false;
+            _animationInProgress = false;
+        }
     }
 }

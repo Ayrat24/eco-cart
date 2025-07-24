@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using R3;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Eco.Scripts.Cart
@@ -16,24 +18,28 @@ namespace Eco.Scripts.Cart
         private readonly Queue<Collider> _colliderQueue = new();
         private const int MaxQueueSize = 5;
 
+        private IDisposable _subscription;
+
         private void Start()
         {
             foreach (var hand in hands)
             {
                 hand.Init(cart);
             }
-            
+
             sphereCollider.includeLayers = layerMask;
 
-            var subscription = Observable.IntervalFrame(10).Subscribe(x =>
+            _subscription = Observable.IntervalFrame(10).Subscribe(x =>
             {
-                if (cart.IsFull || !HasFreeHands())
+                if (!cart.CanAddItems || !HasFreeHands())
                 {
                     return;
                 }
 
                 ScanForItems();
             });
+
+            cart.Init(this);
         }
 
         private void ScanForItems()
@@ -76,7 +82,7 @@ namespace Eco.Scripts.Cart
                 _colliderQueue.Dequeue();
             }
 
-            if (GetClosestFreeHand(shortestCollider.transform.parent.position, out var hand))
+            if (GetClosestFreeHand(shortestCollider.transform.position, out var hand))
             {
                 PickItem(hand, shortestCollider);
             }
@@ -89,7 +95,7 @@ namespace Eco.Scripts.Cart
                 return;
             }
 
-            var item = other.GetComponentInParent<ICartItem>();
+            var item = other.GetComponent<ICartItem>();
             if (item != null)
             {
                 hand.PlayAnimation(item, other);
@@ -133,6 +139,24 @@ namespace Eco.Scripts.Cart
             }
 
             return foundHand;
+        }
+
+        public bool AllHandsAreFree()
+        {
+            foreach (var hand in hands)
+            {
+                if (!hand.IsFree)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void OnDestroy()
+        {
+            _subscription?.Dispose();
         }
 
         void OnDrawGizmos()
