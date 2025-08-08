@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GlassUpgrade
   m_EditorClassIdentifier: 
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  description: Food
+  description: Upgrade glass recycling
   maxLevel: 15
   cost: 10
   trashType: 3

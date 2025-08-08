@@ -27,7 +27,7 @@ public class Cart : MonoBehaviour
 
     private bool _isEmptying;
     private CancellationTokenSource _cancellationTokenSource;
-    private TrashStats _trashStats;
+    private UpgradesCollection _upgrades;
     private MoneyController _moneyController;
     private IDisposable _subscription;
 
@@ -36,9 +36,9 @@ public class Cart : MonoBehaviour
     private ItemCollector _itemCollector;
 
     [Inject]
-    public void Initialize(TrashStats trashStats, MoneyController moneyController)
+    public void Initialize(UpgradesCollection trashStats, MoneyController moneyController)
     {
-        _trashStats = trashStats;
+        _upgrades = trashStats;
         _moneyController = moneyController;
     }
 
@@ -162,9 +162,9 @@ public class Cart : MonoBehaviour
             await UniTask.WaitForSeconds(0.05f, cancellationToken: token);
             item.Recycle();
 
-            if (item is Trash trash)
+            if (item is TrashItem trash)
             {
-                _moneyController.AddMoney(_trashStats.Upgrades[trash.TrashType].ScoreForCurrentUpgrade);
+                _moneyController.AddMoney(_upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade);
             }
         }
 

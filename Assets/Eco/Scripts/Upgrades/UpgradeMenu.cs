@@ -33,7 +33,14 @@ public class UpgradeMenu : MonoBehaviour
 
     private void SpawnButtons()
     {
-        foreach (var upgrade in _upgradesCollection.upgrades)
+        foreach (var upgrade in _upgradesCollection.trashScoreUpgrades)
+        {
+            var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
+            button.Init(upgrade, _moneyController);
+            _buttons.Add(button);
+        }
+        
+        foreach (var upgrade in _upgradesCollection.treeBuyUpgrades)
         {
             var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
             button.Init(upgrade, _moneyController);

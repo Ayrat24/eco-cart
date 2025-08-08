@@ -33,18 +33,18 @@ public class UpgradeButton : MonoBehaviour
     {
         iconImage.sprite = _upgrade.icon;
         descriptionText.text = _upgrade.description;
-        costText.text = _upgrade.cost.ToString();
+        costText.text = _upgrade.Cost.ToString();
     }
 
     private void UpdatePurchaseAvailability()
     {
-        bool available = _moneyController.CurrentMoney.Value >= _upgrade.cost;
+        bool available = _moneyController.CurrentMoney.Value >= _upgrade.Cost;
         button.interactable = available;
     }
 
     public void Purchase()
     {
-        _moneyController.AddMoney(-_upgrade.cost);
+        _moneyController.AddMoney(-_upgrade.Cost);
         _upgrade.BuyUpgrade();
     }
 

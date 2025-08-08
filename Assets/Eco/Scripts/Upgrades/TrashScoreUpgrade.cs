@@ -1,19 +1,22 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Upgrade/TrashScoreUpgrade")]
-public class TrashScoreUpgrade : Upgrade
+namespace Eco.Scripts.Upgrades
 {
-    public TrashType trashType;
-    public int ScoreForCurrentUpgrade = 1;
-
-    protected override void Load()
+    [CreateAssetMenu(menuName = "Upgrade/TrashScoreUpgrade")]
+    public class TrashScoreUpgrade : Upgrade
     {
-        base.Load();
-        ScoreForCurrentUpgrade = 1;
-    }
+        public TrashType trashType;
+        public int ScoreForCurrentUpgrade = 1;
 
-    protected override void ApplyUpgrade(int level)
-    {
-        ScoreForCurrentUpgrade = level * 2;
+        protected override void Load()
+        {
+            base.Load();
+            ScoreForCurrentUpgrade = 1;
+        }
+
+        protected override void ApplyUpgrade(int level)
+        {
+            ScoreForCurrentUpgrade = level * 2;
+        }
     }
 }

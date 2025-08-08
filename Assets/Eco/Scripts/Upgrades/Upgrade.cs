@@ -3,10 +3,14 @@ using UnityEngine;
 
 public abstract class Upgrade : ScriptableObject
 {
+    public string upgradeName;
+    
     public Sprite icon;
     public string description;
     public int maxLevel;
-    public int cost;
+    
+    private int cost;
+    public int Cost => cost;
     
     public ReactiveProperty<int> CurrentLevel = new(1);
     

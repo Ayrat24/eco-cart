@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 797f37434f9570640baa951dc9a2184e, type: 3}
   m_Name: UpgradeCollection
   m_EditorClassIdentifier: 
-  upgrades:
+  trashScoreUpgrades:
   - {fileID: 11400000, guid: 4337a12bc76344e4699a33d91fd09420, type: 2}
   - {fileID: 11400000, guid: b84dc5541e710454594acb50d4cd21ef, type: 2}
   - {fileID: 11400000, guid: f5e4d7f3ab77ead4086897bd48f8ef1a, type: 2}
   - {fileID: 11400000, guid: f15114648b13edf49ad221c030357595, type: 2}
+  treeBuyUpgrades:
+  - {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}

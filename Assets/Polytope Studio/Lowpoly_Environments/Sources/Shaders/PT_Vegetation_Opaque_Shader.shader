@@ -907,6 +907,7 @@ Shader "Polytope Studio/PT_Vegetation_Opaque_Shader"
 					outRenderingLayers = float4( EncodeMeshRenderingLayer( renderingLayers ), 0, 0, 0 );
 				#endif
 
+				color.z = 0.1f;
 				return color;
 			}
 			ENDHLSL
