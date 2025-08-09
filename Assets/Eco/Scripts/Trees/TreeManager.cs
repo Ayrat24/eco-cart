@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class TreeManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private readonly UpgradesCollection _upgrades;
+
+    public TreeManager(UpgradesCollection upgrades)
     {
-        
+        _upgrades = upgrades;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void BuyTree()
     {
         
     }

@@ -1,10 +1,17 @@
+using R3;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Upgrade/TreeBuyUpgrade")]
-public class TreeBuyUpgrade : Upgrade
+namespace Eco.Scripts.Trees
 {
-    protected override void ApplyUpgrade(int level)
+    [CreateAssetMenu(menuName = "Upgrade/TreeBuyUpgrade")]
+    public class TreeBuyUpgrade : Upgrade
     {
+        [SerializeField] GameObject treePrefab;
+        public Subject<GameObject> OnPurchase = new();
         
+        protected override void ApplyUpgrade(int level)
+        {
+            OnPurchase.OnNext(treePrefab);
+        }
     }
 }

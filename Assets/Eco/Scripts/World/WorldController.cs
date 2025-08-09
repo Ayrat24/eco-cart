@@ -1,13 +1,16 @@
+using System;
 using System.Collections.Generic;
+using Eco.Scripts;
 using Eco.Scripts.Pooling;
+using R3;
 using Unity.Mathematics;
 using UnityEngine;
 using VContainer;
 
 public class WorldController : MonoBehaviour
 {
-     [Header("Player & Chunk Settings")]
-    public Transform player;
+
+    [Header("Player & Chunk Settings")] public Transform player;
     public Field chunkPrefab;
     public int chunkSizeX = 16;
     public int chunkSizeY = 16;
@@ -17,20 +20,36 @@ public class WorldController : MonoBehaviour
     private Vector2Int currentPlayerChunkCoord;
     private readonly Dictionary<Vector2Int, Field> spawnedChunks = new();
     private SaveManager _saveManager;
-    
+
     private ObjectPool<Field> _fieldPool;
     private bool _initialized;
-    
+    private UpgradesCollection _upgrades;
+    private IDisposable _subscription;
+    private TreePlanter _treePlanter;
+
     [Inject]
-    public void Initialize(SaveManager saveManager)
+    public void Initialize(SaveManager saveManager, UpgradesCollection upgrades)
     {
         _saveManager = saveManager;
+        _upgrades = upgrades;
     }
 
     public void SpawnWorld()
     {
         _fieldPool = new ObjectPool<Field>(chunkPrefab, renderRadiusX * renderRadiusY);
+        _treePlanter = new TreePlanter();
+        
         UpdateWorld(true);
+
+        DisposableBuilder builder = new DisposableBuilder();
+
+        foreach (var tree in _upgrades.treeBuyUpgrades)
+        {
+            tree.OnPurchase.Subscribe(PlantTree).AddTo(ref builder);
+        }
+
+        _subscription = builder.Build();
+        
         _initialized = true;
     }
 
@@ -40,7 +59,7 @@ public class WorldController : MonoBehaviour
         {
             return;
         }
-        
+
         Vector2Int newChunkCoord = GetPlayerChunkCoord();
         if (newChunkCoord != currentPlayerChunkCoord)
         {
@@ -78,11 +97,10 @@ public class WorldController : MonoBehaviour
                     chunk.transform.position = pos;
                     chunk.transform.rotation = quaternion.identity;
 
-                    chunk.Init(coord, _saveManager);
+                    chunk.Init(coord, _saveManager, _treePlanter);
 
                     chunk.name = $"Chunk_{coord.x}_{coord.y}";
                     spawnedChunks[coord] = chunk;
-                    
                 }
             }
         }
@@ -108,5 +126,31 @@ public class WorldController : MonoBehaviour
         {
             field.SaveTiles();
         }
+    }
+
+    public void PlantTree(GameObject prefab)
+    {
+        var chunk = spawnedChunks[GetPlayerChunkCoord()];
+        Field.Tile tile = null;
+        foreach (var t in chunk.Tiles)
+        {
+            if (t.status == Field.TileStatus.Empty)
+            {
+                tile = t;
+                break;
+            } 
+        }
+
+        if (tile == null)
+        {
+            return;
+        }
+        
+        _treePlanter.PlantTree(prefab, tile, chunk.transform);
+    }
+
+    private void OnDestroy()
+    {
+        _subscription?.Dispose();
     }
 }

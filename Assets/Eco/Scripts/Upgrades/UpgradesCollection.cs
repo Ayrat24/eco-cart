@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
 using UnityEngine;
 using UnityEngine.Serialization;
