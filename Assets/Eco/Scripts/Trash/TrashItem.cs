@@ -2,8 +2,9 @@ using UnityEngine;
 
 namespace Eco.Scripts.Trash
 {
-    public class TrashItem : MonoBehaviour, ICartItem
+    public class TrashItem : MonoBehaviour, ICartItem, ITileItem
     {
+        [SerializeField] private int prefabTypeId;
         [SerializeField] private TrashType trashType;
         public TrashType TrashType => trashType;
     
@@ -58,6 +59,11 @@ namespace Eco.Scripts.Trash
         public void MakeKinematic(bool isKinematic)
         {
             rb.isKinematic = isKinematic;
+        }
+
+        public int GetPrefabId()
+        {
+            return prefabTypeId;
         }
     }
 }

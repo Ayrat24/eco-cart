@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d4e7395d4deee43a846120953363ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabTypeId: 11
   trashType: 0
   isCollected: 0
 --- !u!54 &6272244744961851877

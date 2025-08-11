@@ -178,6 +178,10 @@ PrefabInstance:
       propertyPath: trashType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: prefabTypeId
+      value: 41
+      objectReference: {fileID: 0}
     - target: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_Name
       value: Plastic Item Variant 1

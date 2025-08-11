@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class SaveManager
 {
-    private readonly Dictionary<Vector2Int, int[]> myDictionary = new();
-    public Dictionary<Vector2Int, int[]> FieldTiles => myDictionary;
+    private readonly Dictionary<Vector2Int, TileData[]> myDictionary = new();
+    public Dictionary<Vector2Int, TileData[]> FieldTiles => myDictionary;
     
-    public void SaveFieldTiles(Vector2Int position, int[] tiles)
+    public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
     {
         myDictionary[position] = tiles;
     }
@@ -59,7 +59,7 @@ public class SaveManager
     public struct Vector2IntArrayPair
     {
         public Vector2IntSerializable key;
-        public int[] value;
+        public TileData[] value;
     }
 
     [System.Serializable]
@@ -84,5 +84,12 @@ public class SaveManager
     public class DictionaryWrapper
     {
         public List<Vector2IntArrayPair> items = new();
+    }
+
+    [System.Serializable]
+    public struct TileData
+    {
+        public int state;
+        public int data;
     }
 }

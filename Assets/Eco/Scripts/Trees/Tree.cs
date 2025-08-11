@@ -1,16 +1,11 @@
 using UnityEngine;
 
-public class Tree : MonoBehaviour
+public class Tree : MonoBehaviour, ITileItem
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private int prefabId;
 
-    // Update is called once per frame
-    void Update()
+    public int GetPrefabId()
     {
-        
+        return prefabId;
     }
 }

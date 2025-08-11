@@ -9,7 +9,6 @@ using VContainer;
 
 public class WorldController : MonoBehaviour
 {
-
     [Header("Player & Chunk Settings")] public Transform player;
     public Field chunkPrefab;
     public int chunkSizeX = 16;
@@ -27,6 +26,13 @@ public class WorldController : MonoBehaviour
     private IDisposable _subscription;
     private TreePlanter _treePlanter;
 
+    private List<Vector2Int> _directions = new()
+    {
+        Vector2Int.zero, Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down, Vector2Int.one,
+        -Vector2Int.one,
+        Vector2Int.left + Vector2Int.up, Vector2Int.right + Vector2Int.down
+    };
+
     [Inject]
     public void Initialize(SaveManager saveManager, UpgradesCollection upgrades)
     {
@@ -38,7 +44,7 @@ public class WorldController : MonoBehaviour
     {
         _fieldPool = new ObjectPool<Field>(chunkPrefab, renderRadiusX * renderRadiusY);
         _treePlanter = new TreePlanter();
-        
+
         UpdateWorld(true);
 
         DisposableBuilder builder = new DisposableBuilder();
@@ -49,7 +55,7 @@ public class WorldController : MonoBehaviour
         }
 
         _subscription = builder.Build();
-        
+
         _initialized = true;
     }
 
@@ -128,25 +134,112 @@ public class WorldController : MonoBehaviour
         }
     }
 
-    public void PlantTree(GameObject prefab)
+    public void PlantTree(int id)
     {
-        var chunk = spawnedChunks[GetPlayerChunkCoord()];
-        Field.Tile tile = null;
-        foreach (var t in chunk.Tiles)
+        Vector3 playerPos = player.position; // Player world position
+        Vector2Int playerChunkCoord = GetPlayerChunkCoord();
+        int chunkSize = 10;
+
+        Field closestField = null;
+        Field.Tile closestTile = null;
+        float closestDistSqr = float.MaxValue;
+
+        // Search in surrounding chunks (adjust search range if needed)
+        for (int cx = -renderRadiusX; cx <= renderRadiusX; cx++)
         {
-            if (t.status == Field.TileStatus.Empty)
+            for (int cy = -renderRadiusY; cy <= renderRadiusY; cy++)
             {
-                tile = t;
-                break;
-            } 
+                Vector2Int chunkCoord = new Vector2Int(playerChunkCoord.x + cx, playerChunkCoord.y + cy);
+
+                if (spawnedChunks.TryGetValue(chunkCoord, out Field field))
+                {
+                    foreach (var tile in field.Tiles)
+                    {
+                        if (tile.status == Field.TileStatus.Empty)
+                        {
+                            // Convert local tile pos to world pos (centered on tile)
+                            Vector3 worldPos = new Vector3(
+                                chunkCoord.x * chunkSize + tile.position.x + 0.5f,
+                                0f,
+                                chunkCoord.y * chunkSize + tile.position.y + 0.5f
+                            );
+
+                            float distSqr = (worldPos - playerPos).sqrMagnitude;
+                            if (distSqr < closestDistSqr)
+                            {
+                                closestDistSqr = distSqr;
+                                closestTile = tile;
+                                closestField = field;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        if (tile == null)
+        if (closestTile != null)
         {
-            return;
+            _treePlanter.PlantTree(id, closestTile, closestField);
+            MarkGroundCircle(closestTile, closestField, radius: 10);
         }
-        
-        _treePlanter.PlantTree(prefab, tile, chunk.transform);
+    }
+
+    private void MarkGroundCircle(Field.Tile centerTile, Field centerField, int radius)
+    {
+        int chunkSize = 10;
+
+        // Center tile's chunk coordinate in chunk grid
+        Vector2Int centerChunkCoord = GetChunkCoordFromTile(centerTile.position, centerField);
+
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                if (x * x + y * y <= radius * radius)
+                {
+                    // Convert local tile pos to global coordinates
+                    Vector2Int globalPos = new Vector2Int(
+                        centerChunkCoord.x * chunkSize + centerTile.position.x + x,
+                        centerChunkCoord.y * chunkSize + centerTile.position.y + y
+                    );
+
+                    // Figure out which chunk this tile belongs to
+                    Vector2Int targetChunkCoord = new Vector2Int(
+                        Mathf.FloorToInt((float)globalPos.x / chunkSize),
+                        Mathf.FloorToInt((float)globalPos.y / chunkSize)
+                    );
+
+                    if (spawnedChunks.TryGetValue(targetChunkCoord, out Field targetField))
+                    {
+                        // Local position inside the target chunk
+                        Vector2Int localPos = new Vector2Int(
+                            Mod(globalPos.x, chunkSize),
+                            Mod(globalPos.y, chunkSize)
+                        );
+
+                        var adjTile = targetField.GetTile(localPos);
+                        if (adjTile != null && adjTile.status == Field.TileStatus.Empty)
+                        {
+                            adjTile.status = Field.TileStatus.Ground;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private int Mod(int a, int m) => (a % m + m) % m;
+
+    private Vector2Int GetChunkCoordFromTile(Vector2Int tilePos, Field field)
+    {
+        // Reverse lookup: find field's chunk coord in spawnedChunks
+        foreach (var kvp in spawnedChunks)
+        {
+            if (kvp.Value == field)
+                return kvp.Key;
+        }
+
+        throw new System.Exception("Field not found in spawnedChunks!");
     }
 
     private void OnDestroy()

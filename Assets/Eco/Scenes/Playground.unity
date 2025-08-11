@@ -1303,6 +1303,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trashPrefabs:
   - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  - {fileID: 5436418194312970475, guid: 20372a9484874e848ac4b48345b047e3, type: 3}
+  - {fileID: 5985191460338198598, guid: af376ac220b093243b0cc787b2a6810a, type: 3}
+  - {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
+  treePrefabs:
+  - {fileID: 1063086795615745562, guid: af759b432389ddd4496a6659d74969e8, type: 3}
 --- !u!4 &970028678
 Transform:
   m_ObjectHideFlags: 0

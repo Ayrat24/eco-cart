@@ -138,6 +138,10 @@ PrefabInstance:
       propertyPath: trashType
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: prefabTypeId
+      value: 21
+      objectReference: {fileID: 0}
     - target: {fileID: 5484698834941378176, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_Height
       value: 1.08

@@ -1,12 +1,18 @@
 using Eco.Scripts;
+using Eco.Scripts.Pooling;
 using UnityEngine;
 
 public class TreePlanter
 {
-    public void PlantTree(GameObject prefab, Field.Tile tile, Transform parent)
+    public void PlantTree(int prefabId, Field.Tile tile, Field parent)
     {
         Debug.Log("Planting Tree at " + parent + " " + tile.position);
-        Object.Instantiate(prefab, parent.position + tile.position, Quaternion.identity, parent);
+
+        var tree = PoolManager.Instance.GetTree(prefabId);
+        tree.transform.parent = parent.transform;
+        tree.transform.position = parent.GetTileWorldPosition(tile);
+
+        tile.item = tree;
         tile.status = Field.TileStatus.Tree;
     }
 }

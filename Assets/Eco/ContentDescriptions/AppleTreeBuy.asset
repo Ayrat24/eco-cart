@@ -16,4 +16,5 @@ MonoBehaviour:
   icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   description: 
   maxLevel: 0
+  prefabId: 101
   treePrefab: {fileID: 4226677145536827948, guid: af759b432389ddd4496a6659d74969e8, type: 3}
