@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using Eco.Scripts.Pooling;
-using Eco.Scripts.Trash;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Eco.Scripts
+namespace Eco.Scripts.World
 {
     public class Field : MonoBehaviour, IPooledObject
     {
@@ -62,13 +61,17 @@ namespace Eco.Scripts
                     }
                     else
                     {
-                        var savedData = saveManager.FieldTiles[position][y * fieldSize + x];
+                        var savedData = saveManager.FieldTiles[position][x * fieldSize + y];
                         var tileStatus = (TileStatus)savedData.state;
-
+                        tile.status = tileStatus;
+                        
                         switch (tileStatus)
                         {
                             case TileStatus.Trash:
                                 SpawnTrashAtTile(tile, savedData.data);
+                                break;
+                            case TileStatus.Tree:
+                                _treePlanter.PlantTree(savedData.data, tile, this);
                                 break;
                         }
                     }
@@ -77,9 +80,22 @@ namespace Eco.Scripts
                 }
             }
 
+            MakeGrass();
+
             if (!hasSave)
             {
                 SaveTiles();
+            }
+        }
+
+        public void MakeGrass()
+        {
+            foreach (var tile in _tiles)
+            {
+                if (tile.status == TileStatus.Ground)
+                {
+                    TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(tile));
+                }
             }
         }
 
@@ -126,48 +142,7 @@ namespace Eco.Scripts
             return _tiles[index];
         }
 
-        private Vector3Int ConvertWordCor2TerrCor(Vector3 wordCor)
-        {
-            Vector3Int vecRet = new();
-            Terrain ter = Terrain.activeTerrain;
-            Vector3 terPosition = ter.transform.position;
-            vecRet.x = (int)(((wordCor.x - terPosition.x) / ter.terrainData.size.x) * ter.terrainData.alphamapWidth);
-            vecRet.z = (int)(((wordCor.z - terPosition.z) / ter.terrainData.size.z) * ter.terrainData.alphamapHeight);
-            return vecRet;
-        }
-
-        public void PaintTexture(Vector3Int pos, int layerIndex)
-        {
-            TerrainData data = terrain.terrainData;
-
-            int sqr = 2;
-            float[,,] splatmap = data.GetAlphamaps(pos.x, pos.z, sqr, sqr);
-
-            // Clear all layers
-            // for (int i = 0; i < data.alphamapLayers; i++)
-            //     splatmap[0, 0, i] = 0;
-            for (int i = 0; i < data.alphamapLayers; i++)
-            {
-                for (int x = 0; x < sqr; x++)
-                {
-                    for (int z = 0; z < sqr; z++)
-                    {
-                        splatmap[x, z, layerIndex] = 0;
-                    }
-                }
-            }
-
-            //Set desired layer
-            for (int x = 0; x < sqr; x++)
-            {
-                for (int z = 0; z < sqr; z++)
-                {
-                    splatmap[x, z, layerIndex] = 1;
-                }
-            }
-
-            data.SetAlphamaps(pos.x, pos.z, splatmap);
-        }
+        
 
         [System.Serializable]
         public class Tile

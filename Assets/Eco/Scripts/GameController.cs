@@ -22,17 +22,19 @@ namespace Eco.Scripts
 
         private void StartGame()
         {
+            TerrainPainter.ClearTerrain();
             _saveManager.LoadFieldTiles();
             _worldController.SpawnWorld();
         }
 
+        [ContextMenu("Save Progress")]
         private void EndGame()
         {
             _worldController.SaveWorld();
             _saveManager.SaveFieldTiles();
         }
 
-        private void OnDestroy()
+        private void OnApplicationQuit()
         {
             EndGame();
         }

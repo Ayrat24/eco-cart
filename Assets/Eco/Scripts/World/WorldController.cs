@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Eco.Scripts;
 using Eco.Scripts.Pooling;
+using Eco.Scripts.World;
 using R3;
 using Unity.Mathematics;
 using UnityEngine;
@@ -190,6 +191,7 @@ public class WorldController : MonoBehaviour
 
         // Center tile's chunk coordinate in chunk grid
         Vector2Int centerChunkCoord = GetChunkCoordFromTile(centerTile.position, centerField);
+        HashSet<Field> updatedFields = new();
 
         for (int x = -radius; x <= radius; x++)
         {
@@ -221,10 +223,16 @@ public class WorldController : MonoBehaviour
                         if (adjTile != null && adjTile.status == Field.TileStatus.Empty)
                         {
                             adjTile.status = Field.TileStatus.Ground;
+                            updatedFields.Add(targetField);
                         }
                     }
                 }
             }
+        }
+
+        foreach (var f in updatedFields)
+        {
+            f.MakeGrass();
         }
     }
 

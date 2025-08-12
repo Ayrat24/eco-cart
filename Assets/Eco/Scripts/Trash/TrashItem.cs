@@ -1,3 +1,5 @@
+using Eco.Scripts.Pooling;
+using Eco.Scripts.World;
 using UnityEngine;
 
 namespace Eco.Scripts.Trash
@@ -48,7 +50,9 @@ namespace Eco.Scripts.Trash
         public void Recycle()
         {
             _tile.status = Field.TileStatus.Empty;
-            Destroy(gameObject);
+            _tile = null;
+            
+            PoolManager.Instance.ReturnItem(this);
         }
 
         public void SetInCartState(bool inCart)

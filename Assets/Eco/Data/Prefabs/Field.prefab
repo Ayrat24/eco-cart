@@ -49,6 +49,7 @@ MonoBehaviour:
   - {fileID: 249274396775117961, guid: 20372a9484874e848ac4b48345b047e3, type: 3}
   - {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
   - {fileID: 1500802933416949484, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
+  _tiles: []
   fieldSize: 10
   terrain: {fileID: 0}
 --- !u!1 &6899343367291295477
@@ -63,12 +64,12 @@ GameObject:
   - component: {fileID: 4698483665303753938}
   - component: {fileID: 3673599644035515307}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Debug Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1939546415832124390
 Transform:
   m_ObjectHideFlags: 0
