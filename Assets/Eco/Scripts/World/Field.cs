@@ -20,6 +20,7 @@ namespace Eco.Scripts.World
 
         public List<Tile> Tiles => _tiles;
         private GUIStyle style;
+
         private void Awake()
         {
             // terrain = Terrain.activeTerrain;
@@ -41,7 +42,7 @@ namespace Eco.Scripts.World
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold
             };
-            
+
             bool hasSave = saveManager.FieldTiles.ContainsKey(position);
 
             for (int x = 0; x < fieldSize; x++)
@@ -64,7 +65,7 @@ namespace Eco.Scripts.World
                         var savedData = saveManager.FieldTiles[position][x * fieldSize + y];
                         var tileStatus = (TileStatus)savedData.state;
                         tile.status = tileStatus;
-                        
+
                         switch (tileStatus)
                         {
                             case TileStatus.Trash:
@@ -92,9 +93,10 @@ namespace Eco.Scripts.World
         {
             foreach (var tile in _tiles)
             {
-                if (tile.status == TileStatus.Ground)
+                if (tile.status == TileStatus.Tree)
                 {
-                    TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(tile));
+                    TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(tile),
+                        14);
                 }
             }
         }
@@ -138,11 +140,10 @@ namespace Eco.Scripts.World
             {
                 return null;
             }
-            
+
             return _tiles[index];
         }
 
-        
 
         [System.Serializable]
         public class Tile
@@ -203,6 +204,7 @@ namespace Eco.Scripts.World
             _tiles.Clear();
         }
 
+        #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (_tiles == null)
@@ -211,7 +213,6 @@ namespace Eco.Scripts.World
             }
 
 
-            
             for (var i = 0; i < _tiles.Count; i++)
             {
                 var tile = _tiles[i];
@@ -219,9 +220,9 @@ namespace Eco.Scripts.World
                 {
                     continue;
                 }
-                
+
                 // Draw a sphere at the object's position
-              
+
 
                 // Draw text in Scene view
 
@@ -230,10 +231,11 @@ namespace Eco.Scripts.World
                           Vector3.up * 0.5f;
                 Handles.Label(pos
                     , tile.position + $" ({tile.status})", style);
-                
+
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(pos, 0.1f);
             }
         }
+        #endif
     }
 }

@@ -7,6 +7,7 @@ using R3;
 using Unity.Mathematics;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 public class WorldController : MonoBehaviour
 {
@@ -181,7 +182,7 @@ public class WorldController : MonoBehaviour
         if (closestTile != null)
         {
             _treePlanter.PlantTree(id, closestTile, closestField);
-            MarkGroundCircle(closestTile, closestField, radius: 10);
+            MarkGroundCircle(closestTile, closestField, radius: Random.Range(18, 25));
         }
     }
 

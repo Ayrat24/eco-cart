@@ -1,75 +1,135 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainPainter
+namespace Eco.Scripts.World
 {
-    public static void ClearTerrain()
+    public abstract class TerrainPainter
     {
-        var data = Terrain.activeTerrain.terrainData;
-        float[,,] splatmap = data.GetAlphamaps(0, 0, data.alphamapWidth, data.alphamapHeight);
-
-        for (int x = 0; x < data.alphamapWidth; x++)
+        public static void ClearTerrain()
         {
-            for (int z = 0; z < data.alphamapHeight; z++)
+            var data = Terrain.activeTerrain.terrainData;
+            float[,,] splatmap = data.GetAlphamaps(0, 0, data.alphamapWidth, data.alphamapHeight);
+
+            for (int x = 0; x < data.alphamapWidth; x++)
             {
-                splatmap[x, z, 1] = 0;
-                splatmap[x, z, 0] = 1;
-            }
-        }
-
-        data.SetAlphamaps(0, 0, splatmap);
-    }
-
-    public static void PaintTerrainTexture(TerrainTexture texture, Vector3 position)
-    {
-        PaintTexture(ConvertWordCor2TerrCor(position), (int)texture);
-    }
-
-    private static Vector3Int ConvertWordCor2TerrCor(Vector3 wordCor)
-    {
-        Vector3Int vecRet = new();
-        Terrain ter = Terrain.activeTerrain;
-        Vector3 terPosition = ter.transform.position;
-        vecRet.x = (int)(((wordCor.x - terPosition.x) / ter.terrainData.size.x) * ter.terrainData.alphamapWidth);
-        vecRet.z = (int)(((wordCor.z - terPosition.z) / ter.terrainData.size.z) * ter.terrainData.alphamapHeight);
-        return vecRet;
-    }
-
-    private static void PaintTexture(Vector3Int pos, int layerIndex)
-    {
-        TerrainData data = Terrain.activeTerrain.terrainData;
-
-        int sqr = 1;
-        float[,,] splatmap = data.GetAlphamaps(pos.x, pos.z, sqr, sqr);
-
-        // Clear all layers
-        // for (int i = 0; i < data.alphamapLayers; i++)
-        //     splatmap[0, 0, i] = 0;
-        for (int i = 0; i < data.alphamapLayers; i++)
-        {
-            for (int x = 0; x < sqr; x++)
-            {
-                for (int z = 0; z < sqr; z++)
+                for (int z = 0; z < data.alphamapHeight; z++)
                 {
-                    splatmap[x, z, i] = 0;
+                    splatmap[x, z, 1] = 0;
+                    splatmap[x, z, 0] = 1;
                 }
             }
-        }
 
-        //Set desired layer
-        for (int x = 0; x < sqr; x++)
-        {
-            for (int z = 0; z < sqr; z++)
+            data.SetAlphamaps(0, 0, splatmap);
+
+            int[,] detailLayer = data.GetDetailLayer(
+                0,
+                0,
+                data.detailWidth,
+                data.detailHeight,
+                0
+            );
+
+            for (int x = 0; x < data.detailWidth; x++)
             {
-                splatmap[x, z, layerIndex] = 1;
+                for (int z = 0; z < data.detailHeight; z++)
+                {
+                    detailLayer[x, z] = 0;
+                }
             }
+
+            data.SetDetailLayer(0, 0, 0, detailLayer);
         }
 
-        data.SetAlphamaps(pos.x, pos.z, splatmap);
-    }
+        public static void PaintTerrainTexture(TerrainTexture texture, Vector3 worldPosition, int radius)
+        {
+            Terrain terrain = Terrain.activeTerrain;
+            TerrainData data = terrain.terrainData;
+            int layerIndex = (int)texture;
 
-    public enum TerrainTexture
-    {
-        Sand,
-        Grass
+            // Convert to splatmap coords and find bounds
+            var initialPoint = ConvertWorldCor2TerrCor(worldPosition - Vector3.one * radius);
+
+
+            // Get only the affected region
+            float[,,] splatmap = data.GetAlphamaps(initialPoint.x, initialPoint.z, radius * 2 + 2, radius * 2 + 2);
+
+            splatmap[0, 0, layerIndex] = 1;
+
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    if (x * x + y * y <= radius * radius)
+                    {
+                        for (int l = 0; l < data.alphamapLayers; l++)
+                        {
+                            splatmap[x + radius, y + radius, l] = (l == layerIndex) ? 1f : 0f;
+                        }
+                    }
+                }
+            }
+
+            // Apply back
+            data.SetAlphamaps(initialPoint.x, initialPoint.z, splatmap);
+
+            AddGrass(worldPosition, 0,radius - 2);
+        }
+
+        private static void AddGrass(Vector3 worldPos, int layer, int radius, int density = 256)
+        {
+            TerrainData tData = Terrain.activeTerrain.terrainData;
+
+            // Convert to detail map position
+            Vector3 terrainPos = worldPos - Terrain.activeTerrain.transform.position - Vector3.one * radius / 2;
+            int mapX = Mathf.RoundToInt((terrainPos.x / tData.size.x) * tData.detailWidth);
+            int mapZ = Mathf.RoundToInt((terrainPos.z / tData.size.z) * tData.detailHeight);
+
+            // Get current detail layer
+            int[,] detailLayer = tData.GetDetailLayer(
+                mapX - radius / 2,
+                mapZ - radius / 2,
+                radius * 2 + 2,
+                radius * 2 + 2,
+                layer
+            );
+
+            // Fill with grass
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    if (x * x + y * y <= radius * radius)
+                    {
+                        detailLayer[y + radius, x + radius] = density; // Higher = more grass
+                    }
+                }
+            }
+
+            // Apply
+            tData.SetDetailLayer(
+                mapX - radius / 2,
+                mapZ - radius / 2,
+                layer,
+                detailLayer
+            );
+        }
+
+        private static Vector3Int ConvertWorldCor2TerrCor(Vector3 worldCor)
+        {
+            Terrain ter = Terrain.activeTerrain;
+            Vector3 terPosition = ter.transform.position;
+
+            return new Vector3Int(
+                (int)(((worldCor.x - terPosition.x) / ter.terrainData.size.x) * ter.terrainData.alphamapWidth),
+                0,
+                (int)(((worldCor.z - terPosition.z) / ter.terrainData.size.z) * ter.terrainData.alphamapHeight)
+            );
+        }
+
+        public enum TerrainTexture
+        {
+            Sand,
+            Grass
+        }
     }
 }
