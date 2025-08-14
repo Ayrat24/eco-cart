@@ -6,6 +6,7 @@ using VContainer.Unity;
 public class GameScope : LifetimeScope
 {
     [SerializeField] UpgradesCollection upgrades;
+    [SerializeField] Settings settings;
     
     protected override void Configure(IContainerBuilder builder)
     {
@@ -20,5 +21,6 @@ public class GameScope : LifetimeScope
 
 
         builder.RegisterComponent(upgrades);
+        builder.RegisterComponent(settings);
     }
 }

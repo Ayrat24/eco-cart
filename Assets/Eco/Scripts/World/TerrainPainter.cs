@@ -72,10 +72,20 @@ namespace Eco.Scripts.World
             // Apply back
             data.SetAlphamaps(initialPoint.x, initialPoint.z, splatmap);
 
-            AddGrass(worldPosition, 0,radius - 2);
+            switch (Settings.DetailQuality)
+            {
+                case Settings.DetailQualities.Low:
+                    break;
+                case Settings.DetailQualities.Medium:
+                    AddGrass(worldPosition, 0, radius - 2, 128);
+                    break;
+                case Settings.DetailQualities.High:
+                    AddGrass(worldPosition, 0, radius - 2, 256);
+                    break;
+            }
         }
 
-        private static void AddGrass(Vector3 worldPos, int layer, int radius, int density = 256)
+        private static void AddGrass(Vector3 worldPos, int layer, int radius, int density)
         {
             TerrainData tData = Terrain.activeTerrain.terrainData;
 

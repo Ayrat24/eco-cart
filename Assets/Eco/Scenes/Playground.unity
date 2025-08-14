@@ -336,6 +336,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   upgrades: {fileID: 11400000, guid: 04f60de0863051342983814c10290882, type: 2}
+  settings: {fileID: 11400000, guid: ba88c4ea8e3488c42b945d7cda0fce40, type: 2}
 --- !u!4 &115343912
 Transform:
   m_ObjectHideFlags: 0

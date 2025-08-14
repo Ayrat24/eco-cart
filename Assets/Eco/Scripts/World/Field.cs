@@ -96,7 +96,7 @@ namespace Eco.Scripts.World
                 if (tile.status == TileStatus.Tree)
                 {
                     TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(tile),
-                        14);
+                        16);
                 }
             }
         }
