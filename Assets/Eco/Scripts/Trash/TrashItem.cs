@@ -1,3 +1,4 @@
+using Eco.Scripts.Cart;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Eco.Scripts.Trash
         public bool isCollected = false;
         Rigidbody rb;
         private Field.Tile _tile;
+        private bool _isBeingPickedUp;
 
         public void Initialize(Field.Tile tile)
         {
@@ -42,6 +44,7 @@ namespace Eco.Scripts.Trash
 
         public void OnFallenOut()
         {
+            SetPickedUpStatus(false);
             ChangeState(false);
             isCollected = false;
             transform.parent = null;
@@ -49,6 +52,8 @@ namespace Eco.Scripts.Trash
 
         public void Recycle()
         {
+            SetPickedUpStatus(false);
+            
             _tile.status = Field.TileStatus.Empty;
             _tile = null;
             
@@ -63,6 +68,16 @@ namespace Eco.Scripts.Trash
         public void MakeKinematic(bool isKinematic)
         {
             rb.isKinematic = isKinematic;
+        }
+
+        public bool IsBeingPickedUp()
+        {
+            return _isBeingPickedUp;
+        }
+
+        public void SetPickedUpStatus(bool status)
+        {
+            _isBeingPickedUp = status;
         }
 
         public int GetPrefabId()

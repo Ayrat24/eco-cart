@@ -21,12 +21,6 @@ namespace Eco.Scripts.World
         public List<Tile> Tiles => _tiles;
         private GUIStyle style;
 
-        private void Awake()
-        {
-            // terrain = Terrain.activeTerrain;
-            // PaintTexture(ConvertWordCor2TerrCor(transform.position), 1);
-        }
-
         public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter)
         {
             _saveManager = saveManager;
@@ -207,6 +201,7 @@ namespace Eco.Scripts.World
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            return;
             if (_tiles == null)
             {
                 return;

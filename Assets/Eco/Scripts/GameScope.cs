@@ -1,4 +1,6 @@
 using Eco.Scripts;
+using Eco.Scripts.Cart;
+using Eco.Scripts.Helpers;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -18,7 +20,8 @@ public class GameScope : LifetimeScope
         builder.RegisterComponentInHierarchy<MoneyDisplay>();
         builder.RegisterComponentInHierarchy<GameController>();
         builder.RegisterComponentInHierarchy<WorldController>();
-
+        builder.RegisterComponentInHierarchy<HelperManager>();
+        builder.RegisterComponentInHierarchy<Player>();
 
         builder.RegisterComponent(upgrades);
         builder.RegisterComponent(settings);

@@ -5,6 +5,7 @@ public class SaveManager
 {
     private readonly Dictionary<Vector2Int, TileData[]> myDictionary = new();
     public Dictionary<Vector2Int, TileData[]> FieldTiles => myDictionary;
+    public PlayerProgress Progress { get; set; }
     
     public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
     {
@@ -26,6 +27,29 @@ public class SaveManager
         // Convert to JSON and save
         string json = JsonUtility.ToJson(wrapper);
         System.IO.File.WriteAllText(Application.persistentDataPath + "/field_tiles.json", json);
+    }
+
+    public void SavePlayerProgress()
+    {
+        string json = JsonUtility.ToJson(Progress);
+        System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
+    }
+    
+    public void LoadPlayerProgress()
+    {
+        string path = Application.persistentDataPath + "/progress.json";
+
+        if (System.IO.File.Exists(path))
+        {
+            string json = System.IO.File.ReadAllText(path);
+            var wrapper = JsonUtility.FromJson<PlayerProgress>(json);
+
+            Progress = wrapper;
+        }
+        else
+        {
+            Progress = new PlayerProgress();
+        }
     }
 
     public void LoadFieldTiles()
@@ -91,5 +115,11 @@ public class SaveManager
     {
         public int state;
         public int data;
+    }
+    
+    [System.Serializable]
+    public class PlayerProgress
+    {
+        public Vector3 playerPosition;
     }
 }

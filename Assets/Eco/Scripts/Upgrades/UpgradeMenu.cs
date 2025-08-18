@@ -46,6 +46,13 @@ public class UpgradeMenu : MonoBehaviour
             button.Init(upgrade, _moneyController);
             _buttons.Add(button);
         }
+
+        foreach (var upgrade in _upgradesCollection.helperBuyUpgrades)
+        {
+            var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
+            button.Init(upgrade, _moneyController);
+            _buttons.Add(button);
+        }
         
         _spawnedButtons = true;
     }

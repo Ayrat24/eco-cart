@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Helpers;
 using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class UpgradesCollection : ScriptableObject
 
     
     public List<TreeBuyUpgrade> treeBuyUpgrades;
+    public List<HelperBuyUpgrade> helperBuyUpgrades;
     
     [Inject]
     public void Initialize()

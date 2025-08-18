@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using R3;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Eco.Scripts.Cart
@@ -10,7 +9,7 @@ namespace Eco.Scripts.Cart
     {
         [SerializeField] SphereCollider sphereCollider;
         [SerializeField] LayerMask layerMask;
-        [SerializeField] global::Cart cart;
+        [SerializeField] Cart cart;
 
         [SerializeField] private List<CollectorHand> hands;
 
@@ -20,7 +19,9 @@ namespace Eco.Scripts.Cart
 
         private IDisposable _subscription;
 
-        private void Start()
+        public LayerMask LayerMask => layerMask;
+
+        public void Init(MoneyController moneyController, UpgradesCollection upgrades)
         {
             foreach (var hand in hands)
             {
@@ -39,7 +40,7 @@ namespace Eco.Scripts.Cart
                 ScanForItems();
             });
 
-            cart.Init(this);
+            cart.Init(moneyController, upgrades, this);
         }
 
         private void ScanForItems()
@@ -96,8 +97,10 @@ namespace Eco.Scripts.Cart
             }
 
             var item = other.GetComponent<ICartItem>();
-            if (item != null)
+            if (item != null && !item.IsBeingPickedUp())
             {
+                //Don't grab if other helpers already grabbing it
+                item.SetInCartState(true);
                 hand.PlayAnimation(item, other);
             }
         }

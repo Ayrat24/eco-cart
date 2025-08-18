@@ -1,42 +1,44 @@
 using R3;
 using UnityEngine;
 
-public abstract class Upgrade : ScriptableObject
+namespace Eco.Scripts.Upgrades
 {
-    public string upgradeName;
-    
-    public Sprite icon;
-    public string description;
-    public int maxLevel;
-    
-    private int cost;
-    public int Cost => cost;
-    
-    public ReactiveProperty<int> CurrentLevel = new(1);
-    
-    public void Init()
+    public abstract class Upgrade : ScriptableObject
     {
-        Load();
-    }
+        public string upgradeName;
     
-    public void BuyUpgrade()
-    {
-        cost = CalculateCost();
-        CurrentLevel.Value += 1;
+        public Sprite icon;
+        public string description;
+    
+        private int cost;
+        public int Cost => cost;
+    
+        public ReactiveProperty<int> CurrentLevel = new(1);
+    
+        public void Init()
+        {
+            Load();
+        }
+    
+        public void BuyUpgrade()
+        {
+            cost = CalculateCost();
+            CurrentLevel.Value += 1;
         
-        ApplyUpgrade(CurrentLevel.Value);
-    }
+            ApplyUpgrade(CurrentLevel.Value);
+        }
 
-    protected virtual int CalculateCost()
-    {
-        return cost + (CurrentLevel.Value + 1) * 5;
-    }
+        protected virtual int CalculateCost()
+        {
+            return cost + (CurrentLevel.Value + 1) * 5;
+        }
 
-    protected abstract void ApplyUpgrade(int level);
+        protected abstract void ApplyUpgrade(int level);
     
-    protected virtual void Load()
-    {
-        CurrentLevel.Value = 1;
-        cost = 10;
+        protected virtual void Load()
+        {
+            CurrentLevel.Value = 1;
+            cost = 10;
+        }
     }
 }

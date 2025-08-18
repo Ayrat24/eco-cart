@@ -19,3 +19,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f15114648b13edf49ad221c030357595, type: 2}
   treeBuyUpgrades:
   - {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}
+  helperBuyUpgrades:
+  - {fileID: 11400000, guid: 310ce428d1a983648bf7b33e6770d5b1, type: 2}
