@@ -9,10 +9,20 @@ namespace Eco.Scripts.Helpers
     {
         [SerializeField] HelperManager.HelperClass helperClass;
         public Subject<HelperManager.HelperClass> OnPurchase = new();
-        
+
         protected override void ApplyUpgrade(int level)
         {
             OnPurchase.OnNext(helperClass);
+        }
+
+        protected override void Load(int level)
+        {
+            base.Load(level);
+
+            for (int i = 0; i < level; i++)
+            {
+                ApplyUpgrade(level);
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using Eco.Scripts.World;
 using UnityEngine;
 
 public class Tree : MonoBehaviour, ITileItem
@@ -8,4 +9,6 @@ public class Tree : MonoBehaviour, ITileItem
     {
         return prefabId;
     }
+
+    public bool CanBeRecycled => true;
 }

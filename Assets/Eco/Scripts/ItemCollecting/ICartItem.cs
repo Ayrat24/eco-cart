@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Eco.Scripts.Cart
+namespace Eco.Scripts.ItemCollecting
 {
     public interface ICartItem
     {

@@ -25,8 +25,8 @@ public class MoneyDisplay : MonoBehaviour
     }
 
     [Inject]
-    public void Init(MoneyController moneyController)
+    public void Init(CurrencyManager currencyManager)
     {
-        _subscription = moneyController.CurrentMoney.Subscribe(UpdateValue);
+        _subscription = currencyManager.CurrentMoney.Subscribe(UpdateValue);
     }
 }

@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
+using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Eco.Scripts.Cart
+namespace Eco.Scripts.ItemCollecting
 {
     public class ItemCollector : MonoBehaviour
     {
         [SerializeField] SphereCollider sphereCollider;
         [SerializeField] LayerMask layerMask;
-        [SerializeField] Cart cart;
 
         [SerializeField] private List<CollectorHand> hands;
 
@@ -17,12 +18,15 @@ namespace Eco.Scripts.Cart
         private readonly Queue<Collider> _colliderQueue = new();
         private const int MaxQueueSize = 5;
 
+        private Cart _cart;
         private IDisposable _subscription;
 
         public LayerMask LayerMask => layerMask;
 
-        public void Init(MoneyController moneyController, UpgradesCollection upgrades)
+        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Cart cart)
         {
+            _cart = cart;
+            
             foreach (var hand in hands)
             {
                 hand.Init(cart);
@@ -30,6 +34,7 @@ namespace Eco.Scripts.Cart
 
             sphereCollider.includeLayers = layerMask;
 
+            _subscription?.Dispose();
             _subscription = Observable.IntervalFrame(10).Subscribe(x =>
             {
                 if (!cart.CanAddItems || !HasFreeHands())
@@ -40,7 +45,7 @@ namespace Eco.Scripts.Cart
                 ScanForItems();
             });
 
-            cart.Init(moneyController, upgrades, this);
+            cart.Init(currencyManager, upgrades, this);
         }
 
         private void ScanForItems()
@@ -91,7 +96,7 @@ namespace Eco.Scripts.Cart
 
         private void PickItem(CollectorHand hand, Collider other)
         {
-            if (cart.IsFull)
+            if (_cart.IsFull)
             {
                 return;
             }

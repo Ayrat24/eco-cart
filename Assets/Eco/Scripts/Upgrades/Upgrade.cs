@@ -5,6 +5,8 @@ namespace Eco.Scripts.Upgrades
 {
     public abstract class Upgrade : ScriptableObject
     {
+        [SerializeField] private int baseCost;
+        
         public string upgradeName;
     
         public Sprite icon;
@@ -15,9 +17,9 @@ namespace Eco.Scripts.Upgrades
     
         public ReactiveProperty<int> CurrentLevel = new(1);
     
-        public void Init()
+        public void Init(int level)
         {
-            Load();
+            Load(level);
         }
     
         public void BuyUpgrade()
@@ -30,15 +32,15 @@ namespace Eco.Scripts.Upgrades
 
         protected virtual int CalculateCost()
         {
-            return cost + (CurrentLevel.Value + 1) * 5;
+            return baseCost + (CurrentLevel.Value * baseCost) * 2;
         }
 
         protected abstract void ApplyUpgrade(int level);
-    
-        protected virtual void Load()
+        
+        protected virtual void Load(int level)
         {
-            CurrentLevel.Value = 1;
-            cost = 10;
+            CurrentLevel.Value = level;
+            cost = CalculateCost();
         }
     }
 }

@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 532caf7c28db21b469e10047ea2ecfc8, type: 3}
   m_Name: PlasticUpgrade
   m_EditorClassIdentifier: 
+  baseCost: 120
+  upgradeName: Plastic Score
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   description: Upgrade plastic recycling
-  maxLevel: 15
-  cost: 500
   trashType: 2
-  ScoreForCurrentUpgrade: 1

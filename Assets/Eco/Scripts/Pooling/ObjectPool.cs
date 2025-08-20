@@ -5,10 +5,10 @@ namespace Eco.Scripts.Pooling
 {
     public class ObjectPool<T> where T : MonoBehaviour
     {
-        private Queue<T> poolQueue = new Queue<T>();
-        private T prefab;
-        private Transform parent;
-        private bool autoExpand;
+        private readonly Queue<T> poolQueue = new();
+        private readonly T prefab;
+        private readonly Transform parent;
+        private readonly bool autoExpand;
 
         public ObjectPool(T prefab, int initialSize, Transform parent = null, bool autoExpand = true)
         {
@@ -52,6 +52,7 @@ namespace Eco.Scripts.Pooling
 
         public void ReturnToPool(T obj)
         {
+            obj.transform.SetParent(parent);
             obj.gameObject.SetActive(false);
             poolQueue.Enqueue(obj);
             
@@ -61,11 +62,11 @@ namespace Eco.Scripts.Pooling
             }
         }
 
-        public void AddToPool(int count)
+        private void AddToPool(int count)
         {
             for (int i = 0; i < count; i++)
             {
-                T obj = GameObject.Instantiate(prefab, parent);
+                T obj = Object.Instantiate(prefab, parent);
                 obj.gameObject.SetActive(false);
                 poolQueue.Enqueue(obj);
             }

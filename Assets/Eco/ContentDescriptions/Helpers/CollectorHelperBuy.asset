@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6cdbd3d428a8a04bafdc590c38f63fb, type: 3}
   m_Name: CollectorHelperBuy
   m_EditorClassIdentifier: 
+  baseCost: 200
   upgradeName: Collector Helper
   icon: {fileID: 21300000, guid: 9ee80aae14ec41141a310dd349eac97c, type: 3}
   description: 

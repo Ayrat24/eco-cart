@@ -4,7 +4,7 @@ using Eco.Scripts.Utils;
 using PrimeTween;
 using UnityEngine;
 
-namespace Eco.Scripts.Cart
+namespace Eco.Scripts.ItemCollecting
 {
     public class CollectorHand : MonoBehaviour
     {
@@ -21,7 +21,7 @@ namespace Eco.Scripts.Cart
         private Vector3 _initialPosition;
         private Transform _baseATargetParent;
         private bool _animationInProgress;
-        private global::Eco.Scripts.Cart.Cart _cart;
+        private global::Eco.Scripts.ItemCollecting.Cart _cart;
 
         public Vector3 Position => ikTarget.TransformPoint(_initialPosition);
         public bool IsFree => !_animationInProgress;
@@ -32,7 +32,7 @@ namespace Eco.Scripts.Cart
             _baseATargetParent = ikTarget.parent;
         }
 
-        public void Init(global::Eco.Scripts.Cart.Cart cart)
+        public void Init(global::Eco.Scripts.ItemCollecting.Cart cart)
         {
             _cart = cart;
         }

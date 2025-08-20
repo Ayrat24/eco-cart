@@ -6,17 +6,17 @@ namespace Eco.Scripts.Upgrades
     public class TrashScoreUpgrade : Upgrade
     {
         public TrashType trashType;
-        public int ScoreForCurrentUpgrade = 1;
+        public int ScoreForCurrentUpgrade { get; private set; }
 
-        protected override void Load()
+        protected override void Load(int level)
         {
-            base.Load();
-            ScoreForCurrentUpgrade = 1;
+            base.Load(level);
+            ApplyUpgrade(level);
         }
 
         protected override void ApplyUpgrade(int level)
         {
-            ScoreForCurrentUpgrade = level * 2;
+            ScoreForCurrentUpgrade = 1 + level * 2;
         }
     }
 }

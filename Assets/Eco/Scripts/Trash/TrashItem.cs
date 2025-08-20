@@ -1,4 +1,4 @@
-using Eco.Scripts.Cart;
+using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -11,26 +11,26 @@ namespace Eco.Scripts.Trash
         [SerializeField] private TrashType trashType;
         public TrashType TrashType => trashType;
     
-        public bool isCollected = false;
-        Rigidbody rb;
+        private bool _isCollected;
+        private Rigidbody _rigidbody;
         private Field.Tile _tile;
         private bool _isBeingPickedUp;
 
         public void Initialize(Field.Tile tile)
         {
             _tile = tile;
-            rb = GetComponent<Rigidbody>();
+            _rigidbody = GetComponent<Rigidbody>();
             ChangeState(false);
         }
 
         public void OnPickUp(Transform parent)
         {
-            if (isCollected)
+            if (_isCollected)
             {
                 return;
             }
         
-            isCollected = true;
+            _isCollected = true;
             transform.parent = parent;
         }
 
@@ -46,12 +46,13 @@ namespace Eco.Scripts.Trash
         {
             SetPickedUpStatus(false);
             ChangeState(false);
-            isCollected = false;
+            _isCollected = false;
             transform.parent = null;
         }
 
         public void Recycle()
         {
+            Debug.Log("Recycled");
             SetPickedUpStatus(false);
             
             _tile.status = Field.TileStatus.Empty;
@@ -67,7 +68,7 @@ namespace Eco.Scripts.Trash
 
         public void MakeKinematic(bool isKinematic)
         {
-            rb.isKinematic = isKinematic;
+            _rigidbody.isKinematic = isKinematic;
         }
 
         public bool IsBeingPickedUp()
@@ -84,5 +85,7 @@ namespace Eco.Scripts.Trash
         {
             return prefabTypeId;
         }
+
+        public bool CanBeRecycled => !_isBeingPickedUp && !_isCollected;
     }
 }

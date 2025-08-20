@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Trash;
+using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Eco.Scripts.Cart
+namespace Eco.Scripts.ItemCollecting
 {
     public class Cart : MonoBehaviour
     {
@@ -15,9 +17,11 @@ namespace Eco.Scripts.Cart
         [SerializeField] BoxCollider boxCollider;
         [SerializeField] private LayerMask itemLayers;
 
+        public string Id;
         public Transform dropPoint;
         public bool IsFull => _cartItems.Count >= maxItems;
         public bool CanAddItems => !IsFull && !_isEmptying;
+        public bool IsEmptying => _isEmptying;
 
         private readonly HashSet<ICartItem> _cartItems = new();
         private readonly Dictionary<ICartItem, Collider> _cartItemColliders = new();
@@ -27,7 +31,7 @@ namespace Eco.Scripts.Cart
         private bool _isEmptying;
         private CancellationTokenSource _cancellationTokenSource;
         private UpgradesCollection _upgrades;
-        private MoneyController _moneyController;
+        private CurrencyManager currencyManager;
         private IDisposable _subscription;
 
         private Collider[] _colliders = new Collider[100];
@@ -39,10 +43,10 @@ namespace Eco.Scripts.Cart
             PlayerClickMovement.OnLeftClicked += EmptyCart;
         }
 
-        public void Init(MoneyController moneyController, UpgradesCollection upgrades, ItemCollector itemCollector)
+        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, ItemCollector itemCollector)
         {
             _upgrades = upgrades;
-            _moneyController = moneyController;
+            this.currencyManager = currencyManager;
             _itemCollector = itemCollector;
             _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
         }
@@ -158,16 +162,16 @@ namespace Eco.Scripts.Cart
 
                 if (item is TrashItem trash)
                 {
-                    _moneyController.AddMoney(_upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade);
+                    currencyManager.AddMoney(_upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade);
                 }
             }
 
             ClearItems();
 
-            _isEmptying = false;
 
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;
+            _isEmptying = false;
         }
 
         public void PickUpItem(ICartItem cartItem, Collider col)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
 using VContainer;
@@ -11,18 +12,19 @@ namespace Eco.Scripts.Helpers
     {
         [SerializeField] private CollectorHelper collectorHelperPrefab;
         [SerializeField] private int spawnRadius;
-        private MoneyController _moneyController;
+        private CurrencyManager currencyManager;
         private UpgradesCollection _upgrades;
         IDisposable _subscription;
         private Player _player;
 
         private List<Vector3> _spawnDirections = new(){Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
         private int _lastSpawnDirection;
+        private int _navmeshPriority = 51;
         
         [Inject]
-        private void Init(MoneyController moneyController, UpgradesCollection upgrades, Player player)
+        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player)
         {
-            _moneyController = moneyController;
+            this.currencyManager = currencyManager;
             _upgrades = upgrades;
             _player = player;
         }
@@ -35,7 +37,8 @@ namespace Eco.Scripts.Helpers
         private void SpawnCollector(Vector3 spawnPosition)
         {
             var helper = Instantiate(collectorHelperPrefab, spawnPosition, Quaternion.identity, transform);
-            helper.Init(_moneyController, _upgrades, _player);
+            helper.Init(currencyManager, _upgrades, _player, _navmeshPriority);
+            _navmeshPriority++;
         }
 
         private void SetUpUpgrades()

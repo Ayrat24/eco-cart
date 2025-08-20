@@ -1,6 +1,9 @@
-using UnityEngine;
 
-public interface ITileItem
+namespace Eco.Scripts.World
 {
-    int GetPrefabId();
+    public interface ITileItem
+    {
+        int GetPrefabId();
+        bool CanBeRecycled { get; }
+    }
 }

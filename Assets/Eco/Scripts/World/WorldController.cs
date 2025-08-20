@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Eco.Scripts;
 using Eco.Scripts.Pooling;
+using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
 using Unity.Mathematics;
@@ -28,13 +29,6 @@ public class WorldController : MonoBehaviour
     private IDisposable _subscription;
     private TreePlanter _treePlanter;
 
-    private List<Vector2Int> _directions = new()
-    {
-        Vector2Int.zero, Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down, Vector2Int.one,
-        -Vector2Int.one,
-        Vector2Int.left + Vector2Int.up, Vector2Int.right + Vector2Int.down
-    };
-
     [Inject]
     public void Initialize(SaveManager saveManager, UpgradesCollection upgrades)
     {
@@ -44,7 +38,7 @@ public class WorldController : MonoBehaviour
 
     public void SpawnWorld()
     {
-        _fieldPool = new ObjectPool<Field>(chunkPrefab, renderRadiusX * renderRadiusY);
+        _fieldPool = new ObjectPool<Field>(chunkPrefab, renderRadiusX * renderRadiusY, transform);
         _treePlanter = new TreePlanter();
 
         UpdateWorld(true);
@@ -118,7 +112,9 @@ public class WorldController : MonoBehaviour
         foreach (var chunkCoord in spawnedChunks.Keys)
         {
             if (!neededChunks.Contains(chunkCoord))
+            {
                 toRemove.Add(chunkCoord);
+            }
         }
 
         foreach (var coord in toRemove)

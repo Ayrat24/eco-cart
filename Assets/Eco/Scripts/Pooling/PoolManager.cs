@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Eco.Scripts.Trash;
+using Eco.Scripts.World;
 using UnityEngine;
 
 namespace Eco.Scripts.Pooling
@@ -32,7 +33,7 @@ namespace Eco.Scripts.Pooling
         {
             foreach (var prefab in trashPrefabs)
             {
-                var objectPool = new ObjectPool<TrashItem>(prefab, 1);
+                var objectPool = new ObjectPool<TrashItem>(prefab, 1, transform);
                 var o = objectPool.Get();
 
                 var id = o.GetPrefabId();
@@ -47,7 +48,7 @@ namespace Eco.Scripts.Pooling
 
             foreach (var prefab in treePrefabs)
             {
-                var objectPool = new ObjectPool<Tree>(prefab, 1);
+                var objectPool = new ObjectPool<Tree>(prefab, 1, transform);
                 var o = objectPool.Get();
 
                 var id = o.GetPrefabId();

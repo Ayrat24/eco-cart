@@ -1,5 +1,6 @@
 using System;
-using Eco.Scripts.Cart;
+using Eco.Scripts.ItemCollecting;
+using Eco.Scripts.Upgrades;
 using R3;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Eco.Scripts.Helpers
     {
         [SerializeField] NavMeshAgent agent;
         [SerializeField] private int searchRadius;
-        [SerializeField] private Cart.Cart cart;
+        [SerializeField] private Cart cart;
         [SerializeField] ItemCollector itemCollector;
         [SerializeField] private int playerStopDistance = 8;
         
@@ -21,11 +22,14 @@ namespace Eco.Scripts.Helpers
         private Player _player;
         private string _state = "";
 
-        public void Init(MoneyController moneyController, UpgradesCollection upgrades, Player player)
+        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player,
+            int navmeshPriority)
         {
             _player = player;
 
-            itemCollector.Init(moneyController, upgrades);
+            agent.avoidancePriority = navmeshPriority;
+            
+            itemCollector.Init(currencyManager, upgrades, cart);
 
             var interval = TimeSpan.FromSeconds(1);
             _subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });
@@ -60,7 +64,6 @@ namespace Eco.Scripts.Helpers
             {
                 _state = "Going around player";
 
-                Debug.LogError("Go To Player");
                 if (!agent.hasPath)
                 {
                     _state = "Making path around player";

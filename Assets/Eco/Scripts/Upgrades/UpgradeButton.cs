@@ -14,16 +14,16 @@ public class UpgradeButton : MonoBehaviour
     
     private Upgrade _upgrade;
     private IDisposable _subscription;
-    private MoneyController _moneyController;
+    private CurrencyManager currencyManager;
     
-    public void Init(Upgrade upgrade, MoneyController moneyController)
+    public void Init(Upgrade upgrade, CurrencyManager currencyManager)
     {
         _upgrade = upgrade;
-        _moneyController = moneyController;
+        this.currencyManager = currencyManager;
 
         var d = Disposable.CreateBuilder();
         upgrade.CurrentLevel.Subscribe(x => UpdateUI()).AddTo(ref d);
-        moneyController.CurrentMoney.Subscribe(x => UpdatePurchaseAvailability()).AddTo(ref d);
+        currencyManager.CurrentMoney.Subscribe(x => UpdatePurchaseAvailability()).AddTo(ref d);
         _subscription = d.Build();
         
         UpdateUI();
@@ -33,19 +33,19 @@ public class UpgradeButton : MonoBehaviour
     private void UpdateUI()
     {
         iconImage.sprite = _upgrade.icon;
-        descriptionText.text = _upgrade.description;
+        descriptionText.text = _upgrade.CurrentLevel.Value.ToString();
         costText.text = _upgrade.Cost.ToString();
     }
 
     private void UpdatePurchaseAvailability()
     {
-        bool available = _moneyController.CurrentMoney.Value >= _upgrade.Cost;
+        bool available = currencyManager.CurrentMoney.Value >= _upgrade.Cost;
         button.interactable = available;
     }
 
     public void Purchase()
     {
-        _moneyController.AddMoney(-_upgrade.Cost);
+        currencyManager.AddMoney(-_upgrade.Cost);
         _upgrade.BuyUpgrade();
     }
 

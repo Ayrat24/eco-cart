@@ -1,6 +1,7 @@
 using Eco.Scripts;
-using Eco.Scripts.Cart;
+using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Helpers;
+using Eco.Scripts.Upgrades;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,7 +13,7 @@ public class GameScope : LifetimeScope
     
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.Register<MoneyController>(Lifetime.Singleton);
+        builder.Register<CurrencyManager>(Lifetime.Singleton);
         builder.Register<SaveManager>(Lifetime.Singleton);
         
         builder.RegisterComponentInHierarchy<Cart>();

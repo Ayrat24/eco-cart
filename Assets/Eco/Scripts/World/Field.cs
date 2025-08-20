@@ -168,7 +168,7 @@ namespace Eco.Scripts.World
 
             public void Clear()
             {
-                if (item != null)
+                if (item is { CanBeRecycled: true })
                 {
                     PoolManager.Instance.ReturnItem(item);
                 }

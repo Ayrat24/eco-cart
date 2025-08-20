@@ -9,7 +9,7 @@ namespace Eco.Scripts.Trees
     {
         [SerializeField] private int prefabId;
         [SerializeField] GameObject treePrefab;
-        public Subject<int> OnPurchase = new();
+        public readonly Subject<int> OnPurchase = new();
 
         protected override int CalculateCost()
         {

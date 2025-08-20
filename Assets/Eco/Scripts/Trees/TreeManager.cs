@@ -1,3 +1,4 @@
+using Eco.Scripts.Upgrades;
 using UnityEngine;
 
 public class TreeManager : MonoBehaviour

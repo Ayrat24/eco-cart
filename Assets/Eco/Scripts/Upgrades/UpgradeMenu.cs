@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Upgrades;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
@@ -7,18 +8,18 @@ public class UpgradeMenu : MonoBehaviour
 {
     [SerializeField] UpgradeButton upgradeButtonPrefab;
     [SerializeField] Transform upgradeButtonsParent;
-    [FormerlySerializedAs("moneyCounter")] [SerializeField] MoneyDisplay moneyDisplay;
+    [SerializeField] MoneyDisplay moneyDisplay;
 
     private UpgradesCollection _upgradesCollection;
     private bool _spawnedButtons;
     private readonly List<UpgradeButton> _buttons = new();
-    private MoneyController _moneyController;
+    private CurrencyManager _currencyManager;
 
     [Inject]
-    public void Initialize(UpgradesCollection upgradesCollection, MoneyController moneyController)
+    public void Initialize(UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
     {
         _upgradesCollection = upgradesCollection;
-        _moneyController = moneyController;
+        _currencyManager = currencyManager;
     }
 
     public void Open()
@@ -27,7 +28,7 @@ public class UpgradeMenu : MonoBehaviour
         {
             SpawnButtons();
         }
-        
+
         gameObject.SetActive(true);
     }
 
@@ -36,24 +37,31 @@ public class UpgradeMenu : MonoBehaviour
         foreach (var upgrade in _upgradesCollection.trashScoreUpgrades)
         {
             var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
-            button.Init(upgrade, _moneyController);
+            button.Init(upgrade, _currencyManager);
             _buttons.Add(button);
         }
-        
+
         foreach (var upgrade in _upgradesCollection.treeBuyUpgrades)
         {
             var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
-            button.Init(upgrade, _moneyController);
+            button.Init(upgrade, _currencyManager);
             _buttons.Add(button);
         }
 
         foreach (var upgrade in _upgradesCollection.helperBuyUpgrades)
         {
             var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
-            button.Init(upgrade, _moneyController);
+            button.Init(upgrade, _currencyManager);
             _buttons.Add(button);
         }
-        
+
+        foreach (var upgrade in _upgradesCollection.cartBuyUpgrades)
+        {
+            var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
+            button.Init(upgrade, _currencyManager);
+            _buttons.Add(button);
+        }
+
         _spawnedButtons = true;
     }
 }

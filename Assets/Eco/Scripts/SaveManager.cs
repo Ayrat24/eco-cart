@@ -1,125 +1,113 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
-public class SaveManager
+namespace Eco.Scripts
 {
-    private readonly Dictionary<Vector2Int, TileData[]> myDictionary = new();
-    public Dictionary<Vector2Int, TileData[]> FieldTiles => myDictionary;
-    public PlayerProgress Progress { get; set; }
-    
-    public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
+    public class SaveManager
     {
-        myDictionary[position] = tiles;
-    }
+        private readonly Dictionary<Vector2Int, TileData[]> myDictionary = new();
+        public Dictionary<Vector2Int, TileData[]> FieldTiles => myDictionary;
+        public PlayerProgress Progress { get; set; }
 
-    public void SaveFieldTiles()
-    {
-        DictionaryWrapper wrapper = new DictionaryWrapper();
-        foreach (var pair in myDictionary)
+        public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
         {
-            wrapper.items.Add(new Vector2IntArrayPair
+            myDictionary[position] = tiles;
+        }
+
+        public void SaveFieldTiles()
+        {
+            // Convert Vector2Int -> string (e.g., "x,y")
+            var serializableDict = new Dictionary<string, TileData[]>();
+            foreach (var pair in myDictionary)
             {
-                key = new Vector2IntSerializable(pair.Key),
-                value = pair.Value
-            });
+                serializableDict[$"{pair.Key.x},{pair.Key.y}"] = pair.Value;
+            }
+
+            string json = JsonConvert.SerializeObject(serializableDict, Formatting.Indented);
+            System.IO.File.WriteAllText(Application.persistentDataPath + "/field_tiles.json", json);
         }
 
-        // Convert to JSON and save
-        string json = JsonUtility.ToJson(wrapper);
-        System.IO.File.WriteAllText(Application.persistentDataPath + "/field_tiles.json", json);
-    }
-
-    public void SavePlayerProgress()
-    {
-        string json = JsonUtility.ToJson(Progress);
-        System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
-    }
-    
-    public void LoadPlayerProgress()
-    {
-        string path = Application.persistentDataPath + "/progress.json";
-
-        if (System.IO.File.Exists(path))
+        public void SavePlayerProgress()
         {
-            string json = System.IO.File.ReadAllText(path);
-            var wrapper = JsonUtility.FromJson<PlayerProgress>(json);
-
-            Progress = wrapper;
+            string json = JsonConvert.SerializeObject(Progress, Formatting.Indented);
+            System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
         }
-        else
+
+        public void LoadPlayerProgress()
         {
-            Progress = new PlayerProgress();
-        }
-    }
+            string path = Application.persistentDataPath + "/progress.json";
 
-    public void LoadFieldTiles()
-    {
-        string path = Application.persistentDataPath + "/field_tiles.json";
-        myDictionary.Clear();
-
-        if (System.IO.File.Exists(path))
-        {
-            string json = System.IO.File.ReadAllText(path);
-            DictionaryWrapper wrapper = JsonUtility.FromJson<DictionaryWrapper>(json);
-
-            foreach (var pair in wrapper.items)
+            if (System.IO.File.Exists(path))
             {
-                myDictionary[pair.key.ToVector2Int()] = pair.value;
+                string json = System.IO.File.ReadAllText(path);
+                Progress = JsonConvert.DeserializeObject<PlayerProgress>(json);
+            }
+            else
+            {
+                Progress = new PlayerProgress();
             }
         }
-    }
 
-    public void DeleteProgress()
-    {
-        string path = Application.persistentDataPath + "/field_tiles.json";
-
-        if (System.IO.File.Exists(path))
+        public void LoadFieldTiles()
         {
-            System.IO.File.Delete(path);
-        }
-    }
+            string path = Application.persistentDataPath + "/field_tiles.json";
+            myDictionary.Clear();
 
-    [System.Serializable]
-    public struct Vector2IntArrayPair
-    {
-        public Vector2IntSerializable key;
-        public TileData[] value;
-    }
+            if (System.IO.File.Exists(path))
+            {
+                string json = System.IO.File.ReadAllText(path);
+                var serializableDict = JsonConvert.DeserializeObject<Dictionary<string, TileData[]>>(json);
 
-    [System.Serializable]
-    public struct Vector2IntSerializable
-    {
-        public int x;
-        public int y;
-
-        public Vector2IntSerializable(Vector2Int v)
-        {
-            x = v.x;
-            y = v.y;
+                foreach (var pair in serializableDict)
+                {
+                    var parts = pair.Key.Split(',');
+                    var pos = new Vector2Int(int.Parse(parts[0]), int.Parse(parts[1]));
+                    myDictionary[pos] = pair.Value;
+                }
+            }
         }
 
-        public readonly Vector2Int ToVector2Int()
+        public void DeleteProgress()
         {
-            return new Vector2Int(x, y);
+            string path = Application.persistentDataPath + "/field_tiles.json";
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+
+            path = Application.persistentDataPath + "/progress.json";
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
         }
-    }
 
-    [System.Serializable]
-    public class DictionaryWrapper
-    {
-        public List<Vector2IntArrayPair> items = new();
-    }
+        [System.Serializable]
+        public struct TileData
+        {
+            public int state;
+            public int data;
+        }
 
-    [System.Serializable]
-    public struct TileData
-    {
-        public int state;
-        public int data;
-    }
-    
-    [System.Serializable]
-    public class PlayerProgress
-    {
-        public Vector3 playerPosition;
+        [System.Serializable]
+        public class PlayerProgress
+        {
+            public int currency;
+            public string selectedCart;
+            public Vector3Serializable playerPosition;
+            public Dictionary<string, int> UpgradeLevels = new();
+        }
+        
+        [System.Serializable]
+        public struct Vector3Serializable {
+            public float x;
+            public float y;
+            public float z;
+
+            public Vector3Serializable(Vector3 v) {
+                x = v.x;
+                y = v.y;
+                z = v.z;
+            }
+
+            public Vector3 ToVector3() => new Vector3(x, y, z);
+        }
     }
 }

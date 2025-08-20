@@ -1,30 +1,80 @@
-using Eco.Scripts.Cart;
+using System;
+using Cysharp.Threading.Tasks;
+using Eco.Scripts.ItemCollecting;
+using Eco.Scripts.Upgrades;
 using UnityEngine;
 using VContainer;
+using R3;
 
 namespace Eco.Scripts
 {
     public class Player : MonoBehaviour
     {
         [SerializeField] private ItemCollector itemCollector;
-        private MoneyController _moneyController;
+        private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
+        private Cart _cart;
+        private IDisposable _subscription;
 
         [Inject]
-        private void Init(MoneyController moneyController, UpgradesCollection upgrades)
+        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades)
         {
-            _moneyController = moneyController;
+            _currencyManager = currencyManager;
             _upgrades = upgrades;
         }
-        
-        public void Spawn()
+
+        public void Spawn(SaveManager saveManager)
         {
-            itemCollector.Init(_moneyController, _upgrades);
+            transform.position = saveManager.Progress.playerPosition.ToVector3();
+
+            var cartUpgrade = _upgrades.cartBuyUpgrades.Find(x => x.upgradeName == saveManager.Progress.selectedCart);
+            if (cartUpgrade == null)
+            {
+                cartUpgrade = _upgrades.cartBuyUpgrades[0];
+            }
+
+            SpawnNewCart(cartUpgrade.GetCartData());
+
+            var builder = new DisposableBuilder();
+            foreach (var cart in _upgrades.cartBuyUpgrades)
+            {
+                cart.OnCartSelected.Subscribe(ChangeCart).AddTo(ref builder);
+            }
+            _subscription = builder.Build();
+        }
+
+        private void SpawnNewCart(CartBuyUpgrade.CartData cartData)
+        {
+            _cart = Instantiate(cartData.Prefab, transform);
+            _cart.transform.localPosition = cartData.Offset;
+            _cart.Id = cartData.Id;
+
+            itemCollector.Init(_currencyManager, _upgrades, _cart);
+        }
+
+        private void ChangeCart(CartBuyUpgrade.CartData cart)
+        {
+            ChangeCartAsync(cart).Forget();
+        }
+
+        private async UniTask ChangeCartAsync(CartBuyUpgrade.CartData cart)
+        {
+            _cart.EmptyCart();
+            await UniTask.WaitWhile(() => _cart.IsEmptying);
+            Destroy(_cart.gameObject);
+
+            SpawnNewCart(cart);
         }
 
         public void SavePosition(SaveManager saveManager)
         {
-            saveManager.Progress.playerPosition = transform.position;
+            saveManager.Progress.selectedCart = _cart.Id;
+            saveManager.Progress.playerPosition = new SaveManager.Vector3Serializable(transform.position);
+        }
+
+        private void OnDestroy()
+        {
+            _subscription.Dispose();
         }
     }
 }
