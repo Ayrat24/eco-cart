@@ -1,4 +1,5 @@
 using Eco.Scripts.Helpers;
+using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -15,10 +16,11 @@ namespace Eco.Scripts
         private Player _player;
         private UpgradesCollection _upgradeCollection;
         private CurrencyManager _currencyManager;
+        private UpgradeMenu _upgradeMenu;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
-            HelperManager helperManager, Player player, UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
+            HelperManager helperManager, Player player, UpgradesCollection upgradesCollection, CurrencyManager currencyManager, UpgradeMenu upgradeMenu)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -27,6 +29,7 @@ namespace Eco.Scripts
             _player = player;
             _upgradeCollection = upgradesCollection;
             _currencyManager = currencyManager;
+            _upgradeMenu = upgradeMenu;
         }
 
         private void Start()
@@ -50,6 +53,8 @@ namespace Eco.Scripts
             _upgradeCollection.Load(_saveManager);
 
             _currencyManager.Init(_saveManager);
+            
+            _upgradeMenu.Init();
         }
 
         [ContextMenu("Save Progress")]

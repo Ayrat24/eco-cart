@@ -1,0 +1,15 @@
+:root {
+}
+
+.Button:hover {
+    background-color: rgb(88, 202, 60);
+}
+
+.Button:disabled {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.Button {
+    background-color: rgb(158, 255, 134);
+}

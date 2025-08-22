@@ -102,6 +102,7 @@ namespace Eco.Scripts.Helpers
             _subscription.Dispose();
         }
 
+        #if UNITY_EDITOR
         void OnDrawGizmos()
         {
             Gizmos.color = Color.magenta;
@@ -111,5 +112,6 @@ namespace Eco.Scripts.Helpers
             Handles.Label(pos
                 , _state);
         }
+        #endif
     }
 }

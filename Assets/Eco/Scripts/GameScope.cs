@@ -1,6 +1,7 @@
 using Eco.Scripts;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Helpers;
+using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
 using UnityEngine;
 using VContainer;

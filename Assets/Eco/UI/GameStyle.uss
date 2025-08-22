@@ -1,0 +1,15 @@
+.TopPanel {
+    background-color: rgba(255, 189, 189, 0.51);
+}
+
+#UpgradeMenu > #UpgradeList > .unity-scroll-view--vertical-horizontal > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
+    align-self: flex-start;
+    background-color: rgb(42, 0, 255);
+}
+
+.unity-scroll-view--vertical-horizontal {
+}
+
+.Hidden {
+    translate: -105% 0;
+}
