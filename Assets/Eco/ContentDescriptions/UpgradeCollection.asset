@@ -12,6 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 797f37434f9570640baa951dc9a2184e, type: 3}
   m_Name: UpgradeCollection
   m_EditorClassIdentifier: 
+  upgrades:
+  - name: Recycling
+    upgrades:
+    - {fileID: 11400000, guid: 4337a12bc76344e4699a33d91fd09420, type: 2}
+    - {fileID: 11400000, guid: b84dc5541e710454594acb50d4cd21ef, type: 2}
+    - {fileID: 11400000, guid: f5e4d7f3ab77ead4086897bd48f8ef1a, type: 2}
+    - {fileID: 11400000, guid: f15114648b13edf49ad221c030357595, type: 2}
+  - name: Trees
+    upgrades:
+    - {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}
+  - name: Helpers
+    upgrades:
+    - {fileID: 11400000, guid: 310ce428d1a983648bf7b33e6770d5b1, type: 2}
+  - name: Carts
+    upgrades:
+    - {fileID: 11400000, guid: 3cd67880c2f78b240963e01e4d3719e0, type: 2}
+    - {fileID: 11400000, guid: 40cab2ef86f641849ad9cc999ea80bee, type: 2}
   trashScoreUpgrades:
   - {fileID: 11400000, guid: 4337a12bc76344e4699a33d91fd09420, type: 2}
   - {fileID: 11400000, guid: b84dc5541e710454594acb50d4cd21ef, type: 2}

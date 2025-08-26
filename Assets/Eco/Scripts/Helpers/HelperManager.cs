@@ -12,7 +12,7 @@ namespace Eco.Scripts.Helpers
     {
         [SerializeField] private CollectorHelper collectorHelperPrefab;
         [SerializeField] private int spawnRadius;
-        private CurrencyManager currencyManager;
+        private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
         IDisposable _subscription;
         private Player _player;
@@ -24,7 +24,7 @@ namespace Eco.Scripts.Helpers
         [Inject]
         private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player)
         {
-            this.currencyManager = currencyManager;
+            _currencyManager = currencyManager;
             _upgrades = upgrades;
             _player = player;
         }
@@ -37,14 +37,14 @@ namespace Eco.Scripts.Helpers
         private void SpawnCollector(Vector3 spawnPosition)
         {
             var helper = Instantiate(collectorHelperPrefab, spawnPosition, Quaternion.identity, transform);
-            helper.Init(currencyManager, _upgrades, _player, _navmeshPriority);
+            helper.Init(_currencyManager, _upgrades, _player, _navmeshPriority);
             _navmeshPriority++;
         }
 
         private void SetUpUpgrades()
         {
             var builder = new DisposableBuilder();
-            foreach (var helperBuyUpgrade in _upgrades.helperBuyUpgrades)
+            foreach (var helperBuyUpgrade in _upgrades.GetUpgradeType<HelperBuyUpgrade>())
             {
                 helperBuyUpgrade.OnPurchase.Subscribe(SpawnHelper).AddTo(ref builder);
             }

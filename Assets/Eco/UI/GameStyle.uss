@@ -2,6 +2,10 @@
     background-color: rgba(255, 189, 189, 0.51);
 }
 
+.Hidden {
+    translate: -105% 0;
+}
+
 #UpgradeMenu > #UpgradeList > .unity-scroll-view--vertical-horizontal > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
     align-self: flex-start;
     background-color: rgb(42, 0, 255);
@@ -10,6 +14,148 @@
 .unity-scroll-view--vertical-horizontal {
 }
 
-.Hidden {
-    translate: -105% 0;
+#UpgradeTabs > .unity-tab-view__content-viewport {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0);
+    height: 200%;
+    flex-direction: row;
+    align-self: flex-end;
+}
+
+#UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0);
+    align-content: flex-start;
+    justify-content: flex-start;
+    align-items: flex-end;
+    align-self: flex-end;
+    flex-basis: initial;
+    flex-direction: row;
+}
+
+#UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header {
+    flex-grow: 0;
+    height: 50%;
+    width: 200px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-right-width: 2px;
+    margin-right: -40px;
+    margin-left: 0;
+    -unity-text-align: upper-left;
+    border-top-width: 2px;
+    border-bottom-width: 0;
+    border-left-width: 2px;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+    transition-duration: 0.2s;
+    flex-direction: row;
+    align-self: flex-end;
+    background-color: rgb(167, 201, 87);
+    color: rgb(255, 255, 255);
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Bold');
+    font-size: 18px;
+}
+
+#UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header:hover {
+    flex-grow: 0;
+    height: 50%;
+    width: 200px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-right-width: 2px;
+    margin-right: -8px;
+    margin-left: 0;
+    -unity-text-align: upper-left;
+    border-top-width: 2px;
+    border-bottom-width: 0;
+    border-left-width: 2px;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+    transition-duration: 0.2s;
+    flex-direction: row;
+    align-self: flex-end;
+    background-color: rgb(188, 71, 73);
+}
+
+#UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header:selected {
+    flex-grow: 0;
+    height: 60%;
+    width: 200px;
+    background-color: rgb(56, 102, 65);
+    translate: 0 0%;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header > #unity-tab__header-label {
+    font-size: 28px;
+    -unity-text-align: middle-center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-content: center;
+    align-items: stretch;
+    align-self: center;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+    -unity-text-outline-width: 0;
+    -unity-text-outline-color: rgb(56, 102, 65);
+    -unity-font-style: normal;
+    text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    letter-spacing: 0;
+    -unity-paragraph-spacing: 0;
+    left: 0;
+}
+
+.unity-repeat-button {
+    background-color: rgb(221, 93, 93);
+    width: 6%;
+    height: 40%;
+    border-right-width: 0;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    color: rgb(255, 255, 255);
+    background-image: url("project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1087164816274819069&guid=74d29b23049ab664aba75ae8b0545ea7&type=3#arrow-right@2x");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    translate: 0 65%;
+}
+
+#UpgradeTabs > .unity-tab-view__content-viewport > .unity-tab-view__previous-button {
+    background-image: url("project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1008301579157283121&guid=74d29b23049ab664aba75ae8b0545ea7&type=3#arrow-left@2x");
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.upgrade-page {
+    flex-grow: 1;
+    align-content: stretch;
+    align-self: flex-start;
+    justify-content: space-around;
+    align-items: auto;
+    height: auto;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    transition-duration: 0s;
+    padding-right: 16px;
+    padding-left: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
 }

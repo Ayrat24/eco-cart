@@ -14,9 +14,13 @@ namespace Eco.Scripts.UI
 
         public DragScrollView()
         {
-            DoRegisterCallbacks();
         }
 
+
+        public void Init()
+        {
+            DoRegisterCallbacks();
+        }
 
         VisualElement MouseOwner => this;
 

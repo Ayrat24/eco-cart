@@ -1,0 +1,29 @@
+.dark-green {
+    background-color: rgb(56, 102, 65);
+    color: rgb(242, 232, 207);
+}
+
+.mid-green {
+    background-color: rgb(106, 153, 78);
+}
+
+.light-green {
+    background-color: rgb(167, 201, 87);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+}
+
+.white {
+    background-color: rgb(242, 232, 207);
+}
+
+.red {
+    background-color: rgb(188, 71, 73);
+    color: rgb(242, 232, 207);
+}

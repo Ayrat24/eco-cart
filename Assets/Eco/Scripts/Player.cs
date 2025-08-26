@@ -27,16 +27,17 @@ namespace Eco.Scripts
         {
             transform.position = saveManager.Progress.playerPosition.ToVector3();
 
-            var cartUpgrade = _upgrades.cartBuyUpgrades.Find(x => x.upgradeName == saveManager.Progress.selectedCart);
+            var cartUpgrades = _upgrades.GetUpgradeType<CartBuyUpgrade>();
+            var cartUpgrade = cartUpgrades.Find(x => x.upgradeName == saveManager.Progress.selectedCart);
             if (cartUpgrade == null)
             {
-                cartUpgrade = _upgrades.cartBuyUpgrades[0];
+                cartUpgrade = cartUpgrades[0];
             }
 
             SpawnNewCart(cartUpgrade.GetCartData());
 
             var builder = new DisposableBuilder();
-            foreach (var cart in _upgrades.cartBuyUpgrades)
+            foreach (var cart in cartUpgrades)
             {
                 cart.OnCartSelected.Subscribe(ChangeCart).AddTo(ref builder);
             }
@@ -61,7 +62,8 @@ namespace Eco.Scripts
         {
             _cart.EmptyCart();
             await UniTask.WaitWhile(() => _cart.IsEmptying);
-            Destroy(_cart.gameObject);
+            Destroy(_cart?.gameObject);
+            await UniTask.NextFrame();
 
             SpawnNewCart(cart);
         }

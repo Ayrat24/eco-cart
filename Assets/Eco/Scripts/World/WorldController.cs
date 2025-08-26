@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Eco.Scripts;
 using Eco.Scripts.Pooling;
+using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
@@ -45,7 +46,7 @@ public class WorldController : MonoBehaviour
 
         DisposableBuilder builder = new DisposableBuilder();
 
-        foreach (var tree in _upgrades.treeBuyUpgrades)
+        foreach (var tree in _upgrades.GetUpgradeType<TreeBuyUpgrade>())
         {
             tree.OnPurchase.Subscribe(PlantTree).AddTo(ref builder);
         }

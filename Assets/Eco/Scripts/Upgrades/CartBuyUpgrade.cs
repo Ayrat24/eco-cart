@@ -15,7 +15,6 @@ namespace Eco.Scripts.Upgrades
         protected override void ApplyUpgrade(int level)
         {
             OnCartSelected.OnNext(GetCartData());
-            OnCartSelected.Subscribe(x => cartPrefab = null);
         }
 
         public CartData GetCartData()

@@ -19,7 +19,6 @@ public class GameScope : LifetimeScope
         
         builder.RegisterComponentInHierarchy<Cart>();
         builder.RegisterComponentInHierarchy<UpgradeMenu>();
-        builder.RegisterComponentInHierarchy<MoneyDisplay>();
         builder.RegisterComponentInHierarchy<GameController>();
         builder.RegisterComponentInHierarchy<WorldController>();
         builder.RegisterComponentInHierarchy<HelperManager>();

@@ -14,12 +14,16 @@ namespace Eco.Scripts.UI
         [SerializeField] private VisualTreeAsset upgradeItemTemplate;
 
         private UpgradesCollection _upgradesCollection;
-        private bool _spawnedButtons;
-        private readonly List<UpgradeButton> _buttons = new();
         private CurrencyManager _currencyManager;
+
+        private TabView _tabView;
         private VisualElement _upgradeMenu;
-        private Button _button;
-        private bool _menuOpen;
+        private Button _openButton;
+        private Label _currencyLabel;
+
+        private readonly List<UpgradeButton> _buttons = new();
+        private readonly List<VisualElement> _tabContents = new();
+        private bool _menuOpen = true;
         private IDisposable _subscription;
 
         [Inject]
@@ -34,61 +38,66 @@ namespace Eco.Scripts.UI
             var root = uiDocument.rootVisualElement;
 
             _upgradeMenu = root.Q<VisualElement>("UpgradeMenu");
+            _currencyLabel = root.Q<Label>("MoneyCounter");
 
-            _button = root.Q<Button>("OpenUpgradeMenuButton");
-            _button.RegisterCallback<ClickEvent>(OnOpenUpgradeMenuButtonClicked);
+            _openButton = root.Q<Button>("OpenUpgradeMenuButton");
+            _openButton.RegisterCallback<ClickEvent>(OnOpenUpgradeMenuButtonClicked);
 
             var scrollView = root.Q<DragScrollView>("UpgradeList");
+            scrollView.Init();
             scrollView.Interactable = true;
-            SpawnButtons(scrollView);
+
+            _tabView = root.Q<TabView>("UpgradeTabs");
+            SpawnButtons(scrollView, _tabView);
+            SetMenuState(false);
         }
 
-        private void SpawnButtons(DragScrollView scrollView)
+        private void SpawnButtons(DragScrollView scrollView, TabView tabView)
         {
             var builder = new DisposableBuilder();
 
-            _currencyManager.CurrentMoney.Subscribe((x) => UpdateButtons()).AddTo(ref builder);
-            
-            foreach (var upgrade in _upgradesCollection.trashScoreUpgrades)
+            _currencyManager.CurrentMoney.Subscribe(_ => UpdateButtons()).AddTo(ref builder);
+            _currencyManager.CurrentMoney.Subscribe(UpdateMoneyCounter).AddTo(ref builder);
+
+            foreach (var category in _upgradesCollection.upgrades)
             {
-                builder = SpawnUpgradeButton(scrollView, upgrade, builder);
-            }
-            
-            foreach (var upgrade in _upgradesCollection.trashScoreUpgrades)
-            {
-                builder = SpawnUpgradeButton(scrollView, upgrade, builder);
-            }
-            
-            foreach (var upgrade in _upgradesCollection.trashScoreUpgrades)
-            {
-                builder = SpawnUpgradeButton(scrollView, upgrade, builder);
+                var page = new VisualElement();
+                page.AddToClassList("upgrade-page");
+
+                scrollView.Add(page);
+                _tabContents.Add(page);
+
+                foreach (var upgrade in category.upgrades)
+                {
+                    builder = SpawnUpgradeButton(page, upgrade, builder);
+                }
+
+                var tab = new Tab
+                {
+                    label = category.name
+                };
+
+                _tabView.Add(tab);
             }
 
-            // foreach (var upgrade in _upgradesCollection.treeBuyUpgrades)
-            // {
-            //     var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
-            //     button.Init(upgrade, _currencyManager);
-            //     _buttons.Add(button);
-            // }
-            //
-            // foreach (var upgrade in _upgradesCollection.helperBuyUpgrades)
-            // {
-            //     var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
-            //     button.Init(upgrade, _currencyManager);
-            //     _buttons.Add(button);
-            // }
-            //
-            // foreach (var upgrade in _upgradesCollection.cartBuyUpgrades)
-            // {
-            //     var button = Instantiate(upgradeButtonPrefab, upgradeButtonsParent);
-            //     button.Init(upgrade, _currencyManager);
-            //     _buttons.Add(button);
-            // }
+
+            tabView.RegisterCallback<ClickEvent>((_) => SetTab());
+            SetTab();
             
             _subscription = builder.Build();
         }
 
-        private DisposableBuilder SpawnUpgradeButton(DragScrollView scrollView, TrashScoreUpgrade upgrade,
+        private void SetTab()
+        {
+            var tabIndex = _tabView.selectedTabIndex;
+            for (int i = 0; i < _tabContents.Count; i++)
+            {
+                _tabContents[i].style.display = i == tabIndex ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+        }
+
+        private DisposableBuilder SpawnUpgradeButton(VisualElement page,
+            Upgrade upgrade,
             DisposableBuilder builder)
         {
             var button = upgradeItemTemplate.Instantiate();
@@ -98,7 +107,7 @@ namespace Eco.Scripts.UI
             b.UpdatePurchaseAvailability(_currencyManager.CurrentMoney.Value);
             b.OnUpgradeClicked.Subscribe(OnUpgradePurchase).AddTo(ref builder);
 
-            scrollView.Add(button);
+            page.Add(b);
             _buttons.Add(b);
             return builder;
         }
@@ -109,6 +118,11 @@ namespace Eco.Scripts.UI
             upgrade.BuyUpgrade();
             UpdateButtons();
         }
+        
+        private void UpdateMoneyCounter(int money)
+        {
+            _currencyLabel.text = money.ToString();
+        }
 
         private void UpdateButtons()
         {
@@ -116,7 +130,7 @@ namespace Eco.Scripts.UI
             {
                 return;
             }
-            
+
             foreach (var btn in _buttons)
             {
                 btn.UpdatePurchaseAvailability(_currencyManager.CurrentMoney.Value);
@@ -125,21 +139,26 @@ namespace Eco.Scripts.UI
 
         private void OnOpenUpgradeMenuButtonClicked(ClickEvent evt)
         {
+            _menuOpen = !_menuOpen;
+            SetMenuState(_menuOpen);
+        }
+
+        private void SetMenuState(bool isOpen)
+        {
+            _menuOpen = isOpen;
             const string className = "Hidden";
-            if (_menuOpen)
+            if (!_menuOpen)
             {
                 _upgradeMenu.AddToClassList(className);
-                _button.text = "Menu";
+                _openButton.text = "Menu";
             }
             else
             {
                 _upgradeMenu.RemoveFromClassList(className);
-                _button.text = "Close";
-                
+                _openButton.text = "Close";
+
                 UpdateButtons();
             }
-
-            _menuOpen = !_menuOpen;
         }
 
         private void OnDestroy()

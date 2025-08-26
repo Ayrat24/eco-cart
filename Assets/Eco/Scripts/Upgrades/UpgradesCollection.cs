@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
-using Eco.Scripts.Helpers;
-using Eco.Scripts.Trees;
+using System.Linq;
 using UnityEngine;
 
 namespace Eco.Scripts.Upgrades
@@ -8,57 +8,58 @@ namespace Eco.Scripts.Upgrades
     [CreateAssetMenu(menuName = "Upgrade/UpgradeCollection")]
     public class UpgradesCollection : ScriptableObject
     {
-        public List<TrashScoreUpgrade> trashScoreUpgrades;
+        public List<UpgradeTab<Upgrade>> upgrades = new();
         public readonly Dictionary<TrashType, TrashScoreUpgrade> TrashScoreUpgrades = new();
-
-
-        public List<TreeBuyUpgrade> treeBuyUpgrades;
-        public List<HelperBuyUpgrade> helperBuyUpgrades;
-        public List<CartBuyUpgrade> cartBuyUpgrades;
-
-        private readonly List<Upgrade> _allUpgrades = new();
 
         public void Load(SaveManager saveManager)
         {
             TrashScoreUpgrades.Clear();
-            _allUpgrades.Clear();
-            
-            foreach (var upgrade in trashScoreUpgrades)
+
+            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
             {
-                TrashScoreUpgrades.Add(upgrade.trashType, upgrade);
-                _allUpgrades.Add(upgrade);
+                if (upgrade is TrashScoreUpgrade trashScoreUpgrade)
+                {
+                    TrashScoreUpgrades.Add(trashScoreUpgrade.trashType, trashScoreUpgrade);
+                }
             }
 
-            foreach (var helper in helperBuyUpgrades)
+            foreach (var upgrade in upgrades.SelectMany(category => category.upgrades))
             {
-                _allUpgrades.Add(helper);
+                upgrade.Init(saveManager.Progress.UpgradeLevels.GetValueOrDefault(upgrade.upgradeName, 0));
+            }
+        }
+
+        public List<T> GetUpgradeType<T>() where T : Upgrade
+        {
+            List<T> list = new();
+            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
+            {
+                if (upgrade is T u)
+                {
+                    list.Add(u);
+                }
             }
 
-            foreach (var tree in treeBuyUpgrades)
-            {
-                _allUpgrades.Add(tree);
-            }
-            
-            foreach (var cart in cartBuyUpgrades)
-            {
-                _allUpgrades.Add(cart);
-            }
-            
-            foreach (var u in _allUpgrades)
-            {
-                u.Init(saveManager.Progress.UpgradeLevels.GetValueOrDefault(u.upgradeName, 0));
-            }
+            return list;
         }
 
         public void Save(SaveManager saveManager)
         {
-            Dictionary<string, int> upgrades = new Dictionary<string, int>();
-            foreach (var u in _allUpgrades)
+            Dictionary<string, int> saveData = new Dictionary<string, int>();
+
+            foreach (var upgrade in upgrades.SelectMany(category => category.upgrades))
             {
-                upgrades[u.upgradeName] = u.CurrentLevel.Value;
+                saveData[upgrade.upgradeName] = upgrade.CurrentLevel.Value;
             }
 
-            saveManager.Progress.UpgradeLevels = upgrades;
+            saveManager.Progress.UpgradeLevels = saveData;
+        }
+
+        [Serializable]
+        public class UpgradeTab<T> where T : Upgrade
+        {
+            public string name;
+            public List<T> upgrades;
         }
     }
 }

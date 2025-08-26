@@ -52,7 +52,6 @@ namespace Eco.Scripts.Trash
 
         public void Recycle()
         {
-            Debug.Log("Recycled");
             SetPickedUpStatus(false);
             
             _tile.status = Field.TileStatus.Empty;

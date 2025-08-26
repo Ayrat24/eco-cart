@@ -41,7 +41,7 @@ public partial class UpgradeButton : VisualElement
     {
         iconImage.style.backgroundImage = new StyleBackground(_upgrade.icon);
         nameText.text = _upgrade.upgradeName;
-        descriptionText.text = _upgrade.CurrentLevel.Value.ToString();
+        descriptionText.text = _upgrade.description + "  " + _upgrade.CurrentLevel.Value.ToString();
         button.text = _upgrade.Cost.ToString();
     }
 
