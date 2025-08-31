@@ -1,4 +1,5 @@
 using Eco.Scripts.Helpers;
+using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
@@ -17,10 +18,12 @@ namespace Eco.Scripts
         private UpgradesCollection _upgradeCollection;
         private CurrencyManager _currencyManager;
         private UpgradeMenu _upgradeMenu;
+        private TreeManager _treeManager;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
-            HelperManager helperManager, Player player, UpgradesCollection upgradesCollection, CurrencyManager currencyManager, UpgradeMenu upgradeMenu)
+            HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
+            CurrencyManager currencyManager, UpgradeMenu upgradeMenu, TreeManager treeManager)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -30,6 +33,7 @@ namespace Eco.Scripts
             _upgradeCollection = upgradesCollection;
             _currencyManager = currencyManager;
             _upgradeMenu = upgradeMenu;
+            _treeManager = treeManager;
         }
 
         private void Start()
@@ -40,21 +44,23 @@ namespace Eco.Scripts
         private void StartGame()
         {
             _saveManager.LoadPlayerProgress();
-            
+
             _settings.Load();
             TerrainPainter.ClearTerrain();
             _saveManager.LoadFieldTiles();
             _worldController.SpawnWorld();
-            
+
             _saveManager.LoadPlayerProgress();
             _player.Spawn(_saveManager);
             _helperManager.LoadHelpers();
-            
+
             _upgradeCollection.Load(_saveManager);
 
             _currencyManager.Init(_saveManager);
-            
+
             _upgradeMenu.Init();
+            
+            _treeManager.Init();
         }
 
         [ContextMenu("Save Progress")]
@@ -64,9 +70,11 @@ namespace Eco.Scripts
             _currencyManager.Save(_saveManager);
             _upgradeCollection.Save(_saveManager);
             _worldController.SaveWorld();
-            
+
             _saveManager.SaveFieldTiles();
             _saveManager.SavePlayerProgress();
+            
+            _treeManager.Clear();
         }
 
         private void OnApplicationQuit()

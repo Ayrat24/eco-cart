@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eadc48912bbc31649aa5db183675ebd0, type: 3}
   m_Name: AppleTreeBuy
   m_EditorClassIdentifier: 
-  upgradeName: Apple Tree
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  baseCost: 50
+  costGrowth: 1.5
   description: 
-  maxLevel: 0
+  upgradeName: Apple Tree
+  icon: {fileID: 21300000, guid: 12356ccbcdd21d344bc85f131400e8ad, type: 3}
   prefabId: 101
   treePrefab: {fileID: 4226677145536827948, guid: af759b432389ddd4496a6659d74969e8, type: 3}
+  scoreUpgrade: {fileID: 11400000, guid: f18031bd1af53e04a8718839617c5fb7, type: 2}
+  intervalUpgrade: {fileID: 11400000, guid: ea76762c304856749aadfdd9841301e8, type: 2}

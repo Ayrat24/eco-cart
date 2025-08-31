@@ -23,6 +23,8 @@ MonoBehaviour:
   - name: Trees
     upgrades:
     - {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}
+    - {fileID: 11400000, guid: f18031bd1af53e04a8718839617c5fb7, type: 2}
+    - {fileID: 11400000, guid: ea76762c304856749aadfdd9841301e8, type: 2}
   - name: Helpers
     upgrades:
     - {fileID: 11400000, guid: 310ce428d1a983648bf7b33e6770d5b1, type: 2}

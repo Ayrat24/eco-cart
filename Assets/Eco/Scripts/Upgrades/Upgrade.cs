@@ -6,11 +6,12 @@ namespace Eco.Scripts.Upgrades
     public abstract class Upgrade : ScriptableObject
     {
         [SerializeField] protected int baseCost;
+        [SerializeField] protected float costGrowth = 1.15f;
+        [SerializeField] protected string description;
         
         public string upgradeName;
     
         public Sprite icon;
-        public string description;
     
         private int cost;
         public int Cost => cost;
@@ -31,7 +32,7 @@ namespace Eco.Scripts.Upgrades
 
         protected virtual int CalculateCost()
         {
-            return baseCost + (CurrentLevel.Value * baseCost) * 2;
+            return Mathf.FloorToInt(baseCost * Mathf.Pow(costGrowth, CurrentLevel.Value));
         }
 
         protected abstract void ApplyUpgrade(int level);
@@ -40,6 +41,11 @@ namespace Eco.Scripts.Upgrades
         {
             CurrentLevel.Value = level;
             cost = CalculateCost();
+        }
+
+        public virtual string GetDescription()
+        {
+            return $"{description} Level: {CurrentLevel.Value}.";
         }
     }
 }
