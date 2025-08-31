@@ -44,7 +44,7 @@ namespace Eco.Scripts.Helpers
         private void SetUpUpgrades()
         {
             var builder = new DisposableBuilder();
-            foreach (var helperBuyUpgrade in _upgrades.GetUpgradeType<HelperBuyUpgrade>())
+            foreach (var helperBuyUpgrade in _upgrades.GetUpgradeTypes<HelperBuyUpgrade>())
             {
                 helperBuyUpgrade.OnPurchase.Subscribe(SpawnHelper).AddTo(ref builder);
             }

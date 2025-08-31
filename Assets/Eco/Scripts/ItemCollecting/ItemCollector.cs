@@ -9,6 +9,7 @@ namespace Eco.Scripts.ItemCollecting
 {
     public class ItemCollector : MonoBehaviour
     {
+        [SerializeField] ItemRecycler itemRecycler;
         [SerializeField] SphereCollider sphereCollider;
         [SerializeField] LayerMask layerMask;
 
@@ -45,7 +46,8 @@ namespace Eco.Scripts.ItemCollecting
                 ScanForItems();
             });
 
-            cart.Init(currencyManager, upgrades, this);
+            itemRecycler.Init(currencyManager, upgrades);
+            cart.Init(itemRecycler, this);
         }
 
         private void ScanForItems()

@@ -1,0 +1,20 @@
+{
+    "asset": "a0a6a65ebbe1b6b4eb7591d520fb76a9",
+    "fileName": "0198ecb4-3d6c-71e6-968c-f13332917b9a.png",
+    "prompt": "peach tree, icon, no background, NO TEXT, yellow peaches",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "dc974f13b26ddbe8bff970b3fd7ce9c2",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

@@ -5,7 +5,7 @@ namespace Eco.Scripts.Upgrades
 {
     public abstract class Upgrade : ScriptableObject
     {
-        [SerializeField] private int baseCost;
+        [SerializeField] protected int baseCost;
         
         public string upgradeName;
     
@@ -24,9 +24,8 @@ namespace Eco.Scripts.Upgrades
     
         public void BuyUpgrade()
         {
-            cost = CalculateCost();
             CurrentLevel.Value += 1;
-        
+            cost = CalculateCost();
             ApplyUpgrade(CurrentLevel.Value);
         }
 

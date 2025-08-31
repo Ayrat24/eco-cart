@@ -16,4 +16,5 @@ MonoBehaviour:
   upgradeName: Paper Score
   icon: {fileID: 21300000, guid: 8a598e358ce803c449e0d21a93d59595, type: 3}
   description: Upgrade glass recycling
+  color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
   trashType: 1

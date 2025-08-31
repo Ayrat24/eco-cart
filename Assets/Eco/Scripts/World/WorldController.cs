@@ -46,7 +46,7 @@ public class WorldController : MonoBehaviour
 
         DisposableBuilder builder = new DisposableBuilder();
 
-        foreach (var tree in _upgrades.GetUpgradeType<TreeBuyUpgrade>())
+        foreach (var tree in _upgrades.GetUpgradeTypes<TreeBuyUpgrade>())
         {
             tree.OnPurchase.Subscribe(PlantTree).AddTo(ref builder);
         }

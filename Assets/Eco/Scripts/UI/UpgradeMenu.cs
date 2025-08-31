@@ -26,6 +26,16 @@ namespace Eco.Scripts.UI
         private bool _menuOpen = true;
         private IDisposable _subscription;
 
+        private const string UpgradeRootName = "Upgrade";
+        private const string UpgradeMenuRootName = "UpgradeMenu";
+        private const string UpgradeListName = "UpgradeList";
+        private const string MoneyCounterLabelName = "MoneyCounter";
+        private const string OpenButtonName = "OpenUpgradeMenuButton";
+        private const string UpgradeTabsName = "UpgradeTabs";
+        private const string PageClassName = "upgrade-page";
+        private const string HiddenClassName = "Hidden";
+
+
         [Inject]
         public void Initialize(UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
         {
@@ -37,17 +47,17 @@ namespace Eco.Scripts.UI
         {
             var root = uiDocument.rootVisualElement;
 
-            _upgradeMenu = root.Q<VisualElement>("UpgradeMenu");
-            _currencyLabel = root.Q<Label>("MoneyCounter");
+            _upgradeMenu = root.Q<VisualElement>(UpgradeMenuRootName);
+            _currencyLabel = root.Q<Label>(MoneyCounterLabelName);
 
-            _openButton = root.Q<Button>("OpenUpgradeMenuButton");
+            _openButton = root.Q<Button>(OpenButtonName);
             _openButton.RegisterCallback<ClickEvent>(OnOpenUpgradeMenuButtonClicked);
 
-            var scrollView = root.Q<DragScrollView>("UpgradeList");
+            var scrollView = root.Q<DragScrollView>(UpgradeListName);
             scrollView.Init();
             scrollView.Interactable = true;
 
-            _tabView = root.Q<TabView>("UpgradeTabs");
+            _tabView = root.Q<TabView>(UpgradeTabsName);
             SpawnButtons(scrollView, _tabView);
             SetMenuState(false);
         }
@@ -62,7 +72,7 @@ namespace Eco.Scripts.UI
             foreach (var category in _upgradesCollection.upgrades)
             {
                 var page = new VisualElement();
-                page.AddToClassList("upgrade-page");
+                page.AddToClassList(PageClassName);
 
                 scrollView.Add(page);
                 _tabContents.Add(page);
@@ -102,7 +112,7 @@ namespace Eco.Scripts.UI
         {
             var button = upgradeItemTemplate.Instantiate();
 
-            var b = button.Q<UpgradeButton>("Upgrade");
+            var b = button.Q<UpgradeButton>(UpgradeRootName);
             b.Init(upgrade);
             b.UpdatePurchaseAvailability(_currencyManager.CurrentMoney.Value);
             b.OnUpgradeClicked.Subscribe(OnUpgradePurchase).AddTo(ref builder);
@@ -146,15 +156,14 @@ namespace Eco.Scripts.UI
         private void SetMenuState(bool isOpen)
         {
             _menuOpen = isOpen;
-            const string className = "Hidden";
             if (!_menuOpen)
             {
-                _upgradeMenu.AddToClassList(className);
-                _openButton.text = "Menu";
+                _upgradeMenu.AddToClassList(HiddenClassName);
+                _openButton.text = "Upgrades";
             }
             else
             {
-                _upgradeMenu.RemoveFromClassList(className);
+                _upgradeMenu.RemoveFromClassList(HiddenClassName);
                 _openButton.text = "Close";
 
                 UpdateButtons();

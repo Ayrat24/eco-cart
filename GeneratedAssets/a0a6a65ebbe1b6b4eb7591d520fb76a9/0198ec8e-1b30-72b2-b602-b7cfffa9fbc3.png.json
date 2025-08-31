@@ -1,0 +1,20 @@
+{
+    "asset": "a0a6a65ebbe1b6b4eb7591d520fb76a9",
+    "fileName": "0198ec8e-1b30-72b2-b602-b7cfffa9fbc3.png",
+    "prompt": "paper waste, stack of paper, crumbled, icon, no background, NO TEXT, blue colors",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "dbea96f101ba52d00d8b6bb450ad5b89",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

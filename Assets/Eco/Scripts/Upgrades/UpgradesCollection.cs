@@ -29,7 +29,7 @@ namespace Eco.Scripts.Upgrades
             }
         }
 
-        public List<T> GetUpgradeType<T>() where T : Upgrade
+        public List<T> GetUpgradeTypes<T>() where T : Upgrade
         {
             List<T> list = new();
             foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
@@ -41,6 +41,19 @@ namespace Eco.Scripts.Upgrades
             }
 
             return list;
+        }
+        
+        public T GetUpgradeType<T>() where T : Upgrade
+        {
+            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
+            {
+                if (upgrade is T u)
+                {
+                    return u;
+                }
+            }
+
+            return null;
         }
 
         public void Save(SaveManager saveManager)

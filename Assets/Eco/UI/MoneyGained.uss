@@ -1,0 +1,25 @@
+.base-label {
+    font-size: 55px;
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Black');
+    -unity-text-outline-width: 4px;
+    color: rgb(255, 255, 255);
+    -unity-text-outline-color: rgb(0, 0, 0);
+    transition-duration: 0.5s;
+    min-width: 100px;
+    white-space: nowrap;
+    min-height: auto;
+    height: auto;
+    margin-top: -18px;
+    margin-right: -18px;
+    margin-bottom: -18px;
+    margin-left: -18px;
+    -unity-text-align: upper-right;
+}
+
+.hidden {
+    font-size: 55px;
+    color: rgba(255, 255, 255, 0);
+    -unity-text-outline-color: rgba(0, 0, 0, 0);
+    scale: 0.4 0.4 0.4;
+    opacity: 0;
+}

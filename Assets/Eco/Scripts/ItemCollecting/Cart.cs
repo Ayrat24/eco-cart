@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Eco.Scripts.Trash;
-using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Eco.Scripts.ItemCollecting
 {
@@ -30,8 +27,7 @@ namespace Eco.Scripts.ItemCollecting
 
         private bool _isEmptying;
         private CancellationTokenSource _cancellationTokenSource;
-        private UpgradesCollection _upgrades;
-        private CurrencyManager currencyManager;
+        private ItemRecycler _itemRecycler;
         private IDisposable _subscription;
 
         private Collider[] _colliders = new Collider[100];
@@ -43,10 +39,9 @@ namespace Eco.Scripts.ItemCollecting
             PlayerClickMovement.OnLeftClicked += EmptyCart;
         }
 
-        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, ItemCollector itemCollector)
+        public void Init(ItemRecycler recycler, ItemCollector itemCollector)
         {
-            _upgrades = upgrades;
-            this.currencyManager = currencyManager;
+            _itemRecycler = recycler;
             _itemCollector = itemCollector;
             _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
         }
@@ -153,21 +148,9 @@ namespace Eco.Scripts.ItemCollecting
             await UniTask.WaitUntil(() => _itemCollector.AllHandsAreFree(), cancellationToken: token);
             await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
 
-            var listItems = _cartItems.ToList();
-            for (var i = listItems.Count - 1; i >= 0; i--)
-            {
-                var item = listItems[i];
-                await UniTask.WaitForSeconds(0.05f, cancellationToken: token);
-                item.Recycle();
-
-                if (item is TrashItem trash)
-                {
-                    currencyManager.AddMoney(_upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade);
-                }
-            }
+            await _itemRecycler.EmptyAsync(_cartItems.ToList(), token);
 
             ClearItems();
-
 
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;

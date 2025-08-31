@@ -7,6 +7,6 @@
             <ui:Label text="Name" name="Name" style="font-size: 36%; -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); color: rgb(56, 102, 65); height: 30%; width: 100%; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-left;" />
             <ui:Label text="This is it lllllle adw d wdawd as daw dasd c dawd awdas dawd a dawdasdas dawdas" name="Description" class="text-auto-size text-auto-size-max-20" style="color: rgb(56, 102, 65); font-size: 20px; white-space: normal; text-overflow: clip; flex-wrap: nowrap; height: 60%; min-height: 60%; max-height: 60%; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; -unity-font-style: normal; width: 100%; -unity-font-definition: resource(&apos;FlatSkin/Font/Roboto-Regular&apos;);" />
         </ui:VisualElement>
-        <ui:Button text="1234567" enabled="true" name="Button" class="text-auto-size-max-80 light-green Button" />
+        <ui:Button text="1234567" enabled="false" name="Button" class="text-auto-size-max-80 light-green Button" />
     </UpgradeButton>
 </ui:UXML>

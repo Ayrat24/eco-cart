@@ -27,7 +27,7 @@ namespace Eco.Scripts
         {
             transform.position = saveManager.Progress.playerPosition.ToVector3();
 
-            var cartUpgrades = _upgrades.GetUpgradeType<CartBuyUpgrade>();
+            var cartUpgrades = _upgrades.GetUpgradeTypes<CartBuyUpgrade>();
             var cartUpgrade = cartUpgrades.Find(x => x.upgradeName == saveManager.Progress.selectedCart);
             if (cartUpgrade == null)
             {
