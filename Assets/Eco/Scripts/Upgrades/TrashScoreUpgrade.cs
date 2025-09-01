@@ -1,3 +1,5 @@
+using System;
+using LargeNumbers;
 using UnityEngine;
 
 namespace Eco.Scripts.Upgrades
@@ -5,9 +7,11 @@ namespace Eco.Scripts.Upgrades
     [CreateAssetMenu(menuName = "Upgrade/TrashScoreUpgrade")]
     public class TrashScoreUpgrade : Upgrade
     {
+        [SerializeField] private int baseScore;
+        [SerializeField] private float scoreGrowth = 1.1f;
         [SerializeField] private Color color;
         public TrashType trashType;
-        public int ScoreForCurrentUpgrade { get; private set; }
+        public AlphabeticNotation ScoreForCurrentUpgrade { get; private set; }
         public Color Color => color;
         
         protected override void Load(int level)
@@ -18,7 +22,19 @@ namespace Eco.Scripts.Upgrades
 
         protected override void ApplyUpgrade(int level)
         {
-            ScoreForCurrentUpgrade = 1 + level * 2;
+            var power = new AlphabeticNotation(scoreGrowth);
+            for (int i = 0; i < CurrentLevel.Value; i++)
+            {
+                power *= scoreGrowth;
+            }
+            
+            var score = baseScore + power;
+            if (score.magnitude == 0)
+            {
+                score.coefficient = Math.Floor(score.coefficient);
+            }
+            
+            ScoreForCurrentUpgrade = score;
         }
     }
 }

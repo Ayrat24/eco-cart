@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Eco.Scripts.Upgrades;
+using LargeNumbers;
 using R3;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -67,7 +68,7 @@ namespace Eco.Scripts.UI
             var builder = new DisposableBuilder();
 
             _currencyManager.CurrentMoney.Subscribe(_ => UpdateButtons()).AddTo(ref builder);
-            _currencyManager.CurrentMoney.Subscribe(UpdateMoneyCounter).AddTo(ref builder);
+            _currencyManager.CurrentMoney.Subscribe(UpdateCurrencyCounter).AddTo(ref builder);
 
             foreach (var category in _upgradesCollection.upgrades)
             {
@@ -124,12 +125,12 @@ namespace Eco.Scripts.UI
 
         private void OnUpgradePurchase(Upgrade upgrade)
         {
-            _currencyManager.AddMoney(-upgrade.Cost);
+            _currencyManager.RemoveMoney(upgrade.Cost);
             upgrade.BuyUpgrade();
             UpdateButtons();
         }
         
-        private void UpdateMoneyCounter(int money)
+        private void UpdateCurrencyCounter(AlphabeticNotation money)
         {
             _currencyLabel.text = money.ToString();
         }

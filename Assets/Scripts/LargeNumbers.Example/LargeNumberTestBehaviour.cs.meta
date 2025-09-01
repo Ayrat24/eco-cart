@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5657fcec647c057428d265f68ccc45fa
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 158468
+  packageName: Large Numbers Library
+  packageVersion: 2.1.1
+  assetPath: Assets/Scripts/LargeNumbers.Example/LargeNumberTestBehaviour.cs
+  uploadId: 629614

@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: PlasticUpgrade
   m_EditorClassIdentifier: 
   baseCost: 120
+  costGrowth: 1.15
+  description: Upgrade plastic recycling
   upgradeName: Plastic Score
   icon: {fileID: 21300000, guid: 9cabde73ebd71f84aab4bb730a7a9eb6, type: 3}
-  description: Upgrade plastic recycling
+  baseScore: 0
+  scoreGrowth: 1.5
   color: {r: 0.627451, g: 0.1254902, b: 0.9411765, a: 1}
   trashType: 2

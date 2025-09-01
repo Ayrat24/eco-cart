@@ -14,7 +14,7 @@ namespace Eco.Scripts.Trees
     
         protected override void ApplyUpgrade(int level)
         {
-            Interval = minInterval + (baseInterval - minInterval) / (1f + level * scale); 
+            Interval = minInterval + (baseInterval - minInterval) / (1f + level * scale);
         }
 
         protected override void Load(int level)

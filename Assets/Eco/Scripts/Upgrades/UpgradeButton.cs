@@ -1,7 +1,6 @@
-using System;
 using Eco.Scripts.Upgrades;
+using LargeNumbers;
 using R3;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 [UxmlElement]
@@ -45,7 +44,7 @@ public partial class UpgradeButton : VisualElement
         button.text = _upgrade.Cost.ToString();
     }
 
-    public void UpdatePurchaseAvailability(int money)
+    public void UpdatePurchaseAvailability(AlphabeticNotation money)
     {
         if (_upgrade.CurrentLevel.Value != _previousLevel)
         {

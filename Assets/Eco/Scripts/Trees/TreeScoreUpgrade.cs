@@ -1,4 +1,5 @@
 using Eco.Scripts.Upgrades;
+using LargeNumbers;
 using UnityEngine;
 
 namespace Eco.Scripts.Trees
@@ -9,11 +10,17 @@ namespace Eco.Scripts.Trees
         [SerializeField] private int baseScore = 1;
         [SerializeField] private float growth = 1.1f;
     
-        public int Score { get; private set; }
+        public LargeNumber Score { get; private set; }
     
         protected override void ApplyUpgrade(int level)
         {
-            Score = Mathf.FloorToInt(baseScore * Mathf.Pow(growth, level)) + level;
+            var power = new LargeNumber(costGrowth);
+            for (int i = 0; i < CurrentLevel.Value; i++)
+            {
+                power *= costGrowth;
+            }
+            
+            Score = baseScore * power + level;
         }
 
         protected override void Load(int level)

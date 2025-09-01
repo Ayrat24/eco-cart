@@ -1,23 +1,30 @@
-using Eco.Scripts;
+using LargeNumbers;
 using R3;
-using UnityEngine;
 
-public class CurrencyManager
+namespace Eco.Scripts
 {
-    public readonly ReactiveProperty<int> CurrentMoney = new();
-    
-    public void AddMoney(int money)
+    public class CurrencyManager
     {
-        CurrentMoney.Value += money;
-    }
+        public readonly ReactiveProperty<AlphabeticNotation> CurrentMoney = new();
 
-    public void Init(SaveManager saveManager)
-    {
-        CurrentMoney.Value = saveManager.Progress.currency;
-    }
+        public void AddMoney(AlphabeticNotation money)
+        {
+            CurrentMoney.Value += money;
+        }
 
-    public void Save(SaveManager saveManager)
-    {
-        saveManager.Progress.currency = CurrentMoney.Value;
+        public void RemoveMoney(AlphabeticNotation money)
+        {
+            CurrentMoney.Value -= money;
+        }
+
+        public void Init(SaveManager saveManager)
+        {
+            CurrentMoney.Value = saveManager.Progress.currency;
+        }
+
+        public void Save(SaveManager saveManager)
+        {
+            saveManager.Progress.currency = CurrentMoney.Value;
+        }
     }
 }

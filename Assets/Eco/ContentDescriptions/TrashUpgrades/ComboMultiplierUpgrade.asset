@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ComboMultiplierUpgrade
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.ComboMultiplierUpgrade
   baseCost: 10
+  costGrowth: 1.15
+  description: Gain more money per same trash type in the cart
   upgradeName: Trash Sorting
   icon: {fileID: -348211939, guid: a03e9228371be9449a97a937850924ca, type: 3}
-  description: Gain more money per same trash type in the cart

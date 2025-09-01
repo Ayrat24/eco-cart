@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: GlassUpgrade
   m_EditorClassIdentifier: 
   baseCost: 30
+  costGrowth: 1.15
+  description: Upgrade glass recycling
   upgradeName: Glass Score
   icon: {fileID: 21300000, guid: 01cde3e65d8607a45b6948393adc3916, type: 3}
-  description: Upgrade glass recycling
+  baseScore: 0
+  scoreGrowth: 1.5
   color: {r: 0.3921569, g: 0.5843138, b: 0.9294118, a: 1}
   trashType: 3

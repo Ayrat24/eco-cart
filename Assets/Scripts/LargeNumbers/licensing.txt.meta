@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5e6316a379af32e4f8155e2b69b9d73a
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 158468
+  packageName: Large Numbers Library
+  packageVersion: 2.1.1
+  assetPath: Assets/Scripts/LargeNumbers/licensing.txt
+  uploadId: 629614

@@ -41,8 +41,8 @@ namespace Eco.Scripts.ItemCollecting
         {
             _gainedScoreText.Clear();
             
-            float scoreMultiplier = _upgrades.GetUpgradeType<ComboMultiplierUpgrade>().Multiplier;
-            Dictionary<TrashType, float> scoreMultipliers = new();
+            double scoreMultiplier = _upgrades.GetUpgradeType<ComboMultiplierUpgrade>().Multiplier;
+            Dictionary<TrashType, double> scoreMultipliers = new();
             
             var listItems = cartItems.ToList();
             for (var i = listItems.Count - 1; i >= 0; i--)
@@ -57,7 +57,7 @@ namespace Eco.Scripts.ItemCollecting
 
                     if (scoreMultipliers.TryGetValue(trash.TrashType, out var currentMultiplier))
                     {
-                        score = Mathf.CeilToInt(score * currentMultiplier);
+                        score = currentMultiplier * score;
                         scoreMultipliers[trash.TrashType] *= scoreMultiplier;
                     }
                     else

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fc55c7eb6ea1d6146a51b9f57a2f5d2f
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 158468
+  packageName: Large Numbers Library
+  packageVersion: 2.1.1
+  assetPath: Assets/Scripts/LargeNumbers.Example/com.votrubec.largenumbers.example.asmdef
+  uploadId: 629614

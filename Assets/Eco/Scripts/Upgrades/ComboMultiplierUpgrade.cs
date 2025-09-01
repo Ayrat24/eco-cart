@@ -1,3 +1,4 @@
+using LargeNumbers;
 using UnityEngine;
 
 namespace Eco.Scripts.Upgrades
@@ -12,10 +13,16 @@ namespace Eco.Scripts.Upgrades
             Multiplier += level * 0.10f;
         }
 
-        protected override int CalculateCost()
-        {
-            return Mathf.FloorToInt(baseCost + Mathf.Pow(CurrentLevel.Value, CurrentLevel.Value) * baseCost);
-        }
+        // protected override AlphabeticNotation CalculateCost()
+        // {
+        //     var power = new AlphabeticNotation(costGrowth);
+        //     for (int i = 0; i < CurrentLevel.Value; i++)
+        //     {
+        //         power *= costGrowth;
+        //     }
+        //     
+        //     return baseCost * power;
+        // }
 
         protected override void Load(int level)
         {

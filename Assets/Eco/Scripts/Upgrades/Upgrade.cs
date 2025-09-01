@@ -1,3 +1,5 @@
+using System;
+using LargeNumbers;
 using R3;
 using UnityEngine;
 
@@ -13,8 +15,7 @@ namespace Eco.Scripts.Upgrades
     
         public Sprite icon;
     
-        private int cost;
-        public int Cost => cost;
+        public AlphabeticNotation Cost { get; private set; }
     
         public ReactiveProperty<int> CurrentLevel = new(1);
     
@@ -26,13 +27,25 @@ namespace Eco.Scripts.Upgrades
         public void BuyUpgrade()
         {
             CurrentLevel.Value += 1;
-            cost = CalculateCost();
+            Cost = CalculateCost();
             ApplyUpgrade(CurrentLevel.Value);
         }
 
-        protected virtual int CalculateCost()
+        protected virtual AlphabeticNotation CalculateCost()
         {
-            return Mathf.FloorToInt(baseCost * Mathf.Pow(costGrowth, CurrentLevel.Value));
+            var power = new AlphabeticNotation(costGrowth);
+            for (int i = 0; i < CurrentLevel.Value; i++)
+            {
+                power *= costGrowth;
+            }
+
+            var cost = baseCost * power;
+            if (cost.magnitude == 0)
+            {
+                cost.coefficient = Math.Ceiling(cost.coefficient);
+            }
+            
+            return cost;
         }
 
         protected abstract void ApplyUpgrade(int level);
@@ -40,7 +53,7 @@ namespace Eco.Scripts.Upgrades
         protected virtual void Load(int level)
         {
             CurrentLevel.Value = level;
-            cost = CalculateCost();
+            Cost = CalculateCost();
         }
 
         public virtual string GetDescription()

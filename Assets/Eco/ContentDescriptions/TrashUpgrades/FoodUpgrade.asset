@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: FoodUpgrade
   m_EditorClassIdentifier: 
   baseCost: 10
-  upgradeName: Food Score
-  icon: {fileID: 21300000, guid: a0a6a65ebbe1b6b4eb7591d520fb76a9, type: 3}
+  costGrowth: 1.15
   description: Upgrade food recycling Upgrade food recycling Upgrade food recycling
     Upgrade food recycling Upgrade food recycling
+  upgradeName: Food Score
+  icon: {fileID: 21300000, guid: a0a6a65ebbe1b6b4eb7591d520fb76a9, type: 3}
+  baseScore: 0
+  scoreGrowth: 1.5
   color: {r: 1, g: 0.627451, b: 0.4784314, a: 1}
   trashType: 0

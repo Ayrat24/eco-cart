@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78c71a706a9c17646b70d975165d956d, type: 3}
-  m_Name: AppleTreeScore
+  m_Name: PeachScore
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeScoreUpgrade
   baseCost: 15
   costGrowth: 1.15
-  upgradeName: AppleTreeScore
-  icon: {fileID: 21300000, guid: b470a8b0ebb0cf142974e652184d3834, type: 3}
   description: 
-  baseScore: 1
+  upgradeName: Peach Tree Score
+  icon: {fileID: 21300000, guid: fd223362f33d9f0419f8446dac1d3eb6, type: 3}
+  baseScore: 10000000
   growth: 1.1

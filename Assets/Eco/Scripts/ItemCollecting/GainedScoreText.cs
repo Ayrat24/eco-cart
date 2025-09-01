@@ -8,14 +8,14 @@ namespace Eco.Scripts.ItemCollecting
 {
     public class GainedScoreText
     {
-        private float hideDelay = 2f;
-        private string spawnStyleClass = "base-label";
-        private string hiddenStyleClass = "hidden";
+        private const string SpawnStyleClass = "base-label";
+        private const string HiddenStyleClass = "hidden";
+        private const float HideDelay = 1.0f;
+        private const float HideSequenceDelay = 0.05f;
 
-        private Queue<Label> _labelPool = new();
-        private List<Label> _activeLabels = new();
-
-
+        private readonly Queue<Label> _labelPool = new();
+        private readonly List<Label> _activeLabels = new();
+        
         private Camera _camera;
         private VisualElement _itemContainer;
         private CancellationTokenSource _cancellationTokenSource;
@@ -24,8 +24,6 @@ namespace Eco.Scripts.ItemCollecting
         {
             _camera = Camera.main;
             _itemContainer = uiDocument.rootVisualElement.Q("Panel");
-
-            var root = uiDocument.rootVisualElement;
         }
 
         public void FaceCamera(Transform transform)
@@ -43,21 +41,18 @@ namespace Eco.Scripts.ItemCollecting
 
             // Reset styles
             label.BringToFront();
-            label.AddToClassList(spawnStyleClass);
+            label.AddToClassList(SpawnStyleClass);
 
             label.style.display = DisplayStyle.Flex;
 
             _activeLabels.Add(label);
         }
 
-        private async UniTask HideAfterDelay(Label label, float delay, CancellationToken token)
+        private async UniTask HideAfterDelay(Label label, CancellationToken token)
         {
-            await UniTask.WaitForSeconds(1f, cancellationToken: token);
+            await UniTask.WaitForSeconds(HideDelay, cancellationToken: token);
 
-            if (label != null)
-            {
-                label.AddToClassList(hiddenStyleClass);
-            }
+            label.AddToClassList(HiddenStyleClass);
         }
 
         private Label GetLabel()
@@ -95,8 +90,8 @@ namespace Eco.Scripts.ItemCollecting
         {
             foreach (var label in _activeLabels)
             {
-                await UniTask.WaitForSeconds(0.05f, cancellationToken: token);
-                HideAfterDelay(label, 1.2f, token).Forget();
+                await UniTask.WaitForSeconds(HideSequenceDelay, cancellationToken: token);
+                HideAfterDelay(label, token).Forget();
             }
         }
 

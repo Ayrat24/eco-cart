@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using LargeNumbers;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -89,7 +90,7 @@ namespace Eco.Scripts
         [System.Serializable]
         public class PlayerProgress
         {
-            public int currency;
+            public AlphabeticNotation currency;
             public string selectedCart;
             public Vector3Serializable playerPosition;
             public Dictionary<string, int> UpgradeLevels = new();

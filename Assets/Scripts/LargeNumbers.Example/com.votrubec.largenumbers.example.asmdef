@@ -1,0 +1,15 @@
+{
+    "name": "com.votrubec.largenumbers.example",
+    "references": [
+        "GUID:a31522116141ad74da4c30c6351c7b39"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

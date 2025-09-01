@@ -31,7 +31,7 @@ namespace Eco.Scripts.Trees
 
         private void GainCurrency()
         {
-            _currencyManager.AddMoney(_upgrade.CurrentLevel.Value * _upgrade.ScoreUpgrade.Score);
+            _currencyManager.AddMoney(_upgrade.ScoreUpgrade.Score * _upgrade.CurrentLevel.Value);
         }
 
         public void Clear()

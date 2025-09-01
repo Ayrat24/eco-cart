@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eadc48912bbc31649aa5db183675ebd0, type: 3}
+  m_Name: PeachBuy
+  m_EditorClassIdentifier: 
+  baseCost: 1
+  costGrowth: 1.5
+  description: 
+  upgradeName: Buy A Peach Tree
+  icon: {fileID: 21300000, guid: fd223362f33d9f0419f8446dac1d3eb6, type: 3}
+  prefabId: 110
+  scoreUpgrade: {fileID: 11400000, guid: 7785a9d66557d8f4cb997a60b0c25c2b, type: 2}
+  intervalUpgrade: {fileID: 11400000, guid: 58e05af49af20b8439621f8b9b0eeb96, type: 2}

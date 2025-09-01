@@ -8,8 +8,6 @@ namespace Eco.Scripts.Trees
     public class TreeBuyUpgrade : Upgrade
     {
         [SerializeField] private int prefabId;
-        [SerializeField] GameObject treePrefab;
-
         [SerializeField] private TreeScoreUpgrade scoreUpgrade;
         [SerializeField] TreeIntervalUpgrade intervalUpgrade;
 
