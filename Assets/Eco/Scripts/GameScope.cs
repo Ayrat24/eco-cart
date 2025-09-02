@@ -1,8 +1,8 @@
 using Eco.Scripts.Helpers;
-using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
+using Eco.Scripts.World;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -20,7 +20,6 @@ namespace Eco.Scripts
             builder.Register<SaveManager>(Lifetime.Singleton);
             builder.Register<TreeManager>(Lifetime.Singleton);
         
-            builder.RegisterComponentInHierarchy<Cart>();
             builder.RegisterComponentInHierarchy<UpgradeMenu>();
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();

@@ -48,10 +48,12 @@ namespace Eco.Scripts.World
 
             // Convert to splatmap coords and find bounds
             var initialPoint = ConvertWorldCor2TerrCor(worldPosition - Vector3.one * radius);
-
-
+            initialPoint.Clamp(Vector3Int.zero, new Vector3Int(data.alphamapWidth, 0, data.alphamapHeight));
+            Vector2Int size = new Vector2Int(radius * 2 + 2, radius * 2 + 2);    
+            size.Clamp(Vector2Int.zero, new Vector2Int(data.alphamapWidth - initialPoint.x, data.alphamapHeight - initialPoint.z));
+            
             // Get only the affected region
-            float[,,] splatmap = data.GetAlphamaps(initialPoint.x, initialPoint.z, radius * 2 + 2, radius * 2 + 2);
+            float[,,] splatmap = data.GetAlphamaps(initialPoint.x, initialPoint.z, size.x, size.y);
 
             splatmap[0, 0, layerIndex] = 1;
 
@@ -63,7 +65,14 @@ namespace Eco.Scripts.World
                     {
                         for (int l = 0; l < data.alphamapLayers; l++)
                         {
-                            splatmap[x + radius, y + radius, l] = (l == layerIndex) ? 1f : 0f;
+                            var xPos = x + radius;
+                            var yPos = y + radius;
+                            if (splatmap.GetLength(0) <= xPos || splatmap.GetLength(1) <= yPos)
+                            {
+                                continue;
+                            }
+                            
+                            splatmap[xPos, yPos, l] = (l == layerIndex) ? 1f : 0f;
                         }
                     }
                 }

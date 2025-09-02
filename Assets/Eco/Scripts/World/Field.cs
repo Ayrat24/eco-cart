@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Eco.Scripts.Pooling;
+using Eco.Scripts.Trash;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,17 +9,15 @@ namespace Eco.Scripts.World
 {
     public class Field : MonoBehaviour, IPooledObject
     {
-        [SerializeField] private List<GameObject> trashPrefabs;
-        [SerializeField] private List<Tile> _tiles = new();
+        [SerializeField] private bool debug;
+        [SerializeField] private List<Tile> tiles = new();
+        [SerializeField] private int fieldSize = 10;
 
-        [SerializeField] private int fieldSize = 20;
-
-        public Terrain terrain;
         private SaveManager _saveManager;
         private Vector2Int _position;
         private TreePlanter _treePlanter;
 
-        public List<Tile> Tiles => _tiles;
+        public List<Tile> Tiles => tiles;
         private GUIStyle style;
 
         public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter)
@@ -71,7 +70,7 @@ namespace Eco.Scripts.World
                         }
                     }
 
-                    _tiles.Add(tile);
+                    tiles.Add(tile);
                 }
             }
 
@@ -81,11 +80,23 @@ namespace Eco.Scripts.World
             {
                 SaveTiles();
             }
+
+            if (debug)
+            {
+                DebugDraw();
+            }
         }
 
-        public void MakeGrass()
+        private void DebugDraw()
         {
-            foreach (var tile in _tiles)
+            var mesh = GetComponentInChildren<MeshRenderer>();
+            mesh.material.color = Random.ColorHSV(0.2f, 0.7f, 0.2f, 1f);
+            mesh.gameObject.SetActive(true);
+        }
+
+        public virtual void MakeGrass()
+        {
+            foreach (var tile in tiles)
             {
                 if (tile.status == TileStatus.Tree)
                 {
@@ -95,7 +106,7 @@ namespace Eco.Scripts.World
             }
         }
 
-        private void SpawnTrashAtTile(Tile tile, int id = -1)
+        protected virtual TrashItem SpawnTrashAtTile(Tile tile, int id = -1)
         {
             var tileWorldPosition =
                 GetTileWorldPosition(tile);
@@ -106,6 +117,7 @@ namespace Eco.Scripts.World
             trash.Initialize(tile);
             tile.item = trash;
             tile.status = TileStatus.Trash;
+            return trash;
         }
 
         public Vector3 GetTileWorldPosition(Tile tile)
@@ -117,10 +129,10 @@ namespace Eco.Scripts.World
 
         public void SaveTiles()
         {
-            var saveData = new SaveManager.TileData[_tiles.Count];
-            for (var i = 0; i < _tiles.Count; i++)
+            var saveData = new SaveManager.TileData[tiles.Count];
+            for (var i = 0; i < tiles.Count; i++)
             {
-                saveData[i] = _tiles[i].GetSaveData();
+                saveData[i] = tiles[i].GetSaveData();
             }
 
             _saveManager.SaveFieldTiles(_position, saveData);
@@ -130,12 +142,12 @@ namespace Eco.Scripts.World
         {
             var index = position.x * fieldSize + position.y;
 
-            if (index >= _tiles.Count || index < 0)
+            if (index >= tiles.Count || index < 0)
             {
                 return null;
             }
 
-            return _tiles[index];
+            return tiles[index];
         }
 
 
@@ -187,30 +199,30 @@ namespace Eco.Scripts.World
         {
         }
 
-        public void OnDespawn()
+        public virtual void OnDespawn()
         {
             SaveTiles();
-            foreach (var t in _tiles)
+            foreach (var t in tiles)
             {
                 t.Clear();
             }
 
-            _tiles.Clear();
+            tiles.Clear();
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             return;
-            if (_tiles == null)
+            if (tiles == null)
             {
                 return;
             }
 
 
-            for (var i = 0; i < _tiles.Count; i++)
+            for (var i = 0; i < tiles.Count; i++)
             {
-                var tile = _tiles[i];
+                var tile = tiles[i];
                 if (tile.status == TileStatus.Empty)
                 {
                     continue;
@@ -231,6 +243,6 @@ namespace Eco.Scripts.World
                 Gizmos.DrawSphere(pos, 0.1f);
             }
         }
-        #endif
+#endif
     }
 }
