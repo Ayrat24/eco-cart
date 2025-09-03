@@ -5,11 +5,13 @@ using Eco.Scripts.Upgrades;
 using UnityEngine;
 using VContainer;
 using R3;
+using UnityEngine.AI;
 
 namespace Eco.Scripts
 {
     public class Player : MonoBehaviour
     {
+        [SerializeField] private NavMeshAgent agent;
         [SerializeField] private ItemCollector itemCollector;
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
@@ -26,6 +28,7 @@ namespace Eco.Scripts
         public void Spawn(SaveManager saveManager)
         {
             transform.position = saveManager.Progress.playerPosition.ToVector3();
+            agent.enabled = true;
 
             var cartUpgrades = _upgrades.GetUpgradeTypes<CartBuyUpgrade>();
             var cartUpgrade = cartUpgrades.Find(x => x.upgradeName == saveManager.Progress.selectedCart);

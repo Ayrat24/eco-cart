@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Eco.Scripts.Helpers;
 using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
@@ -38,10 +39,10 @@ namespace Eco.Scripts
 
         private void Start()
         {
-            StartGame();
+            StartGameAsync().Forget();
         }
 
-        private void StartGame()
+        private async UniTask StartGameAsync()
         {
             _saveManager.LoadPlayerProgress();
 
@@ -51,15 +52,15 @@ namespace Eco.Scripts
             _worldController.SpawnWorld();
 
             _saveManager.LoadPlayerProgress();
-            _player.Spawn(_saveManager);
-            _helperManager.LoadHelpers();
-
             _upgradeCollection.Load(_saveManager);
 
-            _currencyManager.Init(_saveManager);
-
-            _upgradeMenu.Init();
+            await UniTask.NextFrame();
             
+            _player.Spawn(_saveManager);
+
+            _helperManager.LoadHelpers();
+            _currencyManager.Init(_saveManager);
+            _upgradeMenu.Init();
             _treeManager.Init();
         }
 
