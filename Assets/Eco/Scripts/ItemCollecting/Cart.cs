@@ -34,6 +34,11 @@ namespace Eco.Scripts.ItemCollecting
         private HashSet<Collider> _itemsInPhysicalBox = new();
         private ItemCollector _itemCollector;
 
+        public Subject<ICartItem> OnItemAdded = new();
+        public Subject<ICartItem> OnItemRemoved = new();
+        public Subject<CartStatus> OnStatusChanged = new();
+        public int StorageSize => maxItems;
+
         private void Start()
         {
             PlayerClickMovement.OnLeftClicked += EmptyCart;
@@ -56,6 +61,17 @@ namespace Eco.Scripts.ItemCollecting
             _cartItems.Add(item);
             _cartItemColliders.Add(item, col);
             _cartColliderItems.Add(col, item);
+            
+            OnItemAdded.OnNext(item);
+
+            if (IsFull)
+            {
+                OnStatusChanged.OnNext(CartStatus.Full);
+            }
+            else
+            {
+                OnStatusChanged.OnNext(CartStatus.HasItems);
+            }
         }
 
         private void RemoveItemFromCollections(ICartItem item, Collider col)
@@ -63,6 +79,17 @@ namespace Eco.Scripts.ItemCollecting
             _cartItemColliders.Remove(item);
             _cartColliderItems.Remove(col);
             _cartItemAddTime.Remove(item);
+            
+            OnItemRemoved.OnNext(item);
+
+            if (!IsFull && _cartItems.Count > 0)
+            {
+                OnStatusChanged.OnNext(CartStatus.HasItems);
+            }
+            else if(!IsFull)
+            {
+                OnStatusChanged.OnNext(CartStatus.Empty);
+            }
         }
 
         private void ClearItems()
@@ -71,6 +98,9 @@ namespace Eco.Scripts.ItemCollecting
             _cartColliderItems.Clear();
             _cartItemColliders.Clear();
             _cartItemAddTime.Clear();
+            
+            OnItemRemoved.OnNext(null);
+            OnStatusChanged.OnNext(CartStatus.Empty);
         }
 
         private void RemoveFallenOutItems()
@@ -144,6 +174,7 @@ namespace Eco.Scripts.ItemCollecting
         private async UniTask EmptyAsync(CancellationToken token)
         {
             _isEmptying = true;
+            OnStatusChanged.OnNext(CartStatus.Recycling);
 
             await UniTask.WaitUntil(() => _itemCollector.AllHandsAreFree(), cancellationToken: token);
             await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
@@ -155,6 +186,7 @@ namespace Eco.Scripts.ItemCollecting
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;
             _isEmptying = false;
+            OnStatusChanged.OnNext(CartStatus.Empty);
         }
 
         public void PickUpItem(ICartItem cartItem, Collider col)
@@ -176,6 +208,14 @@ namespace Eco.Scripts.ItemCollecting
             Vector3 size = Vector3.Scale(boxCollider.size, boxCollider.transform.lossyScale);
             Gizmos.matrix = Matrix4x4.TRS(center, boxCollider.transform.rotation, size);
             Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+        }
+
+        public enum CartStatus
+        {
+            Empty,
+            HasItems,
+            Full,
+            Recycling
         }
     }
 }

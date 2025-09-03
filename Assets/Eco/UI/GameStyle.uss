@@ -3,7 +3,7 @@
 }
 
 .Hidden {
-    translate: -105% 0;
+    translate: -100% 0;
 }
 
 #UpgradeMenu > #UpgradeList > .unity-scroll-view--vertical-horizontal > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {

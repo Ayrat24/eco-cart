@@ -11,6 +11,8 @@ namespace Eco.Scripts
 {
     public class GameController : MonoBehaviour
     {
+        [SerializeField] GameUI gameUI;
+
         private SaveManager _saveManager;
         private WorldController _worldController;
         private Settings _settings;
@@ -18,13 +20,12 @@ namespace Eco.Scripts
         private Player _player;
         private UpgradesCollection _upgradeCollection;
         private CurrencyManager _currencyManager;
-        private UpgradeMenu _upgradeMenu;
         private TreeManager _treeManager;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
             HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
-            CurrencyManager currencyManager, UpgradeMenu upgradeMenu, TreeManager treeManager)
+            CurrencyManager currencyManager, TreeManager treeManager)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -33,7 +34,6 @@ namespace Eco.Scripts
             _player = player;
             _upgradeCollection = upgradesCollection;
             _currencyManager = currencyManager;
-            _upgradeMenu = upgradeMenu;
             _treeManager = treeManager;
         }
 
@@ -53,14 +53,15 @@ namespace Eco.Scripts
 
             _saveManager.LoadPlayerProgress();
             _upgradeCollection.Load(_saveManager);
-
+            
+            await UniTask.NextFrame();
+            gameUI.Init(_upgradeCollection, _currencyManager, _player);
             await UniTask.NextFrame();
             
             _player.Spawn(_saveManager);
 
             _helperManager.LoadHelpers();
             _currencyManager.Init(_saveManager);
-            _upgradeMenu.Init();
             _treeManager.Init();
         }
 
@@ -74,8 +75,9 @@ namespace Eco.Scripts
 
             _saveManager.SaveFieldTiles();
             _saveManager.SavePlayerProgress();
-            
+
             _treeManager.Clear();
+            gameUI.Clear();
         }
 
         private void OnApplicationQuit()

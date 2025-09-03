@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Eco.Scripts.Trees
 {
-    public class TreeManager : MonoBehaviour
+    public class TreeManager
     {
         private List<TreeTypeEarner> _treeTypeEarners;
         private readonly UpgradesCollection _upgrades;

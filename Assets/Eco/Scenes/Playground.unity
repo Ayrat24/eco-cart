@@ -968,11 +968,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1248775054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 341215d797a4df24ca2cd45b83870730, type: 3}
+  m_Script: {fileID: 11500000, guid: 70f7840fe4acc904f9ad05010e02dc75, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.UI.UpgradeMenu
+  m_EditorClassIdentifier: Assembly-CSharp::GameUI
   uiDocument: {fileID: 1248775055}
   upgradeItemTemplate: {fileID: 9197481963319205126, guid: 2da1b02a7a9317743b571445d178188a, type: 3}
+  cartItemTemplate: {fileID: 9197481963319205126, guid: 7684011abaf84824dbcc82b2562e6e37, type: 3}
 --- !u!1 &1274122422
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1347,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1863505813}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 8
@@ -1591,6 +1592,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4672f19b57d479d46b8e304f47e04346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 1863505815}
   itemCollector: {fileID: 719770982}
 --- !u!1 &2021531118
 GameObject:
@@ -1700,6 +1702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b591b6cfd52f24a98a1ea5bee5ae86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameUI: {fileID: 1248775057}
 --- !u!4 &2032983157
 Transform:
   m_ObjectHideFlags: 0

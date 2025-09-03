@@ -135,6 +135,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: color.g
+      value: 0.9322505
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: itemName
+      value: Glass bottle
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: trashType
       value: 3
       objectReference: {fileID: 0}

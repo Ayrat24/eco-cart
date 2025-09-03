@@ -2,13 +2,16 @@ using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Eco.Scripts.Trash
 {
     public class TrashItem : MonoBehaviour, ICartItem, ITileItem
     {
+        [SerializeField] string itemName = "trash";
         [SerializeField] private int prefabTypeId;
         [SerializeField] private TrashType trashType;
+        [SerializeField] private Color color;
         public TrashType TrashType => trashType;
     
         private bool _isCollected;
@@ -78,6 +81,16 @@ namespace Eco.Scripts.Trash
         public void SetPickedUpStatus(bool status)
         {
             _isBeingPickedUp = status;
+        }
+
+        public StyleColor GetColor()
+        {
+            return color;
+        }
+
+        public string GetName()
+        {
+            return $"{itemName}\n({trashType})";
         }
 
         public int GetPrefabId()

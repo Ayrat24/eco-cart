@@ -1,15 +1,18 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Eco.Scripts.ItemCollecting
 {
     public interface ICartItem
     {
-        public void OnPickUp(Transform parent);
-        public void OnFallenOut();
-        public void Recycle();
-        public void SetInCartState(bool inCart);
-        public void MakeKinematic(bool isKinematic);
-        public bool IsBeingPickedUp();
-        public void SetPickedUpStatus(bool status);
+        void OnPickUp(Transform parent);
+        void OnFallenOut();
+        void Recycle();
+        void SetInCartState(bool inCart);
+        void MakeKinematic(bool isKinematic);
+        bool IsBeingPickedUp();
+        void SetPickedUpStatus(bool status);
+        StyleColor GetColor();
+        string GetName();
     }
 }

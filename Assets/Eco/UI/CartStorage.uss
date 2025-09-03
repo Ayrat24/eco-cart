@@ -1,0 +1,84 @@
+.cart-item {
+    flex-grow: 0;
+    flex-shrink: 1;
+    margin-right: 0;
+    margin-left: 0;
+    background-color: rgb(0, 0, 0);
+    flex-basis: initial;
+    align-items: auto;
+    align-self: stretch;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: flex-start;
+    max-width: initial;
+    width: 10%;
+    min-width: initial;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+}
+
+.cart-item:hover {
+    flex-grow: 0;
+    flex-shrink: 1;
+    margin-right: 0;
+    margin-left: 0;
+    flex-basis: initial;
+    align-items: auto;
+    align-self: stretch;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: flex-start;
+    max-width: initial;
+    width: 10%;
+    min-width: initial;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    border-left-color: rgb(242, 232, 207);
+    border-right-color: rgb(242, 232, 207);
+    border-top-color: rgb(242, 232, 207);
+    border-bottom-color: rgb(242, 232, 207);
+}
+
+.disappear {
+    opacity: 0;
+}
+
+.tooltip {
+    flex-grow: 1;
+    position: relative;
+    width: 150px;
+    height: 100px;
+    justify-content: flex-start;
+    background-color: rgb(242, 232, 207);
+    bottom: 44px;
+    left: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    transition-duration: 0.3s;
+}

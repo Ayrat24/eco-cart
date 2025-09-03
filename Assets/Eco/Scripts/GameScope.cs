@@ -20,7 +20,6 @@ namespace Eco.Scripts
             builder.Register<SaveManager>(Lifetime.Singleton);
             builder.Register<TreeManager>(Lifetime.Singleton);
         
-            builder.RegisterComponentInHierarchy<UpgradeMenu>();
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();
             builder.RegisterComponentInHierarchy<HelperManager>();

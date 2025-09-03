@@ -13,10 +13,13 @@ namespace Eco.Scripts
     {
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private ItemCollector itemCollector;
+        
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
         private Cart _cart;
         private IDisposable _subscription;
+
+        public Subject<Cart> OnCartChanged = new();
 
         [Inject]
         private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades)
@@ -54,6 +57,7 @@ namespace Eco.Scripts
             _cart.Id = cartData.Id;
 
             itemCollector.Init(_currencyManager, _upgrades, _cart);
+            OnCartChanged.OnNext(_cart);
         }
 
         private void ChangeCart(CartBuyUpgrade.CartData cart)

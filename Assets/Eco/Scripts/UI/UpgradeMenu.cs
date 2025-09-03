@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using Eco.Scripts.Upgrades;
 using LargeNumbers;
 using R3;
-using UnityEngine;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace Eco.Scripts.UI
 {
-    public class UpgradeMenu : MonoBehaviour
+    public class UpgradeMenu
     {
-        [SerializeField] private UIDocument uiDocument;
-        [SerializeField] private VisualTreeAsset upgradeItemTemplate;
+        private UIDocument _uiDocument;
+        private VisualTreeAsset _upgradeItemTemplate;
 
         private UpgradesCollection _upgradesCollection;
         private CurrencyManager _currencyManager;
@@ -36,17 +34,18 @@ namespace Eco.Scripts.UI
         private const string PageClassName = "upgrade-page";
         private const string HiddenClassName = "Hidden";
 
-
-        [Inject]
-        public void Initialize(UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
+        public UpgradeMenu(UIDocument uiDocument, VisualTreeAsset upgradeItemTemplate,
+            UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
         {
+            _uiDocument = uiDocument;
+            _upgradeItemTemplate = upgradeItemTemplate;
             _upgradesCollection = upgradesCollection;
             _currencyManager = currencyManager;
         }
 
         public void Init()
         {
-            var root = uiDocument.rootVisualElement;
+            var root = _uiDocument.rootVisualElement;
 
             _upgradeMenu = root.Q<VisualElement>(UpgradeMenuRootName);
             _currencyLabel = root.Q<Label>(MoneyCounterLabelName);
@@ -94,7 +93,7 @@ namespace Eco.Scripts.UI
 
             tabView.RegisterCallback<ClickEvent>((_) => SetTab());
             SetTab();
-            
+
             _subscription = builder.Build();
         }
 
@@ -111,7 +110,7 @@ namespace Eco.Scripts.UI
             Upgrade upgrade,
             DisposableBuilder builder)
         {
-            var button = upgradeItemTemplate.Instantiate();
+            var button = _upgradeItemTemplate.Instantiate();
 
             var b = button.Q<UpgradeButton>(UpgradeRootName);
             b.Init(upgrade);
@@ -129,7 +128,7 @@ namespace Eco.Scripts.UI
             upgrade.BuyUpgrade();
             UpdateButtons();
         }
-        
+
         private void UpdateCurrencyCounter(AlphabeticNotation money)
         {
             _currencyLabel.text = money.ToString();
@@ -171,7 +170,7 @@ namespace Eco.Scripts.UI
             }
         }
 
-        private void OnDestroy()
+        public void Clear()
         {
             _subscription?.Dispose();
         }
