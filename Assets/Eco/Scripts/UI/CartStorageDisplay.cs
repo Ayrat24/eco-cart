@@ -47,8 +47,10 @@ namespace Eco.Scripts.UI
             var builder = new DisposableBuilder();
             cart.OnItemAdded.Subscribe(OnItemAdded).AddTo(ref builder);
             cart.OnItemRemoved.Subscribe(OnItemRemoved).AddTo(ref builder);
-            cart.OnStatusChanged.Subscribe(OnCarsStatusChanged).AddTo(ref builder);
+            cart.OnStatusChanged.Subscribe(OnCartStatusChanged).AddTo(ref builder);
             _cartSubscription = builder.Build();
+            
+            OnCartStatusChanged(Cart.CartStatus.Empty);
         }
 
         private void OnItemAdded(ICartItem item)
@@ -114,7 +116,7 @@ namespace Eco.Scripts.UI
             _freeVisualElements.Add(visualElement);
         }
 
-        private void OnCarsStatusChanged(Cart.CartStatus cartStatus)
+        private void OnCartStatusChanged(Cart.CartStatus cartStatus)
         {
             switch (cartStatus)
             {
