@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace Eco.Scripts.Upgrades
 {
@@ -25,7 +26,7 @@ namespace Eco.Scripts.Upgrades
 
             foreach (var upgrade in upgrades.SelectMany(category => category.upgrades))
             {
-                upgrade.Init(saveManager.Progress.UpgradeLevels.GetValueOrDefault(upgrade.upgradeName, 0));
+                upgrade.Init(saveManager.Progress.UpgradeLevels.GetValueOrDefault(upgrade.upgradeId, 0));
             }
         }
 
@@ -62,7 +63,7 @@ namespace Eco.Scripts.Upgrades
 
             foreach (var upgrade in upgrades.SelectMany(category => category.upgrades))
             {
-                saveData[upgrade.upgradeName] = upgrade.CurrentLevel.Value;
+                saveData[upgrade.upgradeId] = upgrade.CurrentLevel.Value;
             }
 
             saveManager.Progress.UpgradeLevels = saveData;
@@ -72,6 +73,7 @@ namespace Eco.Scripts.Upgrades
         public class UpgradeTab<T> where T : Upgrade
         {
             public string name;
+            public LocalizedString nameLoc;
             public List<T> upgrades;
         }
     }

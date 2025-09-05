@@ -14,6 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgrades:
   - name: Recycling
+    nameLoc:
+      m_TableReference:
+        m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableEntryReference:
+        m_KeyId: 5261750272
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
     upgrades:
     - {fileID: 11400000, guid: 4337a12bc76344e4699a33d91fd09420, type: 2}
     - {fileID: 11400000, guid: b84dc5541e710454594acb50d4cd21ef, type: 2}
@@ -21,6 +30,15 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f15114648b13edf49ad221c030357595, type: 2}
     - {fileID: 11400000, guid: cd2fc93533924d946957cf1ecd34fdfe, type: 2}
   - name: Trees
+    nameLoc:
+      m_TableReference:
+        m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableEntryReference:
+        m_KeyId: 90926215168
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
     upgrades:
     - {fileID: 11400000, guid: 56d5aa994a726a445bd2db8f4b6e59b6, type: 2}
     - {fileID: 11400000, guid: 58e05af49af20b8439621f8b9b0eeb96, type: 2}
@@ -32,9 +50,30 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 91289b9aa7710ed4186f0cf60094034c, type: 2}
     - {fileID: 11400000, guid: ebe6783055dcdc84285a8c2fca278714, type: 2}
   - name: Helpers
+    nameLoc:
+      m_TableReference:
+        m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableEntryReference:
+        m_KeyId: 130365255680
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
     upgrades:
     - {fileID: 11400000, guid: 310ce428d1a983648bf7b33e6770d5b1, type: 2}
   - name: Carts
+    nameLoc:
+      m_TableReference:
+        m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableEntryReference:
+        m_KeyId: 156600627200
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
     upgrades:
     - {fileID: 11400000, guid: 3cd67880c2f78b240963e01e4d3719e0, type: 2}
     - {fileID: 11400000, guid: 40cab2ef86f641849ad9cc999ea80bee, type: 2}
+  references:
+    version: 2
+    RefIds: []

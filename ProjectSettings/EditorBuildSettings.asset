@@ -9,5 +9,7 @@ EditorBuildSettings:
     path: Assets/Eco/Scenes/Playground.unity
     guid: 014ba6a428247b4439317aa9c766cbeb
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 3f41973574c6253478380912f7fcb51f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 74cc26c2a50fc764b9fac218a7683331, type: 2}
   m_UseUCBPForAssetBundles: 0

@@ -15,9 +15,29 @@ MonoBehaviour:
   baseCost: 1
   costGrowth: 1.5
   description: 
-  upgradeName: Apple Tree
+  upgradeId: Apple Tree
+  upgradeLocalizedName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+    m_TableEntryReference:
+      m_KeyId: 15625260888064
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeLocalizedDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+    m_TableEntryReference:
+      m_KeyId: 15711067959296
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: 88170e60f72c16249b018b8971ab1460, type: 3}
   prefabId: 101
-  treePrefab: {fileID: 4226677145536827948, guid: af759b432389ddd4496a6659d74969e8, type: 3}
   scoreUpgrade: {fileID: 11400000, guid: f18031bd1af53e04a8718839617c5fb7, type: 2}
   intervalUpgrade: {fileID: 11400000, guid: ea76762c304856749aadfdd9841301e8, type: 2}
+  references:
+    version: 2
+    RefIds: []

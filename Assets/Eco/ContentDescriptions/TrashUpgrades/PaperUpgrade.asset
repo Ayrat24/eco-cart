@@ -15,9 +15,30 @@ MonoBehaviour:
   baseCost: 60
   costGrowth: 1.15
   description: Upgrade glass recycling
-  upgradeName: Paper Score
+  upgradeId: Paper Score
+  upgradeLocalizedName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+    m_TableEntryReference:
+      m_KeyId: 11693897805824
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeLocalizedDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+    m_TableEntryReference:
+      m_KeyId: 11711492911104
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: 8a598e358ce803c449e0d21a93d59595, type: 3}
   baseScore: 0
   scoreGrowth: 1.5
   color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
   trashType: 1
+  references:
+    version: 2
+    RefIds: []

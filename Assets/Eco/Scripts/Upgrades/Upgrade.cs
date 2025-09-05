@@ -2,6 +2,8 @@ using System;
 using LargeNumbers;
 using R3;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Serialization;
 
 namespace Eco.Scripts.Upgrades
 {
@@ -9,15 +11,17 @@ namespace Eco.Scripts.Upgrades
     {
         [SerializeField] protected int baseCost;
         [SerializeField] protected float costGrowth = 1.15f;
-        [SerializeField] protected string description;
         
-        public string upgradeName;
+        public string upgradeId;
+        public LocalizedString upgradeLocalizedName;
+        public LocalizedString upgradeLocalizedDescription;
+        
     
         public Sprite icon;
     
         public AlphabeticNotation Cost { get; private set; }
     
-        public ReactiveProperty<int> CurrentLevel = new(1);
+        public readonly ReactiveProperty<int> CurrentLevel = new(1);
     
         public void Init(int level)
         {
@@ -56,9 +60,9 @@ namespace Eco.Scripts.Upgrades
             Cost = CalculateCost();
         }
 
-        public virtual string GetDescription()
+        public virtual string GetDescription(string localizedString)
         {
-            return $"{description} Level: {CurrentLevel.Value}.";
+            return string.Format(localizedString, CurrentLevel.Value);
         }
     }
 }

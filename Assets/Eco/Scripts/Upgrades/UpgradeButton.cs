@@ -13,9 +13,9 @@ public partial class UpgradeButton : VisualElement
 
     private Upgrade _upgrade;
     private int _previousLevel;
-    
+
     public readonly Subject<Upgrade> OnUpgradeClicked = new();
-    
+
 
     public UpgradeButton()
     {
@@ -25,7 +25,7 @@ public partial class UpgradeButton : VisualElement
     {
         _upgrade = upgrade;
         _previousLevel = upgrade.CurrentLevel.Value;
-        
+
         button = this.Q<Button>("Button");
         iconImage = this.Q<VisualElement>("Icon");
         descriptionText = this.Q<Label>("Description");
@@ -33,14 +33,14 @@ public partial class UpgradeButton : VisualElement
 
         button.RegisterCallback<ClickEvent>(Purchase);
 
-        UpdateUI();
+        SetUpUI();
     }
 
-    private void UpdateUI()
+    private void SetUpUI()
     {
         iconImage.style.backgroundImage = new StyleBackground(_upgrade.icon);
-        nameText.text = _upgrade.upgradeName;
-        descriptionText.text = _upgrade.GetDescription();
+        _upgrade.upgradeLocalizedName.StringChanged += OnUpgradeNameStringChanged;
+        _upgrade.upgradeLocalizedDescription.StringChanged += OnUpgradeDescriptionStringChanged;
         button.text = _upgrade.Cost.ToString();
     }
 
@@ -48,9 +48,9 @@ public partial class UpgradeButton : VisualElement
     {
         if (_upgrade.CurrentLevel.Value != _previousLevel)
         {
-            descriptionText.text = _upgrade.GetDescription();
+            _upgrade.upgradeLocalizedDescription.RefreshString();
         }
-        
+
         button.text = _upgrade.Cost.ToString();
         bool available = money >= _upgrade.Cost;
         button.SetEnabled(available);
@@ -59,5 +59,21 @@ public partial class UpgradeButton : VisualElement
     private void Purchase(ClickEvent clickEvent)
     {
         OnUpgradeClicked.OnNext(_upgrade);
+    }
+
+    private void OnUpgradeNameStringChanged(string value)
+    {
+        nameText.text = value;
+    }
+
+    private void OnUpgradeDescriptionStringChanged(string value)
+    {
+        descriptionText.text = _upgrade.GetDescription(value);
+    }
+
+    public void Clean()
+    {
+        _upgrade.upgradeLocalizedName.StringChanged -= OnUpgradeNameStringChanged;
+        _upgrade.upgradeLocalizedDescription.StringChanged -= OnUpgradeDescriptionStringChanged;
     }
 }

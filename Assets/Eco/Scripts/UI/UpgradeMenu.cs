@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Eco.Scripts.Upgrades;
 using LargeNumbers;
 using R3;
+using UnityEngine.Localization;
 using UnityEngine.UIElements;
 
 namespace Eco.Scripts.UI
@@ -22,6 +23,7 @@ namespace Eco.Scripts.UI
 
         private readonly List<UpgradeButton> _buttons = new();
         private readonly List<VisualElement> _tabContents = new();
+        private readonly Dictionary<UpgradesCollection.UpgradeTab<Upgrade>, LocalizedString.ChangeHandler> _tabLocHandlers = new();
         private bool _menuOpen = true;
         private IDisposable _subscription;
 
@@ -33,6 +35,17 @@ namespace Eco.Scripts.UI
         private const string UpgradeTabsName = "UpgradeTabs";
         private const string PageClassName = "upgrade-page";
         private const string HiddenClassName = "Hidden";
+        
+        private const string LocTableName = "GameUI";
+        private const string OpenLocString = "open-upgrade-menu";
+        private const string CloseLocString = "close-upgrade-menu";
+
+        private readonly LocalizedString _openLocString = new LocalizedString(LocTableName, OpenLocString);
+        private readonly LocalizedString _closeLocString = new LocalizedString(LocTableName, CloseLocString);
+
+        private string OpenText => _openLocString.GetLocalizedString();
+        private string CloseText => _closeLocString.GetLocalizedString();
+
 
         public UpgradeMenu(UIDocument uiDocument, VisualTreeAsset upgradeItemTemplate,
             UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
@@ -82,11 +95,11 @@ namespace Eco.Scripts.UI
                     builder = SpawnUpgradeButton(page, upgrade, builder);
                 }
 
-                var tab = new Tab
-                {
-                    label = category.name
-                };
-
+                var tab = new Tab();
+                LocalizedString.ChangeHandler handler = tabName => OnTabNameChanged(tabName, tab);
+                category.nameLoc.StringChanged += handler;
+                _tabLocHandlers[category] = handler;
+                
                 _tabView.Add(tab);
             }
 
@@ -95,6 +108,11 @@ namespace Eco.Scripts.UI
             SetTab();
 
             _subscription = builder.Build();
+        }
+
+        private void OnTabNameChanged(string tabName, Tab tab)
+        {
+            tab.label = tabName;
         }
 
         private void SetTab()
@@ -159,12 +177,12 @@ namespace Eco.Scripts.UI
             if (!_menuOpen)
             {
                 _upgradeMenu.AddToClassList(HiddenClassName);
-                _openButton.text = "Upgrades";
+                _openButton.text = OpenText;
             }
             else
             {
                 _upgradeMenu.RemoveFromClassList(HiddenClassName);
-                _openButton.text = "Close";
+                _openButton.text = CloseText;
 
                 UpdateButtons();
             }
@@ -173,6 +191,19 @@ namespace Eco.Scripts.UI
         public void Clear()
         {
             _subscription?.Dispose();
+
+            foreach (var category in _upgradesCollection.upgrades)
+            {
+                if (_tabLocHandlers.TryGetValue(category, out var handler))
+                {
+                    category.nameLoc.StringChanged -= handler;
+                }
+            }
+
+            foreach (var btn in _buttons)
+            {
+                btn.Clean();
+            }
         }
     }
 }

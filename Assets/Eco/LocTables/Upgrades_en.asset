@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Upgrades_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: b958da43275a91c46a38f0b71faa67b2, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 78016147456
+    m_Localized: Food Score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10213383991296
+    m_Localized: More money per recycled food item. Level {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11693897805824
+    m_Localized: Paper scrore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11838404161536
+    m_Localized: Glass score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11897933918208
+    m_Localized: Plastic score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11711492911104
+    m_Localized: More money per recycled paper item. Level {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11870943571968
+    m_Localized: More money per recycled glass item. Level {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11962337456128
+    m_Localized: More money per recycled plastic item. Level {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13008547868672
+    m_Localized: Combo sorting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13111115378688
+    m_Localized: Get more money if recycling items of the same type
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14903664439296
+    m_Localized: Plant pine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15062158798848
+    m_Localized: 'Planted: {0} pines'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15129611595776
+    m_Localized: Pine earnings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15172850675712
+    m_Localized: 'Increase amount of pine earnings per its interval. Level: {0} Amount:
+      {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15209169154048
+    m_Localized: Pine interval
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15263036600320
+    m_Localized: Makes pine earnings more often. Level {0} Interval {1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15625260888064
+    m_Localized: Plant apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15711067959296
+    m_Localized: 'Planted: {0} apples'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246912
+    m_Localized: Apple earnings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246913
+    m_Localized: 'Increase amount of apple earnings per its interval. Level: {0}
+      Amount: {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246914
+    m_Localized: Apple interval
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246915
+    m_Localized: Makes apple earnings more often. Level {0} Interval {1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246916
+    m_Localized: Plant pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246917
+    m_Localized: 'Planted: {0} pears'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246918
+    m_Localized: Pear earnings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246919
+    m_Localized: 'Increase amount of pear earnings per its interval. Level: {0} Amount:
+      {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246920
+    m_Localized: Pear interval
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246921
+    m_Localized: Makes pear earnings more often. Level {0} Interval {1}
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

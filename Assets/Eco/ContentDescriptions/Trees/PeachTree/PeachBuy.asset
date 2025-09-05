@@ -15,8 +15,29 @@ MonoBehaviour:
   baseCost: 1
   costGrowth: 1.5
   description: 
-  upgradeName: Buy A Peach Tree
+  upgradeId: Buy A Peach Tree
+  upgradeLocalizedName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+    m_TableEntryReference:
+      m_KeyId: 17499326246916
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeLocalizedDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+    m_TableEntryReference:
+      m_KeyId: 17499326246917
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: fd223362f33d9f0419f8446dac1d3eb6, type: 3}
   prefabId: 110
   scoreUpgrade: {fileID: 11400000, guid: 7785a9d66557d8f4cb997a60b0c25c2b, type: 2}
   intervalUpgrade: {fileID: 11400000, guid: 58e05af49af20b8439621f8b9b0eeb96, type: 2}
+  references:
+    version: 2
+    RefIds: []

@@ -29,9 +29,9 @@ namespace Eco.Scripts.Trees
             ApplyUpgrade(level);
         }
 
-        public override string GetDescription()
+        public override string GetDescription(string locString)
         {
-            return $"{base.GetDescription()} Score: {Score}";
+            return $"{locString} {Score}";
         }
     }
 }

@@ -23,9 +23,9 @@ namespace Eco.Scripts.Trees
             ApplyUpgrade(level);
         }
 
-        public override string GetDescription()
+        public override string GetDescription(string locString)
         {
-            return $"{base.GetDescription()} Interval: {Interval}";
+            return $"{locString} {Interval}";
         }
     }
 }

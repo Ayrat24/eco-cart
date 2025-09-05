@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Upgrades Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Upgrades
+  m_TableCollectionNameGuidString: b958da43275a91c46a38f0b71faa67b2
+  m_Entries:
+  - m_Id: 78016147456
+    m_Key: trash-tab-food-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10213383991296
+    m_Key: trash-tab-food-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11693897805824
+    m_Key: trash-tab-paper-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11711492911104
+    m_Key: trash-tab-paper-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11838404161536
+    m_Key: trash-tab-glass-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11870943571968
+    m_Key: trash-tab-glass-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11897933918208
+    m_Key: trash-tab-plastic-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11962337456128
+    m_Key: trash-tab-plastic-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13008547868672
+    m_Key: trash-tab-combo-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13111115378688
+    m_Key: trash-tab-combo-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14903664439296
+    m_Key: tree-tab-pine-buy-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15062158798848
+    m_Key: tree-tab-pine-buy-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15129611595776
+    m_Key: tree-tab-pine-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15172850675712
+    m_Key: tree-tab-pine-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15209169154048
+    m_Key: tree-tab-pine-interval-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15263036600320
+    m_Key: tree-tab-pine-interval-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15625260888064
+    m_Key: tree-tab-apple-buy-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15711067959296
+    m_Key: tree-tab-apple-buy-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246912
+    m_Key: tree-tab-apple-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246913
+    m_Key: tree-tab-apple-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246914
+    m_Key: tree-tab-apple-interval-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246915
+    m_Key: tree-tab-apple-interval-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246916
+    m_Key: tree-tab-pears-buy-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246917
+    m_Key: tree-tab-pears-buy-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246918
+    m_Key: tree-tab-pears-score-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246919
+    m_Key: tree-tab-pears-score-upgrade-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246920
+    m_Key: tree-tab-pears-interval-upgrade-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17499326246921
+    m_Key: tree-tab-pears-interval-upgrade-description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8274779476618641667
+  references:
+    version: 2
+    RefIds:
+    - rid: 8274779476618641667
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1756987582815

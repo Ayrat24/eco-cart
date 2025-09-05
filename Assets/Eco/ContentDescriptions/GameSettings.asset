@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4594da3cc70b2964499b2d35eebf150d, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  detailQuality: 0
+  detailQuality: 2

@@ -13,8 +13,34 @@ MonoBehaviour:
   m_Name: Cart 2
   m_EditorClassIdentifier: 
   baseCost: 5
-  upgradeName: Better Cart
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  costGrowth: 1.15
   description: 
-  cartPrefab: {fileID: 4051820825589880697, guid: 07ea2c6337c60c1478cd8de7658e1b46, type: 3}
-  offset: {x: 0, y: 0, z: -3.717}
+  upgradeId: Better Cart
+  upgradeLocalizedName:
+    m_TableReference:
+      m_TableCollectionName: GUID:f32698ac96874c844b6c98b586eb07b2
+    m_TableEntryReference:
+      m_KeyId: 1514355552256
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeLocalizedDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:f32698ac96874c844b6c98b586eb07b2
+    m_TableEntryReference:
+      m_KeyId: 246631362560
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  cartData:
+    prefab: {fileID: 4051820825589880697, guid: 07ea2c6337c60c1478cd8de7658e1b46, type: 3}
+    offset: {x: 0, y: 0, z: -3.717}
+    id: 
+    carryingCapacity: 20
+    moveSpeed: 7
+  references:
+    version: 2
+    RefIds: []

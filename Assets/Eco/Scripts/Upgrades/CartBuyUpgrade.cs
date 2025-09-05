@@ -1,3 +1,4 @@
+using System;
 using Eco.Scripts.ItemCollecting;
 using R3;
 using UnityEngine;
@@ -7,8 +8,7 @@ namespace Eco.Scripts.Upgrades
     [CreateAssetMenu(menuName = "Upgrade/CartBuyUpgrade")]
     public class CartBuyUpgrade : Upgrade
     {
-        [SerializeField] private Cart cartPrefab;
-        [SerializeField] private Vector3 offset;
+        [SerializeField] private CartData cartData;
         
         public readonly Subject<CartData> OnCartSelected = new();
 
@@ -19,20 +19,31 @@ namespace Eco.Scripts.Upgrades
 
         public CartData GetCartData()
         {
-            return new CartData(upgradeName, cartPrefab, offset);
+            cartData.id = upgradeId;
+            return cartData;
         }
-        
+
+        public override string GetDescription(string localizedString)
+        {
+            return string.Format(localizedString, cartData.carryingCapacity, cartData.moveSpeed);
+        }
+
+        [Serializable]
         public struct CartData
         {
-            public Cart Prefab;
-            public Vector3 Offset;
-            public string Id;
+            public Cart prefab;
+            public Vector3 offset;
+            [HideInInspector] public string id;
+            public int carryingCapacity;
+            public int moveSpeed;
 
-            public CartData(string id, Cart prefab, Vector3 offset)
+            public CartData(string id, Cart prefab, Vector3 offset, int carryingCapacity, int moveSpeed)
             {
-                Prefab = prefab;
-                Offset = offset;
-                Id = id;
+                this.prefab = prefab;
+                this.offset = offset;
+                this.carryingCapacity = carryingCapacity;
+                this.moveSpeed = moveSpeed;
+                this.id = id;
             }
         }
     }

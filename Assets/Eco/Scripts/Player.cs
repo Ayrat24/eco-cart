@@ -34,7 +34,7 @@ namespace Eco.Scripts
             agent.enabled = true;
 
             var cartUpgrades = _upgrades.GetUpgradeTypes<CartBuyUpgrade>();
-            var cartUpgrade = cartUpgrades.Find(x => x.upgradeName == saveManager.Progress.selectedCart);
+            var cartUpgrade = cartUpgrades.Find(x => x.upgradeId == saveManager.Progress.selectedCart);
             if (cartUpgrade == null)
             {
                 cartUpgrade = cartUpgrades[0];
@@ -52,9 +52,9 @@ namespace Eco.Scripts
 
         private void SpawnNewCart(CartBuyUpgrade.CartData cartData)
         {
-            _cart = Instantiate(cartData.Prefab, transform);
-            _cart.transform.localPosition = cartData.Offset;
-            _cart.Id = cartData.Id;
+            _cart = Instantiate(cartData.prefab, transform);
+            _cart.transform.localPosition = cartData.offset;
+            _cart.Id = cartData.id;
 
             itemCollector.Init(_currencyManager, _upgrades, _cart);
             OnCartChanged.OnNext(_cart);

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Eco.Scripts.ItemCollecting;
 using R3;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UIElements;
 
 namespace Eco.Scripts.UI
@@ -15,6 +17,13 @@ namespace Eco.Scripts.UI
 
         private VisualElement _container;
         private Label _label;
+        private string CartEmptyText => _cartEmptyTextLocalized.GetLocalizedString();
+        private string CartFullText => _cartFullTextLocalized.GetLocalizedString();
+        private string CartRecyclingText => _cartRecyclingTextLocalized.GetLocalizedString();
+        
+        private readonly LocalizedString _cartEmptyTextLocalized = new(LocTableName, CartEmptyLocString);
+        private readonly LocalizedString _cartFullTextLocalized = new (LocTableName, CartFullLocString);
+        private readonly LocalizedString _cartRecyclingTextLocalized  = new (LocTableName, CartRecyclingLocString);
 
         private IDisposable _playerSubscription;
         private IDisposable _cartSubscription;
@@ -23,6 +32,11 @@ namespace Eco.Scripts.UI
         private readonly List<VisualElement> _freeVisualElements = new();
 
         private const string DisappearClassName = "disappear";
+        private const string LocTableName = "GameUI";
+        private const string CartEmptyLocString = "cart-status-empty";
+        private const string CartFullLocString = "cart-status-full";
+        private const string CartRecyclingLocString = "cart-status-recycling";
+        
 
         public CartStorageDisplay(UIDocument uiDocument, Player player, VisualTreeAsset cartItemTemplate)
         {
@@ -121,13 +135,13 @@ namespace Eco.Scripts.UI
             switch (cartStatus)
             {
                 case Cart.CartStatus.Full:
-                    DisplayLabel("Car is full!");
+                    DisplayLabel(CartFullText);
                     break;
                 case Cart.CartStatus.Recycling:
-                    DisplayLabel("Recycling...");
+                    DisplayLabel(CartRecyclingText);
                     break;
                 case Cart.CartStatus.Empty:
-                    DisplayLabel("Cart is empty");
+                    DisplayLabel(CartEmptyText);
                     break;
                 case Cart.CartStatus.HasItems:
                     _label.AddToClassList(DisappearClassName);
