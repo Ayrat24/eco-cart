@@ -127,6 +127,22 @@ MonoBehaviour:
     m_Key: tree-tab-pears-interval-upgrade-description
     m_Metadata:
       m_Items: []
+  - m_Id: 394613107978240
+    m_Key: upgrade-level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 394871611322368
+    m_Key: "upgrade-bonus-percent\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395318250172416
+    m_Key: upgrade-amount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395616981086208
+    m_Key: upgrade-interval
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

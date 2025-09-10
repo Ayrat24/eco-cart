@@ -58,11 +58,11 @@ namespace Eco.Scripts.ItemCollecting
                     if (scoreMultipliers.TryGetValue(trash.TrashType, out var currentMultiplier))
                     {
                         score = currentMultiplier * score;
-                        scoreMultipliers[trash.TrashType] *= scoreMultiplier;
+                        scoreMultipliers[trash.TrashType] += scoreMultiplier;
                     }
                     else
                     {
-                        scoreMultipliers[trash.TrashType] = scoreMultiplier;
+                        scoreMultipliers[trash.TrashType] = 1 + scoreMultiplier;
                     }
                     
                     _currencyManager.AddMoney(score);

@@ -133,6 +133,22 @@ MonoBehaviour:
     m_Localized: Makes pear earnings more often. Level {0} Interval {1}
     m_Metadata:
       m_Items: []
+  - m_Id: 394613107978240
+    m_Localized: 'Level: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 394871611322368
+    m_Localized: 'Bonus: {0}%'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395318250172416
+    m_Localized: 'Amount: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395616981086208
+    m_Localized: 'Interval: {0}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

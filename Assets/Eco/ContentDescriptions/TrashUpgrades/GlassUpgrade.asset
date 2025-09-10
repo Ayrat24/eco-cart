@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseCost: 30
   costGrowth: 1.15
-  description: Upgrade glass recycling
   upgradeId: Glass Score
   upgradeLocalizedName:
     m_TableReference:
@@ -35,7 +34,7 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 01cde3e65d8607a45b6948393adc3916, type: 3}
-  baseScore: 0
+  baseScore: 1
   scoreGrowth: 1.5
   color: {r: 0.3921569, g: 0.5843138, b: 0.9294118, a: 1}
   trashType: 3

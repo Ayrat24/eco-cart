@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eadc48912bbc31649aa5db183675ebd0, type: 3}
   m_Name: PeachBuy
   m_EditorClassIdentifier: 
-  baseCost: 1
+  baseCost: 150
   costGrowth: 1.5
-  description: 
   upgradeId: Buy A Peach Tree
   upgradeLocalizedName:
     m_TableReference:

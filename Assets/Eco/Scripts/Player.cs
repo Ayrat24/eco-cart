@@ -54,8 +54,10 @@ namespace Eco.Scripts
         {
             _cart = Instantiate(cartData.prefab, transform);
             _cart.transform.localPosition = cartData.offset;
-            _cart.Id = cartData.id;
-
+            _cart.SetStats(cartData.id, cartData.carryingCapacity);
+            
+            agent.speed = cartData.moveSpeed;
+            
             itemCollector.Init(_currencyManager, _upgrades, _cart);
             OnCartChanged.OnNext(_cart);
         }

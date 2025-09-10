@@ -1,6 +1,6 @@
 .base-label {
     font-size: 55px;
-    -unity-font-definition: resource('FlatSkin/Font/Roboto-Black');
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
     -unity-text-outline-width: 4px;
     color: rgb(255, 255, 255);
     -unity-text-outline-color: rgb(0, 0, 0);
@@ -14,6 +14,7 @@
     margin-bottom: -18px;
     margin-left: -18px;
     -unity-text-align: upper-right;
+    -unity-font-style: normal;
 }
 
 .hidden {

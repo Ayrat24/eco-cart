@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 532caf7c28db21b469e10047ea2ecfc8, type: 3}
   m_Name: PaperUpgrade
   m_EditorClassIdentifier: 
-  baseCost: 60
+  baseCost: 40
   costGrowth: 1.15
-  description: Upgrade glass recycling
   upgradeId: Paper Score
   upgradeLocalizedName:
     m_TableReference:
@@ -35,8 +34,8 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 8a598e358ce803c449e0d21a93d59595, type: 3}
-  baseScore: 0
-  scoreGrowth: 1.5
+  baseScore: 1
+  scoreGrowth: 1.7
   color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
   trashType: 1
   references:

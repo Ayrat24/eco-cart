@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeScoreUpgrade
   baseCost: 15
   costGrowth: 1.15
-  description: 
   upgradeId: Peach Tree Score
   upgradeLocalizedName:
     m_TableReference:
@@ -35,7 +34,7 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: fd223362f33d9f0419f8446dac1d3eb6, type: 3}
-  baseScore: 10000000
+  baseScore: 50
   growth: 1.1
   references:
     version: 2

@@ -17,6 +17,12 @@
     border-right-color: rgb(56, 102, 65);
     border-top-color: rgb(56, 102, 65);
     border-bottom-color: rgb(56, 102, 65);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+    color: rgb(56, 102, 65);
 }
 
 .white {

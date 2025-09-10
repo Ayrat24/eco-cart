@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a619cf1f4209e64a8f75b7c7adf03b6, type: 3}
   m_Name: Cart 2
   m_EditorClassIdentifier: 
-  baseCost: 5
+  baseCost: 60
   costGrowth: 1.15
-  description: 
   upgradeId: Better Cart
   upgradeLocalizedName:
     m_TableReference:
@@ -38,7 +37,7 @@ MonoBehaviour:
   cartData:
     prefab: {fileID: 4051820825589880697, guid: 07ea2c6337c60c1478cd8de7658e1b46, type: 3}
     offset: {x: 0, y: 0, z: -3.717}
-    id: 
+    id: Better Cart
     carryingCapacity: 20
     moveSpeed: 7
   references:

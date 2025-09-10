@@ -12,6 +12,7 @@ namespace Eco.Scripts.UI
 
         private UpgradeMenu _upgradeMenu;
         private CartStorageDisplay _cartStorageDisplay;
+        private TutorialMenu _tutorialMenu;
         
         public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player)
         {
@@ -20,12 +21,16 @@ namespace Eco.Scripts.UI
 
             _cartStorageDisplay = new CartStorageDisplay(uiDocument, player, cartItemTemplate);
             _cartStorageDisplay.Init();
+
+            _tutorialMenu = new TutorialMenu();
+            _tutorialMenu.Init(uiDocument);
         }
 
         public void Clear()
         {
             _upgradeMenu.Clear();
             _cartStorageDisplay.Clear();
+            _tutorialMenu.Clear();
         }
     }
 }

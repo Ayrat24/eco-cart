@@ -10,13 +10,11 @@ namespace Eco.Scripts.ItemCollecting
 {
     public class Cart : MonoBehaviour
     {
-        [SerializeField] private int maxItems = 10;
         [SerializeField] BoxCollider boxCollider;
         [SerializeField] private LayerMask itemLayers;
 
-        public string Id;
         public Transform dropPoint;
-        public bool IsFull => _cartItems.Count >= maxItems;
+        public bool IsFull => _cartItems.Count >= _maxItems;
         public bool CanAddItems => !IsFull && !_isEmptying;
         public bool IsEmptying => _isEmptying;
 
@@ -33,11 +31,16 @@ namespace Eco.Scripts.ItemCollecting
         private Collider[] _colliders = new Collider[100];
         private HashSet<Collider> _itemsInPhysicalBox = new();
         private ItemCollector _itemCollector;
+        
+        private string _id;
+        private int _maxItems = 10;
+        public String Id => _id;
 
         public Subject<ICartItem> OnItemAdded = new();
         public Subject<ICartItem> OnItemRemoved = new();
         public Subject<CartStatus> OnStatusChanged = new();
-        public int StorageSize => maxItems;
+        
+        public int StorageSize => _maxItems;
 
         private void Start()
         {
@@ -49,6 +52,12 @@ namespace Eco.Scripts.ItemCollecting
             _itemRecycler = recycler;
             _itemCollector = itemCollector;
             _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
+        }
+
+        public void SetStats(string id, int capacity)
+        {
+            _id = id;
+            _maxItems = capacity;
         }
 
         private void AddItemToCollections(ICartItem item, Collider col)
