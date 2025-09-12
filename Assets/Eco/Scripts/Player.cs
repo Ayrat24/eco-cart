@@ -18,6 +18,7 @@ namespace Eco.Scripts
         private UpgradesCollection _upgrades;
         private Cart _cart;
         private IDisposable _subscription;
+        private bool _changingCart;
 
         public Subject<Cart> OnCartChanged = new();
 
@@ -54,7 +55,7 @@ namespace Eco.Scripts
         {
             _cart = Instantiate(cartData.prefab, transform);
             _cart.transform.localPosition = cartData.offset;
-            _cart.SetStats(cartData.id, cartData.carryingCapacity);
+            _cart.SetStats(cartData);
             
             agent.speed = cartData.moveSpeed;
             
@@ -64,17 +65,25 @@ namespace Eco.Scripts
 
         private void ChangeCart(CartBuyUpgrade.CartData cart)
         {
+            if (_changingCart)
+            {
+                return;
+            }
+            
             ChangeCartAsync(cart).Forget();
         }
 
         private async UniTask ChangeCartAsync(CartBuyUpgrade.CartData cart)
         {
+            _changingCart = true;
             _cart.EmptyCart();
             await UniTask.WaitWhile(() => _cart.IsEmptying);
             Destroy(_cart?.gameObject);
             await UniTask.NextFrame();
 
             SpawnNewCart(cart);
+            
+            _changingCart = false;
         }
 
         public void SavePosition(SaveManager saveManager)

@@ -2,6 +2,7 @@ using System;
 using Eco.Scripts.ItemCollecting;
 using R3;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Eco.Scripts.Upgrades
 {
@@ -36,15 +37,11 @@ namespace Eco.Scripts.Upgrades
             [HideInInspector] public string id;
             public int carryingCapacity;
             public int moveSpeed;
-
-            public CartData(string id, Cart prefab, Vector3 offset, int carryingCapacity, int moveSpeed)
-            {
-                this.prefab = prefab;
-                this.offset = offset;
-                this.carryingCapacity = carryingCapacity;
-                this.moveSpeed = moveSpeed;
-                this.id = id;
-            }
+            public Vector3 cameraOffset;
+            public Vector3 playerPosition;
+            public float pickupRadius;
+            public float pickupRadiusDeadZone;
+            public float menuCameraOffset;
         }
     }
 }

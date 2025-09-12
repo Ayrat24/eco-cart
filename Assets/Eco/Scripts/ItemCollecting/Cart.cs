@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace Eco.Scripts.ItemCollecting
         public bool IsFull => _cartItems.Count >= _maxItems;
         public bool CanAddItems => !IsFull && !_isEmptying;
         public bool IsEmptying => _isEmptying;
+        public CartBuyUpgrade.CartData CartData => _cartData;
 
         private readonly HashSet<ICartItem> _cartItems = new();
         private readonly Dictionary<ICartItem, Collider> _cartItemColliders = new();
@@ -28,17 +30,18 @@ namespace Eco.Scripts.ItemCollecting
         private ItemRecycler _itemRecycler;
         private IDisposable _subscription;
 
-        private Collider[] _colliders = new Collider[100];
-        private HashSet<Collider> _itemsInPhysicalBox = new();
+        private readonly Collider[] _colliders = new Collider[100];
+        private readonly HashSet<Collider> _itemsInPhysicalBox = new();
         private ItemCollector _itemCollector;
         
         private string _id;
-        private int _maxItems = 10;
+        private int _maxItems;
+        private CartBuyUpgrade.CartData _cartData;
         public String Id => _id;
 
-        public Subject<ICartItem> OnItemAdded = new();
-        public Subject<ICartItem> OnItemRemoved = new();
-        public Subject<CartStatus> OnStatusChanged = new();
+        public readonly Subject<ICartItem> OnItemAdded = new();
+        public readonly Subject<ICartItem> OnItemRemoved = new();
+        public readonly Subject<CartStatus> OnStatusChanged = new();
         
         public int StorageSize => _maxItems;
 
@@ -54,10 +57,11 @@ namespace Eco.Scripts.ItemCollecting
             _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
         }
 
-        public void SetStats(string id, int capacity)
+        public void SetStats(CartBuyUpgrade.CartData cartData)
         {
-            _id = id;
-            _maxItems = capacity;
+            _cartData = cartData;
+            _id = cartData.id;
+            _maxItems = cartData.carryingCapacity;
         }
 
         private void AddItemToCollections(ICartItem item, Collider col)

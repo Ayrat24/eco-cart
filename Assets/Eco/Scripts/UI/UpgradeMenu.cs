@@ -45,6 +45,8 @@ namespace Eco.Scripts.UI
 
         private string OpenText => _openLocString.GetLocalizedString();
         private string CloseText => _closeLocString.GetLocalizedString();
+        
+        public static Subject<bool> OnOpen { get; } = new();
 
 
         public UpgradeMenu(UIDocument uiDocument, VisualTreeAsset upgradeItemTemplate,
@@ -174,6 +176,8 @@ namespace Eco.Scripts.UI
         private void SetMenuState(bool isOpen)
         {
             _menuOpen = isOpen;
+            OnOpen.OnNext(_menuOpen);
+            
             if (!_menuOpen)
             {
                 _upgradeMenu.AddToClassList(HiddenClassName);

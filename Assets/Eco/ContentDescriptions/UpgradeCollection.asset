@@ -74,6 +74,7 @@ MonoBehaviour:
     upgrades:
     - {fileID: 11400000, guid: 3cd67880c2f78b240963e01e4d3719e0, type: 2}
     - {fileID: 11400000, guid: 40cab2ef86f641849ad9cc999ea80bee, type: 2}
+    - {fileID: 11400000, guid: 305b5aa401de714438694cbb94902bfa, type: 2}
   references:
     version: 2
     RefIds: []

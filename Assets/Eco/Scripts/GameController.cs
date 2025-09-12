@@ -12,6 +12,7 @@ namespace Eco.Scripts
     public class GameController : MonoBehaviour
     {
         [SerializeField] GameUI gameUI;
+        [SerializeField] CameraController cameraController;
 
         private SaveManager _saveManager;
         private WorldController _worldController;
@@ -56,6 +57,7 @@ namespace Eco.Scripts
             
             await UniTask.NextFrame();
             gameUI.Init(_upgradeCollection, _currencyManager, _player);
+            cameraController.Init(_player);
             await UniTask.NextFrame();
             
             _player.Spawn(_saveManager);
