@@ -10,9 +10,10 @@ namespace Eco.Scripts.ItemCollecting
         void Recycle();
         void SetInCartState(bool inCart);
         void MakeKinematic(bool isKinematic);
-        bool IsBeingPickedUp();
+        bool IsBeingPickedUp { get; set; }
         void SetPickedUpStatus(bool status);
         StyleColor GetColor();
         string GetName();
+        int GetWeight();
     }
 }

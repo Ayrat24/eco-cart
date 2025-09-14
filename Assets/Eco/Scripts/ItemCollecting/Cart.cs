@@ -5,24 +5,57 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Upgrades;
 using R3;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Eco.Scripts.ItemCollecting
 {
     public class Cart : MonoBehaviour
     {
-        [SerializeField] BoxCollider boxCollider;
+        [SerializeField] private BoxCollider boxCollider;
         [SerializeField] private LayerMask itemLayers;
+        [SerializeField] private Transform dropPoint;
 
-        public Transform dropPoint;
-        public bool IsFull => _cartItems.Count >= _maxItems;
+        public bool IsFull
+        {
+            get
+            {
+                int weight = 0;
+                foreach (var item in _itemsInStorage)
+                {
+                    weight += item.GetWeight();
+                    if (weight >= _maxCargoWeight)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        private int CurrentCargoWeight
+        {
+            get
+            {
+                int weight = 0;
+                foreach (var item in _itemsInStorage)
+                {
+                    weight += item.GetWeight();
+                }
+
+                return weight;
+            }
+        }
+
         public bool CanAddItems => !IsFull && !_isEmptying;
         public bool IsEmptying => _isEmptying;
+        public Transform DropPoint => dropPoint;
         public CartBuyUpgrade.CartData CartData => _cartData;
 
-        private readonly HashSet<ICartItem> _cartItems = new();
-        private readonly Dictionary<ICartItem, Collider> _cartItemColliders = new();
-        private readonly Dictionary<Collider, ICartItem> _cartColliderItems = new();
+        private readonly List<ICartItem> _itemsInStorage = new();
+        private readonly Dictionary<ICartItem, Collider> _itemColliderDictionary = new();
+        private readonly Dictionary<Collider, ICartItem> _colliderItemDictionary = new();
         private readonly Dictionary<ICartItem, DateTime> _cartItemAddTime = new();
 
         private bool _isEmptying;
@@ -33,17 +66,17 @@ namespace Eco.Scripts.ItemCollecting
         private readonly Collider[] _colliders = new Collider[100];
         private readonly HashSet<Collider> _itemsInPhysicalBox = new();
         private ItemCollector _itemCollector;
-        
+
         private string _id;
-        private int _maxItems;
+        private int _maxCargoWeight;
         private CartBuyUpgrade.CartData _cartData;
         public String Id => _id;
 
         public readonly Subject<ICartItem> OnItemAdded = new();
         public readonly Subject<ICartItem> OnItemRemoved = new();
-        public readonly Subject<CartStatus> OnStatusChanged = new();
-        
-        public int StorageSize => _maxItems;
+        public readonly Subject<CartState> OnStatusChanged = new();
+
+        public int StorageSize => _maxCargoWeight;
 
         private void Start()
         {
@@ -61,61 +94,68 @@ namespace Eco.Scripts.ItemCollecting
         {
             _cartData = cartData;
             _id = cartData.id;
-            _maxItems = cartData.carryingCapacity;
+            _maxCargoWeight = cartData.carryingCapacity;
         }
 
         private void AddItemToCollections(ICartItem item, Collider col)
         {
-            if (!_cartItems.Contains(item))
+            if (_itemColliderDictionary.ContainsKey(item))
             {
-                _cartItemAddTime[item] = DateTime.Now;
+                return;
             }
 
-            _cartItems.Add(item);
-            _cartItemColliders.Add(item, col);
-            _cartColliderItems.Add(col, item);
-            
+            _cartItemAddTime[item] = DateTime.Now;
+            _itemsInStorage.Add(item);
+            _itemColliderDictionary.Add(item, col);
+            _colliderItemDictionary.Add(col, item);
+
             OnItemAdded.OnNext(item);
 
             if (IsFull)
             {
-                OnStatusChanged.OnNext(CartStatus.Full);
+                OnStatusChanged.OnNext(CartState.Full);
             }
             else
             {
-                OnStatusChanged.OnNext(CartStatus.HasItems);
+                OnStatusChanged.OnNext(CartState.HasItems);
             }
         }
 
         private void RemoveItemFromCollections(ICartItem item, Collider col)
         {
-            _cartItemColliders.Remove(item);
-            _cartColliderItems.Remove(col);
+            _itemsInStorage.Remove(item);
+            _itemColliderDictionary.Remove(item);
+            _colliderItemDictionary.Remove(col);
             _cartItemAddTime.Remove(item);
-            
+
             OnItemRemoved.OnNext(item);
 
-            if (!IsFull && _cartItems.Count > 0)
+            if (!IsFull && _itemsInStorage.Count > 0)
             {
-                OnStatusChanged.OnNext(CartStatus.HasItems);
+                OnStatusChanged.OnNext(CartState.HasItems);
             }
-            else if(!IsFull)
+            else if (!IsFull)
             {
-                OnStatusChanged.OnNext(CartStatus.Empty);
+                OnStatusChanged.OnNext(CartState.Empty);
             }
         }
 
         private void ClearItems()
         {
-            _cartItems.Clear();
-            _cartColliderItems.Clear();
-            _cartItemColliders.Clear();
+            _itemsInStorage.Clear();
+            _colliderItemDictionary.Clear();
+            _itemColliderDictionary.Clear();
             _cartItemAddTime.Clear();
-            
+
             OnItemRemoved.OnNext(null);
-            OnStatusChanged.OnNext(CartStatus.Empty);
+            OnStatusChanged.OnNext(CartState.Empty);
         }
 
+        public void AddToCart(ICartItem item, Collider coll)
+        {
+            AddItemToCollections(item, coll);
+        }
+        
         private void RemoveFallenOutItems()
         {
             if (_isEmptying)
@@ -125,46 +165,49 @@ namespace Eco.Scripts.ItemCollecting
 
             Vector3 center = boxCollider.transform.TransformPoint(boxCollider.center);
             Vector3 halfExtents = Vector3.Scale(boxCollider.size * 0.5f, boxCollider.transform.lossyScale);
-            int count = Physics.OverlapBoxNonAlloc(center, halfExtents, _colliders);
+            int count = Physics.OverlapBoxNonAlloc(center, halfExtents, _colliders, quaternion.identity, itemLayers);
 
             _itemsInPhysicalBox.Clear();
             for (int i = 0; i < count; i++)
             {
-                var coll = _colliders[i];
-                if (_cartColliderItems.ContainsKey(coll))
-                {
-                    _itemsInPhysicalBox.Add(coll);
-                }
+                _itemsInPhysicalBox.Add(_colliders[i]);
             }
 
-            foreach (var col in _itemsInPhysicalBox)
+            foreach (var coll in _itemsInPhysicalBox)
             {
-                if (_cartColliderItems.ContainsKey(col))
+                if (_colliderItemDictionary.ContainsKey(coll))
                 {
                     continue;
                 }
-
-                var item = col.GetComponent<ICartItem>();
-                AddItemToCollections(item, col);
+            
+                var item = coll.GetComponent<ICartItem>();
+            
+                if (item == null)
+                {
+                    continue;
+                }
+            
+                AddItemToCollections(item, coll);
             }
 
-            _cartItems.RemoveWhere(item =>
+            for (int i = _itemsInStorage.Count - 1; i >= 0; i--)
             {
-                var col = _cartItemColliders[item];
+                var item = _itemsInStorage[i];
+                var col = _itemColliderDictionary[item];
                 bool toRemove = !_itemsInPhysicalBox.Contains(col) &&
-                                (DateTime.Now - _cartItemAddTime[item]).TotalSeconds > 1;
+                                (DateTime.Now - _cartItemAddTime[item]).TotalSeconds > 1 && !item.IsBeingPickedUp;
+            
                 if (toRemove)
                 {
                     item.OnFallenOut();
                     RemoveItemFromCollections(item, col);
                 }
-
-                return toRemove;
-            });
+            }
         }
 
         private void OnDestroy()
         {
+            _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
 
@@ -184,32 +227,33 @@ namespace Eco.Scripts.ItemCollecting
             EmptyAsync(_cancellationTokenSource.Token).Forget();
         }
 
+        public bool CanFitItem(ICartItem item)
+        {
+            if (CurrentCargoWeight + item.GetWeight() <= _maxCargoWeight)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private async UniTask EmptyAsync(CancellationToken token)
         {
             _isEmptying = true;
-            OnStatusChanged.OnNext(CartStatus.Recycling);
+            OnStatusChanged.OnNext(CartState.Recycling);
 
             await UniTask.WaitUntil(() => _itemCollector.AllHandsAreFree(), cancellationToken: token);
             await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
 
-            await _itemRecycler.EmptyAsync(_cartItems.ToList(), token);
+            await _itemRecycler.EmptyAsync(_itemsInStorage.ToList(), token);
 
             ClearItems();
 
-            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
             _isEmptying = false;
-            OnStatusChanged.OnNext(CartStatus.Empty);
-        }
-
-        public void PickUpItem(ICartItem cartItem, Collider col)
-        {
-            if (_cartItems.Contains(cartItem))
-            {
-                return;
-            }
-
-            AddItemToCollections(cartItem, col);
+            OnStatusChanged.OnNext(CartState.Empty);
         }
 
         void OnDrawGizmos()
@@ -223,7 +267,7 @@ namespace Eco.Scripts.ItemCollecting
             Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
         }
 
-        public enum CartStatus
+        public enum CartState
         {
             Empty,
             HasItems,

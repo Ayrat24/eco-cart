@@ -102,6 +102,10 @@ PrefabInstance:
       value: Plastic Item Variant 3
       objectReference: {fileID: 0}
     - target: {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
+      propertyPath: weight
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
       propertyPath: itemName
       value: Twisted plastic bottle
       objectReference: {fileID: 0}

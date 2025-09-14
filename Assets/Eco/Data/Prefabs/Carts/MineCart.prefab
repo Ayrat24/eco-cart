@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 191805885600682098, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
       propertyPath: m_Name
-      value: Cart Variant
+      value: MineCart
       objectReference: {fileID: 0}
     - target: {fileID: 254775318512296367, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
       propertyPath: m_LocalScale.x
@@ -126,7 +126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4010286788431969275, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 1.082
       objectReference: {fileID: 0}
     - target: {fileID: 4010286788431969275, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -163,6 +163,10 @@ PrefabInstance:
     - target: {fileID: 5706876331870234199, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 6335477868539353455, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
+      propertyPath: itemLayers.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 6552422647474423293, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
       propertyPath: m_Size.y

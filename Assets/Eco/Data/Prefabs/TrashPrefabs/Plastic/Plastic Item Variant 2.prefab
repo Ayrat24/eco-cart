@@ -99,7 +99,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1500802933416949484, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
       propertyPath: m_Name
-      value: Plastic Item Variant 2 Variant
+      value: Plastic Item Variant 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
+      propertyPath: weight
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
       propertyPath: prefabTypeId

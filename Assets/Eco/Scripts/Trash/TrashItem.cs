@@ -11,7 +11,8 @@ namespace Eco.Scripts.Trash
         [SerializeField] string itemName = "trash";
         [SerializeField] private int prefabTypeId;
         [SerializeField] private TrashType trashType;
-        [SerializeField] private Color color;
+        [SerializeField] private Color color = Color.wheat;
+        [SerializeField] private int weight = 1;
         public TrashType TrashType => trashType;
     
         private bool _isCollected;
@@ -73,10 +74,7 @@ namespace Eco.Scripts.Trash
             _rigidbody.isKinematic = isKinematic;
         }
 
-        public bool IsBeingPickedUp()
-        {
-            return _isBeingPickedUp;
-        }
+        bool ICartItem.IsBeingPickedUp { get; set; }
 
         public void SetPickedUpStatus(bool status)
         {
@@ -91,6 +89,11 @@ namespace Eco.Scripts.Trash
         public string GetName()
         {
             return $"{itemName}\n({trashType})";
+        }
+
+        public int GetWeight()
+        {
+            return weight;
         }
 
         public int GetPrefabId()

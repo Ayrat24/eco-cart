@@ -64,14 +64,14 @@ namespace Eco.Scripts.UI
             cart.OnStatusChanged.Subscribe(OnCartStatusChanged).AddTo(ref builder);
             _cartSubscription = builder.Build();
             
-            OnCartStatusChanged(Cart.CartStatus.Empty);
+            OnCartStatusChanged(Cart.CartState.Empty);
         }
 
         private void OnItemAdded(ICartItem item)
         {
             var ve = GetVisualElement();
             ve.style.flexGrow = 0;
-            ve.style.width = Length.Percent(1f / _storageSize * 100);
+            ve.style.width = Length.Percent((float)item.GetWeight() / _storageSize * 100);
             ve.style.backgroundColor = item.GetColor();
             _items[item] = ve;
             
@@ -130,20 +130,20 @@ namespace Eco.Scripts.UI
             _freeVisualElements.Add(visualElement);
         }
 
-        private void OnCartStatusChanged(Cart.CartStatus cartStatus)
+        private void OnCartStatusChanged(Cart.CartState cartState)
         {
-            switch (cartStatus)
+            switch (cartState)
             {
-                case Cart.CartStatus.Full:
+                case Cart.CartState.Full:
                     DisplayLabel(CartFullText);
                     break;
-                case Cart.CartStatus.Recycling:
+                case Cart.CartState.Recycling:
                     DisplayLabel(CartRecyclingText);
                     break;
-                case Cart.CartStatus.Empty:
+                case Cart.CartState.Empty:
                     DisplayLabel(CartEmptyText);
                     break;
-                case Cart.CartStatus.HasItems:
+                case Cart.CartState.HasItems:
                     _label.AddToClassList(DisappearClassName);
                     _label.style.display = DisplayStyle.None;
                     break;

@@ -138,7 +138,7 @@ MonoBehaviour:
   boxCollider: {fileID: 8543705912528311458}
   itemLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 256
   dropPoint: {fileID: 4066524737900063128}
 --- !u!1 &1426532328272579393
 GameObject:

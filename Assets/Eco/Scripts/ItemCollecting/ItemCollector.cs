@@ -27,7 +27,7 @@ namespace Eco.Scripts.ItemCollecting
         public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Cart cart)
         {
             _cart = cart;
-            
+
             foreach (var hand in hands)
             {
                 hand.Init(cart);
@@ -38,6 +38,7 @@ namespace Eco.Scripts.ItemCollecting
             _subscription?.Dispose();
             _subscription = Observable.IntervalFrame(10).Subscribe(x =>
             {
+                Debug.Log(cart.CanAddItems);
                 if (!cart.CanAddItems || !HasFreeHands())
                 {
                     return;
@@ -104,10 +105,12 @@ namespace Eco.Scripts.ItemCollecting
             }
 
             var item = other.GetComponent<ICartItem>();
-            if (item != null && !item.IsBeingPickedUp())
+            if (item is { IsBeingPickedUp: false } && _cart.CanFitItem(item))
             {
                 //Don't grab if other helpers already grabbing it
                 item.SetInCartState(true);
+                item.SetPickedUpStatus(true);
+                _cart.AddToCart(item, other);
                 hand.PlayAnimation(item, other);
             }
         }
@@ -167,6 +170,11 @@ namespace Eco.Scripts.ItemCollecting
         private void OnDestroy()
         {
             _subscription?.Dispose();
+
+            foreach (var hand in hands)
+            {
+                hand.Clear();
+            }
         }
 
         void OnDrawGizmos()
