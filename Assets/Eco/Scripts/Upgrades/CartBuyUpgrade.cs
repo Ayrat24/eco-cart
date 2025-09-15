@@ -2,15 +2,15 @@ using System;
 using Eco.Scripts.ItemCollecting;
 using R3;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Eco.Scripts.Upgrades
 {
     [CreateAssetMenu(menuName = "Upgrade/CartBuyUpgrade")]
-    public class CartBuyUpgrade : Upgrade
+    public class CartBuyUpgrade : SelectableUpgrade
     {
         [SerializeField] private CartData cartData;
-        
+
+        protected override string SelectableGroupId => "cart-buy-upgrade";
         public readonly Subject<CartData> OnCartSelected = new();
 
         protected override void ApplyUpgrade(int level)

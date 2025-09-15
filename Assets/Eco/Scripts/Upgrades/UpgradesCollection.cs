@@ -69,6 +69,17 @@ namespace Eco.Scripts.Upgrades
             saveManager.Progress.UpgradeLevels = saveData;
         }
 
+        public void Clear()
+        {
+            foreach (var tab in upgrades)
+            {
+                foreach (var upgrade in tab.upgrades)
+                {
+                    upgrade.Clear();
+                }
+            }
+        }
+
         [Serializable]
         public class UpgradeTab<T> where T : Upgrade
         {

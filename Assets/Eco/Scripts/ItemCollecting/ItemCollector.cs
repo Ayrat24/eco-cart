@@ -38,7 +38,6 @@ namespace Eco.Scripts.ItemCollecting
             _subscription?.Dispose();
             _subscription = Observable.IntervalFrame(10).Subscribe(x =>
             {
-                Debug.Log(cart.CanAddItems);
                 if (!cart.CanAddItems || !HasFreeHands())
                 {
                     return;

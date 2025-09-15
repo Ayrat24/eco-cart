@@ -72,7 +72,10 @@ namespace Eco.Scripts
         {
             _player.SavePosition(_saveManager);
             _currencyManager.Save(_saveManager);
+            
             _upgradeCollection.Save(_saveManager);
+            _upgradeCollection.Clear();
+            
             _worldController.SaveWorld();
 
             _saveManager.SaveFieldTiles();

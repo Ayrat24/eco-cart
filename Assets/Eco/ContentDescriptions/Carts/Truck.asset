@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a619cf1f4209e64a8f75b7c7adf03b6, type: 3}
   m_Name: Truck
   m_EditorClassIdentifier: 
-  baseCost: 0
+  baseCost: 2
   costGrowth: 1.15
   upgradeId: Truck
   upgradeLocalizedName:
@@ -34,6 +34,24 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  selectString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  notSelectedString:
+    m_TableReference:
+      m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+    m_TableEntryReference:
+      m_KeyId: 3743286369972224
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   cartData:
     prefab: {fileID: 6084339236651460199, guid: 6e69200a3067f014aae99f737e537907, type: 3}
     offset: {x: 0, y: 0, z: -10.22}

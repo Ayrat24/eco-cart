@@ -54,6 +54,14 @@ MonoBehaviour:
     m_Localized: Close
     m_Metadata:
       m_Items: []
+  - m_Id: 3742865677086720
+    m_Localized: Equipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3743286369972224
+    m_Localized: Equip
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

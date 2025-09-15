@@ -3,7 +3,6 @@ using LargeNumbers;
 using R3;
 using UnityEngine;
 using UnityEngine.Localization;
-using UnityEngine.Serialization;
 
 namespace Eco.Scripts.Upgrades
 {
@@ -15,12 +14,11 @@ namespace Eco.Scripts.Upgrades
         public string upgradeId;
         public LocalizedString upgradeLocalizedName;
         public LocalizedString upgradeLocalizedDescription;
-        
-    
         public Sprite icon;
     
         public AlphabeticNotation Cost { get; private set; }
-    
+        public bool Available { get; protected set; }
+        
         public readonly ReactiveProperty<int> CurrentLevel = new(1);
     
         public void Init(int level)
@@ -28,7 +26,7 @@ namespace Eco.Scripts.Upgrades
             Load(level);
         }
     
-        public void BuyUpgrade()
+        public virtual void BuyUpgrade()
         {
             CurrentLevel.Value += 1;
             Cost = CalculateCost();
@@ -58,11 +56,19 @@ namespace Eco.Scripts.Upgrades
         {
             CurrentLevel.Value = level;
             Cost = CalculateCost();
+            Available = true;
         }
 
         public virtual string GetDescription(string localizedString)
         {
             return string.Format(localizedString, CurrentLevel.Value);
         }
+
+        public virtual string GetButtonText()
+        {
+            return CalculateCost().ToString();
+        }
+
+        public virtual void Clear() { }
     }
 }

@@ -41,7 +41,7 @@ public partial class UpgradeButton : VisualElement
         iconImage.style.backgroundImage = new StyleBackground(_upgrade.icon);
         _upgrade.upgradeLocalizedName.StringChanged += OnUpgradeNameStringChanged;
         _upgrade.upgradeLocalizedDescription.StringChanged += OnUpgradeDescriptionStringChanged;
-        button.text = _upgrade.Cost.ToString();
+        button.text = _upgrade.GetButtonText();
     }
 
     public void UpdatePurchaseAvailability(AlphabeticNotation money)
@@ -51,8 +51,8 @@ public partial class UpgradeButton : VisualElement
             _upgrade.upgradeLocalizedDescription.RefreshString();
         }
 
-        button.text = _upgrade.Cost.ToString();
-        bool available = money >= _upgrade.Cost;
+        button.text = _upgrade.GetButtonText();
+        bool available =_upgrade.Available &&  money >= _upgrade.Cost;
         button.SetEnabled(available);
     }
 
