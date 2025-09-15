@@ -45,6 +45,7 @@ MonoBehaviour:
     pickupRadius: 0
     pickupRadiusDeadZone: 0
     menuCameraOffset: -7
+    characterModelOffset: {x: 0, y: 3, z: 0.5}
   references:
     version: 2
     RefIds: []

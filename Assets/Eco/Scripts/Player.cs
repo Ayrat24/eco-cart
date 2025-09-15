@@ -13,6 +13,7 @@ namespace Eco.Scripts
     {
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private ItemCollector itemCollector;
+        [SerializeField] private Transform characterModel;
         
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
@@ -58,6 +59,7 @@ namespace Eco.Scripts
             _cart.SetStats(cartData);
             
             agent.speed = cartData.moveSpeed;
+            characterModel.localPosition = cartData.characterModelOffset;
             
             itemCollector.Init(_currencyManager, _upgrades, _cart);
             OnCartChanged.OnNext(_cart);

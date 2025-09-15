@@ -42,6 +42,7 @@ namespace Eco.Scripts.Upgrades
             public float pickupRadius;
             public float pickupRadiusDeadZone;
             public float menuCameraOffset;
+            public Vector3 characterModelOffset;
         }
     }
 }
