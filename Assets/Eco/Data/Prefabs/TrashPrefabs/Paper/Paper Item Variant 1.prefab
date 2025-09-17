@@ -127,6 +127,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1089873644866034962, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 1116974758960116970, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_LocalScale.x
       value: 5
@@ -203,6 +207,10 @@ PrefabInstance:
       propertyPath: prefabTypeId
       value: 31
       objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: particleEffect
+      value: 
+      objectReference: {fileID: 1006626421476542575}
     - target: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_Name
       value: Paper Item Variant 1
@@ -211,6 +219,7 @@ PrefabInstance:
     - {fileID: 5484698834941378176, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
     m_RemovedGameObjects:
     - {fileID: 2180413166149379004, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+    - {fileID: 5316999956918939084, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       insertIndex: -1
@@ -220,6 +229,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8211110264246000725}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+--- !u!198 &1006626421476542575 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8789553599633901821, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  m_PrefabInstance: {fileID: 8359390143493079186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1947872644166016036 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}

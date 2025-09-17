@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5630400703690826571}
   - component: {fileID: 3674695029508227615}
   - component: {fileID: 1063086795615745562}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Peach Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,6 +75,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PT_Fruit_Tree_01_pears
       objectReference: {fileID: 0}
+    - target: {fileID: 2479184009378418726, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2613454675235345673, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 2966750739439028892, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.5
@@ -130,6 +138,14 @@ PrefabInstance:
     - target: {fileID: 2966750739439028892, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3491555602639996928, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7765329102591482917, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

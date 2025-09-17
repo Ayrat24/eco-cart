@@ -1,26 +1,29 @@
 .base-label {
-    font-size: 55px;
+    font-size: 25px;
     -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
-    -unity-text-outline-width: 4px;
-    color: rgb(255, 255, 255);
-    -unity-text-outline-color: rgb(0, 0, 0);
-    transition-duration: 0.5s;
-    min-width: 100px;
+    -unity-text-outline-width: 1px;
+    color: rgb(242, 232, 207);
+    -unity-text-outline-color: rgb(60, 105, 65);
+    transition-duration: 0.2s;
+    min-width: 100%;
     white-space: nowrap;
     min-height: auto;
     height: auto;
-    margin-top: -18px;
-    margin-right: -18px;
-    margin-bottom: -18px;
-    margin-left: -18px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
     -unity-text-align: upper-right;
     -unity-font-style: normal;
+    background-color: rgb(255, 255, 255);
+    border-right-width: 8px;
+    border-left-width: 8px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
 }
 
 .hidden {
-    font-size: 55px;
-    color: rgba(255, 255, 255, 0);
-    -unity-text-outline-color: rgba(0, 0, 0, 0);
-    scale: 0.4 0.4 0.4;
     opacity: 0;
+    display: flex;
+    translate: 100% 0;
 }

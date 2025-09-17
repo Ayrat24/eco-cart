@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using LargeNumbers;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,22 +9,46 @@ namespace Eco.Scripts.ItemCollecting
 {
     public class GainedScoreText
     {
-        private const string SpawnStyleClass = "base-label";
         private const string HiddenStyleClass = "hidden";
         private const float HideDelay = 1.0f;
         private const float HideSequenceDelay = 0.05f;
 
-        private readonly Queue<Label> _labelPool = new();
-        private readonly List<Label> _activeLabels = new();
+        private List<Label> _labels = new();
+        private int _lastLabelIndex = -1;
         
         private Camera _camera;
         private VisualElement _itemContainer;
+        private Label _totalScoreLabel;
+        private AlphabeticNotation _totalScore; 
         private CancellationTokenSource _cancellationTokenSource;
+        private bool _active;
 
         public void Init(UIDocument uiDocument)
         {
             _camera = Camera.main;
             _itemContainer = uiDocument.rootVisualElement.Q("Panel");
+            _labels = _itemContainer.Query<Label>("GainLabel").ToList();
+            _totalScoreLabel = _itemContainer.Q<Label>("TotalScore");
+            _totalScore = new AlphabeticNotation(0);
+            HideAllLabelsInstant();
+            
+        }
+
+        private void HideAllLabelsInstant()
+        {
+            foreach (var label in _labels)
+            {
+                label.AddToClassList(HiddenStyleClass);
+            }
+
+            ResetScore();
+        }
+
+        private void ResetScore()
+        {
+            _totalScore = new AlphabeticNotation(0);
+            UpdateTotalLabel(_totalScore);
+            _lastLabelIndex = -1;
         }
 
         public void FaceCamera(Transform transform)
@@ -33,78 +58,84 @@ namespace Eco.Scripts.ItemCollecting
             transform.LookAt(targetPosition, targetUp);
         }
 
-        public void SpawnLabel(string text, Color color)
+        public void StartNewRecycle()
         {
-            Label label = GetLabel();
-            label.text = text;
-            label.style.color = color;
-
-            // Reset styles
-            label.BringToFront();
-            label.AddToClassList(SpawnStyleClass);
-
-            label.style.display = DisplayStyle.Flex;
-
-            _activeLabels.Add(label);
+            if (_active)
+            {
+                Clear();
+                HideAllLabelsInstant();
+                ResetScore();
+            }
+            else
+            {
+                _itemContainer.RemoveFromClassList(HiddenStyleClass);
+            }
+            
+            _active = true;
         }
-
-        private async UniTask HideAfterDelay(Label label, CancellationToken token)
+        
+        public void UpdateTotalLabel(AlphabeticNotation score)
         {
-            await UniTask.WaitForSeconds(HideDelay, cancellationToken: token);
+            _totalScore += score;
+            _totalScoreLabel.text = $"+{_totalScore.ToString()}";
+        }
+        
+        public void SpawnGainLabel(string text, Color color)
+        {
+            var label = GetLabel();
+            label.text = text;
 
-            label.AddToClassList(HiddenStyleClass);
+            color.a = 0.4f;
+            label.style.backgroundColor = color;
         }
 
         private Label GetLabel()
         {
-            Label label;
-
-            if (_labelPool.Count > 0)
+            _lastLabelIndex++;
+            if (_lastLabelIndex < _labels.Count - 1)
             {
-                label = _labelPool.Dequeue();
+                var label = _labels[_lastLabelIndex];
+                label.RemoveFromClassList(HiddenStyleClass);
+                
+                return label;
             }
-            else
+            
+            for (int i = 0; i < _labels.Count - 1; i++)
             {
-                label = new Label();
-                _itemContainer.Add(label);
+                _labels[i].text = _labels[i + 1].text;
+                _labels[i].style.backgroundColor = _labels[i + 1].style.backgroundColor;
             }
-
-            return label;
+            
+            return _labels[^1];
         }
-
-        private void RecycleLabel(Label label)
-        {
-            label.style.display = DisplayStyle.None;
-            label.ClearClassList();
-            _activeLabels.Remove(label);
-            _labelPool.Enqueue(label);
-        }
-
+        
         public void HideLabels()
         {
             _cancellationTokenSource = new CancellationTokenSource();
             HideLabelsAsync(_cancellationTokenSource.Token).Forget();
         }
-
+        
         private async UniTask HideLabelsAsync(CancellationToken token)
         {
-            foreach (var label in _activeLabels)
+            await UniTask.WaitForSeconds(2, cancellationToken: token);
+            
+            foreach (var label in _labels)
             {
+                label.AddToClassList(HiddenStyleClass);
                 await UniTask.WaitForSeconds(HideSequenceDelay, cancellationToken: token);
-                HideAfterDelay(label, token).Forget();
             }
+
+            ResetScore();
+            
+            _itemContainer.AddToClassList(HiddenStyleClass);
+            _active = false;
         }
 
         public void Clear()
         {
             _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
-
-            for (var i = _activeLabels.Count - 1; i >= 0; i--)
-            {
-                var label = _activeLabels[i];
-                RecycleLabel(label);
-            }
         }
     }
 }

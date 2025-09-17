@@ -208,13 +208,13 @@ namespace Eco.Scripts.World
             if (closestTile != null)
             {
                 _treePlanter.PlantTree(id, closestTile, closestField);
-                MarkGroundCircle(closestTile, closestField, radius: Random.Range(18, 25));
+                MarkGroundCircle(closestTile, closestField, radius: Random.Range(8, 16));
             }
         }
 
         private void MarkGroundCircle(Field.Tile centerTile, Field centerField, int radius)
         {
-            int chunkSize = 10;
+            int chunkSize = chunkSizeX;
 
             // Center tile's chunk coordinate in chunk grid
             Vector2Int centerChunkCoord = GetChunkCoordFromTile(centerTile.position, centerField);

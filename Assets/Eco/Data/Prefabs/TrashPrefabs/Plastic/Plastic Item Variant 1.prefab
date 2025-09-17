@@ -134,6 +134,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1089873644866034962, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.49
+      objectReference: {fileID: 0}
     - target: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.65666
@@ -198,6 +202,10 @@ PrefabInstance:
       propertyPath: prefabTypeId
       value: 41
       objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: particleEffect
+      value: 
+      objectReference: {fileID: 154132753199719079}
     - target: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_Name
       value: Plastic Item Variant 1
@@ -206,6 +214,7 @@ PrefabInstance:
     - {fileID: 5484698834941378176, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
     m_RemovedGameObjects:
     - {fileID: 2180413166149379004, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+    - {fileID: 5316999956918939084, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       insertIndex: -1
@@ -215,6 +224,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8093173451791852569}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+--- !u!198 &154132753199719079 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8789553599633901821, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  m_PrefabInstance: {fileID: 8924254855629351514}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1500802933416949484 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}

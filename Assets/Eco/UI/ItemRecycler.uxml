@@ -1,4 +1,24 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Eco/UI/MoneyGained.uss?fileID=7433441132597879392&amp;guid=b3c5b5bed4d7fe0449ffb1cea8516156&amp;type=3#MoneyGained" />
-    <ui:VisualElement name="Panel" style="flex-grow: 1; flex-direction: column; justify-content: flex-end; flex-wrap: nowrap; flex-shrink: 1; align-content: flex-end; flex-basis: auto; width: initial; height: initial; align-items: flex-end; align-self: flex-end;" />
+    <ui:VisualElement name="Panel" style="flex-grow: 0; flex-direction: column; justify-content: flex-start; flex-wrap: nowrap; flex-shrink: 0; align-content: flex-end; flex-basis: auto; width: auto; height: 80%; align-items: flex-end; align-self: flex-end; min-height: initial; bottom: 0; position: absolute;">
+        <ui:Label text="Last earnings:" name="LastEarnings" class="base-label" style="background-color: rgba(255, 255, 255, 0);" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+        <ui:Label text="+100$ (combo 1.4x) bottle" name="GainLabel" class="base-label" />
+    </ui:VisualElement>
 </ui:UXML>

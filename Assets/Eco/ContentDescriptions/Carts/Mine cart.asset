@@ -58,7 +58,7 @@ MonoBehaviour:
     id: Mine cart
     carryingCapacity: 20
     moveSpeed: 7
-    cameraOffset: {x: 10, y: 18, z: 0}
+    cameraOffset: {x: 12, y: 22, z: 0}
     playerPosition: {x: 0, y: 0, z: 0}
     pickupRadius: 0
     pickupRadiusDeadZone: 0

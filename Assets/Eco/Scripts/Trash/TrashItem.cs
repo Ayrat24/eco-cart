@@ -1,29 +1,36 @@
+using Cysharp.Threading.Tasks;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
+using PrimeTween;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace Eco.Scripts.Trash
 {
-    public class TrashItem : MonoBehaviour, ICartItem, ITileItem
+    public class TrashItem : MonoBehaviour, ICartItem, ITileItem, IPooledObject
     {
         [SerializeField] string itemName = "trash";
         [SerializeField] private int prefabTypeId;
         [SerializeField] private TrashType trashType;
         [SerializeField] private Color color = Color.wheat;
         [SerializeField] private int weight = 1;
+        [SerializeField] private Rigidbody rb;
+        [SerializeField] ParticleSystem particleEffect;
         public TrashType TrashType => trashType;
-    
+
         private bool _isCollected;
-        private Rigidbody _rigidbody;
         private Field.Tile _tile;
         private bool _isBeingPickedUp;
 
         public void Initialize(Field.Tile tile)
         {
             _tile = tile;
-            _rigidbody = GetComponent<Rigidbody>();
+
+            var vfx = particleEffect.main;
+            vfx.startColor = color;
+            //particleEffect.main = vfx;
             ChangeState(false);
         }
 
@@ -33,7 +40,7 @@ namespace Eco.Scripts.Trash
             {
                 return;
             }
-        
+
             _isCollected = true;
             transform.parent = parent;
         }
@@ -42,7 +49,7 @@ namespace Eco.Scripts.Trash
         {
             const int cartLayer = 8;
             const int groundLayer = 7;
-        
+
             gameObject.layer = inCart ? cartLayer : groundLayer;
         }
 
@@ -56,11 +63,34 @@ namespace Eco.Scripts.Trash
 
         public void Recycle()
         {
+            RecycleAsync().Forget();
+        }
+
+        public async UniTask RecycleAsync()
+        {
+            MakeKinematic(true);
+
+            var currentPosition = transform.localPosition;
+            var endPosition =
+                new Vector3(Random.Range(-2.5f, 2.5f), Random.Range(3f, 4.9f), Random.Range(-2.5f, 2.5f)) +
+                currentPosition;
+            Tween.LocalPosition(transform, currentPosition, endPosition, 0.6f, Ease.InCubic);
+            Tween.Scale(transform, 1, 1.3f, 0.6f, ease: Ease.OutElastic);
+            Tween.EulerAngles(transform, Vector3.zero, Vector3.up * 180, 0.8f);
+
+            await UniTask.WaitForSeconds(0.6f);
+            Tween.Scale(transform, 1.3f, 0, 0.5f, ease: Ease.OutCirc);
+
+            particleEffect.transform.parent = transform.parent;
+            particleEffect.transform.position = transform.position;
+            particleEffect.Play();
+
             SetPickedUpStatus(false);
-            
+
             _tile.status = Field.TileStatus.Empty;
             _tile = null;
-            
+            await UniTask.WaitForSeconds(0.5f);
+
             PoolManager.Instance.ReturnItem(this);
         }
 
@@ -71,7 +101,7 @@ namespace Eco.Scripts.Trash
 
         public void MakeKinematic(bool isKinematic)
         {
-            _rigidbody.isKinematic = isKinematic;
+            rb.isKinematic = isKinematic;
         }
 
         bool ICartItem.IsBeingPickedUp { get; set; }
@@ -88,7 +118,7 @@ namespace Eco.Scripts.Trash
 
         public string GetName()
         {
-            return $"{itemName}\n({trashType})";
+            return $"{itemName}";
         }
 
         public int GetWeight()
@@ -102,5 +132,14 @@ namespace Eco.Scripts.Trash
         }
 
         public bool CanBeRecycled => !_isBeingPickedUp && !_isCollected;
+
+        public void OnSpawn()
+        {
+            particleEffect.transform.parent = transform;
+        }
+
+        public void OnDespawn()
+        {
+        }
     }
 }

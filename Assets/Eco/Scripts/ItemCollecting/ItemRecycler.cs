@@ -39,7 +39,7 @@ namespace Eco.Scripts.ItemCollecting
 
         public async UniTask EmptyAsync(List<ICartItem> cartItems, CancellationToken token)
         {
-            _gainedScoreText.Clear();
+            _gainedScoreText.StartNewRecycle();
             
             double scoreMultiplier = _upgrades.GetUpgradeType<ComboMultiplierUpgrade>().Multiplier;
             Dictionary<TrashType, double> scoreMultipliers = new();
@@ -48,12 +48,13 @@ namespace Eco.Scripts.ItemCollecting
             for (var i = listItems.Count - 1; i >= 0; i--)
             {
                 var item = listItems[i];
-                await UniTask.WaitForSeconds(0.05f, cancellationToken: token);
+                await UniTask.WaitForSeconds(0.15f, cancellationToken: token);
                 item.Recycle();
 
                 if (item is TrashItem trash)
                 {
-                    var score = _upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade;
+                    var baseScore = _upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade;
+                    var score = baseScore;
 
                     if (scoreMultipliers.TryGetValue(trash.TrashType, out var currentMultiplier))
                     {
@@ -62,14 +63,17 @@ namespace Eco.Scripts.ItemCollecting
                     }
                     else
                     {
-                        scoreMultipliers[trash.TrashType] = 1 + scoreMultiplier;
+                        currentMultiplier = 1;
+                        scoreMultipliers[trash.TrashType] = currentMultiplier + scoreMultiplier;
                     }
                     
                     _currencyManager.AddMoney(score);
-                    _gainedScoreText.SpawnLabel($"+{score}", _upgrades.TrashScoreUpgrades[trash.TrashType].Color);
+                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b> Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color> Type:<b>{trash.TrashType}</b>", _upgrades.TrashScoreUpgrades[trash.TrashType].Color);
+                    _gainedScoreText.UpdateTotalLabel(score);
                 }
             }
 
+            await UniTask.WaitForSeconds(0.6f, cancellationToken: token);
             _gainedScoreText.HideLabels();
         }
 

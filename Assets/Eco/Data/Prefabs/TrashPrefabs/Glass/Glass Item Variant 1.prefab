@@ -94,6 +94,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1089873644866034962, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 1089873644866034962, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.014
+      objectReference: {fileID: 0}
     - target: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -158,6 +166,10 @@ PrefabInstance:
       propertyPath: prefabTypeId
       value: 21
       objectReference: {fileID: 0}
+    - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      propertyPath: particleEffect
+      value: 
+      objectReference: {fileID: 1550895248219562178}
     - target: {fileID: 5484698834941378176, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       propertyPath: m_Height
       value: 1.08
@@ -177,12 +189,18 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2180413166149379004, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+    - {fileID: 5316999956918939084, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4642979335085579398}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+--- !u!198 &1550895248219562178 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8789553599633901821, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  m_PrefabInstance: {fileID: 7818010826867517503}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5294390514288214201 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
