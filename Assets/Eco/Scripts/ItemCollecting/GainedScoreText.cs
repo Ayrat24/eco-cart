@@ -22,6 +22,7 @@ namespace Eco.Scripts.ItemCollecting
         private AlphabeticNotation _totalScore; 
         private CancellationTokenSource _cancellationTokenSource;
         private bool _active;
+        public bool Active => _active;
 
         public void Init(UIDocument uiDocument)
         {

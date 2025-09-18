@@ -2,8 +2,8 @@
     font-size: 25px;
     -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
     -unity-text-outline-width: 1px;
-    color: rgb(242, 232, 207);
-    -unity-text-outline-color: rgb(60, 105, 65);
+    color: rgb(255, 255, 255);
+    -unity-text-outline-color: rgba(0, 0, 0, 0.81);
     transition-duration: 0.2s;
     min-width: 100%;
     white-space: nowrap;
@@ -14,7 +14,7 @@
     margin-bottom: 0;
     margin-left: 0;
     -unity-text-align: upper-right;
-    -unity-font-style: normal;
+    -unity-font-style: italic;
     background-color: rgb(255, 255, 255);
     border-right-width: 8px;
     border-left-width: 8px;

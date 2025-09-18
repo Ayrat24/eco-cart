@@ -19,7 +19,8 @@ namespace Eco.Scripts
         private Tween _xTween;
         private Tween _yTween;
         private Tween _zTween;
-
+        private bool _menuOpened;
+        
         public void Init(Player player)
         {
             _player = player;
@@ -28,12 +29,13 @@ namespace Eco.Scripts
             
             _player.OnCartChanged.Subscribe(OnCartChanged).AddTo(ref builder);
             UpgradeMenu.OnOpen.Subscribe(OnMenuOpened).AddTo(ref builder);
-
+            
             _subscription = builder.Build();
         }
 
         private void OnCartChanged(Cart cart)
         {
+            Debug.Log("Cart Changed");
             _cart = cart;
 
             var xStart = cinemachineFollow.FollowOffset.x;
@@ -45,6 +47,11 @@ namespace Eco.Scripts
             var yEnd = cart.CartData.cameraOffset.y;
             _yTween = Tween.Custom(yStart, yEnd, 0.5f,
                 f => cinemachineFollow.FollowOffset.y = f);
+
+            if (!_menuOpened)
+            {
+                return;
+            }
             
             var zStart = cinemachineFollow.FollowOffset.z;
             var zEnd = cart.CartData.menuCameraOffset;
@@ -54,6 +61,8 @@ namespace Eco.Scripts
 
         private void OnMenuOpened(bool isOpen)
         {
+            _menuOpened = isOpen;
+            
             if (_cart == null)
             {
                 return;

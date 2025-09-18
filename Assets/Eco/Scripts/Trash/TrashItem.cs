@@ -18,6 +18,7 @@ namespace Eco.Scripts.Trash
         [SerializeField] private int weight = 1;
         [SerializeField] private Rigidbody rb;
         [SerializeField] ParticleSystem particleEffect;
+        [SerializeField] TrailRenderer trailRenderer;
         public TrashType TrashType => trashType;
 
         private bool _isCollected;
@@ -66,31 +67,34 @@ namespace Eco.Scripts.Trash
             RecycleAsync().Forget();
         }
 
-        public async UniTask RecycleAsync()
+        private async UniTask RecycleAsync()
         {
             MakeKinematic(true);
+            SetPickedUpStatus(false);
 
+            _tile.status = Field.TileStatus.Empty;
+            _tile = null;
+            transform.parent = null;
+            
+            
             var currentPosition = transform.localPosition;
             var endPosition =
-                new Vector3(Random.Range(-2.5f, 2.5f), Random.Range(3f, 4.9f), Random.Range(-2.5f, 2.5f)) +
+                new Vector3(Random.Range(-2.5f, 2.5f), Random.Range(5f, 7.9f), Random.Range(-2.5f, 2.5f)) +
                 currentPosition;
             Tween.LocalPosition(transform, currentPosition, endPosition, 0.6f, Ease.InCubic);
             Tween.Scale(transform, 1, 1.3f, 0.6f, ease: Ease.OutElastic);
             Tween.EulerAngles(transform, Vector3.zero, Vector3.up * 180, 0.8f);
 
+            trailRenderer.startColor = color;
+            trailRenderer.gameObject.SetActive(true);
+            
             await UniTask.WaitForSeconds(0.6f);
             Tween.Scale(transform, 1.3f, 0, 0.5f, ease: Ease.OutCirc);
 
-            particleEffect.transform.parent = transform.parent;
-            particleEffect.transform.position = transform.position;
+            particleEffect.gameObject.SetActive(true);
             particleEffect.Play();
 
-            SetPickedUpStatus(false);
-
-            _tile.status = Field.TileStatus.Empty;
-            _tile = null;
             await UniTask.WaitForSeconds(0.5f);
-
             PoolManager.Instance.ReturnItem(this);
         }
 
@@ -135,7 +139,8 @@ namespace Eco.Scripts.Trash
 
         public void OnSpawn()
         {
-            particleEffect.transform.parent = transform;
+            particleEffect.gameObject.SetActive(false);
+            trailRenderer.gameObject.SetActive(false);
         }
 
         public void OnDespawn()
