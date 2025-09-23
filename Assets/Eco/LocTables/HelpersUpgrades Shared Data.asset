@@ -23,6 +23,14 @@ MonoBehaviour:
     m_Key: helper-tab-gather-helper-buy-description
     m_Metadata:
       m_Items: []
+  - m_Id: 6857036459405312
+    m_Key: helper-tab-cat-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6857118369968128
+    m_Key: helper-tab-cat-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
