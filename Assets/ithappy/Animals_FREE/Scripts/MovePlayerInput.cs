@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Controller
+namespace ithappy.Animals_FREE
 {
     [RequireComponent(typeof(CreatureMover))]
     public class MovePlayerInput : MonoBehaviour

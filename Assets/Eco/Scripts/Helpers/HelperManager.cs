@@ -11,6 +11,7 @@ namespace Eco.Scripts.Helpers
     public class HelperManager : MonoBehaviour
     {
         [SerializeField] private CollectorHelper collectorHelperPrefab;
+        [SerializeField] private CatHelper catPrefab;
         [SerializeField] private int spawnRadius;
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
@@ -41,6 +42,13 @@ namespace Eco.Scripts.Helpers
             _navmeshPriority++;
         }
 
+        private void SpawnCat(Vector3 spawnPosition)
+        {
+            var helper = Instantiate(catPrefab, spawnPosition, Quaternion.identity, transform);
+            helper.Init(_currencyManager, _upgrades, _player, _navmeshPriority);
+            _navmeshPriority++;
+        }
+        
         private void SetUpUpgrades()
         {
             var builder = new DisposableBuilder();
@@ -67,6 +75,9 @@ namespace Eco.Scripts.Helpers
                 case HelperClass.Collector:
                     SpawnCollector(spawnPosition);
                     break;
+                case HelperClass.Cat:
+                    SpawnCat(spawnPosition);
+                    break;
             }
         }
 
@@ -78,7 +89,7 @@ namespace Eco.Scripts.Helpers
         public enum HelperClass
         {
             Collector,
-            Planter
+            Cat
         }
     }
 }

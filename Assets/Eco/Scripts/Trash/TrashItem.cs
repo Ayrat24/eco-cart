@@ -67,13 +67,17 @@ namespace Eco.Scripts.Trash
             RecycleAsync().Forget();
         }
 
-        private async UniTask RecycleAsync()
+        public async UniTask RecycleAsync()
         {
             MakeKinematic(true);
             SetPickedUpStatus(false);
 
-            _tile.status = Field.TileStatus.Empty;
-            _tile = null;
+            if(_tile != null)
+            {
+                _tile.status = Field.TileStatus.Empty;
+                _tile = null;
+            }
+            
             transform.parent = null;
             
             

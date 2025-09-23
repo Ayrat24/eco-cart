@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Controller
+namespace ithappy.Animals_FREE
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Animator))]
