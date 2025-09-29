@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Trash;
 using Eco.Scripts.Upgrades;
@@ -10,43 +11,25 @@ namespace Eco.Scripts.Helpers
 {
     public class CatHelper : Helper
     {
-        [SerializeField] private Animator animator;
         [SerializeField] private int maxDistanceFromPlayer = 30;
         [SerializeField] private LayerMask groundItemsMask;
         [SerializeField] private int playerStopDistance = 8;
 
-        private Player _player;
         private readonly Collider[] _colliders = new Collider[50];
-        private IDisposable _subscription;
         private const TrashType Food = TrashType.Food;
 
         private bool _goingToTarget;
 
-        private static readonly int State = Animator.StringToHash("State");
-        private static readonly int Vert = Animator.StringToHash("Vert");
-        private static readonly int Recycle = Animator.StringToHash("Recycle");
-
-        
         public override void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player,
             int navmeshPriority)
         {
-            _player = player;
-            agent.avoidancePriority = navmeshPriority;
-
+            base.Init(currencyManager, upgrades, player, navmeshPriority);
+            
             var interval = TimeSpan.FromSeconds(1);
-            _subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });
+            Subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });
+            CancellationTokenSource = new CancellationTokenSource();
         }
 
-        public override void Clear()
-        {
-            _subscription?.Dispose();
-        }
-
-        private void FixedUpdate()
-        {
-            animator.SetFloat(Vert, agent.velocity.magnitude / agent.speed);
-            animator.SetFloat(State, _goingToTarget ? 1 : 0);
-        }
 
         private void GoToNearbyItem()
         {
@@ -74,14 +57,14 @@ namespace Eco.Scripts.Helpers
             }
 
             trashItems.Sort((x, y) =>
-                Vector3.Distance(x.transform.position, _player.transform.position) -
-                Vector3.Distance(y.transform.position, _player.transform.position) > 0
+                Vector3.Distance(x.transform.position, Player.transform.position) -
+                Vector3.Distance(y.transform.position, Player.transform.position) > 0
                     ? -1
                     : 1);
 
             var food = trashItems[0];
 
-            if (Vector3.Distance(food.transform.position, _player.transform.position) > maxDistanceFromPlayer)
+            if (Vector3.Distance(food.transform.position, Player.transform.position) > maxDistanceFromPlayer)
             {
                 ReturnToPlayer();
                 return;
@@ -90,30 +73,36 @@ namespace Eco.Scripts.Helpers
             agent.stoppingDistance = 3;
             agent.destination = food.transform.position;
             _goingToTarget = true;
+            animationController.GoingToTarget = true;
+
             DebugState = "Going to trash";
 
-            ConsumeFoodAsync(food).Forget();
+            ConsumeFoodAsync(food, CancellationTokenSource.Token).Forget();
         }
 
         private void ReturnToPlayer()
         {
             DebugState = "Going around player";
             agent.stoppingDistance = playerStopDistance;
-            agent.destination = _player.transform.position;
+            agent.destination = Player.transform.position;
         }
 
-        private async UniTask ConsumeFoodAsync(TrashItem food)
+        private async UniTask ConsumeFoodAsync(TrashItem food, CancellationToken token)
         {
             await UniTask.WaitUntil(() =>
-                Vector3.Distance(food.transform.position, transform.position) <= agent.stoppingDistance);
+                    Vector3.Distance(food.transform.position, transform.position) <= agent.stoppingDistance,
+                cancellationToken: token);
 
             if (food.CanBeRecycled)
             {
-                animator.SetTrigger(Recycle);
+                animationController.TriggerAction();
+                var money = UpgradesCollection.TrashScoreUpgrades[food.TrashType].ScoreForCurrentUpgrade;
                 await food.RecycleAsync();
+                CurrencyManager.AddMoney(money);
             }
 
             _goingToTarget = false;
+            animationController.GoingToTarget = false;
         }
     }
 }

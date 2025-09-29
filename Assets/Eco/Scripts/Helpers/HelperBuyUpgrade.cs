@@ -8,21 +8,13 @@ namespace Eco.Scripts.Helpers
     public class HelperBuyUpgrade : Upgrade
     {
         [SerializeField] HelperManager.HelperClass helperClass;
-        public Subject<HelperManager.HelperClass> OnPurchase = new();
+        public readonly Subject<HelperManager.HelperClass> OnPurchase = new();
+        
+        public HelperManager.HelperClass GetHelperClass() => helperClass;
 
         protected override void ApplyUpgrade(int level)
         {
             OnPurchase.OnNext(helperClass);
-        }
-
-        protected override void Load(int level)
-        {
-            base.Load(level);
-
-            for (int i = 0; i < level; i++)
-            {
-                ApplyUpgrade(level);
-            }
         }
     }
 }

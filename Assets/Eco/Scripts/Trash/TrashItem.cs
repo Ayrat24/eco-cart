@@ -4,7 +4,6 @@ using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using PrimeTween;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace Eco.Scripts.Trash

@@ -60,8 +60,8 @@ MonoBehaviour:
       m_WaitForCompletion: 0
       m_LocalVariables: []
     upgrades:
-    - {fileID: 11400000, guid: 310ce428d1a983648bf7b33e6770d5b1, type: 2}
     - {fileID: 11400000, guid: a2e26bd82d3b52f458502896929f5bab, type: 2}
+    - {fileID: 11400000, guid: 8d944b28b3980944eb24a9a805e6becc, type: 2}
   - name: Carts
     nameLoc:
       m_TableReference:

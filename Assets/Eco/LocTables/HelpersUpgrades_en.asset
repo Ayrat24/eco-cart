@@ -31,7 +31,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6857118369968128
-    m_Localized: Ketty recycles food
+    m_Localized: Kitty recycles food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7233248012791808
+    m_Localized: Chicken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7233287560884224
+    m_Localized: Chicken lays eggs that can be recycled to gain money
     m_Metadata:
       m_Items: []
   references:

@@ -31,6 +31,14 @@ MonoBehaviour:
     m_Key: helper-tab-cat-description
     m_Metadata:
       m_Items: []
+  - m_Id: 7233248012791808
+    m_Key: helper-tab-chicken-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7233287560884224
+    m_Key: helper-tab-chicken-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -42,7 +42,6 @@ namespace Eco.Scripts.Pooling
                 _trashPools.Add(id, objectPool);
                 _ids.Add(id);
 
-
                 _trashPools[id].ReturnToPool(o);
             }
 
@@ -75,12 +74,28 @@ namespace Eco.Scripts.Pooling
             switch (item)
             {
                 case TrashItem trashItem:
-                    _trashPools[trashItem.GetPrefabId()].ReturnToPool(trashItem);
+                    var id = trashItem.GetPrefabId();
+                    _trashPools[id].ReturnToPool(trashItem);
                     return;
+
                 case Tree tree:
                     _treePools[tree.GetPrefabId()].ReturnToPool(tree);
                     break;
             }
+        }
+
+        public TrashItem GetTrash(TrashItem trashItem)
+        {
+            var id = trashItem.GetPrefabId();
+            if (_trashPools.TryGetValue(id, out var trashPool))
+            {
+                return trashPool.Get();
+            }
+            
+            var pool = new ObjectPool<TrashItem>(trashItem, 0, transform);
+            _trashPools.Add(id, pool);
+            _ids.Add(id);
+            return pool.Get();
         }
 
         public TrashItem GetRandomTrash()

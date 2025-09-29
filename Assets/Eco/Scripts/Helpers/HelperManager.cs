@@ -4,23 +4,23 @@ using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
 using VContainer;
-using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.Helpers
 {
     public class HelperManager : MonoBehaviour
     {
-        [SerializeField] private CollectorHelper collectorHelperPrefab;
         [SerializeField] private CatHelper catPrefab;
+        [SerializeField] private ChickenHelper chickenPrefab;
         [SerializeField] private int spawnRadius;
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
         IDisposable _subscription;
         private Player _player;
 
-        private List<Vector3> _spawnDirections = new(){Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
+        private readonly List<Vector3> _spawnDirections = new(){Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
         private int _lastSpawnDirection;
         private int _navmeshPriority = 51;
+        private readonly List<Helper> _helpers = new();
         
         [Inject]
         private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player)
@@ -35,18 +35,12 @@ namespace Eco.Scripts.Helpers
             SetUpUpgrades();
         }
 
-        private void SpawnCollector(Vector3 spawnPosition)
+        private Helper Spawn(Helper prefab, Vector3 spawnPosition)
         {
-            var helper = Instantiate(collectorHelperPrefab, spawnPosition, Quaternion.identity, transform);
+            var helper = Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
             helper.Init(_currencyManager, _upgrades, _player, _navmeshPriority);
             _navmeshPriority++;
-        }
-
-        private void SpawnCat(Vector3 spawnPosition)
-        {
-            var helper = Instantiate(catPrefab, spawnPosition, Quaternion.identity, transform);
-            helper.Init(_currencyManager, _upgrades, _player, _navmeshPriority);
-            _navmeshPriority++;
+            return helper;
         }
         
         private void SetUpUpgrades()
@@ -55,6 +49,11 @@ namespace Eco.Scripts.Helpers
             foreach (var helperBuyUpgrade in _upgrades.GetUpgradeTypes<HelperBuyUpgrade>())
             {
                 helperBuyUpgrade.OnPurchase.Subscribe(SpawnHelper).AddTo(ref builder);
+
+                for (int i = 0; i < helperBuyUpgrade.CurrentLevel.Value; i++)
+                {
+                    SpawnHelper(helperBuyUpgrade.GetHelperClass());
+                }
             }
 
             _subscription = builder.Build();
@@ -69,27 +68,38 @@ namespace Eco.Scripts.Helpers
             
             Vector3 spawnPosition = _player.transform.position + _spawnDirections[_lastSpawnDirection] * spawnRadius;
             _lastSpawnDirection++;
-            
+
+            Helper helper;
             switch (helperClass)
             {
-                case HelperClass.Collector:
-                    SpawnCollector(spawnPosition);
-                    break;
                 case HelperClass.Cat:
-                    SpawnCat(spawnPosition);
+                    helper = Spawn(catPrefab, spawnPosition);
                     break;
+                case HelperClass.Chicken:
+                    helper = Spawn(chickenPrefab, spawnPosition);
+                    break;
+                default:
+                    return;
             }
+            
+            _helpers.Add(helper);
         }
 
         private void OnDestroy()
         {
             _subscription.Dispose();
+
+            foreach (var helper in _helpers)
+            {
+                helper.Clear();
+            }
         }
 
         public enum HelperClass
         {
             Collector,
-            Cat
+            Cat,
+            Chicken
         }
     }
 }
