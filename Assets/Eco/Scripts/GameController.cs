@@ -21,12 +21,12 @@ namespace Eco.Scripts
         private Player _player;
         private UpgradesCollection _upgradeCollection;
         private CurrencyManager _currencyManager;
-        private TreeManager _treeManager;
+        private TreeCurrencyEarner _treeCurrencyEarner;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
             HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
-            CurrencyManager currencyManager, TreeManager treeManager)
+            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -35,7 +35,7 @@ namespace Eco.Scripts
             _player = player;
             _upgradeCollection = upgradesCollection;
             _currencyManager = currencyManager;
-            _treeManager = treeManager;
+            _treeCurrencyEarner = treeCurrencyEarner;
         }
 
         private void Start()
@@ -64,7 +64,7 @@ namespace Eco.Scripts
 
             _helperManager.LoadHelpers();
             _currencyManager.Init(_saveManager);
-            _treeManager.Init();
+            _treeCurrencyEarner.Init();
         }
 
         [ContextMenu("Save Progress")]
@@ -81,7 +81,7 @@ namespace Eco.Scripts
             _saveManager.SaveFieldTiles();
             _saveManager.SavePlayerProgress();
 
-            _treeManager.Clear();
+            _treeCurrencyEarner.Clear();
             gameUI.Clear();
         }
 

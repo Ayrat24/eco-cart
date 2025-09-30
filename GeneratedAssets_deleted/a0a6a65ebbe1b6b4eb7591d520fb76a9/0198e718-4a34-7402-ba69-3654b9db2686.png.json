@@ -1,0 +1,20 @@
+{
+    "asset": "a0a6a65ebbe1b6b4eb7591d520fb76a9",
+    "fileName": "0198e718-4a34-7402-ba69-3654b9db2686.png",
+    "prompt": "A simple orange apple, half eaten, icon",
+    "negativePrompt": "",
+    "model": "bec6de48-894c-4734-b15c-33bd94f3a0e4",
+    "modelName": "Pudgy Props",
+    "customSeed": -1,
+    "w3CTraceId": "320deb5e44ef846a9fde847539a682fc",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

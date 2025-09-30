@@ -1,6 +1,5 @@
 using Eco.Scripts.Helpers;
 using Eco.Scripts.Trees;
-using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -16,9 +15,9 @@ namespace Eco.Scripts
     
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<CurrencyManager>(Lifetime.Singleton);
             builder.Register<SaveManager>(Lifetime.Singleton);
-            builder.Register<TreeManager>(Lifetime.Singleton);
+            builder.Register<CurrencyManager>(Lifetime.Singleton);
+            builder.Register<TreeCurrencyEarner>(Lifetime.Singleton);
         
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();

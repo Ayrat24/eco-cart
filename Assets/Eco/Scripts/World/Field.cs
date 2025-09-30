@@ -18,7 +18,10 @@ namespace Eco.Scripts.World
         private TreePlanter _treePlanter;
 
         public List<Tile> Tiles => tiles;
+        
+#if UNITY_EDITOR
         private GUIStyle style;
+#endif
 
         public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter)
         {
@@ -26,6 +29,7 @@ namespace Eco.Scripts.World
             _position = position;
             _treePlanter = treePlanter;
 
+#if UNITY_EDITOR
             style = new GUIStyle
             {
                 normal =
@@ -35,6 +39,7 @@ namespace Eco.Scripts.World
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold
             };
+#endif
 
             bool hasSave = saveManager.FieldTiles.ContainsKey(position);
 
@@ -129,7 +134,7 @@ namespace Eco.Scripts.World
 
         public void SaveTiles()
         {
-            var saveData = new SaveManager.TileData[tiles.Count];
+            var saveData = new TileData[tiles.Count];
             for (var i = 0; i < tiles.Count; i++)
             {
                 saveData[i] = tiles[i].GetSaveData();
@@ -150,50 +155,6 @@ namespace Eco.Scripts.World
             return tiles[index];
         }
 
-
-        [System.Serializable]
-        public class Tile
-        {
-            public ITileItem item;
-            public Vector2Int position;
-            public TileStatus status = TileStatus.Empty;
-
-            public Tile(Vector2Int position)
-            {
-                this.position = position;
-            }
-
-            public SaveManager.TileData GetSaveData()
-            {
-                var data = new SaveManager.TileData
-                {
-                    state = (int)status
-                };
-
-                if (item != null)
-                {
-                    data.data = item.GetPrefabId();
-                }
-
-                return data;
-            }
-
-            public void Clear()
-            {
-                if (item is { CanBeRecycled: true })
-                {
-                    PoolManager.Instance.ReturnItem(item);
-                }
-            }
-        }
-
-        public enum TileStatus
-        {
-            Empty,
-            Trash,
-            Ground,
-            Tree
-        }
 
         public void OnSpawn()
         {

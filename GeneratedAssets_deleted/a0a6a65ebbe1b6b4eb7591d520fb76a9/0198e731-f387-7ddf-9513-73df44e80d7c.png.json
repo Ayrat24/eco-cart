@@ -1,0 +1,20 @@
+{
+    "asset": "a0a6a65ebbe1b6b4eb7591d520fb76a9",
+    "fileName": "0198e731-f387-7ddf-9513-73df44e80d7c.png",
+    "prompt": "A single bitten apple, icon, no background, outline, white fill, inner shadow",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "ee4e7cea899d8c1c2a4c776dbbf645dd",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

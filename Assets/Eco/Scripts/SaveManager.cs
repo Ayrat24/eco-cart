@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.World;
 using LargeNumbers;
 using UnityEngine;
 using Newtonsoft.Json;
@@ -7,20 +8,20 @@ namespace Eco.Scripts
 {
     public class SaveManager
     {
-        private readonly Dictionary<Vector2Int, TileData[]> myDictionary = new();
-        public Dictionary<Vector2Int, TileData[]> FieldTiles => myDictionary;
+        private readonly Dictionary<Vector2Int, TileData[]> _fieldTiles = new();
+        public Dictionary<Vector2Int, TileData[]> FieldTiles => _fieldTiles;
         public PlayerProgress Progress { get; set; }
 
         public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
         {
-            myDictionary[position] = tiles;
+            _fieldTiles[position] = tiles;
         }
 
         public void SaveFieldTiles()
         {
             // Convert Vector2Int -> string (e.g., "x,y")
             var serializableDict = new Dictionary<string, TileData[]>();
-            foreach (var pair in myDictionary)
+            foreach (var pair in _fieldTiles)
             {
                 serializableDict[$"{pair.Key.x},{pair.Key.y}"] = pair.Value;
             }
@@ -53,7 +54,7 @@ namespace Eco.Scripts
         public void LoadFieldTiles()
         {
             string path = Application.persistentDataPath + "/field_tiles.json";
-            myDictionary.Clear();
+            _fieldTiles.Clear();
 
             if (System.IO.File.Exists(path))
             {
@@ -64,7 +65,7 @@ namespace Eco.Scripts
                 {
                     var parts = pair.Key.Split(',');
                     var pos = new Vector2Int(int.Parse(parts[0]), int.Parse(parts[1]));
-                    myDictionary[pos] = pair.Value;
+                    _fieldTiles[pos] = pair.Value;
                 }
             }
         }
@@ -78,13 +79,6 @@ namespace Eco.Scripts
             path = Application.persistentDataPath + "/progress.json";
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path);
-        }
-
-        [System.Serializable]
-        public struct TileData
-        {
-            public int state;
-            public int data;
         }
 
         [System.Serializable]

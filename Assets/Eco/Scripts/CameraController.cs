@@ -35,7 +35,6 @@ namespace Eco.Scripts
 
         private void OnCartChanged(Cart cart)
         {
-            Debug.Log("Cart Changed");
             _cart = cart;
 
             var xStart = cinemachineFollow.FollowOffset.x;

@@ -1,0 +1,20 @@
+{
+    "asset": "a0a6a65ebbe1b6b4eb7591d520fb76a9",
+    "fileName": "0198e758-16d2-7199-8730-cc81a03d7f4f.png",
+    "prompt": "A single shattered bottle, icon, no background, outline, white color fill, flat colors",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "7692d46c85246eb804991f3fa2b2b48c",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

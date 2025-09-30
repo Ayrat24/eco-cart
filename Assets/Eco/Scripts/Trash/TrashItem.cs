@@ -21,10 +21,10 @@ namespace Eco.Scripts.Trash
         public TrashType TrashType => trashType;
 
         private bool _isCollected;
-        private Field.Tile _tile;
+        private Tile _tile;
         private bool _isBeingPickedUp;
 
-        public void Initialize(Field.Tile tile)
+        public void Initialize(Tile tile)
         {
             _tile = tile;
 
@@ -73,7 +73,7 @@ namespace Eco.Scripts.Trash
 
             if(_tile != null)
             {
-                _tile.status = Field.TileStatus.Empty;
+                _tile.status = TileStatus.Empty;
                 _tile = null;
             }
             
