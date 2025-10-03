@@ -58,7 +58,7 @@ MonoBehaviour:
     id: Truck
     carryingCapacity: 20
     moveSpeed: 25
-    cameraOffset: {x: 17, y: 30, z: 0}
+    cameraOffset: {x: 0, y: 30, z: -9}
     playerPosition: {x: 0, y: 0, z: 0}
     pickupRadius: 0
     pickupRadiusDeadZone: 0

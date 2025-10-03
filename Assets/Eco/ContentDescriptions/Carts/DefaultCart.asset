@@ -34,13 +34,31 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  selectString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  notSelectedString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-not-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   cartData:
     prefab: {fileID: 6335477868539353455, guid: c95a28ae2e90df340949c522db591ee6, type: 3}
     offset: {x: 0, y: 0, z: -4.5}
     id: Base Cart
     carryingCapacity: 10
     moveSpeed: 8
-    cameraOffset: {x: 10, y: 18, z: 0}
+    cameraOffset: {x: 0, y: 18, z: -9}
     playerPosition: {x: 0, y: 0, z: 0}
     pickupRadius: 0
     pickupRadiusDeadZone: 0

@@ -12,11 +12,15 @@ namespace Eco.Scripts.World
 {
     public class TreePlanter
     {
+        public const int TreeGrassRadius = 12;
+        
         private readonly Transform _player;
         private readonly UpgradesCollection _upgrades;
         private readonly WorldController _worldController;
         private IDisposable _subscription;
 
+        public Subject<int> OnTreePlanted = new();
+        
         public TreePlanter(UpgradesCollection upgrades, Transform player, WorldController worldController)
         {
             _upgrades = upgrades;
@@ -60,7 +64,7 @@ namespace Eco.Scripts.World
                     {
                         foreach (var tile in field.Tiles)
                         {
-                            if (tile.status == TileStatus.Empty)
+                            if (tile.objectType == TileObjectType.Empty && tile.groundType == TileGroundType.Ground)
                             {
                                 // Convert local tile pos to world pos (centered on tile)
                                 Vector3 worldPos = new Vector3(
@@ -82,11 +86,14 @@ namespace Eco.Scripts.World
                 }
             }
 
-            if (closestTile != null)
+            if (closestTile == null)
             {
-                PlantTree(id, closestTile, closestField);
-                MarkGroundCircle(closestTile, closestField, radius: Random.Range(8, 16));
+                return;
             }
+            
+            PlantTree(id, closestTile, closestField);
+            MarkGroundCircle(closestTile, closestField, TreeGrassRadius);
+            OnTreePlanted.OnNext(id);
         }
 
         private void MarkGroundCircle(Tile centerTile, Field centerField, int radius)
@@ -124,9 +131,9 @@ namespace Eco.Scripts.World
                             );
 
                             var adjTile = targetField.GetTile(localPos);
-                            if (adjTile != null && adjTile.status == TileStatus.Empty)
+                            if (adjTile != null)
                             {
-                                adjTile.status = TileStatus.Ground;
+                                adjTile.groundType = TileGroundType.Grass;
                                 updatedFields.Add(targetField);
                             }
                         }
@@ -161,7 +168,7 @@ namespace Eco.Scripts.World
             tree.transform.position = parent.GetTileWorldPosition(tile);
 
             tile.item = tree;
-            tile.status = TileStatus.Tree;
+            tile.objectType = TileObjectType.Tree;
         }
         
         public void Clear()

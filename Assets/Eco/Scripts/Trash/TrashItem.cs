@@ -3,6 +3,7 @@ using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using PrimeTween;
+using R3;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,11 +19,13 @@ namespace Eco.Scripts.Trash
         [SerializeField] private Rigidbody rb;
         [SerializeField] ParticleSystem particleEffect;
         [SerializeField] TrailRenderer trailRenderer;
-        public TrashType TrashType => trashType;
 
         private bool _isCollected;
         private Tile _tile;
         private bool _isBeingPickedUp;
+
+        public TrashType TrashType => trashType;
+        public static readonly Subject<Tile> OnItemRecycled = new();
 
         public void Initialize(Tile tile)
         {
@@ -30,7 +33,6 @@ namespace Eco.Scripts.Trash
 
             var vfx = particleEffect.main;
             vfx.startColor = color;
-            //particleEffect.main = vfx;
             ChangeState(false);
         }
 
@@ -71,15 +73,15 @@ namespace Eco.Scripts.Trash
             MakeKinematic(true);
             SetPickedUpStatus(false);
 
-            if(_tile != null)
+            if (_tile != null)
             {
-                _tile.status = TileStatus.Empty;
+                _tile.objectType = TileObjectType.Empty;
+                OnItemRecycled?.OnNext(_tile);
                 _tile = null;
             }
-            
+
             transform.parent = null;
-            
-            
+
             var currentPosition = transform.localPosition;
             var endPosition =
                 new Vector3(Random.Range(-2.5f, 2.5f), Random.Range(5f, 7.9f), Random.Range(-2.5f, 2.5f)) +
@@ -90,7 +92,7 @@ namespace Eco.Scripts.Trash
 
             trailRenderer.startColor = color;
             trailRenderer.gameObject.SetActive(true);
-            
+
             await UniTask.WaitForSeconds(0.6f);
             Tween.Scale(transform, 1.3f, 0, 0.5f, ease: Ease.OutCirc);
 

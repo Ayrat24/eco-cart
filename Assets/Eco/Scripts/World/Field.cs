@@ -61,16 +61,17 @@ namespace Eco.Scripts.World
                     else
                     {
                         var savedData = saveManager.FieldTiles[position][x * fieldSize + y];
-                        var tileStatus = (TileStatus)savedData.state;
-                        tile.status = tileStatus;
+                        tile.groundType = (TileGroundType)savedData.ground;
+                        var tileStatus = (TileObjectType)savedData.objectType;
+                        tile.objectType = tileStatus;
 
                         switch (tileStatus)
                         {
-                            case TileStatus.Trash:
-                                SpawnTrashAtTile(tile, savedData.data);
+                            case TileObjectType.Trash:
+                                SpawnTrashAtTile(tile, savedData.objectId);
                                 break;
-                            case TileStatus.Tree:
-                                _treePlanter.PlantTree(savedData.data, tile, this);
+                            case TileObjectType.Tree:
+                                _treePlanter.PlantTree(savedData.objectId, tile, this);
                                 break;
                         }
                     }
@@ -103,10 +104,10 @@ namespace Eco.Scripts.World
         {
             foreach (var tile in tiles)
             {
-                if (tile.status == TileStatus.Tree)
+                if (tile.objectType == TileObjectType.Tree)
                 {
                     TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(tile),
-                        16);
+                        TreePlanter.TreeGrassRadius);
                 }
             }
         }
@@ -121,7 +122,7 @@ namespace Eco.Scripts.World
             trash.transform.position = tileWorldPosition;
             trash.Initialize(tile);
             tile.item = trash;
-            tile.status = TileStatus.Trash;
+            tile.objectType = TileObjectType.Trash;
             return trash;
         }
 
@@ -162,7 +163,6 @@ namespace Eco.Scripts.World
 
         public virtual void OnDespawn()
         {
-            SaveTiles();
             foreach (var t in tiles)
             {
                 t.Clear();
@@ -174,7 +174,6 @@ namespace Eco.Scripts.World
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            return;
             if (tiles == null)
             {
                 return;
@@ -184,7 +183,7 @@ namespace Eco.Scripts.World
             for (var i = 0; i < tiles.Count; i++)
             {
                 var tile = tiles[i];
-                if (tile.status == TileStatus.Empty)
+                if (tile.objectType == TileObjectType.Empty)
                 {
                     continue;
                 }
@@ -198,7 +197,7 @@ namespace Eco.Scripts.World
                           new Vector3(tile.position.x, 0, tile.position.y) +
                           Vector3.up * 0.5f;
                 Handles.Label(pos
-                    , tile.position + $" ({tile.status})", style);
+                    , tile.position + $" ({tile.objectType})", style);
 
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(pos, 0.1f);

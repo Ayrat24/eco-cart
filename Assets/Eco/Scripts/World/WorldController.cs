@@ -33,6 +33,7 @@ namespace Eco.Scripts.World
 
         public int ChunkSize => chunkSize;
         public int RenderRadius => renderRadius;
+        public TreePlanter TreePlanter => _treePlanter;
         public Dictionary<Vector2Int, Field> ActiveChunks => _spawnedChunks;
         
         [Inject]
@@ -131,6 +132,8 @@ namespace Eco.Scripts.World
             foreach (var coord in toRemove)
             {
                 var chunk = _spawnedChunks[coord];
+                chunk.SaveTiles();
+                
                 if (chunk is WaterField waterField)
                 {
                     _waterPool.ReturnToPool(waterField);

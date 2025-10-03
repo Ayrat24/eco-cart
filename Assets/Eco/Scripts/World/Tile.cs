@@ -8,8 +8,9 @@ namespace Eco.Scripts.World
     {
         public ITileItem item;
         public Vector2Int position;
-        public TileStatus status = TileStatus.Empty;
-
+        public TileObjectType objectType = TileObjectType.Empty;
+        public TileGroundType groundType = TileGroundType.Ground;
+        
         public Tile(Vector2Int position)
         {
             this.position = position;
@@ -19,13 +20,15 @@ namespace Eco.Scripts.World
         {
             var data = new TileData
             {
-                state = (int)status
+                objectType = (int)objectType
             };
 
             if (item != null)
             {
-                data.data = item.GetPrefabId();
+                data.objectId = item.GetPrefabId();
             }
+            
+            data.ground = (int)groundType;
 
             return data;
         }
@@ -39,11 +42,17 @@ namespace Eco.Scripts.World
         }
     }
 
-    public enum TileStatus
+    public enum TileObjectType
     {
         Empty,
         Trash,
-        Ground,
         Tree
+    }
+
+    public enum TileGroundType
+    {
+        Ground,
+        Grass,
+        Water
     }
 }

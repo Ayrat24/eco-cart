@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Helpers;
+using Eco.Scripts.ProgressionScreen;
 using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
@@ -13,6 +14,7 @@ namespace Eco.Scripts
     {
         [SerializeField] GameUI gameUI;
         [SerializeField] CameraController cameraController;
+        [SerializeField] private Map map;
 
         private SaveManager _saveManager;
         private WorldController _worldController;
@@ -65,6 +67,8 @@ namespace Eco.Scripts
             _helperManager.LoadHelpers();
             _currencyManager.Init(_saveManager);
             _treeCurrencyEarner.Init();
+            
+            map.Initialize(_worldController, _saveManager, _player);
         }
 
         [ContextMenu("Save Progress")]
