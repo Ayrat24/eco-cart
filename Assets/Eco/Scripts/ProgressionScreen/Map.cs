@@ -20,6 +20,7 @@ namespace Eco.Scripts.ProgressionScreen
         [SerializeField] private int viewportSize;
         [SerializeField] private float zoomScale;
         [SerializeField] Vector2 zoomRange;
+        [SerializeField] private Transform iconParent;
 
         [SerializeField] private RectTransform playerMarker;
 
@@ -143,7 +144,7 @@ namespace Eco.Scripts.ProgressionScreen
             {
                 var t = _pool.Get();
                 t.Rect.anchoredPosition = id * 100;
-                t.Initialize(_worldController.ChunkSize);
+                t.Initialize(_worldController.ChunkSize, iconParent);
 
                 if (_saveManager.FieldTiles.TryGetValue(id, out var data))
                 {

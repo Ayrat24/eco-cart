@@ -95,23 +95,25 @@ namespace Eco.Scripts.World
                         Vector3 pos = new Vector3(coord.x * chunkSize, 0, coord.y * chunkSize);
 
                         Field chunk;
+                        TileGroundType groundType;
                         if (coord.x > worldSize || coord.x < -worldSize || coord.y > worldSize || coord.y < -worldSize)
                         {
                             WaterField waterChunk = _waterPool.Get();
                             waterChunk.UpdateWaterCorners(worldSize, coord);
-
+                            groundType = TileGroundType.Water;
                             chunk = waterChunk;
                         }
                         else
                         {
                             chunk = _fieldPool.Get();
+                            groundType = TileGroundType.Ground;
                         }
 
                         chunk.transform.parent = transform;
                         chunk.transform.position = pos;
                         chunk.transform.rotation = quaternion.identity;
 
-                        chunk.Init(coord, _saveManager, _treePlanter);
+                        chunk.Init(coord, _saveManager, _treePlanter, groundType);
 
                         chunk.name = $"Chunk_{coord.x}_{coord.y}";
                         _spawnedChunks[coord] = chunk;

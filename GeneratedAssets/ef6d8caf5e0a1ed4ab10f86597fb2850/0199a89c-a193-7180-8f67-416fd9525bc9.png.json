@@ -1,0 +1,20 @@
+{
+    "asset": "ef6d8caf5e0a1ed4ab10f86597fb2850",
+    "fileName": "0199a89c-a193-7180-8f67-416fd9525bc9.png",
+    "prompt": "Small game map icon, green ghost, player position, no background, ",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "0a9b08b2dadcf424b3f84f616b7e092e",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

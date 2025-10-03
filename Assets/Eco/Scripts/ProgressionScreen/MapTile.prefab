@@ -36,7 +36,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 40}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2692003804308012009
@@ -62,14 +62,19 @@ MonoBehaviour:
   rectTransform: {fileID: 2631934284273891059}
   text: {fileID: 7711573342912550192}
   tileMap: {fileID: 3655540481600065497}
+  treeIconPrefab: {fileID: 4146740904376989119, guid: aed804cc52fec9e4b8c01c2300ea509d, type: 3}
   tileColors:
   - groundType: 0
-    color: {r: 0.5058824, g: 0.48627454, b: 0.40000004, a: 1}
+    color: {r: 0.9490197, g: 0.909804, b: 0.8117648, a: 1}
   - groundType: 1
     color: {r: 0.654902, g: 0.78823537, b: 0.34117648, a: 1}
   - groundType: 2
     color: {r: 0.039215684, g: 0.5890757, b: 1, a: 1}
   trashColor: {r: 1, g: 0.039215688, b: 0.4039216, a: 1}
+  treeSprites:
+  - {fileID: 21300000, guid: b00f4d66ffae8f648a020e14a5348bc4, type: 3}
+  - {fileID: 21300000, guid: 88170e60f72c16249b018b8971ab1460, type: 3}
+  - {fileID: 21300000, guid: fd223362f33d9f0419f8446dac1d3eb6, type: 3}
 --- !u!1 &6313469317135657649
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +110,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -4, y: -4}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4274910689403832870
 CanvasRenderer:
@@ -159,7 +164,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5192028991247204883
 RectTransform:
   m_ObjectHideFlags: 0

@@ -23,7 +23,7 @@ namespace Eco.Scripts.World
         private GUIStyle style;
 #endif
 
-        public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter)
+        public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter, TileGroundType groundType)
         {
             _saveManager = saveManager;
             _position = position;
@@ -57,6 +57,8 @@ namespace Eco.Scripts.World
                         {
                             SpawnTrashAtTile(tile);
                         }
+                        
+                        tile.groundType = groundType;
                     }
                     else
                     {

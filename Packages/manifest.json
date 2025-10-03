@@ -4,6 +4,8 @@
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.kyrylokuzyk.primetween": "1.3.2",
+    "com.unity.2d.enhancers": "1.0.0",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.assistant": "1.0.0-pre.12",
     "com.unity.ai.generators": "1.0.0-pre.19",
     "com.unity.ai.inference": "2.3.0",
