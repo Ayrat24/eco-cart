@@ -15,16 +15,18 @@
 }
 
 #UpgradeTabs > .unity-tab-view__content-viewport {
-    width: 100%;
+    width: auto;
     background-color: rgba(255, 255, 255, 0);
-    height: 200%;
+    height: 100%;
     flex-direction: row;
     align-self: flex-end;
+    background-size: 100% 100%;
+    flex-grow: 1;
 }
 
 #UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container {
     width: 100%;
-    height: 100%;
+    height: 80px;
     background-color: rgba(255, 255, 255, 0);
     align-content: flex-start;
     justify-content: flex-start;
@@ -32,20 +34,24 @@
     align-self: flex-end;
     flex-basis: initial;
     flex-direction: row;
+    display: flex;
+    visibility: visible;
+    overflow: visible;
+    padding-right: 50px;
 }
 
 #UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header {
     flex-grow: 0;
-    height: 50%;
+    height: 100%;
     width: 200px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     border-right-width: 2px;
-    margin-right: -40px;
+    margin-right: 0;
     margin-left: 0;
     -unity-text-align: upper-left;
     border-top-width: 2px;
-    border-bottom-width: 0;
+    border-bottom-width: 2px;
     border-left-width: 2px;
     border-left-color: rgb(56, 102, 65);
     border-right-color: rgb(56, 102, 65);
@@ -62,12 +68,12 @@
 
 #UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header:hover {
     flex-grow: 0;
-    height: 50%;
-    width: 200px;
+    height: 100%;
+    width: 220px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     border-right-width: 2px;
-    margin-right: -8px;
+    margin-right: 0;
     margin-left: 0;
     -unity-text-align: upper-left;
     border-top-width: 2px;
@@ -85,8 +91,8 @@
 
 #UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header:selected {
     flex-grow: 0;
-    height: 60%;
-    width: 200px;
+    height: 110%;
+    width: 220px;
     background-color: rgb(56, 102, 65);
     translate: 0 0%;
     border-left-color: rgb(56, 102, 65);
@@ -134,6 +140,7 @@
     background-image: url("project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1087164816274819069&guid=74d29b23049ab664aba75ae8b0545ea7&type=3#arrow-right@2x");
     -unity-background-image-tint-color: rgb(255, 255, 255);
     translate: 0 65%;
+    display: none;
 }
 
 #UpgradeTabs > .unity-tab-view__content-viewport > .unity-tab-view__previous-button {
@@ -158,4 +165,116 @@
     padding-left: 16px;
     padding-top: 16px;
     padding-bottom: 16px;
+}
+
+#unity-dragger {
+    background-color: rgb(167, 201, 87);
+    padding-right: 0;
+    margin-right: 0;
+    padding-bottom: 0;
+    flex-shrink: 1;
+    flex-grow: 1;
+    border-top-left-radius: 11px;
+    border-top-right-radius: 11px;
+    border-bottom-right-radius: 11px;
+    border-bottom-left-radius: 11px;
+    margin-top: -1px;
+    margin-bottom: 0;
+    margin-left: -3px;
+    padding-top: 0;
+    padding-left: 0;
+    width: 100%;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    scale: 1.2 1;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+}
+
+#unity-tracker {
+    background-color: rgb(242, 232, 207);
+    width: auto;
+    flex-grow: 1;
+    height: auto;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left-color: rgba(56, 102, 65, 0);
+    border-right-color: rgba(56, 102, 65, 0);
+    border-top-color: rgba(56, 102, 65, 0);
+    border-bottom-color: rgba(56, 102, 65, 0);
+}
+
+#unity-slider {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 14px;
+    margin-left: 2px;
+    border-bottom-right-radius: 12px;
+    border-left-color: rgb(56, 102, 65);
+    border-right-color: rgb(56, 102, 65);
+    border-top-color: rgb(56, 102, 65);
+    border-bottom-color: rgb(56, 102, 65);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    padding-right: 0;
+    right: 6px;
+    padding-bottom: 0;
+}
+
+#UpgradeMenu > .unity-scroll-view--horizontal > .unity-scroll-view__horizontal-scroller > #unity-slider > .unity-slider__input > #unity-drag-container > #unity-dragger {
+    margin-right: 2px;
+    margin-left: 2px;
+    margin-top: -1px;
+}
+
+#UpgradeMenu > #Tabs > .unity-scroll-view__horizontal-scroller > #unity-slider {
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    margin-left: 0;
+    position: relative;
+    right: 0;
+    left: 0;
+}
+
+#UpgradeMenu > #Tabs > .unity-scroll-view__horizontal-scroller > #unity-slider > .unity-slider__input > #unity-drag-container > #unity-dragger {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    height: 100%;
+    justify-content: flex-start;
+    margin-top: -3px;
+    scale: 1 1.1;
+    margin-left: -1px;
+    margin-right: -1px;
+}
+
+#UpgradeMenu > #Tabs > #UpgradeTabs > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header > #unity-tab__header-underline {
+    background-color: rgba(0, 0, 0, 0);
+    display: none;
+}
+
+#unity-dragger:hover {
+    background-color: rgb(188, 71, 73);
 }
