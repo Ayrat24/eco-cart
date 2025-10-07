@@ -15,6 +15,14 @@
     background-color: rgb(242, 232, 207);
     opacity: 0.7;
     color: rgb(188, 71, 73);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(194, 110, 106);
+    border-right-color: rgb(194, 110, 106);
+    border-top-color: rgb(194, 110, 106);
+    border-bottom-color: rgb(194, 110, 106);
 }
 
 .Button {

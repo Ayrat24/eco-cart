@@ -13,6 +13,18 @@ MonoBehaviour:
   m_Name: UpgradeCollection
   m_EditorClassIdentifier: 
   upgrades:
+  - name: Unlocks
+    nameLoc:
+      m_TableReference:
+        m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
+      m_TableEntryReference:
+        m_KeyId: 13530671607808
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    upgrades:
+    - {fileID: 11400000, guid: 79173f9eb7095324fb1b151fd5e0bea9, type: 2}
   - name: Recycling
     nameLoc:
       m_TableReference:

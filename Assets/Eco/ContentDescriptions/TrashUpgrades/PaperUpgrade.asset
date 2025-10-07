@@ -33,7 +33,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 21300000, guid: 8a598e358ce803c449e0d21a93d59595, type: 3}
+  icon: {fileID: 21300000, guid: 6f0d086008c752643bb54ca2f1baccf2, type: 3}
   baseScore: 1
   scoreGrowth: 1.7
   color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}

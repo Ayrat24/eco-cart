@@ -3,46 +3,21 @@
     <Style src="project://database/Assets/Eco/UI/Upgrade.uss?fileID=7433441132597879392&amp;guid=22217a5ddd9006747bc9814f92241902&amp;type=3#Upgrade" />
     <Style src="project://database/Assets/Eco/UI/BackgroundColors.uss?fileID=7433441132597879392&amp;guid=404a0c799aeb1484f94faf474cec9a85&amp;type=3#BackgroundColors" />
     <Style src="project://database/Assets/Eco/UI/CartStorage.uss?fileID=7433441132597879392&amp;guid=24c5d10c1db1c2d42a3e82c2f1aa3073&amp;type=3#CartStorage" />
-    <ui:VisualElement name="TopPanel" class="TopPanel" style="flex-grow: 1; height: 8%; background-size: 100% 100%; opacity: 1; align-self: center; width: 100%; align-content: flex-start; align-items: center; justify-content: flex-start; min-height: 8%; max-height: 8px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; background-color: rgba(255, 189, 189, 0); flex-direction: row;">
-        <ui:Button text="Menu" name="OpenUpgradeMenuButton" class="light-green Button" style="width: 10%; height: 100%; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
-        <ui:Button text="?" name="TutorialButton" class="light-green Button" style="width: 50px; height: 50px; font-size: 32px;" />
-        <ui:VisualElement name="RightSide" style="flex-grow: 1; flex-direction: row-reverse; align-self: center; justify-content: flex-start; align-items: center; right: 16px;">
+    <ui:VisualElement name="TopPanel" class="TopPanel" style="flex-grow: 1; height: 8%; background-size: 100% 100%; opacity: 1; align-self: auto; width: auto; align-content: flex-start; align-items: center; justify-content: flex-start; min-height: 8%; max-height: 8px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; background-color: rgba(255, 189, 189, 0); flex-direction: row;">
+        <ui:VisualElement name="LeftSide" style="flex-grow: 0; flex-direction: row; justify-content: space-between; height: 90%; align-self: center; align-items: center; flex-wrap: nowrap; width: 262px;">
+            <ui:Button text="Menu" name="OpenUpgradeMenuButton" class="light-green Button" style="width: 200px; height: 100%; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            <ui:Button text="?" name="TutorialButton" class="light-green Button" style="width: 50px; height: 50%; font-size: 32px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="RightSide" style="flex-grow: 1; flex-direction: row-reverse; align-self: center; justify-content: flex-start; align-items: center; right: 16px; position: absolute;">
             <ui:Label text="$" class="white" style="width: 36px; height: 60px; align-self: center; background-color: rgba(242, 232, 207, 0.6); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); -unity-font-style: bold; -unity-text-align: middle-left; color: rgb(56, 102, 65); font-size: 42s; border-top-left-radius: 0; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 0; top: 1px; left: auto; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-start; align-items: flex-start; align-content: stretch;" />
             <ui:Label text="13212313215646851321658423134" name="MoneyCounter" class="white" style="flex-direction: row-reverse; justify-content: flex-end; align-content: flex-end; align-items: flex-end; align-self: center; right: 0; position: relative; left: 0%; border-top-width: 8px; border-right-width: 8px; border-bottom-width: 8px; border-left-width: 8px; font-size: 30px; -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); color: rgb(56, 102, 65); background-color: rgba(242, 232, 207, 0.6); border-top-left-radius: 12px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 12px; margin-right: 0;" />
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="UpgradeMenu" enabled="true" class="UpgradeMenu white" style="flex-grow: 1; align-self: flex-start; width: 40%; flex-shrink: 1; transition-duration: 0.25s; transition-timing-function: ease-in-out-circ; border-top-left-radius: 0; border-top-right-radius: 12px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 0; border-left-color: rgb(56, 102, 65); border-right-color: rgb(56, 102, 65); border-top-color: rgb(56, 102, 65); border-bottom-color: rgb(56, 102, 65); height: auto; max-height: 82%; border-bottom-right-radius: 12px;">
-        <Eco.Scripts.UI.DragScrollView name="UpgradeList" touch-scroll-type="Clamped" style="height: auto; background-color: rgba(255, 255, 255, 0); top: auto; flex-shrink: 1; bottom: auto; flex-grow: 1; margin-top: 12px; margin-bottom: 110px;">
-            <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; height: 3433px; background-color: rgb(64, 59, 99); display: none;" />
-        </Eco.Scripts.UI.DragScrollView>
+        <Eco.Scripts.UI.DragScrollView name="UpgradeList" touch-scroll-type="Clamped" style="height: auto; background-color: rgba(255, 255, 255, 0); top: auto; flex-shrink: 1; bottom: auto; flex-grow: 1; margin-top: 12px; margin-bottom: 110px;" />
         <ui:ScrollView mode="Horizontal" horizontal-scroller-visibility="Auto" vertical-scroller-visibility="Hidden" name="Tabs" style="height: 120px; position: absolute; bottom: 6px; width: auto; left: 6px; right: 6px;">
-            <ui:TabView name="UpgradeTabs" style="justify-content: flex-start; width: auto; height: 100px; align-items: stretch; align-content: auto; align-self: stretch; flex-grow: 0; flex-shrink: 0; flex-direction: row; min-height: initial; translate: 0 0%; left: auto; position: relative; bottom: 10px; min-width: initial; margin-right: 0; padding-right: 0; flex-wrap: nowrap;">
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-                <ui:Tab label="Tab" />
-            </ui:TabView>
+            <ui:TabView name="UpgradeTabs" style="justify-content: flex-start; width: auto; height: 100px; align-items: stretch; align-content: auto; align-self: stretch; flex-grow: 0; flex-shrink: 0; flex-direction: row; min-height: initial; translate: 0 0%; left: auto; position: relative; bottom: 10px; min-width: initial; margin-right: 0; padding-right: 0; flex-wrap: nowrap;" />
         </ui:ScrollView>
-    </ui:VisualElement>
-    <ui:VisualElement name="CartStorage" style="flex-grow: 0; left: 540px; height: 40px; flex-shrink: 0; -unity-background-image-tint-color: rgb(152, 152, 152); background-color: rgba(56, 102, 65, 0.4); flex-direction: row; justify-content: flex-start; align-items: center; align-content: flex-start; width: 1000px; align-self: flex-start; position: absolute; bottom: 17px; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; opacity: 0.8; right: auto; top: auto;">
-        <ui:Label text="Cart Is Full!" name="CartStatus" enabled="true" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%; background-color: rgba(56, 102, 65, 0.5); -unity-text-align: middle-center; color: rgb(255, 255, 255); font-size: 30px; transition-duration: 0.25s; display: flex; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; opacity: 1; -unity-text-outline-width: 2px; -unity-text-outline-color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); -unity-font-style: bold; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 4px; padding-left: 0;" />
     </ui:VisualElement>
     <ui:VisualElement name="HelpMenu" class="white" style="flex-grow: 0; position: absolute; width: 778px; height: auto; top: 15%; left: auto; right: 0; bottom: auto; max-height: none; background-color: rgba(242, 232, 207, 0.8);">
         <ui:Label text="Label" name="Label" style="font-size: 24px; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;);">
@@ -56,5 +31,10 @@
             </Bindings>
         </ui:Label>
         <ui:Button text="x" name="CloseButton" class="light-green Button" style="position: absolute; height: 50px; width: 50px; top: -27px; left: 722px; font-size: 35px; -unity-text-align: middle-center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 5px; padding-left: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-grow: 1; position: absolute; bottom: 0; width: 100%; align-self: center; align-content: stretch; align-items: auto; justify-content: center; flex-direction: row; margin-left: -831px;">
+        <ui:VisualElement name="CartStorage" style="flex-grow: 0; left: auto; height: 40px; flex-shrink: 0; -unity-background-image-tint-color: rgb(152, 152, 152); background-color: rgba(56, 102, 65, 0.4); flex-direction: row; justify-content: flex-start; align-items: center; align-content: auto; width: 1000px; align-self: auto; position: absolute; bottom: 17px; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; opacity: 0.8; right: auto; top: auto;">
+            <ui:Label text="Cart Is Full!" name="CartStatus" enabled="true" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%; background-color: rgba(56, 102, 65, 0.5); -unity-text-align: middle-center; color: rgb(255, 255, 255); font-size: 30px; transition-duration: 0.25s; display: flex; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; opacity: 1; -unity-text-outline-width: 2px; -unity-text-outline-color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); -unity-font-style: bold; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 4px; padding-left: 0;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8d59123153fafe47b1fc0579c91a16c
+    m_Address: Assets/Eco/LocTables/Unlocks Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f32698ac96874c844b6c98b586eb07b2
     m_Address: Assets/Eco/LocTables/CartUpgrades Shared Data.asset
     m_ReadOnly: 1

@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563666e2a730bd1478e97f85d519bb45, type: 3}
+  m_Name: MapUnlock
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.UnlockableUpgrade
+  baseCost: 2
+  costGrowth: 1
+  needsUpgrade: 0
+  upgradeId: map-unlock
+  upgradeLocalizedName:
+    m_TableReference:
+      m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
+    m_TableEntryReference:
+      m_KeyId: 7769944064
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeLocalizedDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
+    m_TableEntryReference:
+      m_KeyId: 208576442368
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 94ea43556dfb347439e67a9da6005b9a, type: 3}
+  alreadyPurchasedString:
+    m_TableReference:
+      m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
+    m_TableEntryReference:
+      m_KeyId: 796181655552
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeType: 1
+  references:
+    version: 2
+    RefIds: []

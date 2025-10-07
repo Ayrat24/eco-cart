@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.Trash;
+using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
 using UnityEngine;
@@ -11,6 +13,8 @@ namespace Eco.Scripts.ProgressionScreen
 {
     public class Map : MonoBehaviour
     {
+        [SerializeField] private GameObject map;
+        
         [SerializeField] private ScrollRect scrollView;
         [SerializeField] private RectTransform content;
         [SerializeField] Transform tileParent;
@@ -21,7 +25,6 @@ namespace Eco.Scripts.ProgressionScreen
         [SerializeField] private float zoomScale;
         [SerializeField] Vector2 zoomRange;
         [SerializeField] private Transform iconParent;
-
         [SerializeField] private RectTransform playerMarker;
 
         private readonly List<MapField> _tiles = new List<MapField>();
@@ -34,7 +37,8 @@ namespace Eco.Scripts.ProgressionScreen
         private InputSystem_Actions _inputActions;
         private float _currentZoom = 1;
         private Player _player;
-
+        private IDisposable _subscription;
+        
         public void Initialize(WorldController worldController, SaveManager saveManager, Player player)
         {
             _worldController = worldController;
@@ -46,10 +50,28 @@ namespace Eco.Scripts.ProgressionScreen
             _inputActions.Map.Enable();
             _inputActions.Map.Zoom.performed += Zoom;
 
-            TrashItem.OnItemRecycled.Subscribe(OnTrashRecycled);
-            worldController.TreePlanter.OnTreePlanted.Subscribe(OnTreePlanted);
+            var builder = new DisposableBuilder();
+            TrashItem.OnItemRecycled.Subscribe(OnTrashRecycled).AddTo(ref builder);
+            worldController.TreePlanter.OnTreePlanted.Subscribe(OnTreePlanted).AddTo(ref builder);
+            Stats.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
+            _subscription = builder.Build();
+            
+            EnableMap(Stats.IsUpgradeUnlocked(UnlockableUpgradeType.Map));
             
             _initialized = true;
+        }
+
+        private void OnMapUnlocked(UnlockableUpgradeType upgradeType)
+        {
+            if (upgradeType == UnlockableUpgradeType.Map)
+            {
+                map.SetActive(true);
+            }
+        }
+
+        private void EnableMap(bool enable)
+        {
+            map.SetActive(enable);
         }
 
         private void OnTrashRecycled(Tile tile)
@@ -62,7 +84,6 @@ namespace Eco.Scripts.ProgressionScreen
         {
             _worldController.SaveWorld();
             UpdateVisibleFields();
-            Debug.LogError("here");
         }
         
         private void Zoom(InputAction.CallbackContext context)
@@ -82,7 +103,6 @@ namespace Eco.Scripts.ProgressionScreen
             zoomObject.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (!_initialized)
@@ -173,6 +193,11 @@ namespace Eco.Scripts.ProgressionScreen
                     t.SetAsUndiscovered();
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            _subscription.Dispose();
         }
     }
 }

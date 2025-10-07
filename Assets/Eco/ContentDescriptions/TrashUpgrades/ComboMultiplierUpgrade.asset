@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.ComboMultiplierUpgrade
   baseCost: 10
   costGrowth: 1.15
-  description: Gain more money per same trash type in the cart
   upgradeId: Trash Sorting
   upgradeLocalizedName:
     m_TableReference:
@@ -34,7 +33,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: -348211939, guid: a03e9228371be9449a97a937850924ca, type: 3}
+  icon: {fileID: 21300000, guid: a5fd1d31c7504cd4083d950f36ed7511, type: 3}
   references:
     version: 2
     RefIds: []

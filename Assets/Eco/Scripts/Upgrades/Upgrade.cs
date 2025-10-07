@@ -10,6 +10,7 @@ namespace Eco.Scripts.Upgrades
     {
         [SerializeField] protected int baseCost;
         [SerializeField] protected float costGrowth = 1.15f;
+        [SerializeField] private UnlockableUpgradeType needsUpgrade = UnlockableUpgradeType.None;
         
         public string upgradeId;
         public LocalizedString upgradeLocalizedName;
