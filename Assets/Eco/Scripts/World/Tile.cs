@@ -46,7 +46,8 @@ namespace Eco.Scripts.World
     {
         Empty,
         Trash,
-        Tree
+        Tree,
+        TrashPile
     }
 
     public enum TileGroundType

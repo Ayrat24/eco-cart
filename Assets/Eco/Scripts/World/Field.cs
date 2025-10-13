@@ -18,12 +18,13 @@ namespace Eco.Scripts.World
         private TreePlanter _treePlanter;
 
         public List<Tile> Tiles => tiles;
-        
+
 #if UNITY_EDITOR
         private GUIStyle style;
 #endif
 
-        public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter, TileGroundType groundType)
+        public void Init(Vector2Int position, SaveManager saveManager, TreePlanter treePlanter,
+            TileGroundType groundType)
         {
             _saveManager = saveManager;
             _position = position;
@@ -42,6 +43,7 @@ namespace Eco.Scripts.World
 #endif
 
             bool hasSave = saveManager.FieldTiles.ContainsKey(position);
+            bool isPile = Random.Range(0, 100) < 10;
 
             for (int x = 0; x < fieldSize; x++)
             {
@@ -51,14 +53,21 @@ namespace Eco.Scripts.World
 
                     if (!hasSave)
                     {
-                        bool occupied = Random.Range(0, 10) == 0;
-
-                        if (occupied)
-                        {
-                            SpawnTrashAtTile(tile);
-                        }
-                        
                         tile.groundType = groundType;
+                        if (isPile && x == fieldSize / 2 && y == fieldSize / 2)
+                        {
+                            SpawnTrashPileAtTile(tile);
+                        }
+                        else
+                        {
+                            bool hasTrash = Random.Range(0, 100) < 5;
+                            
+                            if(hasTrash)
+                            {
+                                SpawnTrashAtTile(tile);
+                            }
+                        }
+
                     }
                     else
                     {
@@ -74,6 +83,10 @@ namespace Eco.Scripts.World
                                 break;
                             case TileObjectType.Tree:
                                 _treePlanter.PlantTree(savedData.objectId, tile, this);
+                                break;
+                            
+                            case TileObjectType.TrashPile:
+                                SpawnTrashPileAtTile(tile, savedData.objectId);
                                 break;
                         }
                     }
@@ -126,6 +139,19 @@ namespace Eco.Scripts.World
             tile.item = trash;
             tile.objectType = TileObjectType.Trash;
             return trash;
+        }
+
+        private void SpawnTrashPileAtTile(Tile tile, int size = 5)
+        {
+            var tileWorldPosition =
+                GetTileWorldPosition(tile);
+
+            var trash = PoolManager.Instance.GetTrashPile();
+            trash.transform.parent = transform;
+            trash.transform.position = tileWorldPosition;
+            trash.Initialize(tile, size);
+            tile.item = trash;
+            tile.objectType = TileObjectType.TrashPile;
         }
 
         public Vector3 GetTileWorldPosition(Tile tile)

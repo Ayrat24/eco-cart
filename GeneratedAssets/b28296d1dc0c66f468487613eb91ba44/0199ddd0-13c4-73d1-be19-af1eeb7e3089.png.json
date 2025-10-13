@@ -1,0 +1,20 @@
+{
+    "asset": "b28296d1dc0c66f468487613eb91ba44",
+    "fileName": "0199ddd0-13c4-73d1-be19-af1eeb7e3089.png",
+    "prompt": "green map icon, green ghost inside, small red squares markers, tree markers",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "6b058d3953b06965ae1736b93071b6ca",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

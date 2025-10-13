@@ -10,6 +10,11 @@ namespace Eco.Scripts.Upgrades
         
         public static bool IsUpgradeUnlocked(UnlockableUpgradeType upgrade)
         {
+            if (upgrade == UnlockableUpgradeType.Cart)
+            {
+                return true;
+            }
+            
             return UnlockableUpgrades.GetValueOrDefault(upgrade, false);
         }
 
@@ -29,5 +34,8 @@ namespace Eco.Scripts.Upgrades
     {
         None,
         Map,
+        Cart,
+        Spade,
+        Smoke
     }
 }

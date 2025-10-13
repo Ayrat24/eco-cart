@@ -113,6 +113,11 @@ namespace Eco.Scripts.Trash
             rb.isKinematic = isKinematic;
         }
 
+        public void AddForce(Vector3 force)
+        {
+            rb.AddForce(force, ForceMode.Impulse);
+        }
+
         bool ICartItem.IsBeingPickedUp { get; set; }
 
         public void SetPickedUpStatus(bool status)

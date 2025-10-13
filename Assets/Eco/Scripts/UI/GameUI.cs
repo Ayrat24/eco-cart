@@ -13,6 +13,7 @@ namespace Eco.Scripts.UI
         private UpgradeMenu _upgradeMenu;
         private CartStorageDisplay _cartStorageDisplay;
         private TutorialMenu _tutorialMenu;
+        private ToolSelector _toolSelector;
         
         public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player)
         {
@@ -21,6 +22,9 @@ namespace Eco.Scripts.UI
 
             _cartStorageDisplay = new CartStorageDisplay(uiDocument, player, cartItemTemplate);
             _cartStorageDisplay.Init();
+
+            _toolSelector = new ToolSelector(uiDocument);
+            _toolSelector.Init();
 
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
@@ -31,6 +35,7 @@ namespace Eco.Scripts.UI
             _upgradeMenu.Clear();
             _cartStorageDisplay.Clear();
             _tutorialMenu.Clear();
+            _toolSelector.Clear();
         }
     }
 }

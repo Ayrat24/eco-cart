@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
@@ -7,7 +9,7 @@ using UnityEngine.Serialization;
 
 namespace Eco.Scripts.ItemCollecting
 {
-    public class ItemCollector : MonoBehaviour
+    public class ItemCollector : Tool
     {
         [SerializeField] ItemRecycler itemRecycler;
         [SerializeField] SphereCollider sphereCollider;
@@ -16,8 +18,8 @@ namespace Eco.Scripts.ItemCollecting
         [SerializeField] private List<CollectorHand> hands;
 
         private readonly Collider[] _colliders = new Collider[20];
-        private readonly Queue<Collider> _colliderQueue = new();
-        private const int MaxQueueSize = 5;
+        //private readonly Queue<Collider> _colliderQueue = new();
+        //private const int MaxQueueSize = 5;
 
         private Cart _cart;
         private IDisposable _subscription;
@@ -38,7 +40,7 @@ namespace Eco.Scripts.ItemCollecting
             _subscription?.Dispose();
             _subscription = Observable.IntervalFrame(10).Subscribe(x =>
             {
-                if (!cart.CanAddItems || !HasFreeHands())
+                if (!Active || !cart.CanAddItems || !HasFreeHands())
                 {
                     return;
                 }
@@ -65,10 +67,10 @@ namespace Eco.Scripts.ItemCollecting
 
             for (int i = 0; i < count; i++)
             {
-                if (_colliderQueue.Contains(_colliders[i]))
-                {
-                    continue;
-                }
+                // if (_colliderQueue.Contains(_colliders[i]))
+                // {
+                //     continue;
+                // }
 
                 var distance = Vector3.Distance(_colliders[i].transform.position, transform.position);
                 if (distance < shortestDistance)
@@ -83,12 +85,12 @@ namespace Eco.Scripts.ItemCollecting
                 return;
             }
 
-            _colliderQueue.Enqueue(shortestCollider);
-
-            if (_colliderQueue.Count > MaxQueueSize)
-            {
-                _colliderQueue.Dequeue();
-            }
+            // _colliderQueue.Enqueue(shortestCollider);
+            //
+            // if (_colliderQueue.Count > MaxQueueSize)
+            // {
+            //     _colliderQueue.Dequeue();
+            // }
 
             if (GetClosestFreeHand(shortestCollider.transform.position, out var hand))
             {
@@ -183,6 +185,20 @@ namespace Eco.Scripts.ItemCollecting
             Gizmos.color = Color.magenta;
             Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
             Gizmos.DrawWireSphere(center, sphereCollider.radius);
+        }
+
+        public override UniTask Enable()
+        {
+            _cart.gameObject.SetActive(true);
+            Active = true;
+            return UniTask.CompletedTask;
+        }
+
+        public override async UniTask Disable()
+        {
+            Active = false;
+            await UniTask.WaitUntil(AllHandsAreFree);
+            _cart.gameObject.SetActive(false);
         }
     }
 }

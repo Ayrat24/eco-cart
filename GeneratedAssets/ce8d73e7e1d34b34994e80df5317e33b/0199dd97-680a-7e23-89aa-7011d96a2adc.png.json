@@ -1,0 +1,20 @@
+{
+    "asset": "ce8d73e7e1d34b34994e80df5317e33b",
+    "fileName": "0199dd97-680a-7e23-89aa-7011d96a2adc.png",
+    "prompt": "cart icon, only white color, no background",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "6501750d1d297b634e5f0f0a323fea3b",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

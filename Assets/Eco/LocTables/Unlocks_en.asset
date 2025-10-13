@@ -35,6 +35,14 @@ MonoBehaviour:
     m_Localized: Unlocks
     m_Metadata:
       m_Items: []
+  - m_Id: 2228294378319872
+    m_Localized: Shovel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2228378205679616
+    m_Localized: Allows to clean up piles of trash
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

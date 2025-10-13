@@ -49,3 +49,18 @@
     -unity-text-outline-color: rgb(242, 232, 207);
     transition-duration: 0.1s;
 }
+
+.selected {
+    background-color: rgb(188, 71, 73);
+    border-left-color: rgb(242, 232, 207);
+    border-right-color: rgb(242, 232, 207);
+    border-top-color: rgb(242, 232, 207);
+    border-bottom-color: rgb(242, 232, 207);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    color: rgb(255, 255, 255);
+    translate: 0 -10px;
+    scale: 1.1 1.1;
+}

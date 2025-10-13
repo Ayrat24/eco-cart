@@ -1,0 +1,20 @@
+{
+    "asset": "b28296d1dc0c66f468487613eb91ba44",
+    "fileName": "0199ddc7-35ec-7661-ad8c-0c53951379fa.png",
+    "prompt": "map icon, ghost player icon",
+    "negativePrompt": "",
+    "model": "5fa78152-02ea-492b-b8ea-777b31a8a2f8",
+    "modelName": "GPT Image 1 - Low",
+    "customSeed": -1,
+    "w3CTraceId": "e6c1cbe2cd81f4af05917e2a829043f2",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

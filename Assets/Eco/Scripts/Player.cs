@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.ItemCollecting;
+using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using UnityEngine;
 using VContainer;
@@ -14,6 +15,7 @@ namespace Eco.Scripts
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private ItemCollector itemCollector;
         [SerializeField] private Transform characterModel;
+        [SerializeField] private ToolController toolController;
         
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
@@ -50,6 +52,8 @@ namespace Eco.Scripts
                 cart.OnCartSelected.Subscribe(ChangeCart).AddTo(ref builder);
             }
             _subscription = builder.Build();
+
+            toolController.Init();
         }
 
         private void SpawnNewCart(CartBuyUpgrade.CartData cartData)
@@ -97,6 +101,7 @@ namespace Eco.Scripts
         private void OnDestroy()
         {
             _subscription.Dispose();
+            toolController.Clear();
         }
     }
 }

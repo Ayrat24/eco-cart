@@ -89,7 +89,7 @@ namespace Eco.Scripts.ItemCollecting
             //Step 3: Return hand to the body
 
             ikTarget.parent = _baseATargetParent;
-            ikTarget.position = other.transform.parent.position;
+            ikTarget.position = other.transform.position;
             ik.Target = ikTarget;
 
             _tweens.Add(Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration));
