@@ -19,7 +19,7 @@ namespace Eco.Scripts.World
         private readonly WorldController _worldController;
         private IDisposable _subscription;
 
-        public Subject<int> OnTreePlanted = new();
+        public readonly Subject<int> OnTreePlanted = new();
         
         public TreePlanter(UpgradesCollection upgrades, Transform player, WorldController worldController)
         {
@@ -46,11 +46,11 @@ namespace Eco.Scripts.World
             Vector2Int playerChunkCoord = _worldController.GetPlayerChunkCoord();
             int chunkSize = 10;
 
-            Field closestField = null;
+            Chunk closestField = null;
             Tile closestTile = null;
             float closestDistSqr = float.MaxValue;
 
-            Dictionary<Vector2Int, Field> groundChunks = _worldController.ActiveChunks.Where(x => x.Value is not WaterField)
+            Dictionary<Vector2Int, Chunk> groundChunks = _worldController.ActiveChunks.Where(x => x.Value is FieldChunk)
                 .ToDictionary(x => x.Key, x => x.Value);
 
             // Search in surrounding chunks (adjust search range if needed)
@@ -60,7 +60,7 @@ namespace Eco.Scripts.World
                 {
                     Vector2Int chunkCoord = new Vector2Int(playerChunkCoord.x + cx, playerChunkCoord.y + cy);
 
-                    if (groundChunks.TryGetValue(chunkCoord, out Field field))
+                    if (groundChunks.TryGetValue(chunkCoord, out Chunk field))
                     {
                         foreach (var tile in field.Tiles)
                         {
@@ -96,13 +96,13 @@ namespace Eco.Scripts.World
             OnTreePlanted.OnNext(id);
         }
 
-        private void MarkGroundCircle(Tile centerTile, Field centerField, int radius)
+        private void MarkGroundCircle(Tile centerTile, Chunk centerField, int radius)
         {
-            int chunkSize = _worldController.ChunkSize;
+            int chunkSize = WorldController.ChunkSize;
 
             // Center tile's chunk coordinate in chunk grid
             Vector2Int centerChunkCoord = GetChunkCoordFromTile(centerField);
-            HashSet<Field> updatedFields = new();
+            HashSet<Chunk> updatedFields = new();
 
             for (int x = -radius; x <= radius; x++)
             {
@@ -122,12 +122,12 @@ namespace Eco.Scripts.World
                             Mathf.FloorToInt((float)globalPos.y / chunkSize)
                         );
 
-                        if (_worldController.ActiveChunks.TryGetValue(targetChunkCoord, out Field targetField))
+                        if (_worldController.ActiveChunks.TryGetValue(targetChunkCoord, out Chunk targetField))
                         {
                             // Local position inside the target chunk
                             Vector2Int localPos = new Vector2Int(
-                                Mod(globalPos.x, chunkSize),
-                                Mod(globalPos.y, chunkSize)
+                                Mod(globalPos.y, chunkSize),
+                                Mod(globalPos.x, chunkSize)
                             );
 
                             var adjTile = targetField.GetTile(localPos);
@@ -143,11 +143,12 @@ namespace Eco.Scripts.World
 
             foreach (var f in updatedFields)
             {
-                f.MakeGrass();
+                var field = (FieldChunk)f;
+                field.MakeGrass();
             }
         }
 
-        private Vector2Int GetChunkCoordFromTile(Field field)
+        private Vector2Int GetChunkCoordFromTile(Chunk field)
         {
             // Reverse lookup: find field's chunk coord in spawnedChunks
             foreach (var kvp in _worldController.ActiveChunks)
@@ -161,7 +162,7 @@ namespace Eco.Scripts.World
         
         private int Mod(int a, int m) => (a % m + m) % m;
 
-        public void PlantTree(int prefabId, Tile tile, Field parent)
+        public void PlantTree(int prefabId, Tile tile, Chunk parent)
         {
             var tree = PoolManager.Instance.GetTree(prefabId);
             tree.transform.parent = parent.transform;

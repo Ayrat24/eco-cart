@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad809763a20d224cb30cc81871a86da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 0
+  type: 0
   tiles: []
-  fieldSize: 10
+  debug: 1
 --- !u!1 &6899343367291295477
 GameObject:
   m_ObjectHideFlags: 0
@@ -65,7 +65,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1939546415832124390
 Transform:
   m_ObjectHideFlags: 0

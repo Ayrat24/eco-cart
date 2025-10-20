@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Eco.Scripts.ProgressionScreen
 {
-    public class MapField : MonoBehaviour
+    public class MapField : MonoBehaviour, IPooledObject
     {
         [SerializeField] private RectTransform rectTransform;
         [SerializeField] private TextMeshProUGUI text;
@@ -68,13 +68,6 @@ namespace Eco.Scripts.ProgressionScreen
             _id = id;
             text.text = id.ToString();
 
-            foreach (var i in _spawnedImages)
-            {
-                _imagePool.ReturnToPool(i);
-            }
-
-            _spawnedImages.Clear();
-
             var size = _texture.width;
             Color[] colors = new Color[size * size];
             for (int x = 0; x < size; x++)
@@ -82,7 +75,7 @@ namespace Eco.Scripts.ProgressionScreen
                 for (int y = 0; y < size; y++)
                 {
                     int index = x + y * size;
-                    var tileData = data[y + x * size];
+                    var tileData = data[index];
                     if (tileData.objectType == (int)TileObjectType.Trash)
                     {
                         colors[index] = trashColor;
@@ -106,19 +99,17 @@ namespace Eco.Scripts.ProgressionScreen
                         _spawnedImages.Add(icon);
                     }
 
-                    colors[index] = _tileColors[data[y + x * size].ground];
+                    colors[index] = _tileColors[data[index].ground];
                 }
             }
 
             _texture.SetPixels(colors);
             _texture.Apply();
 
-            tileMap.gameObject.SetActive(true);
         }
 
         public void SetAsUndiscovered()
         {
-            tileMap.gameObject.SetActive(false);
         }
 
         [System.Serializable]
@@ -126,6 +117,21 @@ namespace Eco.Scripts.ProgressionScreen
         {
             public TileGroundType groundType;
             public Color color;
+        }
+
+        public void OnSpawn()
+        {
+            
+        }
+
+        public void OnDespawn()
+        {
+            foreach (var i in _spawnedImages)
+            {
+                _imagePool.ReturnToPool(i);
+            }
+
+            _spawnedImages.Clear();
         }
     }
 }

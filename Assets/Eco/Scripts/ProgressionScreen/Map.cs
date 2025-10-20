@@ -14,7 +14,7 @@ namespace Eco.Scripts.ProgressionScreen
     public class Map : MonoBehaviour
     {
         [SerializeField] private GameObject map;
-        
+
         [SerializeField] private ScrollRect scrollView;
         [SerializeField] private RectTransform content;
         [SerializeField] Transform tileParent;
@@ -29,7 +29,7 @@ namespace Eco.Scripts.ProgressionScreen
 
         private readonly List<MapField> _tiles = new List<MapField>();
         private readonly List<Vector2Int> _visibleIds = new();
-        private Vector2Int _centerPoint = Vector2Int.one;
+        private Vector2Int _centerPoint;
         private ObjectPool<MapField> _pool;
         private WorldController _worldController;
         private SaveManager _saveManager;
@@ -38,7 +38,9 @@ namespace Eco.Scripts.ProgressionScreen
         private float _currentZoom = 1;
         private Player _player;
         private IDisposable _subscription;
-        
+
+        private const int WorldToCanvasCoef = 100;
+
         public void Initialize(WorldController worldController, SaveManager saveManager, Player player)
         {
             _worldController = worldController;
@@ -55,9 +57,13 @@ namespace Eco.Scripts.ProgressionScreen
             worldController.TreePlanter.OnTreePlanted.Subscribe(OnTreePlanted).AddTo(ref builder);
             Stats.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
             _subscription = builder.Build();
+
+            var mapSize = (_worldController.WorldSize * 2 + viewportSize) * WorldToCanvasCoef;
+            content.sizeDelta = new Vector2(mapSize, mapSize);
             
             EnableMap(Stats.IsUpgradeUnlocked(UnlockableUpgradeType.Map));
-            
+            MoveTiles(true);
+
             _initialized = true;
         }
 
@@ -85,7 +91,7 @@ namespace Eco.Scripts.ProgressionScreen
             _worldController.SaveWorld();
             UpdateVisibleFields();
         }
-        
+
         private void Zoom(InputAction.CallbackContext context)
         {
             Vector2 scrollValue = context.ReadValue<Vector2>();
@@ -103,19 +109,23 @@ namespace Eco.Scripts.ProgressionScreen
             zoomObject.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (!_initialized)
             {
                 return;
             }
 
+            //SetPlayerPosition();
+            MoveTiles();
+        }
+
+        private void SetPlayerPosition()
+        {
             Vector2 playerPos = new Vector2(-_player.transform.position.x, -_player.transform.position.z) * 10;
             playerMarker.anchoredPosition = -playerPos;
             playerMarker.rotation = Quaternion.Euler(0, 0, -_player.transform.eulerAngles.y);
             content.anchoredPosition = playerPos;
-
-            MoveTiles();
         }
 
         public void ResetView()
@@ -124,12 +134,11 @@ namespace Eco.Scripts.ProgressionScreen
             content.anchoredPosition = Vector2.zero;
         }
 
-        private void MoveTiles()
+        private void MoveTiles(bool force = false)
         {
-            Vector2Int center = new Vector2Int((int)(content.anchoredPosition.x / 100), (int)(
-                content.anchoredPosition.y / 100));
+            Vector2Int center = GetMapPosition();
 
-            if (center == _centerPoint)
+            if (!force && center == _centerPoint)
             {
                 return;
             }
@@ -137,6 +146,7 @@ namespace Eco.Scripts.ProgressionScreen
             _centerPoint = center;
 
             _visibleIds.Clear();
+            //find all visible tiles
             for (int x = -viewportSize; x < viewportSize; x++)
             {
                 for (int y = -viewportSize; y < viewportSize; y++)
@@ -147,36 +157,36 @@ namespace Eco.Scripts.ProgressionScreen
                 }
             }
 
+            //remove and hide tiles that became not visible
             for (var i = _tiles.Count - 1; i >= 0; i--)
             {
                 var t = _tiles[i];
-                if (_visibleIds.Contains(t.Id))
-                {
-                    _visibleIds.Remove(t.Id);
-                    continue;
-                }
 
                 _pool.ReturnToPool(t);
                 _tiles.RemoveAt(i);
             }
 
+            //show new tiles
             foreach (var id in _visibleIds)
             {
+                if (!_saveManager.FieldTiles.TryGetValue(id, out var data))
+                {
+                    continue;
+                }
+
                 var t = _pool.Get();
-                t.Rect.anchoredPosition = id * 100;
-                t.Initialize(_worldController.ChunkSize, iconParent);
+                t.Rect.anchoredPosition = id * WorldToCanvasCoef;
+                t.Initialize(WorldController.ChunkSize, iconParent);
 
-                if (_saveManager.FieldTiles.TryGetValue(id, out var data))
-                {
-                    t.SetTileData(id, data);
-                }
-                else
-                {
-                    t.SetAsUndiscovered();
-                }
-
+                t.SetTileData(id, data);
                 _tiles.Add(t);
             }
+        }
+
+        private Vector2Int GetMapPosition()
+        {
+            return new Vector2Int((int)(content.anchoredPosition.x / WorldToCanvasCoef), (int)(
+                content.anchoredPosition.y / WorldToCanvasCoef));
         }
 
         private void UpdateVisibleFields()

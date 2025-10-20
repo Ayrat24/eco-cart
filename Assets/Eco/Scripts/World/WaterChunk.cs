@@ -1,58 +1,32 @@
-using System.Collections.Generic;
 using Bitgem.VFX.StylisedWater;
-using Eco.Scripts.Trash;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Eco.Scripts.World
 {
-    public class WaterField : Field
+    public class WaterChunk : Chunk
     {
         [SerializeField] private bool enableFloating;
         [SerializeField] private WaterVolumeTransforms water;
         [SerializeField] private WaterVolumeHelper waterVolumeHelper;
 
-        private readonly List<WateverVolumeFloater> _waterVolumeFloaters = new();
-
-        public override void MakeGrass()
+        public void Init()
         {
-        }
-
-        public override void OnDespawn()
-        {
-            if (enableFloating)
+            for (int x = 0; x < ChunkSize; x++)
             {
-                for (int i = _waterVolumeFloaters.Count - 1; i >= 0; i--)
+                for (int y = 0; y < ChunkSize; y++)
                 {
-                    Destroy(_waterVolumeFloaters[i]);
+                    Tile t = tiles[y * ChunkSize + x];
+                    t.groundType = TileGroundType.Water;
                 }
-
-                _waterVolumeFloaters.Clear();
             }
-
-            base.OnDespawn();
-        }
-
-        protected override TrashItem SpawnTrashAtTile(Tile tile, int id = -1)
-        {
-            var trash = base.SpawnTrashAtTile(tile, id);
-
-            if (enableFloating)
-            {
-                var floater = trash.AddComponent<WateverVolumeFloater>();
-                floater.WaterVolumeHelper = waterVolumeHelper;
-                _waterVolumeFloaters.Add(floater);
-            }
-
-            trash.MakeKinematic(true);
             
-            var pos = trash.transform.localPosition;
-            pos.y -= 0.2f;
-            trash.transform.localPosition = pos;
-
-            return trash;
+            //to show water on the map
+            if(!HasSave)
+            {
+                SaveTiles();
+            }
         }
-
+        
         public void UpdateWaterCorners(int worldSize, Vector2Int position)
         {
             WaterVolumeBase.TileFace faces = 0;

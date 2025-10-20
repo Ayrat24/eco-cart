@@ -1,40 +1,38 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eco.Scripts.Pooling;
-using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
-using R3;
-using Unity.Mathematics;
+using Unity.AI.Navigation;
 using UnityEngine;
 using VContainer;
-using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.World
 {
     public class WorldController : MonoBehaviour
     {
+        [SerializeField] List<ChunkPrefab> chunkPrefabs;
         [SerializeField] Transform player;
-        [SerializeField] Field chunkPrefab;
-        [SerializeField] WaterField waterPrefab;
-        [SerializeField] int chunkSize = 10;
+        [SerializeField] WaterChunk waterPrefab;
         [SerializeField] int renderRadius = 5; // how many chunks in each direction from the player
         [SerializeField] private int worldSize = 52;
+        [SerializeField] private NavMeshSurface navMeshPlane;
 
-        private readonly Dictionary<Vector2Int, Field> _spawnedChunks = new();
+        private readonly Dictionary<Vector2Int, Chunk> _spawnedChunks = new();
         private Vector2Int _currentPlayerChunkCoord;
         private SaveManager _saveManager;
 
-        private ObjectPool<Field> _fieldPool;
-        private ObjectPool<WaterField> _waterPool;
         private bool _initialized;
         private TreePlanter _treePlanter;
         private UpgradesCollection _upgrades;
 
-        public int ChunkSize => chunkSize;
+        public const int ChunkSize = 10;
         public int RenderRadius => renderRadius;
         public TreePlanter TreePlanter => _treePlanter;
-        public Dictionary<Vector2Int, Field> ActiveChunks => _spawnedChunks;
+        public Dictionary<Vector2Int, Chunk> ActiveChunks => _spawnedChunks;
+        public int WorldSize => worldSize;
+
+        private readonly Dictionary<ChunkType, ObjectPool<Chunk>> _pools = new();
+        private readonly Dictionary<Vector2Int, ChunkType> _map = new();
         
         [Inject]
         public void Initialize(SaveManager saveManager, UpgradesCollection upgrades)
@@ -45,12 +43,34 @@ namespace Eco.Scripts.World
 
         public void SpawnWorld()
         {
-            _fieldPool = new ObjectPool<Field>(chunkPrefab, renderRadius * renderRadius, transform);
-            _waterPool = new ObjectPool<WaterField>(waterPrefab, renderRadius * 2);
+            foreach (var chunkPrefab in chunkPrefabs)
+            {
+                _pools[chunkPrefab.type] = chunkPrefab.CreatePool(renderRadius * renderRadius, transform);
+            }
+            
+            Random.InitState(5);
+            var allTypes = _pools.Keys.ToArray();
+            for (int x = -worldSize; x < worldSize; x++)
+            {
+                for (int y = -worldSize; y < worldSize; y++)
+                {
+                    var rand = Random.Range(0, 2);
+                    var type = allTypes[0];
+                    
+                    _map[new Vector2Int(x, y)] = type;
+                }
+            }
 
             _treePlanter = new TreePlanter(_upgrades, player, this);
             _treePlanter.Init();
+
+            var planeSize = worldSize * 2 + 1;
+            navMeshPlane.transform.localScale = new Vector3(planeSize, 1, planeSize);
+            navMeshPlane.collectObjects = CollectObjects.Volume;
+            navMeshPlane.size = new Vector3(planeSize * 10, 10, planeSize * 10);
+            navMeshPlane.BuildNavMesh();
             
+            Flatten();
             UpdateWorld();
             _initialized = true;
         }
@@ -72,8 +92,8 @@ namespace Eco.Scripts.World
 
         public Vector2Int GetPlayerChunkCoord()
         {
-            int x = Mathf.FloorToInt(player.position.x / chunkSize);
-            int z = Mathf.FloorToInt(player.position.z / chunkSize);
+            int x = Mathf.FloorToInt(player.position.x / ChunkSize);
+            int z = Mathf.FloorToInt(player.position.z / ChunkSize);
             return new Vector2Int(x, z);
         }
 
@@ -92,36 +112,40 @@ namespace Eco.Scripts.World
 
                     if (!_spawnedChunks.ContainsKey(coord))
                     {
-                        Vector3 pos = new Vector3(coord.x * chunkSize, 0, coord.y * chunkSize);
+                        Vector3 pos = new Vector3(coord.x * ChunkSize, 0, coord.y * ChunkSize);
 
-                        Field chunk;
-                        TileGroundType groundType;
-                        if (coord.x > worldSize || coord.x < -worldSize || coord.y > worldSize || coord.y < -worldSize)
+                        var type = _map.GetValueOrDefault(coord, ChunkType.Water);
+                        Chunk chunk = _pools[type].Get();
+                        chunk.Setup(coord, _saveManager);
+                        
+                        if(type == ChunkType.Water)
                         {
-                            WaterField waterChunk = _waterPool.Get();
+                            WaterChunk waterChunk = (WaterChunk)chunk;
+                            waterChunk.Init();
                             waterChunk.UpdateWaterCorners(worldSize, coord);
-                            groundType = TileGroundType.Water;
-                            chunk = waterChunk;
+                            pos.y = -1;
                         }
-                        else
+                        else if(type == ChunkType.Field)
                         {
-                            chunk = _fieldPool.Get();
-                            groundType = TileGroundType.Ground;
+                            FieldChunk fieldChunk = (FieldChunk)chunk;
+                            fieldChunk.Init(_treePlanter);
+                        } else if (type == ChunkType.Pile)
+                        {
+                            PileChunk pileChunk = (PileChunk)chunk;
+                            pileChunk.Init();
                         }
 
                         chunk.transform.parent = transform;
                         chunk.transform.position = pos;
-                        chunk.transform.rotation = quaternion.identity;
+                        chunk.transform.rotation = Quaternion.identity;
 
-                        chunk.Init(coord, _saveManager, _treePlanter, groundType);
-
-                        chunk.name = $"Chunk_{coord.x}_{coord.y}";
+                        chunk.name = $"{type}_Chunk_{coord.x}_{coord.y}";
                         _spawnedChunks[coord] = chunk;
                     }
                 }
             }
 
-            // Optionally remove far-away chunks
+            //remove far-away chunks
             List<Vector2Int> toRemove = new();
             foreach (var chunkCoord in _spawnedChunks.Keys)
             {
@@ -135,18 +159,68 @@ namespace Eco.Scripts.World
             {
                 var chunk = _spawnedChunks[coord];
                 chunk.SaveTiles();
-                
-                if (chunk is WaterField waterField)
-                {
-                    _waterPool.ReturnToPool(waterField);
-                }
-                else
-                {
-                    _fieldPool.ReturnToPool(chunk);
-                }
 
+                _pools[chunk.Type].ReturnToPool(chunk);
                 _spawnedChunks.Remove(coord);
             }
+        }
+
+        public void Flatten()
+        {
+            var terrain = Terrain.activeTerrain;
+            TerrainData data = terrain.terrainData;
+
+            int heightmapWidth = data.heightmapResolution;
+            int heightmapHeight = data.heightmapResolution;
+
+            float[,] heights = data.GetHeights(0, 0, heightmapWidth, heightmapHeight);
+
+            float terrainWidth = data.size.x;
+            float terrainLength = data.size.z;
+            float maxHeight = data.size.y;
+
+            var size = worldSize * 2 * 10;
+            float centerHalf = size / 2f;
+            float centerX = terrainWidth / 2f;
+            float centerZ = terrainLength / 2f;
+
+            float normalizedCenterHeight = 10 / maxHeight;
+            float normalizedBorderHeight = 0 / maxHeight;
+
+            float falloff = 50;
+
+            for (int y = 0; y < heightmapHeight; y++)
+            {
+                for (int x = 0; x < heightmapWidth; x++)
+                {
+                    float worldX = (x / (float)(heightmapWidth - 1)) * terrainWidth;
+                    float worldZ = (y / (float)(heightmapHeight - 1)) * terrainLength;
+
+                    // Distance from center of terrain
+                    float dx = Mathf.Abs(worldX - centerX);
+                    float dz = Mathf.Abs(worldZ - centerZ);
+                    float distanceFromEdge = Mathf.Max(dx - centerHalf, dz - centerHalf);
+
+                    if (distanceFromEdge <= 0)
+                    {
+                        // Inside plateau
+                        heights[y, x] = normalizedCenterHeight;
+                    }
+                    else if (distanceFromEdge >= falloff)
+                    {
+                        // Fully outside plateau
+                        heights[y, x] = normalizedBorderHeight;
+                    }
+                    else
+                    {
+                        // In falloff zone — blend smoothly
+                        float t = Mathf.InverseLerp(0, falloff, distanceFromEdge);
+                        heights[y, x] = Mathf.Lerp(normalizedCenterHeight, normalizedBorderHeight, t);
+                    }
+                }
+            }
+
+            data.SetHeights(0, 0, heights);
         }
 
         public void SaveWorld()
@@ -160,6 +234,18 @@ namespace Eco.Scripts.World
         private void OnDestroy()
         {
             _treePlanter?.Clear();
+        }
+        
+        [System.Serializable]
+        private class ChunkPrefab
+        {
+            public ChunkType type;
+            public Chunk chunk;
+
+            public ObjectPool<Chunk> CreatePool(int initialSize, Transform parent)
+            {
+                return new ObjectPool<Chunk>(chunk, initialSize, parent);
+            }
         }
     }
 }

@@ -220,6 +220,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2158645638231702453, guid: d3acc342df4ee7849871fb8e0bffc8ef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3577063534379541029}
+    - targetCorrespondingSourceObject: {fileID: 2158645638231702453, guid: d3acc342df4ee7849871fb8e0bffc8ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8303831552914349363}
   m_SourcePrefab: {fileID: 100100000, guid: d3acc342df4ee7849871fb8e0bffc8ef, type: 3}
 --- !u!4 &3555696075170880732 stripped
 Transform:
@@ -243,8 +246,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d18e065545e94c4b8191251fc913eda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WaterField
-  debug: 0
+  type: 1
   tiles: []
-  fieldSize: 10
+  enableFloating: 0
   water: {fileID: 9121553497861101713}
   waterVolumeHelper: {fileID: 1799623875235885448}
+--- !u!208 &8303831552914349363
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235408351730670572}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 5, y: 2.5, z: 5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

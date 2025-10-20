@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eadc48912bbc31649aa5db183675ebd0, type: 3}
   m_Name: PineBuy
   m_EditorClassIdentifier: 
-  baseCost: 40
+  baseCost: 1
   costGrowth: 1.5
+  needsUpgrade: 0
   upgradeId: Pane A Pine
   upgradeLocalizedName:
     m_TableReference:
