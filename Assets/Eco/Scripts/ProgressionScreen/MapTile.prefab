@@ -67,7 +67,7 @@ MonoBehaviour:
   - groundType: 0
     color: {r: 0.9490197, g: 0.909804, b: 0.8117648, a: 1}
   - groundType: 1
-    color: {r: 0.654902, g: 0.78823537, b: 0.34117648, a: 1}
+    color: {r: 0.21800463, g: 0.6698113, b: 0.3309563, a: 1}
   - groundType: 2
     color: {r: 0.14159843, g: 0.45960674, b: 0.6981132, a: 1}
   trashColor: {r: 1, g: 0.039215688, b: 0.4039216, a: 1}

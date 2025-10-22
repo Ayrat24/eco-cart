@@ -18,12 +18,11 @@ namespace Eco.Scripts.ProgressionScreen
         [SerializeField] private ScrollRect scrollView;
         [SerializeField] private RectTransform content;
         [SerializeField] Transform tileParent;
-        [SerializeField] Transform zoomObject;
         [SerializeField] private MapField field;
         [SerializeField] private int cellSize;
         [SerializeField] private int viewportSize;
-        [SerializeField] private float zoomScale;
-        [SerializeField] Vector2 zoomRange;
+        [SerializeField] MapInputHandler inputHandler;
+       
         [SerializeField] private Transform iconParent;
         [SerializeField] private RectTransform playerMarker;
 
@@ -34,23 +33,19 @@ namespace Eco.Scripts.ProgressionScreen
         private WorldController _worldController;
         private SaveManager _saveManager;
         private bool _initialized;
-        private InputSystem_Actions _inputActions;
-        private float _currentZoom = 1;
         private Player _player;
         private IDisposable _subscription;
 
         private const int WorldToCanvasCoef = 100;
 
+        public bool PlayerFollowingEnabled { get; set; }
+        
         public void Initialize(WorldController worldController, SaveManager saveManager, Player player)
         {
             _worldController = worldController;
             _saveManager = saveManager;
             _player = player;
             _pool = new ObjectPool<MapField>(field, viewportSize * viewportSize, tileParent);
-
-            _inputActions = new InputSystem_Actions();
-            _inputActions.Map.Enable();
-            _inputActions.Map.Zoom.performed += Zoom;
 
             var builder = new DisposableBuilder();
             TrashItem.OnItemRecycled.Subscribe(OnTrashRecycled).AddTo(ref builder);
@@ -64,6 +59,7 @@ namespace Eco.Scripts.ProgressionScreen
             EnableMap(Stats.IsUpgradeUnlocked(UnlockableUpgradeType.Map));
             MoveTiles(true);
 
+            inputHandler.Init(this);
             _initialized = true;
         }
 
@@ -92,40 +88,27 @@ namespace Eco.Scripts.ProgressionScreen
             UpdateVisibleFields();
         }
 
-        private void Zoom(InputAction.CallbackContext context)
-        {
-            Vector2 scrollValue = context.ReadValue<Vector2>();
-
-            if (scrollValue.y > 0)
-            {
-                _currentZoom += zoomScale;
-            }
-            else if (scrollValue.y < 0)
-            {
-                _currentZoom -= zoomScale;
-            }
-
-            _currentZoom = Mathf.Clamp(_currentZoom, zoomRange.x, zoomRange.y);
-            zoomObject.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
-        }
-
-        void FixedUpdate()
+        void Update()
         {
             if (!_initialized)
             {
                 return;
             }
 
-            //SetPlayerPosition();
+            UpdatePlayerPosition();
             MoveTiles();
         }
 
-        private void SetPlayerPosition()
+        private void UpdatePlayerPosition()
         {
             Vector2 playerPos = new Vector2(-_player.transform.position.x, -_player.transform.position.z) * 10;
             playerMarker.anchoredPosition = -playerPos;
             playerMarker.rotation = Quaternion.Euler(0, 0, -_player.transform.eulerAngles.y);
-            content.anchoredPosition = playerPos;
+            
+            if(PlayerFollowingEnabled)
+            {
+                content.anchoredPosition = playerPos;
+            }
         }
 
         public void ResetView()
