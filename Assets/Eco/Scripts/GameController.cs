@@ -24,11 +24,12 @@ namespace Eco.Scripts
         private UpgradesCollection _upgradeCollection;
         private CurrencyManager _currencyManager;
         private TreeCurrencyEarner _treeCurrencyEarner;
+        private WorldProgress _worldProgress;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
             HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
-            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner)
+            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner, WorldProgress worldProgress)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -38,6 +39,7 @@ namespace Eco.Scripts
             _upgradeCollection = upgradesCollection;
             _currencyManager = currencyManager;
             _treeCurrencyEarner = treeCurrencyEarner;
+            _worldProgress = worldProgress;
         }
 
         private void Start()
@@ -53,12 +55,13 @@ namespace Eco.Scripts
             TerrainPainter.ClearTerrain();
             _saveManager.LoadFieldTiles();
             _worldController.SpawnWorld();
+            _worldProgress.Init();
 
             _saveManager.LoadPlayerProgress();
             _upgradeCollection.Load(_saveManager);
             
             await UniTask.NextFrame();
-            gameUI.Init(_upgradeCollection, _currencyManager, _player);
+            gameUI.Init(_upgradeCollection, _currencyManager, _player, _worldProgress);
             cameraController.Init(_player);
             await UniTask.NextFrame();
             

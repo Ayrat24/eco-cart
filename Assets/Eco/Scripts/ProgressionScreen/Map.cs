@@ -53,7 +53,7 @@ namespace Eco.Scripts.ProgressionScreen
             Stats.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
             _subscription = builder.Build();
 
-            var mapSize = (_worldController.WorldSize * 2 + viewportSize) * WorldToCanvasCoef;
+            var mapSize = (_worldController.WorldSideSize * 2 + viewportSize) * WorldToCanvasCoef;
             content.sizeDelta = new Vector2(mapSize, mapSize);
             
             EnableMap(Stats.IsUpgradeUnlocked(UnlockableUpgradeType.Map));

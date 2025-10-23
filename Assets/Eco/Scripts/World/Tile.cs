@@ -20,7 +20,8 @@ namespace Eco.Scripts.World
         {
             var data = new TileData
             {
-                objectType = (int)objectType
+                objectType = (int)objectType,
+                clean = objectType is TileObjectType.Empty or TileObjectType.Tree
             };
 
             if (item != null)

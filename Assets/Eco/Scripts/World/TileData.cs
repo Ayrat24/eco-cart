@@ -8,5 +8,6 @@ namespace Eco.Scripts.World
         public int objectType;
         public int objectId;
         public int ground;
+        public bool clean;
     }
 }

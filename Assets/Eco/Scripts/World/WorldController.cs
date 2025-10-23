@@ -4,6 +4,7 @@ using Eco.Scripts.Pooling;
 using Eco.Scripts.Upgrades;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 
 namespace Eco.Scripts.World
@@ -14,7 +15,7 @@ namespace Eco.Scripts.World
         [SerializeField] Transform player;
         [SerializeField] WaterChunk waterPrefab;
         [SerializeField] int renderRadius = 5; // how many chunks in each direction from the player
-        [SerializeField] private int worldSize = 52;
+        [FormerlySerializedAs("worldSize")] [SerializeField] private int worldSideSize = 10;
         [SerializeField] private NavMeshSurface navMeshPlane;
 
         private readonly Dictionary<Vector2Int, Chunk> _spawnedChunks = new();
@@ -29,8 +30,9 @@ namespace Eco.Scripts.World
         public int RenderRadius => renderRadius;
         public TreePlanter TreePlanter => _treePlanter;
         public Dictionary<Vector2Int, Chunk> ActiveChunks => _spawnedChunks;
-        public int WorldSize => worldSize;
-
+        public int WorldSideSize => worldSideSize;
+        public int WorldSize => worldSideSize * 2 + 1;
+        
         private readonly Dictionary<ChunkType, ObjectPool<Chunk>> _pools = new();
         private readonly Dictionary<Vector2Int, ChunkType> _map = new();
         
@@ -50,9 +52,9 @@ namespace Eco.Scripts.World
             
             Random.InitState(5);
             var allTypes = _pools.Keys.ToArray();
-            for (int x = -worldSize; x < worldSize; x++)
+            for (int x = -worldSideSize; x <= worldSideSize; x++)
             {
-                for (int y = -worldSize; y < worldSize; y++)
+                for (int y = -worldSideSize; y <= worldSideSize; y++)
                 {
                     var rand = Random.Range(0, 2);
                     var type = allTypes[0];
@@ -64,7 +66,7 @@ namespace Eco.Scripts.World
             _treePlanter = new TreePlanter(_upgrades, player, this);
             _treePlanter.Init();
 
-            var planeSize = worldSize * 2 + 1;
+            var planeSize = worldSideSize * 2 + 1;
             navMeshPlane.transform.localScale = new Vector3(planeSize, 1, planeSize);
             navMeshPlane.collectObjects = CollectObjects.Volume;
             navMeshPlane.size = new Vector3(planeSize * 10, 10, planeSize * 10);
@@ -122,7 +124,7 @@ namespace Eco.Scripts.World
                         {
                             WaterChunk waterChunk = (WaterChunk)chunk;
                             waterChunk.Init();
-                            waterChunk.UpdateWaterCorners(worldSize, coord);
+                            waterChunk.UpdateWaterCorners(worldSideSize, coord);
                             pos.y = -1;
                         }
                         else if(type == ChunkType.Field)
@@ -179,7 +181,7 @@ namespace Eco.Scripts.World
             float terrainLength = data.size.z;
             float maxHeight = data.size.y;
 
-            var size = worldSize * 2 * 10;
+            var size = WorldSize * 10;
             float centerHalf = size / 2f;
             float centerX = terrainWidth / 2f;
             float centerZ = terrainLength / 2f;

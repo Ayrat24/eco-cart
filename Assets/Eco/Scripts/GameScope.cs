@@ -18,6 +18,7 @@ namespace Eco.Scripts
             builder.Register<SaveManager>(Lifetime.Singleton);
             builder.Register<CurrencyManager>(Lifetime.Singleton);
             builder.Register<TreeCurrencyEarner>(Lifetime.Singleton);
+            builder.Register<WorldProgress>(Lifetime.Singleton);
         
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();

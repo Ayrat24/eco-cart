@@ -1,4 +1,5 @@
 using Eco.Scripts.Upgrades;
+using Eco.Scripts.World;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,8 +15,9 @@ namespace Eco.Scripts.UI
         private CartStorageDisplay _cartStorageDisplay;
         private TutorialMenu _tutorialMenu;
         private ToolSelector _toolSelector;
+        private ProgressDisplay _progress;
         
-        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player)
+        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player, WorldProgress worldProgress)
         {
             _upgradeMenu = new UpgradeMenu(uiDocument, upgradeItemTemplate, upgradesCollection, currencyManager);
             _upgradeMenu.Init();
@@ -28,6 +30,9 @@ namespace Eco.Scripts.UI
 
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
+
+            _progress = new ProgressDisplay(uiDocument, worldProgress);
+            _progress.Init();
         }
 
         public void Clear()
@@ -36,6 +41,7 @@ namespace Eco.Scripts.UI
             _cartStorageDisplay.Clear();
             _tutorialMenu.Clear();
             _toolSelector.Clear();
+            _progress.Clear();
         }
     }
 }

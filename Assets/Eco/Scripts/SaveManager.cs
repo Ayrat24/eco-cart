@@ -12,10 +12,12 @@ namespace Eco.Scripts
         private readonly Dictionary<Vector2Int, TileData[]> _fieldTiles = new();
         public Dictionary<Vector2Int, TileData[]> FieldTiles => _fieldTiles;
         public PlayerProgress Progress { get; set; }
+        public readonly Subject<Vector2Int> OnChunkUpdated = new();
 
         public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
         {
             _fieldTiles[position] = tiles;
+            OnChunkUpdated.OnNext(position);
         }
 
         public void SaveFieldTiles()
