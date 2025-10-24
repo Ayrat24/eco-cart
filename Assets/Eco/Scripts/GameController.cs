@@ -15,6 +15,7 @@ namespace Eco.Scripts
         [SerializeField] GameUI gameUI;
         [SerializeField] CameraController cameraController;
         [SerializeField] private Map map;
+        [SerializeField] WorldPreset worldPreset;
 
         private SaveManager _saveManager;
         private WorldController _worldController;
@@ -49,15 +50,13 @@ namespace Eco.Scripts
 
         private async UniTask StartGameAsync()
         {
-            _saveManager.LoadPlayerProgress();
+            _saveManager.Load(worldPreset.WorldId);
 
             _settings.Load();
             TerrainPainter.ClearTerrain();
-            _saveManager.LoadFieldTiles();
-            _worldController.SpawnWorld();
+            _worldController.SpawnWorld(worldPreset);
             _worldProgress.Init();
 
-            _saveManager.LoadPlayerProgress();
             _upgradeCollection.Load(_saveManager);
             
             await UniTask.NextFrame();

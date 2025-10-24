@@ -330,8 +330,8 @@ MonoBehaviour:
   player: {fileID: 1863505816}
   waterPrefab: {fileID: 3577063534379541029, guid: c6b5dc365d34ec944bb0ab8f20fbc917, type: 3}
   renderRadius: 5
-  worldSize: 10
   navMeshPlane: {fileID: 1746297176}
+  worldPreset: {fileID: 0}
 --- !u!4 &144762168
 Transform:
   m_ObjectHideFlags: 0

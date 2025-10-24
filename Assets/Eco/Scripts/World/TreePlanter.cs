@@ -124,6 +124,11 @@ namespace Eco.Scripts.World
 
                         if (_worldController.ActiveChunks.TryGetValue(targetChunkCoord, out Chunk targetField))
                         {
+                            if (targetField is not FieldChunk)
+                            {
+                                continue;
+                            }
+                            
                             // Local position inside the target chunk
                             Vector2Int localPos = new Vector2Int(
                                 Mod(globalPos.y, chunkSize),

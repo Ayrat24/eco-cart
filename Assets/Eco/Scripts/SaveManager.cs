@@ -14,6 +14,8 @@ namespace Eco.Scripts
         public PlayerProgress Progress { get; set; }
         public readonly Subject<Vector2Int> OnChunkUpdated = new();
 
+        private string _worldId;
+        
         public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
         {
             _fieldTiles[position] = tiles;
@@ -30,7 +32,7 @@ namespace Eco.Scripts
             }
 
             string json = JsonConvert.SerializeObject(serializableDict, Formatting.Indented);
-            System.IO.File.WriteAllText(Application.persistentDataPath + "/field_tiles.json", json);
+            System.IO.File.WriteAllText($"{Application.persistentDataPath}/field_tiles_{_worldId}.json", json);
         }
 
         public void SavePlayerProgress()
@@ -39,14 +41,26 @@ namespace Eco.Scripts
             System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
         }
 
-        public void LoadPlayerProgress()
+        public void Load(string worldId)
         {
-            string path = Application.persistentDataPath + "/progress.json";
+            _worldId = worldId;
+            LoadPlayerProgress();
+            LoadFieldTiles();
+        }
+        
+        private void LoadPlayerProgress()
+        {
+            string path = $"{Application.persistentDataPath}/progress.json";
 
             if (System.IO.File.Exists(path))
             {
                 string json = System.IO.File.ReadAllText(path);
                 Progress = JsonConvert.DeserializeObject<PlayerProgress>(json);
+
+                if (Progress.worldId != _worldId)
+                {
+                    Progress.playerPosition = new Vector3Serializable(Vector3.zero);
+                }
             }
             else
             {
@@ -54,9 +68,9 @@ namespace Eco.Scripts
             }
         }
 
-        public void LoadFieldTiles()
+        private void LoadFieldTiles()
         {
-            string path = Application.persistentDataPath + "/field_tiles.json";
+            string path = $"{Application.persistentDataPath}/field_tiles_{_worldId}.json";
             _fieldTiles.Clear();
 
             if (System.IO.File.Exists(path))
@@ -91,6 +105,7 @@ namespace Eco.Scripts
             public string selectedCart;
             public Vector3Serializable playerPosition;
             public Dictionary<string, int> UpgradeLevels = new();
+            public string worldId;
         }
         
         [System.Serializable]

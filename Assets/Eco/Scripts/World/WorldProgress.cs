@@ -48,8 +48,6 @@ namespace Eco.Scripts.World
                 return;
             }
 
-            Debug.LogError(position);
-            
             bool allClean = true;
             foreach (var tile in tiles)
             {
@@ -75,7 +73,6 @@ namespace Eco.Scripts.World
                 percentage = (float)_cleanChunks.Count / _totalChunks;
             }
 
-            Debug.LogError($"{_cleanChunks.Count} / {_totalChunks} = {percentage}");
             ClearPercentage.Value = percentage;
         }
     }

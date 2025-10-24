@@ -40,7 +40,6 @@ public class ProgressDisplay
     private void UpdateProgress(float percentage)
     {
         _progressBar.value = percentage * 100;
-        Debug.LogError(percentage);
     }
 
     public void Clear()
