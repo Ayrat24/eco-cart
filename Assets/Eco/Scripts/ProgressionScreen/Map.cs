@@ -190,7 +190,7 @@ namespace Eco.Scripts.ProgressionScreen
 
         private void OnDestroy()
         {
-            _subscription.Dispose();
+            _subscription?.Dispose();
         }
     }
 }

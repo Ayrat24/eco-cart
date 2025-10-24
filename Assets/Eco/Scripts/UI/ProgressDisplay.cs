@@ -1,54 +1,70 @@
 using System;
 using Eco.Scripts.World;
-using UnityEngine.UIElements;
 using R3;
-using UnityEngine;
+using UnityEngine.UIElements;
 
-public class ProgressDisplay
+namespace Eco.Scripts.UI
 {
-    private readonly UIDocument _uiDocument;
-    private readonly WorldProgress _worldProgress;
-
-    private IDisposable _subscription;
-    private ProgressBar _progressBar;
-
-    public ProgressDisplay(UIDocument uiDocument, WorldProgress worldProgress)
+    public class ProgressDisplay
     {
-        _uiDocument = uiDocument;
-        _worldProgress = worldProgress;
-    }
+        private readonly UIDocument _uiDocument;
+        private readonly ProgressTracker _progressTracker;
 
-    public void Init()
-    {
-        if (_uiDocument == null || _worldProgress == null)
+        private Button _button;
+
+        private IDisposable _subscription;
+        private ProgressBar _clearProgressBar;
+        private ProgressBar _greenProgressBar;
+
+        public ProgressDisplay(UIDocument uiDocument, ProgressTracker progressTracker)
         {
-            return;
+            _uiDocument = uiDocument;
+            _progressTracker = progressTracker;
         }
 
-        var root = _uiDocument.rootVisualElement;
+        public void Init()
+        {
+            var root = _uiDocument.rootVisualElement;
 
-        // Try to find a ProgressBar named "ClearProgress" first
-        _progressBar = root.Q<ProgressBar>("ClearProgress");
+            _button = root.Q<Button>("SelectWorldButton");
+            _button.clicked += OpenWorldSelector;
+            
+            // Find ProgressBars by name
+            _clearProgressBar = root.Q<ProgressBar>("ClearProgress");
+            _greenProgressBar = root.Q<ProgressBar>("GreenProgress");
 
-        // Subscribe to clear percentage changes
-        _subscription = _worldProgress.ClearPercentage.Subscribe(UpdateProgress);
+            // Combine subscriptions into a single disposable using DisposableBuilder
+            var builder = new DisposableBuilder();
+            _progressTracker.ClearPercentage.Subscribe(UpdateClearProgress).AddTo(ref builder);
+            _progressTracker.GreenPercentage.Subscribe(UpdateGreenProgress).AddTo(ref builder);
+            _subscription = builder.Build();
 
-        // Initialize UI with current value
-        UpdateProgress(_worldProgress.ClearPercentage.Value);
-    }
+            // Initialize UI with current values
+            UpdateClearProgress(_progressTracker.ClearPercentage.Value);
+            UpdateGreenProgress(_progressTracker.GreenPercentage.Value);
+        }
 
-    private void UpdateProgress(float percentage)
-    {
-        _progressBar.value = percentage * 100;
-    }
+        private void UpdateClearProgress(float percentage)
+        {
+            _clearProgressBar.value = percentage * 100;
+        }
 
-    public void Clear()
-    {
-        _subscription?.Dispose();
-        _subscription = null;
+        private void UpdateGreenProgress(float percentage)
+        {
+            _greenProgressBar.value = percentage * 100;
+        }
+
+        private void OpenWorldSelector()
+        {
+            WorldSelector.Instance.Open();
+        }
+
+        public void Clear()
+        {
+            _subscription?.Dispose();
+            _subscription = null;
+            
+            _button.clicked -= OpenWorldSelector;
+        }
     }
 }
-
-
-
-

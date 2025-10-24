@@ -17,7 +17,7 @@ namespace Eco.Scripts.UI
         private ToolSelector _toolSelector;
         private ProgressDisplay _progress;
         
-        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player, WorldProgress worldProgress)
+        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player, ProgressTracker progressTracker)
         {
             _upgradeMenu = new UpgradeMenu(uiDocument, upgradeItemTemplate, upgradesCollection, currencyManager);
             _upgradeMenu.Init();
@@ -31,7 +31,7 @@ namespace Eco.Scripts.UI
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
 
-            _progress = new ProgressDisplay(uiDocument, worldProgress);
+            _progress = new ProgressDisplay(uiDocument, progressTracker);
             _progress.Init();
         }
 

@@ -20,13 +20,18 @@ namespace Eco.Scripts.Upgrades
 
         public static void AddUnlockableUpgrade(UnlockableUpgradeType upgrade, bool unlocked)
         {
-            UnlockableUpgrades.Add(upgrade, unlocked);
+            UnlockableUpgrades[upgrade] = unlocked;
         }
 
         public static void UnlockUpgrade(UnlockableUpgradeType upgrade)
         {
             UnlockableUpgrades[upgrade] = true;
             OnUnlocked.OnNext(upgrade);
+        }
+
+        public static void Clear()
+        {
+            UnlockableUpgrades.Clear();
         }
     }
 

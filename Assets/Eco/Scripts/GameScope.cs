@@ -15,10 +15,10 @@ namespace Eco.Scripts
     
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<SaveManager>(Lifetime.Singleton);
-            builder.Register<CurrencyManager>(Lifetime.Singleton);
-            builder.Register<TreeCurrencyEarner>(Lifetime.Singleton);
-            builder.Register<WorldProgress>(Lifetime.Singleton);
+            builder.Register<SaveManager>(Lifetime.Scoped);
+            builder.Register<CurrencyManager>(Lifetime.Scoped);
+            builder.Register<TreeCurrencyEarner>(Lifetime.Scoped);
+            builder.Register<ProgressTracker>(Lifetime.Scoped);
         
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();

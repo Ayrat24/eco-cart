@@ -87,15 +87,28 @@ namespace Eco.Scripts
             }
         }
 
+        [ContextMenu("Delete Progress")]
         public void DeleteProgress()
         {
-            string path = Application.persistentDataPath + "/field_tiles.json";
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
+            var path = Application.persistentDataPath;
+            try
+            {
+                // Delete explicit progress file
+                var progressPath = System.IO.Path.Combine(path, "progress.json");
+                if (System.IO.File.Exists(progressPath))
+                    System.IO.File.Delete(progressPath);
 
-            path = Application.persistentDataPath + "/progress.json";
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
+                // Delete any field_tiles files (per-world or backups)
+                var fieldFiles = System.IO.Directory.GetFiles(path, "field_tiles_*.json");
+                foreach (var file in fieldFiles)
+                {
+                    System.IO.File.Delete(file);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Failed to delete save files in '{path}': {ex}");
+            }
         }
 
         [System.Serializable]

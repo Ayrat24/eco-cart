@@ -25,12 +25,12 @@ namespace Eco.Scripts
         private UpgradesCollection _upgradeCollection;
         private CurrencyManager _currencyManager;
         private TreeCurrencyEarner _treeCurrencyEarner;
-        private WorldProgress _worldProgress;
+        private ProgressTracker _progressTracker;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
             HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
-            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner, WorldProgress worldProgress)
+            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner, ProgressTracker progressTracker)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -40,7 +40,7 @@ namespace Eco.Scripts
             _upgradeCollection = upgradesCollection;
             _currencyManager = currencyManager;
             _treeCurrencyEarner = treeCurrencyEarner;
-            _worldProgress = worldProgress;
+            _progressTracker = progressTracker;
         }
 
         private void Start()
@@ -50,17 +50,18 @@ namespace Eco.Scripts
 
         private async UniTask StartGameAsync()
         {
+            worldPreset = WorldSelector.Instance.SelectedPreset;
             _saveManager.Load(worldPreset.WorldId);
 
             _settings.Load();
             TerrainPainter.ClearTerrain();
             _worldController.SpawnWorld(worldPreset);
-            _worldProgress.Init();
+            _progressTracker.Init();
 
             _upgradeCollection.Load(_saveManager);
             
             await UniTask.NextFrame();
-            gameUI.Init(_upgradeCollection, _currencyManager, _player, _worldProgress);
+            gameUI.Init(_upgradeCollection, _currencyManager, _player, _progressTracker);
             cameraController.Init(_player);
             await UniTask.NextFrame();
             
@@ -89,6 +90,8 @@ namespace Eco.Scripts
 
             _treeCurrencyEarner.Clear();
             gameUI.Clear();
+            
+            Stats.Clear();
         }
 
         private void OnApplicationQuit()

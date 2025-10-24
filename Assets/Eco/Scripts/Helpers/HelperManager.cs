@@ -87,7 +87,7 @@ namespace Eco.Scripts.Helpers
 
         private void OnDestroy()
         {
-            _subscription.Dispose();
+            _subscription?.Dispose();
 
             foreach (var helper in _helpers)
             {

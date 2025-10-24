@@ -97,6 +97,7 @@ namespace Eco.Scripts.World
         public void MakeGrass()
         {
             MakeGrass(_cancellationTokenSource.Token).Forget();
+            SaveTiles();
         }
 
         private async UniTask MakeGrass(CancellationToken cancellationToken)
