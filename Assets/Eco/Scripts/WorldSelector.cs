@@ -57,8 +57,6 @@ namespace Eco.Scripts
                 lastWorldId = worldPresets[0].WorldId;
             }
             
-            Debug.LogError(lastWorldId);
-            
             // Clear existing and add radio buttons
             group.Clear();
             foreach (var preset in worldPresets)

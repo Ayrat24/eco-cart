@@ -38,9 +38,6 @@ namespace Eco.Scripts.Upgrades
             public int carryingCapacity;
             public int moveSpeed;
             public Vector3 cameraOffset;
-            public Vector3 playerPosition;
-            public float pickupRadius;
-            public float pickupRadiusDeadZone;
             public float menuCameraOffset;
             public Vector3 characterModelOffset;
         }

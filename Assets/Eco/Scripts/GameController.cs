@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Helpers;
+using Eco.Scripts.Pooling;
 using Eco.Scripts.ProgressionScreen;
 using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
@@ -52,6 +53,8 @@ namespace Eco.Scripts
         {
             worldPreset = WorldSelector.Instance.SelectedPreset;
             _saveManager.Load(worldPreset.WorldId);
+            
+            PoolManager.Instance.InitializePools(worldPreset.AllowedTrashItems);
 
             _settings.Load();
             TerrainPainter.ClearTerrain();

@@ -37,10 +37,10 @@ namespace Eco.Scripts
         {
             _cart = cart;
 
-            var xStart = cinemachineFollow.FollowOffset.x;
-            var xEnd = cart.CartData.cameraOffset.x;
-            _xTween = Tween.Custom(xStart, xEnd, 0.5f,
-                f => cinemachineFollow.FollowOffset.x = f);
+            var zStart = cinemachineFollow.FollowOffset.z;
+            var zEnd = cart.CartData.cameraOffset.z;
+            _xTween = Tween.Custom(zStart, zEnd, 0.5f,
+                f => cinemachineFollow.FollowOffset.z = f);
 
             var yStart = cinemachineFollow.FollowOffset.y;
             var yEnd = cart.CartData.cameraOffset.y;
@@ -52,10 +52,10 @@ namespace Eco.Scripts
                 return;
             }
             
-            var zStart = cinemachineFollow.FollowOffset.z;
-            var zEnd = cart.CartData.menuCameraOffset;
-            _zTween = Tween.Custom(zStart, zEnd, 0.5f,
-                f => cinemachineFollow.FollowOffset.z = f);
+            var xStart = cinemachineFollow.FollowOffset.x;
+            var xEnd = cart.CartData.menuCameraOffset;
+            _zTween = Tween.Custom(xStart, xEnd, 0.5f,
+                f => cinemachineFollow.FollowOffset.x = f);
         }
 
         private void OnMenuOpened(bool isOpen)
@@ -69,17 +69,17 @@ namespace Eco.Scripts
 
             if (isOpen)
             {
-                var start = cinemachineFollow.FollowOffset.z;
+                var start = cinemachineFollow.FollowOffset.x;
                 var offset = _cart.CartData.menuCameraOffset;
                 Tween.Custom(start, offset, 0.4f,
-                    f => cinemachineFollow.FollowOffset.z = f);
+                    f => cinemachineFollow.FollowOffset.x = f);
             }
             else
             {
                 var start = _cart.CartData.menuCameraOffset;
                 var offset = 0;
                 Tween.Custom(start, offset, 0.4f,
-                    f => cinemachineFollow.FollowOffset.z = f);
+                    f => cinemachineFollow.FollowOffset.x = f);
             }
         }
 

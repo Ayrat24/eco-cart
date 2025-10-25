@@ -7,7 +7,7 @@ namespace Eco.Scripts.Pooling
 {
     public class PoolManager : MonoBehaviour
     {
-        [SerializeField] private List<TrashItem> trashPrefabs;
+        private List<TrashItem> _trashPrefabs;
         private readonly Dictionary<int, ObjectPool<TrashItem>> _trashPools = new();
         private readonly List<int> _ids = new();
 
@@ -31,9 +31,11 @@ namespace Eco.Scripts.Pooling
             Instance = this;
         }
 
-        private void Start()
+        public void InitializePools(List<TrashItem> trashPrefabs)
         {
-            foreach (var prefab in trashPrefabs)
+            _trashPrefabs = trashPrefabs;
+            
+            foreach (var prefab in _trashPrefabs)
             {
                 var objectPool = new ObjectPool<TrashItem>(prefab, 1, transform);
                 var o = objectPool.Get();

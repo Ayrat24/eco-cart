@@ -117,6 +117,8 @@ namespace Eco.Scripts
                 {
                     System.IO.File.Delete(file);
                 }
+                
+                PlayerPrefs.DeleteKey(LastWorldIdKey);
             }
             catch (System.Exception ex)
             {

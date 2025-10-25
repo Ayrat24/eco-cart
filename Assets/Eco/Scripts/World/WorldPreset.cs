@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Trash;
 using UnityEngine;
 
 namespace Eco.Scripts.World
@@ -11,13 +12,15 @@ namespace Eco.Scripts.World
         [SerializeField] private int seed = 5;
         [SerializeField] private int trashPerChunk = 3;
         [SerializeField] private ChunkType[] chunkTypes = new[] { ChunkType.Water };
-
+        [SerializeField] private List<TrashItem> allowedTrashItems;
+        
         private Dictionary<Vector2Int, ChunkType> _map = new();
 
         public int WorldSideSize => worldSideSize;
         public ChunkType[] ChunkTypes => chunkTypes;
         public string WorldId => worldId;
         public int TrashPerChunk => trashPerChunk;
+        public List<TrashItem> AllowedTrashItems => allowedTrashItems;
         
         public void GenerateMap()
         {
