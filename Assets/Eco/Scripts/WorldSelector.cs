@@ -1,5 +1,7 @@
 using Eco.Scripts.World;
 using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
@@ -47,7 +49,16 @@ namespace Eco.Scripts
             
             // The RadioButtonGroup named GroupName is guaranteed to exist in the document.
             RadioButtonGroup group = root.Q<RadioButtonGroup>(GroupName);
+            RadioButton lastSelected = null;
 
+            var lastWorldId = SaveManager.GetLastWorldId();
+            if (string.IsNullOrEmpty(lastWorldId))
+            {
+                lastWorldId = worldPresets[0].WorldId;
+            }
+            
+            Debug.LogError(lastWorldId);
+            
             // Clear existing and add radio buttons
             group.Clear();
             foreach (var preset in worldPresets)
@@ -61,20 +72,16 @@ namespace Eco.Scripts
                         SelectPreset(preset, reload: true);
                     }
                 });
+                
                 group.Add(rb);
-            }
 
-            // Optionally select the first
-            if (group.childCount > 0)
-            {
-                var first = group[0] as RadioButton;
-                if (first != null)
+                if (lastWorldId == preset.WorldId)
                 {
-                    first.SetValueWithoutNotify(true);
-                    // set initial selection without reloading the scene
-                    SelectPreset(worldPresets[0], reload: false);
+                    lastSelected = rb;
                 }
             }
+
+            lastSelected!.value = true;
         }
 
         private void Close()
@@ -94,9 +101,20 @@ namespace Eco.Scripts
 
             if (reload)
             {
-                // Reload the current active scene so the new world preset takes effect
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                LoadSceneAsync().Forget();
             }
+        }
+        
+        private async UniTask LoadSceneAsync()
+        {
+            var loadOp = SceneManager.LoadSceneAsync(0);
+            while (!loadOp.isDone)
+            {
+                await UniTask.Yield();
+            }
+            
+            var gameController = FindFirstObjectByType<GameController>();
+            gameController.StartGame();
         }
 
         private void OnDestroy()

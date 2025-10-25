@@ -218,7 +218,7 @@ namespace Eco.Scripts.ItemCollecting
 
         public void EmptyCart()
         {
-            if (_isEmptying)
+            if (_isEmptying || _itemsInStorage.Count == 0)
             {
                 return;
             }

@@ -15,6 +15,7 @@ namespace Eco.Scripts
         public readonly Subject<Vector2Int> OnChunkUpdated = new();
 
         private string _worldId;
+        private const string LastWorldIdKey = "last_world_id";
         
         public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
         {
@@ -22,7 +23,15 @@ namespace Eco.Scripts
             OnChunkUpdated.OnNext(position);
         }
 
-        public void SaveFieldTiles()
+        public void Save()
+        {
+            SaveFieldTiles();
+            SavePlayerProgress();
+            
+            PlayerPrefs.SetString(LastWorldIdKey, _worldId);
+        }
+        
+        private void SaveFieldTiles()
         {
             // Convert Vector2Int -> string (e.g., "x,y")
             var serializableDict = new Dictionary<string, TileData[]>();
@@ -35,7 +44,7 @@ namespace Eco.Scripts
             System.IO.File.WriteAllText($"{Application.persistentDataPath}/field_tiles_{_worldId}.json", json);
         }
 
-        public void SavePlayerProgress()
+        private void SavePlayerProgress()
         {
             string json = JsonConvert.SerializeObject(Progress, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
@@ -86,8 +95,12 @@ namespace Eco.Scripts
                 }
             }
         }
+        
+        public static string GetLastWorldId()
+        {
+            return PlayerPrefs.GetString(LastWorldIdKey, string.Empty);
+        }
 
-        [ContextMenu("Delete Progress")]
         public void DeleteProgress()
         {
             var path = Application.persistentDataPath;

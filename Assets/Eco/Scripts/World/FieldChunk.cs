@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Pooling;
@@ -36,42 +37,15 @@ namespace Eco.Scripts.World
 #endif
 
             bool hasSave = HasSave;
-
-            for (int x = 0; x < ChunkSize; x++)
+            if (!hasSave)
             {
-                for (int y = 0; y < ChunkSize; y++)
-                {
-                    var index = y * ChunkSize + x;
-                    Tile tile = Tiles[index];
-
-                    if (!hasSave)
-                    {
-                        bool hasTrash = Random.Range(0, 100) < 5;
-
-                        if (hasTrash)
-                        {
-                            SpawnTrashAtTile(tile);
-                        }
-                    }
-                    else
-                    {
-                        var savedData = SaveManager.FieldTiles[Position][index];
-                        tile.groundType = (TileGroundType)savedData.ground;
-                        var tileStatus = (TileObjectType)savedData.objectType;
-                        tile.objectType = tileStatus;
-
-                        switch (tileStatus)
-                        {
-                            case TileObjectType.Trash:
-                                SpawnTrashAtTile(tile, savedData.objectId);
-                                break;
-                            case TileObjectType.Tree:
-                                _treePlanter.PlantTree(savedData.objectId, tile, this);
-                                break;
-                        }
-                    }
-                }
+                CreateTrash();
             }
+            else
+            {
+                LoadSave();
+            }
+
 
             _cancellationTokenSource = new CancellationTokenSource();
             MakeGrass();
@@ -84,6 +58,50 @@ namespace Eco.Scripts.World
             if (debug)
             {
                 DebugDraw();
+            }
+        }
+
+        private void CreateTrash()
+        {
+            HashSet<int> tileIndexes = new HashSet<int>();
+            while (tileIndexes.Count < TrashPerChunk)
+            {
+                int index = Random.Range(0, ChunkSize * ChunkSize);
+                tileIndexes.Add(index);
+            }
+
+            foreach (var index in tileIndexes)
+            {
+                SpawnTrashAtTile(Tiles[index]);
+            }
+        }
+
+        private void LoadSave()
+        {
+            for (int x = 0; x < ChunkSize; x++)
+            {
+                for (int y = 0; y < ChunkSize; y++)
+                {
+                    var index = y * ChunkSize + x;
+                    Tile tile = Tiles[index];
+
+
+                    var savedData = SaveManager.FieldTiles[Position][index];
+                    tile.groundType = (TileGroundType)savedData.ground;
+                    var tileStatus = (TileObjectType)savedData.objectType;
+                    tile.objectType = tileStatus;
+                    tile.containedTrash = savedData.containedTrash;
+
+                    switch (tileStatus)
+                    {
+                        case TileObjectType.Trash:
+                            SpawnTrashAtTile(tile, savedData.objectId);
+                            break;
+                        case TileObjectType.Tree:
+                            _treePlanter.PlantTree(savedData.objectId, tile, this);
+                            break;
+                    }
+                }
             }
         }
 
@@ -124,6 +142,7 @@ namespace Eco.Scripts.World
             trash.Initialize(tile);
             tile.item = trash;
             tile.objectType = TileObjectType.Trash;
+            tile.containedTrash = true;
         }
 
         public override void OnDespawn()
@@ -131,7 +150,7 @@ namespace Eco.Scripts.World
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;
-            
+
             base.OnDespawn();
         }
 

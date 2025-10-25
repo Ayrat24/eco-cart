@@ -61,18 +61,18 @@ namespace Eco.Scripts.World
             _treePlanter = new TreePlanter(_upgrades, player, this);
             _treePlanter.Init();
 
-            RebuildNavMesh();
             Flatten();
+            RebuildNavMesh();
             UpdateWorld();
             _initialized = true;
          }
 
         private void RebuildNavMesh()
         {
-            var planeSize = WorldSize;
-            navMeshPlane.transform.localScale = new Vector3(planeSize, 1, planeSize);
-            navMeshPlane.collectObjects = CollectObjects.Volume;
-            navMeshPlane.size = new Vector3(planeSize * 10, 10, planeSize * 10);
+            // var planeSize = WorldSize;
+            // navMeshPlane.transform.localScale = new Vector3(planeSize, 1, planeSize);
+            // navMeshPlane.collectObjects = CollectObjects.Volume;
+            // navMeshPlane.size = new Vector3(planeSize * 10, 10, planeSize * 10);
             navMeshPlane.BuildNavMesh();
         }
 
@@ -116,7 +116,7 @@ namespace Eco.Scripts.World
                          Vector3 pos = new Vector3(coord.x * ChunkSize, 0, coord.y * ChunkSize);
                         var type = _worldPreset.GetChunkType(coord);
                          Chunk chunk = _pools[type].Get();
-                         chunk.Setup(coord, _saveManager);
+                         chunk.Setup(coord, _saveManager, _worldPreset.TrashPerChunk);
                          
                          if(type == ChunkType.Water)
                          {

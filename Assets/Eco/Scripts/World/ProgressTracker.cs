@@ -17,12 +17,14 @@ namespace Eco.Scripts.World
 
         // total tiles in the world (chunks * chunkSize * chunkSize)
         private int _totalTiles;
+        private int _totalTrashTiles;
 
         // total green tiles across the world
         private int _greenTilesTotal;
 
         // total clean tiles across the world
         private int _cleanTilesTotal;
+        private int _trashPerTile;
 
         // per-chunk green tile counts to allow replacing counts on updates
         private readonly Dictionary<Vector2Int, int> _greenTilesPerChunk = new();
@@ -36,10 +38,12 @@ namespace Eco.Scripts.World
             _worldController = worldController;
         }
 
-        public void Init()
+        public void Init(int trashPerTile)
         {
+            _trashPerTile = trashPerTile;
             _worldSize = _worldController.WorldSize;
             _totalTiles = _worldSize * _worldSize * WorldController.ChunkSize * WorldController.ChunkSize;
+            _totalTrashTiles = _trashPerTile * (_worldSize * _worldSize);
             _saveManager.OnChunkUpdated.Subscribe(OnChunkUpdated);
 
             // Initial calculation of clean/green tiles
@@ -94,7 +98,7 @@ namespace Eco.Scripts.World
             float percentage = 0;
             if (_totalTiles > 0)
             {
-                percentage = (float)_cleanTilesTotal / _totalTiles;
+                percentage = (float)_cleanTilesTotal / _totalTrashTiles;
             }
 
             ClearPercentage.Value = percentage;
@@ -105,7 +109,7 @@ namespace Eco.Scripts.World
             float percentage = 0;
             if (_totalTiles > 0)
             {
-                percentage = (float)_greenTilesTotal / _totalTiles;
+                percentage = 1 - (float)_greenTilesTotal / _totalTiles;
             }
 
             GreenPercentage.Value = percentage;

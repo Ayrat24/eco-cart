@@ -9,15 +9,15 @@ namespace Eco.Scripts.World
         [SerializeField] private string worldId;
         [SerializeField] private int worldSideSize = 10;
         [SerializeField] private int seed = 5;
+        [SerializeField] private int trashPerChunk = 3;
         [SerializeField] private ChunkType[] chunkTypes = new[] { ChunkType.Water };
 
         private Dictionary<Vector2Int, ChunkType> _map = new();
 
         public int WorldSideSize => worldSideSize;
-        public int WorldSize => worldSideSize * 2 + 1;
-        public int Seed => seed;
         public ChunkType[] ChunkTypes => chunkTypes;
         public string WorldId => worldId;
+        public int TrashPerChunk => trashPerChunk;
         
         public void GenerateMap()
         {

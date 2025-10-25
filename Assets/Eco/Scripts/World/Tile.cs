@@ -1,5 +1,6 @@
 using Eco.Scripts.Pooling;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Eco.Scripts.World
 {
@@ -10,6 +11,7 @@ namespace Eco.Scripts.World
         public Vector2Int position;
         public TileObjectType objectType = TileObjectType.Empty;
         public TileGroundType groundType = TileGroundType.Ground;
+        public bool containedTrash;
         
         public Tile(Vector2Int position)
         {
@@ -21,7 +23,8 @@ namespace Eco.Scripts.World
             var data = new TileData
             {
                 objectType = (int)objectType,
-                clean = objectType is TileObjectType.Empty or TileObjectType.Tree
+                containedTrash = containedTrash,
+                clean = objectType is TileObjectType.Empty or TileObjectType.Tree && containedTrash
             };
 
             if (item != null)

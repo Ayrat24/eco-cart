@@ -15,4 +15,5 @@ MonoBehaviour:
   worldId: world1
   worldSideSize: 1
   seed: 5
-  chunkTypes: 0100000001000000
+  trashPerChunk: 3
+  chunkTypes: 00000000

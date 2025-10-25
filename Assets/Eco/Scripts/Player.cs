@@ -100,8 +100,8 @@ namespace Eco.Scripts
 
         private void OnDestroy()
         {
-            _subscription.Dispose();
-            toolController.Clear();
+            _subscription?.Dispose();
+            toolController?.Clear();
         }
     }
 }

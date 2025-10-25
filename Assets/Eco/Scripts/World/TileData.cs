@@ -9,5 +9,6 @@ namespace Eco.Scripts.World
         public int objectId;
         public int ground;
         public bool clean;
+        public bool containedTrash;
     }
 }

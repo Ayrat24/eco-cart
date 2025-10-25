@@ -43,7 +43,7 @@ namespace Eco.Scripts
             _progressTracker = progressTracker;
         }
 
-        private void Start()
+        public void StartGame()
         {
             StartGameAsync().Forget();
         }
@@ -56,7 +56,7 @@ namespace Eco.Scripts
             _settings.Load();
             TerrainPainter.ClearTerrain();
             _worldController.SpawnWorld(worldPreset);
-            _progressTracker.Init();
+            _progressTracker.Init(worldPreset.TrashPerChunk);
 
             _upgradeCollection.Load(_saveManager);
             
@@ -85,8 +85,7 @@ namespace Eco.Scripts
             
             _worldController.SaveWorld();
 
-            _saveManager.SaveFieldTiles();
-            _saveManager.SavePlayerProgress();
+            _saveManager.Save();
 
             _treeCurrencyEarner.Clear();
             gameUI.Clear();
