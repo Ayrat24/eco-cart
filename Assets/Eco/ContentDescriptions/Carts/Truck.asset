@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseCost: 2
   costGrowth: 1.15
+  needsUpgrade: 0
   upgradeId: Truck
   upgradeLocalizedName:
     m_TableReference:
@@ -54,16 +55,13 @@ MonoBehaviour:
     m_LocalVariables: []
   cartData:
     prefab: {fileID: 6084339236651460199, guid: 6e69200a3067f014aae99f737e537907, type: 3}
-    offset: {x: 0, y: 0, z: -10.22}
+    offset: {x: 0, y: 0, z: 0}
     id: Truck
     carryingCapacity: 20
     moveSpeed: 25
-    cameraOffset: {x: 0, y: 30, z: -9}
-    playerPosition: {x: 0, y: 0, z: 0}
-    pickupRadius: 0
-    pickupRadiusDeadZone: 0
-    menuCameraOffset: -11
-    characterModelOffset: {x: 1, y: 5.35, z: 2}
+    cameraOffset: {x: 0, y: 30, z: -13}
+    menuCameraOffset: -4
+    characterModelOffset: {x: 1, y: 2, z: 1.5}
   references:
     version: 2
     RefIds: []

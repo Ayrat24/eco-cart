@@ -89,6 +89,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 3cd67880c2f78b240963e01e4d3719e0, type: 2}
     - {fileID: 11400000, guid: 40cab2ef86f641849ad9cc999ea80bee, type: 2}
     - {fileID: 11400000, guid: 305b5aa401de714438694cbb94902bfa, type: 2}
+    - {fileID: 11400000, guid: 7cd2e984c5785c14486d9f7531d6a424, type: 2}
+    - {fileID: 11400000, guid: a54175a0e4e90d64cbc1929698d60fa6, type: 2}
   references:
     version: 2
     RefIds: []
