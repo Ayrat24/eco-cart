@@ -19,15 +19,47 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 78372663296
-    m_Localized: Simple cart
+    m_Localized: Supermarket cart
     m_Metadata:
       m_Items: []
   - m_Id: 246631362560
+    m_Localized: Very small, make sure to change to a different one!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18692739484872704
     m_Localized: 'Carrying capacity: {0}. Speed: {1}'
     m_Metadata:
       m_Items: []
-  - m_Id: 1514355552256
-    m_Localized: Bigger cart
+  - m_Id: 18693002836832256
+    m_Localized: Small wooden cart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693305883684864
+    m_Localized: Big wooden cart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693451790938112
+    m_Localized: Mine cart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693582774857728
+    m_Localized: Vehicle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693078846009344
+    m_Localized: Light and fast.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693359734353920
+    m_Localized: Look how much you can fit in it! Handles are handy.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693518325182464
+    m_Localized: Very big but heavy.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693639842557952
+    m_Localized: If you need to get from point A to point B.
     m_Metadata:
       m_Items: []
   references:

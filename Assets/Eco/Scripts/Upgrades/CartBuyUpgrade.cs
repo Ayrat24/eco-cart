@@ -2,14 +2,16 @@ using System;
 using Eco.Scripts.ItemCollecting;
 using R3;
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace Eco.Scripts.Upgrades
 {
     [CreateAssetMenu(menuName = "Upgrade/CartBuyUpgrade")]
     public class CartBuyUpgrade : SelectableUpgrade
     {
+        [SerializeField] private LocalizedString descriptionStats = new("CartUpgrades", "cart-tab-stats");
         [SerializeField] private CartData cartData;
-
+        
         protected override string SelectableGroupId => "cart-buy-upgrade";
         public readonly Subject<CartData> OnCartSelected = new();
 
@@ -26,7 +28,7 @@ namespace Eco.Scripts.Upgrades
 
         public override string GetDescription(string localizedString)
         {
-            return string.Format(localizedString, cartData.carryingCapacity, cartData.moveSpeed);
+            return $"{localizedString}\n{string.Format(descriptionStats.GetLocalizedString(), cartData.carryingCapacity, cartData.moveSpeed)}";
         }
 
         [Serializable]

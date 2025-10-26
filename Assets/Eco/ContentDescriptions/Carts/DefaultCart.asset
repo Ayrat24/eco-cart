@@ -34,7 +34,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: ac0530c1c21bd8e4a801a739292b206b, type: 3}
   selectString:
     m_TableReference:
       m_TableCollectionName: GameUI
@@ -50,6 +50,15 @@ MonoBehaviour:
     m_TableEntryReference:
       m_KeyId: 0
       m_Key: upgrade-not-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  descriptionStats:
+    m_TableReference:
+      m_TableCollectionName: CartUpgrades
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: cart-tab-stats
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []

@@ -23,8 +23,40 @@ MonoBehaviour:
     m_Key: cart-tab-default-cart-buy-description
     m_Metadata:
       m_Items: []
-  - m_Id: 1514355552256
-    m_Key: cart-tab-bigger-cart-buy-name
+  - m_Id: 18692739484872704
+    m_Key: cart-tab-stats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693002836832256
+    m_Key: cart-tab-wooden-2wl-cart-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693078846009344
+    m_Key: cart-tab-wooden-2wl-cart-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693305883684864
+    m_Key: cart-tab-wooden-4wl-cart-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693359734353920
+    m_Key: cart-tab-wooden-4wl-cart-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693451790938112
+    m_Key: cart-tab-mine-cart-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693518325182464
+    m_Key: cart-tab-mine-cart-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693582774857728
+    m_Key: cart-tab-truck-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18693639842557952
+    m_Key: cart-tab-truck-buy-description
     m_Metadata:
       m_Items: []
   m_Metadata:

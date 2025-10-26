@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeIntervalUpgrade
   baseCost: 20
   costGrowth: 2
-  description: 
+  needsUpgrade: 0
   upgradeId: Pine Interval
   upgradeLocalizedName:
     m_TableReference:
@@ -34,7 +34,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 21300000, guid: b00f4d66ffae8f648a020e14a5348bc4, type: 3}
+  icon: {fileID: 21300000, guid: 490850caaf049e04a8a742eee061961c, type: 3}
   baseInterval: 5
   minInterval: 0.5
   scale: 0.4

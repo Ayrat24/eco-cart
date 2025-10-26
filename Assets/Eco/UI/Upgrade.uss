@@ -30,11 +30,6 @@
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
-    width: 60px;
-    min-width: auto;
-    height: 60px;
-    min-height: initial;
-    max-height: none;
     flex-shrink: 0;
     flex-basis: initial;
     border-top-left-radius: 12px;

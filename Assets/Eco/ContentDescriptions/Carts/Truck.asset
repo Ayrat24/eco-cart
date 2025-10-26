@@ -20,7 +20,7 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:f32698ac96874c844b6c98b586eb07b2
     m_TableEntryReference:
-      m_KeyId: 1514355552256
+      m_KeyId: 18693582774857728
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -29,12 +29,12 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:f32698ac96874c844b6c98b586eb07b2
     m_TableEntryReference:
-      m_KeyId: 246631362560
+      m_KeyId: 18693639842557952
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: d3bc888ed30a92a42afe01a7f42bbe74, type: 3}
   selectString:
     m_TableReference:
       m_TableCollectionName: GameUI
@@ -53,11 +53,20 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  descriptionStats:
+    m_TableReference:
+      m_TableCollectionName: CartUpgrades
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: cart-tab-stats
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   cartData:
     prefab: {fileID: 6084339236651460199, guid: 6e69200a3067f014aae99f737e537907, type: 3}
-    offset: {x: 0, y: 0, z: 0}
+    offset: {x: 0, y: 0, z: -10.3}
     id: Truck
-    carryingCapacity: 20
+    carryingCapacity: 40
     moveSpeed: 25
     cameraOffset: {x: 0, y: 30, z: -13}
     menuCameraOffset: -4

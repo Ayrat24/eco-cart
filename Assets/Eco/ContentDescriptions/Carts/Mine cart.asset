@@ -20,7 +20,7 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:f32698ac96874c844b6c98b586eb07b2
     m_TableEntryReference:
-      m_KeyId: 1514355552256
+      m_KeyId: 18693451790938112
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -29,12 +29,12 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:f32698ac96874c844b6c98b586eb07b2
     m_TableEntryReference:
-      m_KeyId: 246631362560
+      m_KeyId: 18693518325182464
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: df67b2cb53bb74541b337ad18c0e9500, type: 3}
   selectString:
     m_TableReference:
       m_TableCollectionName: GameUI
@@ -53,11 +53,20 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  descriptionStats:
+    m_TableReference:
+      m_TableCollectionName: CartUpgrades
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: cart-tab-stats
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   cartData:
     prefab: {fileID: 5167812291260083648, guid: 413097658fc0cba46abc69542c18f87b, type: 3}
     offset: {x: 0, y: 0, z: -4.5}
     id: Mine cart
-    carryingCapacity: 20
+    carryingCapacity: 80
     moveSpeed: 7
     cameraOffset: {x: 0, y: 22, z: -9}
     menuCameraOffset: -2
