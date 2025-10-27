@@ -46,13 +46,9 @@ namespace Eco.Scripts.Upgrades
 
         public override void BuyUpgrade()
         {
-            if (CurrentLevel.Value == 0)
-            {
-                CurrentLevel.Value = 1;
-                return;
-            }
-
-            if (CurrentLevel.Value == 1)
+            // Buying an upgrade should also select it. If it's not purchased yet (0) or purchased but not selected (1),
+            // set it to selected (2), apply the upgrade and notify subscribers.
+            if (CurrentLevel.Value < 2)
             {
                 Available = false;
                 CurrentLevel.Value = 2;
@@ -68,13 +64,19 @@ namespace Eco.Scripts.Upgrades
                 return;
             }
 
-            Available = true;
-            CurrentLevel.Value = 1;
+            // Only deselect this upgrade if it is currently selected (level == 2).
+            if (CurrentLevel.Value == 2)
+            {
+                Available = true;
+                CurrentLevel.Value = 1;
+            }
         }
 
         protected override void Load(int level)
         {
             base.Load(level);
+            // Guard against double subscriptions: dispose previous subscription if present.
+            _subscription?.Dispose();
             _subscription = OnSelect.Subscribe(Deselect);
 
             if (CurrentLevel.Value == 2)
@@ -86,6 +88,7 @@ namespace Eco.Scripts.Upgrades
         public override void Clear()
         {
             _subscription?.Dispose();
+            _subscription = null;
         }
 
         public override string GetButtonText()

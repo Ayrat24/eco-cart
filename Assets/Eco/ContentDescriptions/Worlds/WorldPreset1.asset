@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: WorldPreset1
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
   worldId: world1
-  worldSideSize: 1
+  worldSideSize: 3
   seed: 5
-  trashPerChunk: 3
+  trashPerChunk: 4
   chunkTypes: 00000000
   allowedTrashItems:
   - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}

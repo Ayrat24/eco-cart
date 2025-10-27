@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a619cf1f4209e64a8f75b7c7adf03b6, type: 3}
   m_Name: Wooden2wl
   m_EditorClassIdentifier: 
-  baseCost: 0
+  baseCost: 3
   costGrowth: 1.15
   needsUpgrade: 0
   upgradeId: Wooden2wl
