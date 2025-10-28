@@ -105,7 +105,7 @@ namespace Eco.Scripts.Trash
 
         public void SetInCartState(bool inCart)
         {
-            ChangeState(true);
+            ChangeState(inCart);
         }
 
         public void MakeKinematic(bool isKinematic)
@@ -118,7 +118,12 @@ namespace Eco.Scripts.Trash
             rb.AddForce(force, ForceMode.Impulse);
         }
 
-        bool ICartItem.IsBeingPickedUp { get; set; }
+        // Implement interface property using the backing field so external checks and SetPickedUpStatus are consistent.
+        public bool IsBeingPickedUp
+        {
+            get => _isBeingPickedUp;
+            set => _isBeingPickedUp = value;
+        }
 
         public void SetPickedUpStatus(bool status)
         {

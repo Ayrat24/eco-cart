@@ -23,8 +23,6 @@ namespace Eco.Scripts.Trash
         private CancellationTokenSource _cancellationTokenSource;
         public bool CanBeRecycled { get; }
 
-        public static float DigTime = 0.5f;
-
         public void Initialize(Tile tile, int size)
         {
             _size = size;
@@ -55,32 +53,17 @@ namespace Eco.Scripts.Trash
         {
             _isDigging = true;
 
-            //await UniTask.WaitForSeconds(digDuration, cancellationToken: cancellationToken);
-
             //reduce pile size
             var pileHeight = transform.position.y;
             pileHeight -= heightPerSize;
             _size -= 1;
             Tween.PositionY(transform, pileHeight, digDuration);
 
-
-            //Spawn random trash
-            var trash = PoolManager.Instance.GetRandomTrash();
-            var trashPos = transform.position;
-            trashPos.y = 0;
-            trashPos.z += Random.Range(-1f, 1f);
-            trashPos.x += Random.Range(-1f, 1f);
-
-            trash.transform.position = trashPos;
-            trash.OnFallenOut();
-            trash.AddForce(new Vector3(Random.Range(-3f, 3f), Random.Range(3f, 4f), Random.Range(-3f, 3f)));
-
             if (_size <= 0)
             {
                 _tile.item = null;
                 PoolManager.Instance.ReturnItem(this);
                 return;
-                Debug.LogError("clear");
             }
 
             await UniTask.WaitForSeconds(digDuration, cancellationToken: cancellationToken);

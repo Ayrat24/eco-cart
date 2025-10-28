@@ -12,4 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e79b03080feca174cb03df66748c2403, type: 3}
   m_Name: ChunkGenerationRules
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.ChunkGenerationRules
-  rules: []
+  rules:
+  - type: 0
+    allowedAdjacent: 0000000002000000
+    minCount: 1
+    maxCount: 2147483647
+    weight: 2
+  - type: 2
+    allowedAdjacent: 00000000
+    minCount: 1
+    maxCount: 10
+    weight: 1

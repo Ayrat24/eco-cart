@@ -87,7 +87,7 @@ namespace Eco.Scripts.ItemCollecting
         {
             _itemRecycler = recycler;
             _itemCollector = itemCollector;
-            _subscription = Observable.EveryUpdate().Subscribe(x => RemoveFallenOutItems());
+            _subscription = Observable.EveryUpdate().Subscribe(_ => RemoveFallenOutItems());
         }
 
         public void SetStats(CartBuyUpgrade.CartData cartData)
@@ -151,11 +151,31 @@ namespace Eco.Scripts.ItemCollecting
             OnStatusChanged.OnNext(CartState.Empty);
         }
 
-        public void AddToCart(ICartItem item, Collider coll)
+        public bool AddToCart(ICartItem item, Collider coll)
         {
+            if (item == null || coll == null || coll.gameObject == null || !coll.gameObject.activeInHierarchy)
+            {
+                return false;
+            }
+
+            if (_itemColliderDictionary.ContainsKey(item))
+            {
+                return false;
+            }
+
             AddItemToCollections(item, coll);
+            return true;
         }
-        
+
+        public bool RemoveFromCart(ICartItem item)
+        {
+            if (item == null) return false;
+            if (!_itemColliderDictionary.TryGetValue(item, out var col)) return false;
+
+            RemoveItemFromCollections(item, col);
+            return true;
+        }
+
         private void RemoveFallenOutItems()
         {
             if (_isEmptying)

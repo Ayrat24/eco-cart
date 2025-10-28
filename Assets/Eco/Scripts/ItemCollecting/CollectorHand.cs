@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Utils;
-using NUnit.Framework;
 using PrimeTween;
-using R3;
 using UnityEngine;
 
 namespace Eco.Scripts.ItemCollecting
@@ -52,54 +50,79 @@ namespace Eco.Scripts.ItemCollecting
         private async UniTask PlayPickUpAnimationAsync(ICartItem item, Collider other, CancellationToken token)
         {
             _animationInProgress = true;
-            
-            //Step 1: Place hand on the item
-            ik.Target = ikTarget;
-            ikTarget.parent = other.transform;
-            ik.enabled = true;
 
-            _tweens.Add(Tween.LocalPosition(ikTarget, Vector3.zero, pickAnimationDuration));
-
-            await UniTask.Delay(TimeSpan.FromSeconds(pickAnimationDuration), cancellationToken: token);
-
-            //Step 2 : Place hand above the drop point
-
-            item.MakeKinematic(true);
-            item.OnPickUp(_cart.DropPoint);
-            ik.Target = other.transform;
-
-            //Tween.LocalPosition(other.transform.parent, Vector3.zero, placeAnimationDuration);
-
-            Vector3 pointA = other.transform.localPosition;
-            Vector3 pointB = other.transform.localPosition / 2 + animationMiddlePoint;
-            Vector3 pointC = Vector3.zero;
-            _tweens.Add(Tween.Custom(0f, 1f, placeAnimationDuration, ease: Ease.Linear, onValueChange: (t) =>
+            bool success = false;
+            try
             {
-                // Quadratic Bezier formula: B(t) = (1−t)²*A + 2*(1−t)*t*B + t²*C
-                Vector3 pos = Mathf.Pow(1 - t, 2) * pointA +
-                              2 * (1 - t) * t * pointB +
-                              Mathf.Pow(t, 2) * pointC;
-                other.transform.localPosition = pos;
-            }));
+                // Basic null checks - item or other might be destroyed during async work
+                if (item == null || other == null || other.transform == null)
+                    throw new Exception("Item or collider destroyed before animation start");
 
-            await UniTask.Delay(TimeSpan.FromSeconds(placeAnimationDuration), cancellationToken: token);
+                // Step 1: Place hand on the item
+                ik.Target = ikTarget;
+                ikTarget.parent = other.transform;
+                ik.enabled = true;
 
-            item.MakeKinematic(false);
+                _tweens.Add(Tween.LocalPosition(ikTarget, Vector3.zero, pickAnimationDuration));
 
-            //Step 3: Return hand to the body
+                await UniTask.Delay(TimeSpan.FromSeconds(pickAnimationDuration), cancellationToken: token);
 
-            ikTarget.parent = _baseATargetParent;
-            ikTarget.position = other.transform.position;
-            ik.Target = ikTarget;
+                // Step 2 : Place hand above the drop point
+                if (item == null || other == null || other.transform == null)
+                    throw new Exception("Item or collider destroyed during pickup");
 
-            _tweens.Add(Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration));
-            await UniTask.Delay(TimeSpan.FromSeconds(swingBackAnimationDuration), cancellationToken: token);
+                item.MakeKinematic(true);
+                item.OnPickUp(_cart.DropPoint);
+                ik.Target = other.transform;
 
-            ik.enabled = false;
-            _animationInProgress = false;
-            _tweens.Clear();
+                Vector3 pointA = other.transform.localPosition;
+                Vector3 pointB = other.transform.localPosition / 2 + animationMiddlePoint;
+                Vector3 pointC = Vector3.zero;
+                _tweens.Add(Tween.Custom(0f, 1f, placeAnimationDuration, ease: Ease.Linear, onValueChange: (t) =>
+                {
+                    // Quadratic Bezier formula: B(t) = (1−t)²*A + 2*(1−t)*t*B + t²*C
+                    Vector3 pos = Mathf.Pow(1 - t, 2) * pointA +
+                                  2 * (1 - t) * t * pointB +
+                                  Mathf.Pow(t, 2) * pointC;
+                    if (other != null && other.transform != null)
+                        other.transform.localPosition = pos;
+                }));
 
-            item.SetPickedUpStatus(false);
+                await UniTask.Delay(TimeSpan.FromSeconds(placeAnimationDuration), cancellationToken: token);
+
+                if (item == null || other == null)
+                    throw new Exception("Item or collider destroyed during place animation");
+
+                item.MakeKinematic(false);
+
+                // Step 3: Return hand to the body
+                ikTarget.parent = _baseATargetParent;
+                if (other != null)
+                    ikTarget.position = other.transform.position;
+                ik.Target = ikTarget;
+
+                _tweens.Add(Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration));
+                await UniTask.Delay(TimeSpan.FromSeconds(swingBackAnimationDuration), cancellationToken: token);
+
+                ik.enabled = false;
+                success = true;
+            }
+            catch (Exception)
+            {
+                // Attempt to rollback cart entry if we have a reference and pickup failed midway
+                try { if (item != null) _cart.RemoveFromCart(item); } catch { }
+                try { if (item != null) item.SetPickedUpStatus(false); } catch { }
+                try { if (item != null) item.SetInCartState(false); } catch { }
+            }
+            finally
+            {
+                _animationInProgress = false;
+                foreach (var tween in _tweens) tween.Stop();
+                _tweens.Clear();
+
+                // If the animation completed successfully we still clear picked up status so other systems consider it placed.
+                try { if (item != null) item.SetPickedUpStatus(false); } catch { }
+            }
         }
 
         public void Clear()
@@ -114,7 +137,7 @@ namespace Eco.Scripts.ItemCollecting
             }
 
             _tweens.Clear();
-            
+
             _subscription?.Dispose();
         }
     }

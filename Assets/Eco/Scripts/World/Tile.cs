@@ -58,6 +58,7 @@ namespace Eco.Scripts.World
     {
         Ground,
         Grass,
-        Water
+        Water,
+        Pile
     }
 }

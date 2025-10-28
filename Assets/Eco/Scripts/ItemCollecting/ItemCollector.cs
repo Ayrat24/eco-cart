@@ -5,7 +5,6 @@ using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Eco.Scripts.ItemCollecting
 {
@@ -38,15 +37,15 @@ namespace Eco.Scripts.ItemCollecting
             sphereCollider.includeLayers = layerMask;
 
             _subscription?.Dispose();
-            _subscription = Observable.IntervalFrame(10).Subscribe(x =>
-            {
-                if (!Active || !cart.CanAddItems || !HasFreeHands())
-                {
-                    return;
-                }
+            _subscription = Observable.IntervalFrame(10).Subscribe(_ =>
+             {
+                 if (!Active || !cart.CanAddItems || !HasFreeHands())
+                 {
+                     return;
+                 }
 
-                ScanForItems();
-            });
+                 ScanForItems();
+             });
 
             itemRecycler.Init(currencyManager, upgrades);
             cart.Init(itemRecycler, this);
@@ -62,39 +61,86 @@ namespace Eco.Scripts.ItemCollecting
                 return;
             }
 
-            float shortestDistance = Mathf.Infinity;
-            Collider shortestCollider = null;
-
+            // Build a small candidate list sorted by distance so we attempt nearest items first.
+            var candidates = new List<(Collider col, float dist)>();
             for (int i = 0; i < count; i++)
             {
-                // if (_colliderQueue.Contains(_colliders[i]))
-                // {
-                //     continue;
-                // }
+                var col = _colliders[i];
+                if (col == null) continue;
+                float dist = Vector3.Distance(col.transform.position, transform.position);
+                candidates.Add((col, dist));
+            }
 
-                var distance = Vector3.Distance(_colliders[i].transform.position, transform.position);
-                if (distance < shortestDistance)
+            if (candidates.Count == 0) return;
+
+            candidates.Sort((a, b) => a.dist.CompareTo(b.dist));
+
+            // Try each candidate in distance order and pick the first we can successfully reserve and assign.
+            foreach (var cand in candidates)
+            {
+                var col = cand.col;
+                if (col == null) continue;
+
+                var item = col.GetComponent<ICartItem>();
+                if (item == null) continue;
+
+                // If someone else is already grabbing it, skip
+                if (item.IsBeingPickedUp)
+                    continue;
+
+                // Check if cart can accept this item
+                if (!_cart.CanFitItem(item))
+                    continue;
+
+                // Find the closest free hand for this item
+                if (!GetClosestFreeHand(col.transform.position, out var hand))
+                    continue;
+
+                // Double-check item still not being picked (race) and hand/cart still valid
+                if (item.IsBeingPickedUp || _cart.IsFull || !hand.IsFree)
+                    continue;
+
+                // Reserve the item immediately so no other scan picks it.
+                // Mark as in-cart and mark as being picked up; do this in a safe order and rollback on failure.
+                item.SetInCartState(true);
+                item.SetPickedUpStatus(true);
+
+                // Attempt to add to cart. If AddToCart returns false, rollback reservation immediately.
+                bool added = false;
+                try
                 {
-                    shortestDistance = distance;
-                    shortestCollider = _colliders[i];
+                    added = _cart.AddToCart(item, col);
                 }
-            }
+                catch (Exception)
+                {
+                    added = false;
+                }
 
-            if (shortestCollider == null)
-            {
-                return;
-            }
+                if (!added)
+                {
+                    // rollback reservation
+                    try { item.SetPickedUpStatus(false); } catch { }
+                    try { item.SetInCartState(false); } catch { }
+                    continue;
+                }
 
-            // _colliderQueue.Enqueue(shortestCollider);
-            //
-            // if (_colliderQueue.Count > MaxQueueSize)
-            // {
-            //     _colliderQueue.Dequeue();
-            // }
+                // Start hand animation (runs async). We intentionally don't wait here. If animation later fails internally
+                // it must clean up its own state; AddToCart already recorded the item in the cart.
+                try
+                {
+                    hand.PlayAnimation(item, col);
+                }
+                catch (Exception)
+                {
+                    // If PlayAnimation threw synchronously (unlikely), rollback the cart entry and flags.
+                    try { _cart.RemoveFromCart(item); } catch { }
+                    try { item.SetPickedUpStatus(false); } catch { }
+                    try { item.SetInCartState(false); } catch { }
+                    continue;
+                }
 
-            if (GetClosestFreeHand(shortestCollider.transform.position, out var hand))
-            {
-                PickItem(hand, shortestCollider);
+                // We picked one item this tick — stop.
+                break;
             }
         }
 
@@ -106,13 +152,41 @@ namespace Eco.Scripts.ItemCollecting
             }
 
             var item = other.GetComponent<ICartItem>();
-            if (item is { IsBeingPickedUp: false } && _cart.CanFitItem(item))
+            if (item == null) return;
+
+            if (item.IsBeingPickedUp || !_cart.CanFitItem(item) || !hand.IsFree)
+                return;
+
+            // Reserve and attempt pick (same safe flow as in ScanForItems)
+            item.SetInCartState(true);
+            item.SetPickedUpStatus(true);
+
+            bool added = false;
+            try
             {
-                //Don't grab if other helpers already grabbing it
-                item.SetInCartState(true);
-                item.SetPickedUpStatus(true);
-                _cart.AddToCart(item, other);
+                added = _cart.AddToCart(item, other);
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+            if (!added)
+            {
+                try { item.SetPickedUpStatus(false); } catch { }
+                try { item.SetInCartState(false); } catch { }
+                return;
+            }
+
+            try
+            {
                 hand.PlayAnimation(item, other);
+            }
+            catch (Exception)
+            {
+                try { _cart.RemoveFromCart(item); } catch { }
+                try { item.SetPickedUpStatus(false); } catch { }
+                try { item.SetInCartState(false); } catch { }
             }
         }
 

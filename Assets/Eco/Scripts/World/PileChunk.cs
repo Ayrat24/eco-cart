@@ -1,5 +1,4 @@
 using Eco.Scripts.Pooling;
-using UnityEngine;
 
 namespace Eco.Scripts.World
 {
@@ -14,7 +13,7 @@ namespace Eco.Scripts.World
                 for (int y = 0; y < ChunkSize; y++)
                 {
                     var t = tiles[y * ChunkSize + x];
-                    t.groundType = TileGroundType.Ground;
+                    t.groundType = TileGroundType.Pile;
 
                     if (x == ChunkSize / 2 && y == ChunkSize / 2)
                     {
