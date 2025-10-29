@@ -21,13 +21,13 @@ namespace Eco.Scripts.Upgrades
                 Available = false;
             }
             
-            Stats.AddUnlockableUpgrade(upgradeType, Purchased);
+            UnlockTracker.AddUnlockableUpgrade(upgradeType, Purchased);
         }
 
         protected override void ApplyUpgrade(int level)
         {
             Available = false;
-            Stats.UnlockUpgrade(upgradeType);
+            UnlockTracker.UnlockUpgrade(upgradeType);
         }
 
         protected override AlphabeticNotation CalculateCost()

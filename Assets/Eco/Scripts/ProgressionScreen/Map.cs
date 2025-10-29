@@ -50,13 +50,13 @@ namespace Eco.Scripts.ProgressionScreen
             var builder = new DisposableBuilder();
             TrashItem.OnItemRecycled.Subscribe(OnTrashRecycled).AddTo(ref builder);
             worldController.TreePlanter.OnTreePlanted.Subscribe(OnTreePlanted).AddTo(ref builder);
-            Stats.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
+            UnlockTracker.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
             _subscription = builder.Build();
 
             var mapSize = (_worldController.WorldSideSize * 2 + viewportSize) * WorldToCanvasCoef;
             content.sizeDelta = new Vector2(mapSize, mapSize);
             
-            EnableMap(Stats.IsUpgradeUnlocked(UnlockableUpgradeType.Map));
+            EnableMap(UnlockTracker.IsUpgradeUnlocked(UnlockableUpgradeType.Map));
             MoveTiles(true);
 
             inputHandler.Init(this);

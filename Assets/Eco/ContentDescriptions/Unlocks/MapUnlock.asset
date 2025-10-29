@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 563666e2a730bd1478e97f85d519bb45, type: 3}
   m_Name: MapUnlock
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.UnlockableUpgrade
-  baseCost: 2
+  baseCost:
+    coefficient: 100
+    magnitude: 0
   costGrowth: 1
   needsUpgrade: 0
   upgradeId: map-unlock

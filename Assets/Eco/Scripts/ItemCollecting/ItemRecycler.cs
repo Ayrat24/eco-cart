@@ -14,14 +14,15 @@ namespace Eco.Scripts.ItemCollecting
         [SerializeField] UIDocument uiDocument;
 
         private CurrencyManager _currencyManager;
-        private UpgradesCollection _upgrades;
         private GainedScoreText _gainedScoreText;
         private bool _initialized;
 
-        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades)
+        private ScoreStats _scoreStats;
+
+        public void Init(CurrencyManager currencyManager, ScoreStats scoreStats)
         {
             _currencyManager = currencyManager;
-            _upgrades = upgrades;
+            _scoreStats = scoreStats;
             _gainedScoreText = new GainedScoreText();
             _gainedScoreText.Init(uiDocument);
             _initialized = true;
@@ -41,7 +42,7 @@ namespace Eco.Scripts.ItemCollecting
         {
             _gainedScoreText.StartNewRecycle();
             
-            double scoreMultiplier = _upgrades.GetUpgradeType<ComboMultiplierUpgrade>().Multiplier;
+            double scoreMultiplier = 1;
             Dictionary<TrashType, double> scoreMultipliers = new();
             
             var listItems = cartItems.ToList();
@@ -53,7 +54,7 @@ namespace Eco.Scripts.ItemCollecting
 
                 if (item is TrashItem trash)
                 {
-                    var baseScore = _upgrades.TrashScoreUpgrades[trash.TrashType].ScoreForCurrentUpgrade;
+                    var baseScore = _scoreStats.GetScoreForTrash(trash.TrashType);
                     var score = baseScore;
 
                     if (scoreMultipliers.TryGetValue(trash.TrashType, out var currentMultiplier))
@@ -68,7 +69,8 @@ namespace Eco.Scripts.ItemCollecting
                     }
                     
                     _currencyManager.AddMoney(score);
-                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b> Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color> Type:<b>{trash.TrashType}</b>", _upgrades.TrashScoreUpgrades[trash.TrashType].Color);
+                    var color = _scoreStats.GetColor(trash.TrashType);
+                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b> Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color> Type:<b>{trash.TrashType}</b>", color);
                     _gainedScoreText.UpdateTotalLabel(score);
                 }
             }

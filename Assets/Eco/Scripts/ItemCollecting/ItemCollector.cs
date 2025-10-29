@@ -13,19 +13,15 @@ namespace Eco.Scripts.ItemCollecting
         [SerializeField] ItemRecycler itemRecycler;
         [SerializeField] SphereCollider sphereCollider;
         [SerializeField] LayerMask layerMask;
-
         [SerializeField] private List<CollectorHand> hands;
 
         private readonly Collider[] _colliders = new Collider[20];
-        //private readonly Queue<Collider> _colliderQueue = new();
-        //private const int MaxQueueSize = 5;
-
         private Cart _cart;
         private IDisposable _subscription;
 
         public LayerMask LayerMask => layerMask;
 
-        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Cart cart)
+        public void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Cart cart)
         {
             _cart = cart;
 
@@ -47,7 +43,7 @@ namespace Eco.Scripts.ItemCollecting
                  ScanForItems();
              });
 
-            itemRecycler.Init(currencyManager, upgrades);
+            itemRecycler.Init(currencyManager, scoreStats);
             cart.Init(itemRecycler, this);
         }
 

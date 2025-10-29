@@ -27,11 +27,13 @@ namespace Eco.Scripts
         private CurrencyManager _currencyManager;
         private TreeCurrencyEarner _treeCurrencyEarner;
         private ProgressTracker _progressTracker;
+        private ScoreStats _scoreStats;
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
             HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
-            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner, ProgressTracker progressTracker)
+            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner, ProgressTracker progressTracker,
+            ScoreStats scoreStats)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -42,6 +44,7 @@ namespace Eco.Scripts
             _currencyManager = currencyManager;
             _treeCurrencyEarner = treeCurrencyEarner;
             _progressTracker = progressTracker;
+            _scoreStats = scoreStats;
         }
 
         public void StartGame()
@@ -53,7 +56,7 @@ namespace Eco.Scripts
         {
             worldPreset = WorldSelector.Instance.SelectedPreset;
             _saveManager.Load(worldPreset.WorldId);
-            
+
             PoolManager.Instance.InitializePools(worldPreset.AllowedTrashItems);
 
             _settings.Load();
@@ -62,18 +65,19 @@ namespace Eco.Scripts
             _progressTracker.Init(worldPreset.TrashPerChunk);
 
             _upgradeCollection.Load(_saveManager);
+            _scoreStats.Init();
             
             await UniTask.NextFrame();
             gameUI.Init(_upgradeCollection, _currencyManager, _player, _progressTracker);
             cameraController.Init(_player);
             await UniTask.NextFrame();
-            
+
             _player.Spawn(_saveManager);
 
             _helperManager.LoadHelpers();
             _currencyManager.Init(_saveManager);
             _treeCurrencyEarner.Init();
-            
+
             map.Initialize(_worldController, _saveManager, _player);
         }
 
@@ -82,18 +86,18 @@ namespace Eco.Scripts
         {
             _player.SavePosition(_saveManager);
             _currencyManager.Save(_saveManager);
-            
+
             _upgradeCollection.Save(_saveManager);
             _upgradeCollection.Clear();
-            
+
             _worldController.SaveWorld();
 
             _saveManager.Save();
 
             _treeCurrencyEarner.Clear();
             gameUI.Clear();
-            
-            Stats.Clear();
+
+            UnlockTracker.Clear();
         }
 
         private void OnApplicationQuit()

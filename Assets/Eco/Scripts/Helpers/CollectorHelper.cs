@@ -29,7 +29,7 @@ namespace Eco.Scripts.Helpers
 
             agent.avoidancePriority = navmeshPriority;
             
-            itemCollector.Init(currencyManager, upgrades, cart);
+            //itemCollector.Init(currencyManager, upgrades, cart);
 
             var interval = TimeSpan.FromSeconds(1);
             _subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });

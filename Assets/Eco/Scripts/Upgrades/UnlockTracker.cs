@@ -3,7 +3,7 @@ using R3;
 
 namespace Eco.Scripts.Upgrades
 {
-    public static class Stats
+    public static class UnlockTracker
     {
         public static readonly Dictionary<UnlockableUpgradeType, bool> UnlockableUpgrades = new();
         public static readonly Subject<UnlockableUpgradeType> OnUnlocked = new();

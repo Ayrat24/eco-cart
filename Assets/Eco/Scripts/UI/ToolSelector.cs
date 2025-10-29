@@ -41,13 +41,13 @@ namespace Eco.Scripts.UI
                 _buttons[i].clicked += callback;
                 _eventCallbacks.Add(callback);
 
-                if (!Stats.IsUpgradeUnlocked(_toolTypes[index]))
+                if (!UnlockTracker.IsUpgradeUnlocked(_toolTypes[index]))
                 {
                     _buttons[i].style.display = DisplayStyle.None;
                 }
             }
 
-            _subscription = Stats.OnUnlocked.Subscribe(OnToolUnlocked);
+            _subscription = UnlockTracker.OnUnlocked.Subscribe(OnToolUnlocked);
             
             OnClicked(0);
         }

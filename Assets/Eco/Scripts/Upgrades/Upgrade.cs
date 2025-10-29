@@ -8,7 +8,7 @@ namespace Eco.Scripts.Upgrades
 {
     public abstract class Upgrade : ScriptableObject
     {
-        [SerializeField] protected int baseCost;
+        [SerializeField] protected AlphabeticNotation baseCost;
         [SerializeField] protected float costGrowth = 1.15f;
         [SerializeField] private UnlockableUpgradeType needsUpgrade = UnlockableUpgradeType.None;
         

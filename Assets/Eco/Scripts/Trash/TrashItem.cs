@@ -27,6 +27,12 @@ namespace Eco.Scripts.Trash
         public TrashType TrashType => trashType;
         public static readonly Subject<Tile> OnItemRecycled = new();
 
+        public bool IsBeingPickedUp
+        {
+            get => _isBeingPickedUp;
+            set => _isBeingPickedUp = value;
+        }
+        
         public void Initialize(Tile tile)
         {
             _tile = tile;
@@ -57,6 +63,7 @@ namespace Eco.Scripts.Trash
 
         public void OnFallenOut()
         {
+            ResetTile();
             SetPickedUpStatus(false);
             ChangeState(false);
             _isCollected = false;
@@ -73,12 +80,7 @@ namespace Eco.Scripts.Trash
             MakeKinematic(true);
             SetPickedUpStatus(false);
 
-            if (_tile != null)
-            {
-                _tile.objectType = TileObjectType.Empty;
-                OnItemRecycled?.OnNext(_tile);
-                _tile = null;
-            }
+            ResetTile();
 
             transform.parent = null;
 
@@ -103,6 +105,16 @@ namespace Eco.Scripts.Trash
             PoolManager.Instance.ReturnItem(this);
         }
 
+        private void ResetTile()
+        {
+            if (_tile != null)
+            {
+                _tile.objectType = TileObjectType.Empty;
+                OnItemRecycled?.OnNext(_tile);
+                _tile = null;
+            }
+        }
+
         public void SetInCartState(bool inCart)
         {
             ChangeState(inCart);
@@ -111,18 +123,6 @@ namespace Eco.Scripts.Trash
         public void MakeKinematic(bool isKinematic)
         {
             rb.isKinematic = isKinematic;
-        }
-
-        public void AddForce(Vector3 force)
-        {
-            rb.AddForce(force, ForceMode.Impulse);
-        }
-
-        // Implement interface property using the backing field so external checks and SetPickedUpStatus are consistent.
-        public bool IsBeingPickedUp
-        {
-            get => _isBeingPickedUp;
-            set => _isBeingPickedUp = value;
         }
 
         public void SetPickedUpStatus(bool status)

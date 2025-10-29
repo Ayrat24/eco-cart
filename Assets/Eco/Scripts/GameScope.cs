@@ -2,6 +2,7 @@ using Eco.Scripts.Helpers;
 using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
+using Eco.Scripts.ItemCollecting;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -19,6 +20,7 @@ namespace Eco.Scripts
             builder.Register<CurrencyManager>(Lifetime.Scoped);
             builder.Register<TreeCurrencyEarner>(Lifetime.Scoped);
             builder.Register<ProgressTracker>(Lifetime.Scoped);
+            builder.Register<ScoreStats>(Lifetime.Scoped);
         
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();

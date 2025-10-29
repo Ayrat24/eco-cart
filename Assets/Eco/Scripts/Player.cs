@@ -18,6 +18,7 @@ namespace Eco.Scripts
         [SerializeField] private ToolController toolController;
         
         private CurrencyManager _currencyManager;
+        private ScoreStats _scoreStats;
         private UpgradesCollection _upgrades;
         private Cart _cart;
         private IDisposable _subscription;
@@ -26,10 +27,11 @@ namespace Eco.Scripts
         public Subject<Cart> OnCartChanged = new();
 
         [Inject]
-        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades)
+        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, ScoreStats scoreStats)
         {
             _currencyManager = currencyManager;
             _upgrades = upgrades;
+            _scoreStats = scoreStats;
         }
 
         public void Spawn(SaveManager saveManager)
@@ -65,7 +67,7 @@ namespace Eco.Scripts
             agent.speed = cartData.moveSpeed;
             characterModel.localPosition = cartData.characterModelOffset;
             
-            itemCollector.Init(_currencyManager, _upgrades, _cart);
+            itemCollector.Init(_currencyManager, _scoreStats, _cart);
             OnCartChanged.OnNext(_cart);
         }
 
