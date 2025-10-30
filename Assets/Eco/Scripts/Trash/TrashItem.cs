@@ -27,6 +27,15 @@ namespace Eco.Scripts.Trash
         public TrashType TrashType => trashType;
         public static readonly Subject<Tile> OnItemRecycled = new();
 
+        // Optional callback that, when set, will be used to return this item to a custom pool.
+        // If null, the code will fall back to using PoolManager.Instance.ReturnItem(this).
+        public System.Action<TrashItem> ReturnToPoolCallback { get; set; }
+
+        // Notifies an external owner that this item was returned to any pool (called from OnDespawn).
+        // Owners should use this to update tracking state but should NOT attempt to return the
+        // item to a pool again from inside this callback.
+        public System.Action<TrashItem> OnReturnedToPool { get; set; }
+
         public bool IsBeingPickedUp
         {
             get => _isBeingPickedUp;
@@ -82,6 +91,7 @@ namespace Eco.Scripts.Trash
 
             ResetTile();
 
+            gameObject.layer = 0;
             transform.parent = null;
 
             var currentPosition = transform.localPosition;
@@ -102,7 +112,14 @@ namespace Eco.Scripts.Trash
             particleEffect.Play();
 
             await UniTask.WaitForSeconds(0.5f);
-            PoolManager.Instance.ReturnItem(this);
+            if (ReturnToPoolCallback != null)
+            {
+                ReturnToPoolCallback.Invoke(this);
+            }
+            else
+            {
+                PoolManager.Instance.ReturnItem(this);
+            }
         }
 
         private void ResetTile()
@@ -156,10 +173,16 @@ namespace Eco.Scripts.Trash
         {
             particleEffect.gameObject.SetActive(false);
             trailRenderer.gameObject.SetActive(false);
+            
+            transform.localScale = Vector3.one;
+            ChangeState(false);
         }
 
         public void OnDespawn()
         {
+            // Notify owner that this item has been returned to a pool.
+            // Use null-conditional invocation instead of swallowing exceptions with try/catch.
+            OnReturnedToPool?.Invoke(this);
         }
     }
 }

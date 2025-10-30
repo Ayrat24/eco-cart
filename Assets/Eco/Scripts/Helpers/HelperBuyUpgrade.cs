@@ -5,16 +5,18 @@ using UnityEngine;
 namespace Eco.Scripts.Helpers
 {
     [CreateAssetMenu(fileName = "Helper Buy", menuName = "Helper/Buy")]
-    public class HelperBuyUpgrade : Upgrade
+    public class HelperBuyUpgrade : SelectableUpgrade
     {
-        [SerializeField] HelperManager.HelperClass helperClass;
-        public readonly Subject<HelperManager.HelperClass> OnPurchase = new();
+        [SerializeField] private Helper prefab;
+        public readonly Subject<HelperBuyUpgrade> OnPurchase = new();
         
-        public HelperManager.HelperClass GetHelperClass() => helperClass;
+        public Helper GetPrefab() => prefab;
+
+        protected override string SelectableGroupId => "helpers";
 
         protected override void ApplyUpgrade(int level)
         {
-            OnPurchase.OnNext(helperClass);
+            OnPurchase.OnNext(this);
         }
     }
 }

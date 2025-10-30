@@ -9,8 +9,6 @@ namespace Eco.Scripts.Helpers
 {
     public class HelperManager : MonoBehaviour
     {
-        [SerializeField] private CatHelper catPrefab;
-        [SerializeField] private ChickenHelper chickenPrefab;
         [SerializeField] private int spawnRadius;
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
@@ -20,7 +18,11 @@ namespace Eco.Scripts.Helpers
         private readonly List<Vector3> _spawnDirections = new(){Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
         private int _lastSpawnDirection;
         private int _navmeshPriority = 51;
-        private readonly List<Helper> _helpers = new();
+        // single active helper at a time
+        private Helper _activeHelper;
+
+        // map HelperClass -> prefab provided by each HelperBuyUpgrade (assumption: HelperBuyUpgrade exposes GetPrefab())
+        private readonly Dictionary<HelperBuyUpgrade, Helper> _prefabMap = new();
         
         [Inject]
         private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player)
@@ -48,18 +50,23 @@ namespace Eco.Scripts.Helpers
             var builder = new DisposableBuilder();
             foreach (var helperBuyUpgrade in _upgrades.GetUpgradeTypes<HelperBuyUpgrade>())
             {
+                // populate prefab map from the upgrade (assumes GetHelperClass() and GetPrefab() exist)
+                var prefab = helperBuyUpgrade.GetPrefab();
+                _prefabMap[helperBuyUpgrade] = prefab;
+
+                // when a helper upgrade is purchased, replace the active helper
                 helperBuyUpgrade.OnPurchase.Subscribe(SpawnHelper).AddTo(ref builder);
 
-                for (int i = 0; i < helperBuyUpgrade.CurrentLevel.Value; i++)
+                if(helperBuyUpgrade.CurrentLevel.Value >= 2)
                 {
-                    SpawnHelper(helperBuyUpgrade.GetHelperClass());
+                    SpawnHelper(helperBuyUpgrade);
                 }
             }
 
             _subscription = builder.Build();
         }
 
-        private void SpawnHelper(HelperClass helperClass)
+        private void SpawnHelper(HelperBuyUpgrade helperClass)
         {
             if (_lastSpawnDirection >= _spawnDirections.Count)
             {
@@ -69,37 +76,32 @@ namespace Eco.Scripts.Helpers
             Vector3 spawnPosition = _player.transform.position + _spawnDirections[_lastSpawnDirection] * spawnRadius;
             _lastSpawnDirection++;
 
-            Helper helper;
-            switch (helperClass)
+            // dispose existing helper (only one allowed at a time)
+            if (_activeHelper != null)
             {
-                case HelperClass.Cat:
-                    helper = Spawn(catPrefab, spawnPosition);
-                    break;
-                case HelperClass.Chicken:
-                    helper = Spawn(chickenPrefab, spawnPosition);
-                    break;
-                default:
-                    return;
+                _activeHelper.Clear();
+                Destroy(_activeHelper.gameObject);
+                _activeHelper = null;
             }
-            
-            _helpers.Add(helper);
+
+            // lookup prefab for this helper class
+            if (!_prefabMap.TryGetValue(helperClass, out var prefab) || prefab == null)
+                return; // no prefab configured for this helper class
+
+            _activeHelper = Spawn(prefab, spawnPosition);
         }
 
         private void OnDestroy()
         {
             _subscription?.Dispose();
 
-            foreach (var helper in _helpers)
+            if (_activeHelper != null)
             {
-                helper.Clear();
+                _activeHelper.Clear();
+                // don't need to Destroy here since OnDestroy is running, but keep symmetry
+                Destroy(_activeHelper.gameObject);
+                _activeHelper = null;
             }
-        }
-
-        public enum HelperClass
-        {
-            Collector,
-            Cat,
-            Chicken
         }
     }
 }

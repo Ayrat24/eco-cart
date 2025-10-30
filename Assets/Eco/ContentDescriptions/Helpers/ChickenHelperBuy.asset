@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6cdbd3d428a8a04bafdc590c38f63fb, type: 3}
   m_Name: ChickenHelperBuy
   m_EditorClassIdentifier: 
-  baseCost: 200
+  baseCost:
+    coefficient: 0
+    magnitude: 0
   costGrowth: 1.15
+  needsUpgrade: 0
   upgradeId: Chicken Helper
   upgradeLocalizedName:
     m_TableReference:
@@ -34,7 +37,25 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 9ee80aae14ec41141a310dd349eac97c, type: 3}
-  helperClass: 2
+  selectString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  notSelectedString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-not-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  prefab: {fileID: 5288996508364228609, guid: 8c1169b8be74d134fadd4ad1611d6435, type: 3}
   references:
     version: 2
     RefIds: []

@@ -82,11 +82,12 @@ namespace Eco.Scripts.Pooling
                 case TrashItem trashItem:
                     var id = trashItem.GetPrefabId();
                     _trashPools[id].ReturnToPool(trashItem);
-                    return;
+                    break;
 
                 case Tree tree:
                     _treePools[tree.GetPrefabId()].ReturnToPool(tree);
                     break;
+                
                 case TrashPile trashPile:
                     _trashPilePool.ReturnToPool(trashPile);
                     break;

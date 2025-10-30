@@ -519,12 +519,14 @@ MonoBehaviour:
   agent: {fileID: 8780486953474569457}
   searchRadius: 20
   animationController: {fileID: 8217975723707353631}
-  maxDistanceFromPlayer: 30
+  maxDistanceFromPlayer: 15
   groundItemsMask:
     serializedVersion: 2
     m_Bits: 0
   playerStopDistance: 8
   eggPrefab: {fileID: 275388641130890220, guid: 704af7d79dd110341a581cdcf87ce132, type: 3}
+  maxConcurrentEggs: 3
+  eggReplaceDistanceFromPlayer: 15
 --- !u!114 &8217975723707353631
 MonoBehaviour:
   m_ObjectHideFlags: 0
