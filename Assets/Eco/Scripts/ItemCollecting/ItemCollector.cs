@@ -140,52 +140,6 @@ namespace Eco.Scripts.ItemCollecting
             }
         }
 
-        private void PickItem(CollectorHand hand, Collider other)
-        {
-            if (_cart.IsFull)
-            {
-                return;
-            }
-
-            var item = other.GetComponent<ICartItem>();
-            if (item == null) return;
-
-            if (item.IsBeingPickedUp || !_cart.CanFitItem(item) || !hand.IsFree)
-                return;
-
-            // Reserve and attempt pick (same safe flow as in ScanForItems)
-            item.SetInCartState(true);
-            item.SetPickedUpStatus(true);
-
-            bool added = false;
-            try
-            {
-                added = _cart.AddToCart(item, other);
-            }
-            catch (Exception)
-            {
-                added = false;
-            }
-
-            if (!added)
-            {
-                try { item.SetPickedUpStatus(false); } catch { }
-                try { item.SetInCartState(false); } catch { }
-                return;
-            }
-
-            try
-            {
-                hand.PlayAnimation(item, other);
-            }
-            catch (Exception)
-            {
-                try { _cart.RemoveFromCart(item); } catch { }
-                try { item.SetPickedUpStatus(false); } catch { }
-                try { item.SetInCartState(false); } catch { }
-            }
-        }
-
         private bool HasFreeHands()
         {
             foreach (var hand in hands)

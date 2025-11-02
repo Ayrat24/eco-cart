@@ -184,7 +184,8 @@ namespace Eco.Scripts.ItemCollecting
             if (itemTransform != null)
                 ikTarget.position = itemTransform.position;
             ik.Target = ikTarget;
-
+            
+            item.MakeKinematic(false);
             _tweens.Add(Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration));
 
             var waitedSwing = await WaitSeconds(swingBackAnimationDuration, token);
@@ -192,15 +193,13 @@ namespace Eco.Scripts.ItemCollecting
             {
                 // cancelled during swing back - treat as done but ensure cleanup
                 CleanupAndClearTweens();
-                if (item != null) item.SetPickedUpStatus(false);
                 return;
             }
 
             ik.enabled = false;
 
             // Completed successfully: clear picked up flag so other systems consider it placed.
-            if (item != null) item.SetPickedUpStatus(false);
-            item.MakeKinematic(false);
+            item.SetPickedUpStatus(false);
 
             
             CleanupAndClearTweens();

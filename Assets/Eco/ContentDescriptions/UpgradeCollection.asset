@@ -75,6 +75,7 @@ MonoBehaviour:
     upgrades:
     - {fileID: 11400000, guid: a2e26bd82d3b52f458502896929f5bab, type: 2}
     - {fileID: 11400000, guid: 8d944b28b3980944eb24a9a805e6becc, type: 2}
+    - {fileID: 11400000, guid: 7be8c3f3efc96334c99100c3fc77e42a, type: 2}
   - name: Carts
     nameLoc:
       m_TableReference:
