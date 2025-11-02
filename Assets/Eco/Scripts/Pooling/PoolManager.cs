@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Eco.Scripts.Trash;
 using Eco.Scripts.World;
 using UnityEngine;
+using Tree = Eco.Scripts.Trees.Tree;
 
 namespace Eco.Scripts.Pooling
 {

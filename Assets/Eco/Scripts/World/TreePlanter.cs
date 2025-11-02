@@ -91,7 +91,7 @@ namespace Eco.Scripts.World
                 return;
             }
             
-            PlantTree(id, closestTile, closestField);
+            PlantTree(id, closestTile, closestField, true);
             MarkGroundCircle(closestTile, closestField, TreeGrassRadius);
             OnTreePlanted.OnNext(id);
         }
@@ -167,7 +167,7 @@ namespace Eco.Scripts.World
         
         private int Mod(int a, int m) => (a % m + m) % m;
 
-        public void PlantTree(int prefabId, Tile tile, Chunk parent)
+        public void PlantTree(int prefabId, Tile tile, Chunk parent, bool isNewlyPlanted = false)
         {
             var tree = PoolManager.Instance.GetTree(prefabId);
             tree.transform.parent = parent.transform;
@@ -175,6 +175,11 @@ namespace Eco.Scripts.World
 
             tile.item = tree;
             tile.objectType = TileObjectType.Tree;
+            
+            if (isNewlyPlanted)
+            {
+                tree.ShowPlantAnimation();
+            }
         }
         
         public void Clear()
