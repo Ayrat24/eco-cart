@@ -84,7 +84,7 @@ namespace Eco.Scripts
         [ContextMenu("Save Progress")]
         private void EndGame()
         {
-            _player.SavePosition(_saveManager);
+            _player.Save(_saveManager);
             _currencyManager.Save(_saveManager);
 
             _upgradeCollection.Save(_saveManager);

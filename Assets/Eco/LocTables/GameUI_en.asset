@@ -62,6 +62,10 @@ MonoBehaviour:
     m_Localized: Equip
     m_Metadata:
       m_Items: []
+  - m_Id: 21602810879537152
+    m_Localized: Hats
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

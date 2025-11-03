@@ -65,9 +65,9 @@ MonoBehaviour:
       - {fileID: 11400000, guid: ea76762c304856749aadfdd9841301e8, type: 2}
       - {fileID: 11400000, guid: f18031bd1af53e04a8718839617c5fb7, type: 2}
     - upgrades:
-      - {fileID: 11400000, guid: 56d5aa994a726a445bd2db8f4b6e59b6, type: 2}
-      - {fileID: 11400000, guid: 58e05af49af20b8439621f8b9b0eeb96, type: 2}
-      - {fileID: 11400000, guid: 7785a9d66557d8f4cb997a60b0c25c2b, type: 2}
+      - {fileID: 11400000, guid: f7504cbf56c1e39459908e8aaf696323, type: 2}
+      - {fileID: 11400000, guid: 91289b9aa7710ed4186f0cf60094034c, type: 2}
+      - {fileID: 11400000, guid: ebe6783055dcdc84285a8c2fca278714, type: 2}
   - name: Helpers
     nameLoc:
       m_TableReference:
@@ -87,6 +87,8 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 8d944b28b3980944eb24a9a805e6becc, type: 2}
       - {fileID: 11400000, guid: 65768d268a33a0f4495c44c0af35d67c, type: 2}
       - {fileID: 11400000, guid: 6aae01b82273b324c9d2cf398fa5f0bb, type: 2}
+    - upgrades:
+      - {fileID: 11400000, guid: 7be8c3f3efc96334c99100c3fc77e42a, type: 2}
   - name: Carts
     nameLoc:
       m_TableReference:
@@ -104,6 +106,26 @@ MonoBehaviour:
       - {fileID: 11400000, guid: a54175a0e4e90d64cbc1929698d60fa6, type: 2}
       - {fileID: 11400000, guid: 40cab2ef86f641849ad9cc999ea80bee, type: 2}
       - {fileID: 11400000, guid: 305b5aa401de714438694cbb94902bfa, type: 2}
+  - name: Hats
+    nameLoc:
+      m_TableReference:
+        m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableEntryReference:
+        m_KeyId: 21602810879537152
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    upgradeGroups:
+    - upgrades:
+      - {fileID: 11400000, guid: c6b9ab5e08a67154f94814aa362ef9bc, type: 2}
+      - {fileID: 11400000, guid: b5c7a87b3fa2c79469142b648f207e22, type: 2}
+      - {fileID: 11400000, guid: 83a4c27d485d30546a178da9c4a9eb0f, type: 2}
+      - {fileID: 11400000, guid: bdaea2d7e50c3e2429e17ff7af706915, type: 2}
+      - {fileID: 11400000, guid: 9b86d879c7667e14dae4edcaea26b586, type: 2}
+      - {fileID: 11400000, guid: 6dac2a072d9c84f43bd45c6e8932fc38, type: 2}
+      - {fileID: 11400000, guid: 785c77909ef18ae48892f7b536021316, type: 2}
+      - {fileID: 11400000, guid: b956de68f2c0d9549b5beda5bbe6562e, type: 2}
   references:
     version: 2
     RefIds: []

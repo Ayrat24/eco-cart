@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Hats_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 31afe75600c416b40bebd8b31ef8ff29, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 18694001000000001
+    m_Localized: Cowboy hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694001000000002
+    m_Localized: Yeehaw! Perfect for the wild west.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694002000000001
+    m_Localized: Crown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694002000000002
+    m_Localized: Rule your recycling empire in style.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694003000000001
+    m_Localized: Magician hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694003000000002
+    m_Localized: Now you see trash, now you see treasure!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694004000000001
+    m_Localized: Miner hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694004000000002
+    m_Localized: Light up the path to profits.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694005000000001
+    m_Localized: Pajama hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694005000000002
+    m_Localized: Comfort is key to productivity.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694006000000001
+    m_Localized: Police cap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694006000000002
+    m_Localized: Keep order in your recycling business.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694007000000001
+    m_Localized: Sombrero
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694007000000002
+    m_Localized: Stylish shade for sunny days.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694008000000001
+    m_Localized: Viking helmet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694008000000002
+    m_Localized: Conquer the recycling world!
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

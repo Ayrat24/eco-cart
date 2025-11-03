@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Hats;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
@@ -16,7 +17,9 @@ namespace Eco.Scripts
         [SerializeField] private ItemCollector itemCollector;
         [SerializeField] private Transform characterModel;
         [SerializeField] private ToolController toolController;
+        [SerializeField] private Transform hatParent;
         
+        private HatController _hatController;
         private CurrencyManager _currencyManager;
         private ScoreStats _scoreStats;
         private UpgradesCollection _upgrades;
@@ -24,7 +27,7 @@ namespace Eco.Scripts
         private IDisposable _subscription;
         private bool _changingCart;
 
-        public Subject<Cart> OnCartChanged = new();
+        public readonly Subject<Cart> OnCartChanged = new();
 
         [Inject]
         private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, ScoreStats scoreStats)
@@ -53,9 +56,12 @@ namespace Eco.Scripts
             {
                 cart.OnCartSelected.Subscribe(ChangeCart).AddTo(ref builder);
             }
+
             _subscription = builder.Build();
 
             toolController.Init();
+            _hatController = new HatController(_upgrades, hatParent);
+            _hatController.Initialize(saveManager);
         }
 
         private void SpawnNewCart(CartBuyUpgrade.CartData cartData)
@@ -63,10 +69,10 @@ namespace Eco.Scripts
             _cart = Instantiate(cartData.prefab, transform);
             _cart.transform.localPosition = cartData.offset;
             _cart.SetStats(cartData);
-            
+
             agent.speed = cartData.moveSpeed;
             characterModel.localPosition = cartData.characterModelOffset;
-            
+
             itemCollector.Init(_currencyManager, _scoreStats, _cart);
             OnCartChanged.OnNext(_cart);
         }
@@ -77,7 +83,7 @@ namespace Eco.Scripts
             {
                 return;
             }
-            
+
             ChangeCartAsync(cart).Forget();
         }
 
@@ -90,20 +96,22 @@ namespace Eco.Scripts
             await UniTask.NextFrame();
 
             SpawnNewCart(cart);
-            
+
             _changingCart = false;
         }
 
-        public void SavePosition(SaveManager saveManager)
+        public void Save(SaveManager saveManager)
         {
             saveManager.Progress.selectedCart = _cart.Id;
             saveManager.Progress.playerPosition = new SaveManager.Vector3Serializable(transform.position);
+            _hatController.SaveHat(saveManager);
         }
 
         private void OnDestroy()
         {
             _subscription?.Dispose();
             toolController?.Clear();
+            _hatController?.Clear();
         }
     }
 }

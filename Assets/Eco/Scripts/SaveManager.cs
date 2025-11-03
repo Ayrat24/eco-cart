@@ -131,6 +131,7 @@ namespace Eco.Scripts
         {
             public AlphabeticNotation currency;
             public string selectedCart;
+            public string selectedHat;
             public Vector3Serializable playerPosition;
             public Dictionary<string, int> UpgradeLevels = new();
             public string worldId;

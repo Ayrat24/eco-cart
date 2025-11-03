@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37b0741b3c6b2c340b148ac9ab5c1cf5, type: 3}
+  m_Name: MinerHat
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Hats.HatBuyUpgrade
+  baseCost:
+    coefficient: 0
+    magnitude: 0
+  costGrowth: 1.15
+  needsUpgrade: 0
+  upgradeId: minehat
+  upgradeLocalizedName:
+    m_TableReference:
+      m_TableCollectionName: GUID:31afe75600c416b40bebd8b31ef8ff29
+    m_TableEntryReference:
+      m_KeyId: 18694004000000001
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeLocalizedDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:31afe75600c416b40bebd8b31ef8ff29
+    m_TableEntryReference:
+      m_KeyId: 18694004000000002
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300006, guid: b27bcf37600cca24196520251965a496, type: 3}
+  selectString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  notSelectedString:
+    m_TableReference:
+      m_TableCollectionName: GameUI
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: upgrade-not-selected
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  hatData:
+    prefab: {fileID: 1834579425913364409, guid: 6c6ccf23ee5809347ad2d0fd73393e7e, type: 3}
+    positionOffset: {x: 0, y: 0, z: 0}
+  references:
+    version: 2
+    RefIds: []

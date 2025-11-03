@@ -59,6 +59,10 @@ MonoBehaviour:
     m_Key: upgrade-not-selected
     m_Metadata:
       m_Items: []
+  - m_Id: 21602810879537152
+    m_Key: tab-name-hats
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

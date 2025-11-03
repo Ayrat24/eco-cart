@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Hats Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Hats
+  m_TableCollectionNameGuidString: 31afe75600c416b40bebd8b31ef8ff29
+  m_Entries:
+  - m_Id: 18694001000000001
+    m_Key: hat-tab-cowboy-hat-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694001000000002
+    m_Key: hat-tab-cowboy-hat-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694002000000001
+    m_Key: hat-tab-crown-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694002000000002
+    m_Key: hat-tab-crown-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694003000000001
+    m_Key: hat-tab-magician-hat-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694003000000002
+    m_Key: hat-tab-magician-hat-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694004000000001
+    m_Key: hat-tab-miner-hat-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694004000000002
+    m_Key: hat-tab-miner-hat-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694005000000001
+    m_Key: hat-tab-pajama-hat-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694005000000002
+    m_Key: hat-tab-pajama-hat-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694006000000001
+    m_Key: hat-tab-police-cap-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694006000000002
+    m_Key: hat-tab-police-cap-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694007000000001
+    m_Key: hat-tab-sombrero-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694007000000002
+    m_Key: hat-tab-sombrero-buy-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694008000000001
+    m_Key: hat-tab-viking-helmet-buy-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18694008000000002
+    m_Key: hat-tab-viking-helmet-buy-description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5060762932110688783
+  references:
+    version: 2
+    RefIds:
+    - rid: 5060762932110688783
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1762194945432
