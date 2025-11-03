@@ -12,6 +12,7 @@ namespace Eco.Scripts.UI
     {
         private UIDocument _uiDocument;
         private VisualTreeAsset _upgradeItemTemplate;
+        private VisualTreeAsset _upgradeGroupHolder;
 
         private UpgradesCollection _upgradesCollection;
         private CurrencyManager _currencyManager;
@@ -23,7 +24,10 @@ namespace Eco.Scripts.UI
 
         private readonly List<UpgradeButton> _buttons = new();
         private readonly List<VisualElement> _tabContents = new();
-        private readonly Dictionary<UpgradesCollection.UpgradeTab<Upgrade>, LocalizedString.ChangeHandler> _tabLocHandlers = new();
+
+        private readonly Dictionary<UpgradesCollection.UpgradeTab, LocalizedString.ChangeHandler> _tabLocHandlers =
+            new();
+
         private bool _menuOpen = true;
         private IDisposable _subscription;
 
@@ -35,7 +39,7 @@ namespace Eco.Scripts.UI
         private const string UpgradeTabsName = "UpgradeTabs";
         private const string PageClassName = "upgrade-page";
         private const string HiddenClassName = "Hidden";
-        
+
         private const string LocTableName = "GameUI";
         private const string OpenLocString = "open-upgrade-menu";
         private const string CloseLocString = "close-upgrade-menu";
@@ -45,15 +49,17 @@ namespace Eco.Scripts.UI
 
         private string OpenText => _openLocString.GetLocalizedString();
         private string CloseText => _closeLocString.GetLocalizedString();
-        
+
         public static Subject<bool> OnOpen { get; } = new();
 
 
         public UpgradeMenu(UIDocument uiDocument, VisualTreeAsset upgradeItemTemplate,
+            VisualTreeAsset upgradeGroupHolder,
             UpgradesCollection upgradesCollection, CurrencyManager currencyManager)
         {
             _uiDocument = uiDocument;
             _upgradeItemTemplate = upgradeItemTemplate;
+            _upgradeGroupHolder = upgradeGroupHolder;
             _upgradesCollection = upgradesCollection;
             _currencyManager = currencyManager;
         }
@@ -92,16 +98,24 @@ namespace Eco.Scripts.UI
                 scrollView.Add(page);
                 _tabContents.Add(page);
 
-                foreach (var upgrade in category.upgrades)
+                foreach (var upgradeGroup in category.upgradeGroups)
                 {
-                    builder = SpawnUpgradeButton(page, upgrade, builder);
+                    var group = _upgradeGroupHolder.Instantiate();
+                    var container = group.Q<VisualElement>("UpgradeGroup");
+                    
+                    foreach (var upgrade in upgradeGroup.upgrades)
+                    {
+                        builder = SpawnUpgradeButton(container, upgrade, builder);
+                    }
+                    
+                    page.Add(container);
                 }
 
                 var tab = new Tab();
                 LocalizedString.ChangeHandler handler = tabName => OnTabNameChanged(tabName, tab);
                 category.nameLoc.StringChanged += handler;
                 _tabLocHandlers[category] = handler;
-                
+
                 _tabView.Add(tab);
             }
 
@@ -177,7 +191,7 @@ namespace Eco.Scripts.UI
         {
             _menuOpen = isOpen;
             OnOpen.OnNext(_menuOpen);
-            
+
             if (!_menuOpen)
             {
                 _upgradeMenu.AddToClassList(HiddenClassName);

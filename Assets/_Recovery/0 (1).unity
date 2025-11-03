@@ -1853,6 +1853,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameUI
   uiDocument: {fileID: 1248775055}
   upgradeItemTemplate: {fileID: 9197481963319205126, guid: 2da1b02a7a9317743b571445d178188a, type: 3}
+  upgradeGroupItemTemplate: {fileID: 9197481963319205126, guid: b21b7d4de2e90ad4bab36aa2566ce717, type: 3}
   cartItemTemplate: {fileID: 9197481963319205126, guid: 7684011abaf84824dbcc82b2562e6e37, type: 3}
 --- !u!1 &1274122422
 GameObject:

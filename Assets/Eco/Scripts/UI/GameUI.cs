@@ -9,6 +9,7 @@ namespace Eco.Scripts.UI
     {
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset upgradeItemTemplate;
+        [SerializeField] private VisualTreeAsset upgradeGroupItemTemplate;
         [SerializeField] private VisualTreeAsset cartItemTemplate;
 
         private UpgradeMenu _upgradeMenu;
@@ -16,10 +17,12 @@ namespace Eco.Scripts.UI
         private TutorialMenu _tutorialMenu;
         private ToolSelector _toolSelector;
         private ProgressDisplay _progress;
-        
-        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player, ProgressTracker progressTracker)
+
+        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player,
+            ProgressTracker progressTracker)
         {
-            _upgradeMenu = new UpgradeMenu(uiDocument, upgradeItemTemplate, upgradesCollection, currencyManager);
+            _upgradeMenu = new UpgradeMenu(uiDocument, upgradeItemTemplate, upgradeGroupItemTemplate,
+                upgradesCollection, currencyManager);
             _upgradeMenu.Init();
 
             _cartStorageDisplay = new CartStorageDisplay(uiDocument, player, cartItemTemplate);

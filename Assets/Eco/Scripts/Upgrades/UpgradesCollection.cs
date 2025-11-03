@@ -9,44 +9,53 @@ namespace Eco.Scripts.Upgrades
     [CreateAssetMenu(menuName = "Upgrade/UpgradeCollection")]
     public class UpgradesCollection : ScriptableObject
     {
-        public List<UpgradeTab<Upgrade>> upgrades = new();
+        public List<UpgradeTab> upgrades = new();
         public readonly Dictionary<TrashType, TrashScoreUpgrade> TrashScoreUpgrades = new();
 
         public void Load(SaveManager saveManager)
         {
             TrashScoreUpgrades.Clear();
 
-            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
+            foreach (var upgradeGroup in upgrades.SelectMany(tab => tab.upgradeGroups))
             {
-                if (upgrade is TrashScoreUpgrade trashScoreUpgrade)
+                foreach (var upgrade in upgradeGroup.upgrades)
                 {
-                    TrashScoreUpgrades.Add(trashScoreUpgrade.trashType, trashScoreUpgrade);
+                    if (upgrade is TrashScoreUpgrade trashScoreUpgrade)
+                    {
+                        TrashScoreUpgrades.Add(trashScoreUpgrade.trashType, trashScoreUpgrade);
+                    }
                 }
             }
 
-            foreach (var upgrade in upgrades.SelectMany(category => category.upgrades))
+            foreach (var upgradeGroup in upgrades.SelectMany(category => category.upgradeGroups))
             {
-                upgrade.Init(saveManager.Progress.UpgradeLevels.GetValueOrDefault(upgrade.upgradeId, 0));
+                foreach (var upgrade in upgradeGroup.upgrades)
+                {
+                    upgrade.Init(saveManager.Progress.UpgradeLevels.GetValueOrDefault(upgrade.upgradeId, 0));
+                }
             }
         }
 
         public List<T> GetUpgradeTypes<T>() where T : Upgrade
         {
             List<T> list = new();
-            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
+            foreach (var upgradeGroup in upgrades.SelectMany(tab => tab.upgradeGroups))
             {
-                if (upgrade is T u)
+                foreach (var upgrade in upgradeGroup.upgrades)
                 {
-                    list.Add(u);
+                    if (upgrade is T u)
+                    {
+                        list.Add(u);
+                    }
                 }
             }
 
             return list;
         }
-        
+
         public T GetUpgradeType<T>() where T : Upgrade
         {
-            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgrades))
+            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgradeGroups))
             {
                 if (upgrade is T u)
                 {
@@ -61,9 +70,12 @@ namespace Eco.Scripts.Upgrades
         {
             Dictionary<string, int> saveData = new Dictionary<string, int>();
 
-            foreach (var upgrade in upgrades.SelectMany(category => category.upgrades))
+            foreach (var upgradeGroup in upgrades.SelectMany(category => category.upgradeGroups))
             {
-                saveData[upgrade.upgradeId] = upgrade.CurrentLevel.Value;
+                foreach (var upgrade in upgradeGroup.upgrades)
+                {
+                    saveData[upgrade.upgradeId] = upgrade.CurrentLevel.Value;
+                }
             }
 
             saveManager.Progress.UpgradeLevels = saveData;
@@ -73,19 +85,28 @@ namespace Eco.Scripts.Upgrades
         {
             foreach (var tab in upgrades)
             {
-                foreach (var upgrade in tab.upgrades)
+                foreach (var upgradeGroup in tab.upgradeGroups)
                 {
-                    upgrade.Clear();
+                    foreach (var upgrade in upgradeGroup.upgrades)
+                    {
+                        upgrade.Clear();
+                    }
                 }
             }
         }
 
         [Serializable]
-        public class UpgradeTab<T> where T : Upgrade
+        public class UpgradeTab
         {
             public string name;
             public LocalizedString nameLoc;
-            public List<T> upgrades;
+            public List<UpgradeGroup> upgradeGroups;
+        }
+
+        [Serializable]
+        public class UpgradeGroup
+        {
+            public List<Upgrade> upgrades;
         }
     }
 }
