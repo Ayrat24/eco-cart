@@ -74,7 +74,11 @@ MonoBehaviour:
       m_LocalVariables: []
     upgrades:
     - {fileID: 11400000, guid: a2e26bd82d3b52f458502896929f5bab, type: 2}
+    - {fileID: 11400000, guid: f6bd9e0e113922b42bd0f67e3c083779, type: 2}
+    - {fileID: 11400000, guid: 1a4f64121d795c04388fb144db8a44e4, type: 2}
     - {fileID: 11400000, guid: 8d944b28b3980944eb24a9a805e6becc, type: 2}
+    - {fileID: 11400000, guid: 65768d268a33a0f4495c44c0af35d67c, type: 2}
+    - {fileID: 11400000, guid: 6aae01b82273b324c9d2cf398fa5f0bb, type: 2}
     - {fileID: 11400000, guid: 7be8c3f3efc96334c99100c3fc77e42a, type: 2}
   - name: Carts
     nameLoc:

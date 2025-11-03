@@ -176,6 +176,9 @@ namespace Eco.Scripts.Trash
             
             transform.localScale = Vector3.one;
             ChangeState(false);
+
+            _isBeingPickedUp = false;
+            _isCollected = false;
         }
 
         public void OnDespawn()

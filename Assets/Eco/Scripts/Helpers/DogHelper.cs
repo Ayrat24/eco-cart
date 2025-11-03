@@ -22,10 +22,10 @@ namespace Eco.Scripts.Helpers
         private Cart _cart;
         private bool _goingToTarget;
 
-        public override void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player,
-            int navmeshPriority)
+        public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
+            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
         {
-            base.Init(currencyManager, upgrades, player, navmeshPriority);
+            base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
 
             // Try to find existing cart (player spawns cart as child)
             _cart = player.GetComponentInChildren<Cart>();
@@ -34,7 +34,7 @@ namespace Eco.Scripts.Helpers
             player.OnCartChanged.Subscribe(c => { _cart = c; });
 
             var interval = TimeSpan.FromSeconds(1);
-            Subscription = Observable.Interval(interval).Subscribe(_ => { TickFind(); });
+            ActionSubscription = Observable.Interval(interval).Subscribe(_ => { TickFind(); });
             CancellationTokenSource = new CancellationTokenSource();
 
             _goingToTarget = false;

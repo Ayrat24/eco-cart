@@ -42,6 +42,38 @@ MonoBehaviour:
     m_Localized: Chicken lays eggs that can be recycled to gain money
     m_Metadata:
       m_Items: []
+  - m_Id: 21704123558653952
+    m_Localized: Cat move speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21704850821607424
+    m_Localized: 'Current speed: {0} m/s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21710769835995136
+    m_Localized: Cat score multiplier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21710807261769728
+    m_Localized: 'Current multiplier: x{0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715369846632448
+    m_Localized: Max eggs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715482576941056
+    m_Localized: 'How many eggs can exist simultaniously.\nCurren value: {0} eggs'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715490734862336
+    m_Localized: Egg laying interval
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715568723750912
+    m_Localized: 'Current interval: {0} s'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

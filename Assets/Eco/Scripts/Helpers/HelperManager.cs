@@ -12,8 +12,9 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private int spawnRadius;
         private CurrencyManager _currencyManager;
         private UpgradesCollection _upgrades;
-        IDisposable _subscription;
         private Player _player;
+        private ScoreStats _scoreStats;
+        private IDisposable _subscription;
 
         private readonly List<Vector3> _spawnDirections = new(){Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
         private int _lastSpawnDirection;
@@ -23,13 +24,14 @@ namespace Eco.Scripts.Helpers
 
         // map HelperClass -> prefab provided by each HelperBuyUpgrade (assumption: HelperBuyUpgrade exposes GetPrefab())
         private readonly Dictionary<HelperBuyUpgrade, Helper> _prefabMap = new();
-        
+
         [Inject]
-        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player)
+        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player, ScoreStats scoreStats)
         {
             _currencyManager = currencyManager;
             _upgrades = upgrades;
             _player = player;
+            _scoreStats = scoreStats;
         }
 
         public void LoadHelpers()
@@ -37,10 +39,10 @@ namespace Eco.Scripts.Helpers
             SetUpUpgrades();
         }
 
-        private Helper Spawn(Helper prefab, Vector3 spawnPosition)
+        private Helper Spawn(Helper prefab, Vector3 spawnPosition, List<HelperUpgrade> helperClassUpgrades)
         {
             var helper = Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
-            helper.Init(_currencyManager, _upgrades, _player, _navmeshPriority);
+            helper.Init(_currencyManager, _scoreStats, _player, _navmeshPriority, helperClassUpgrades);
             _navmeshPriority++;
             return helper;
         }
@@ -88,7 +90,7 @@ namespace Eco.Scripts.Helpers
             if (!_prefabMap.TryGetValue(helperClass, out var prefab) || prefab == null)
                 return; // no prefab configured for this helper class
 
-            _activeHelper = Spawn(prefab, spawnPosition);
+            _activeHelper = Spawn(prefab, spawnPosition, helperClass.Upgrades);
         }
 
         private void OnDestroy()

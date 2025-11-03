@@ -39,6 +39,38 @@ MonoBehaviour:
     m_Key: helper-tab-chicken-description
     m_Metadata:
       m_Items: []
+  - m_Id: 21704123558653952
+    m_Key: helper-tab-cat-speed-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21704850821607424
+    m_Key: helper-tab-cat-speed-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21710769835995136
+    m_Key: helper-tab-cat-score-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21710807261769728
+    m_Key: helper-tab-cat-score-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715369846632448
+    m_Key: helper-tab-chicken-count-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715482576941056
+    m_Key: helper-tab-chicken-count-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715490734862336
+    m_Key: helper-tab-chicken-interval-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21715568723750912
+    m_Key: helper-tab-chicken-interval-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

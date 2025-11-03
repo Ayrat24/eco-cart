@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldPreset2
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
   worldId: world222
-  worldSideSize: 2
+  worldSideSize: 15
   seed: 5
   trashPerChunk: 3
   chunkTypes: 0000000002000000

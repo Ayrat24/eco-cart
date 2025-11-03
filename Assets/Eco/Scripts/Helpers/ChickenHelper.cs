@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.Trash;
@@ -15,34 +16,43 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private LayerMask groundItemsMask;
         [SerializeField] private int playerStopDistance = 8;
         [SerializeField] private TrashItem eggPrefab;
-        [SerializeField] private int maxConcurrentEggs = 3;
         [SerializeField] private float eggReplaceDistanceFromPlayer = 20;
 
         private bool _initialized;
 
-        // Local pool for eggs so chicken controls egg lifecycle independently
         private ObjectPool<TrashItem> _eggPool;
-        private readonly System.Collections.Generic.HashSet<TrashItem> _activeEggs = new();
+        private readonly HashSet<TrashItem> _activeEggs = new();
 
-        public override void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player,
-            int navmeshPriority)
+        // runtime-configurable values (affected by upgrades)
+        private int _currentMaxConcurrentEggs;
+        private float _eggIntervalSeconds = 5f;
+
+        public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
+            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
         {
-            base.Init(currencyManager, upgrades, player, navmeshPriority);
+            base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
 
-            // create a dedicated pool for eggs. Do not auto-expand to enforce the concurrent limit
-            // use PoolManager's transform as parent so pool objects survive helper destruction
-            // allow the pool to auto-expand to avoid the helper getting stuck if eggs are returned to
-            // the global pool by other systems; we still enforce maxConcurrentEggs via _activeEggs.
-            _eggPool = new ObjectPool<TrashItem>(eggPrefab, maxConcurrentEggs, PoolManager.Instance.transform, true);
+            var maxConcurrentEggs = (int)Upgrades[0].Value;
+            _eggPool = new ObjectPool<TrashItem>(eggPrefab, maxConcurrentEggs, PoolManager.Instance.transform);
 
-            var interval = TimeSpan.FromSeconds(5);
-            Subscription = Observable.Interval(interval).Subscribe(_ => LayEgg());
+            // initialize runtime values from serialized defaults
+            _currentMaxConcurrentEggs = Mathf.Max(1, maxConcurrentEggs);
+            _eggIntervalSeconds = 5f;
+
+            // start periodic lay timer (will be reconfigured by upgrades via ApplyHelperUpgrade)
+            ActionSubscription =
+                Observable.Interval(TimeSpan.FromSeconds(_eggIntervalSeconds)).Subscribe(_ => LayEgg());
             CancellationTokenSource = new CancellationTokenSource();
-            
+
             agent.destination = player.transform.position;
             animationController.GoingToTarget = true;
-            
+
             _initialized = true;
+
+            if (helperClassUpgrades != null)
+            {
+                SetupUpgrades(helperClassUpgrades);
+            }
         }
 
         protected void FixedUpdate()
@@ -51,7 +61,7 @@ namespace Eco.Scripts.Helpers
             {
                 return;
             }
-            
+
             WalkAround();
         }
 
@@ -71,7 +81,7 @@ namespace Eco.Scripts.Helpers
         private void LayEgg()
         {
             animationController.TriggerAction();
-            
+
             // Clean up any inactive or null references that could have been left in the set
             // (defensive: if an egg was returned to a different pool or callbacks missed).
             foreach (var e in System.Linq.Enumerable.ToArray(_activeEggs))
@@ -81,12 +91,9 @@ namespace Eco.Scripts.Helpers
                     _activeEggs.Remove(e);
                 }
             }
-            
-            // Debug info (remove or gate behind a verbose flag if noisy)
-            // Debug.Log($"ChickenHelper: active eggs before lay = {_activeEggs.Count}");
 
             // Limit total eggs spawned by this chicken
-            if (_activeEggs.Count >= maxConcurrentEggs)
+            if (_activeEggs.Count >= _currentMaxConcurrentEggs)
             {
                 // try to find an active egg that is far away from the player and reuse it
                 TrashItem farEgg = null;
@@ -157,7 +164,7 @@ namespace Eco.Scripts.Helpers
             egg.ReturnToPoolCallback = null;
             egg.OnReturnedToPool = null;
 
-            var wasRemoved = _activeEggs.Remove(egg);
+            _activeEggs.Remove(egg);
             // Always return the egg to the pool even if it wasn't tracked (defensive)
             _eggPool.ReturnToPool(egg);
         }
@@ -170,7 +177,7 @@ namespace Eco.Scripts.Helpers
 
             egg.ReturnToPoolCallback = null;
             egg.OnReturnedToPool = null;
-            var wasRemoved = _activeEggs.Remove(egg);
+            _activeEggs.Remove(egg);
         }
 
         public override void Clear()
@@ -183,8 +190,45 @@ namespace Eco.Scripts.Helpers
             }
 
             _activeEggs.Clear();
-            
+
             base.Clear();
+        }
+
+        // Handle helper-class upgrades: index 0 = max concurrent eggs, index 1 = egg spawn interval (seconds)
+        protected override void ApplyHelperUpgrade(HelperUpgrade upgrade, int index)
+        {
+            if (upgrade == null) return;
+
+            try
+            {
+                switch (index)
+                {
+                    case 0:
+                        // treat upgrade.Value as desired capacity (round to int)
+                        _currentMaxConcurrentEggs = Mathf.Max(1, Mathf.RoundToInt(upgrade.Value));
+                        break;
+                    case 1:
+                        // treat upgrade.Value as spawn interval seconds (clamp to a sensible minimum)
+                        var newInterval = Mathf.Max(0.1f, upgrade.Value);
+                        if (Math.Abs(newInterval - _eggIntervalSeconds) > 0.001f)
+                        {
+                            _eggIntervalSeconds = newInterval;
+                            // resubscribe periodic timer
+                            ActionSubscription?.Dispose();
+                            ActionSubscription = Observable.Interval(TimeSpan.FromSeconds(_eggIntervalSeconds))
+                                .Subscribe(_ => LayEgg());
+                        }
+
+                        break;
+                    default:
+                        Debug.Log($"ChickenHelper: received upgrade at index {index} (value={upgrade.Value})");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
     }
 }

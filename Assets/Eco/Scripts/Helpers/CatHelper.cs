@@ -21,16 +21,58 @@ namespace Eco.Scripts.Helpers
 
         private bool _goingToTarget;
 
-        public override void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player,
-            int navmeshPriority)
+        // upgrade subscription tracking (managed by this helper only)
+
+
+        // recycle value multiplier (upgrade index 1)
+        private float _recycleMultiplier = 1f;
+
+        public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
+            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
         {
-            base.Init(currencyManager, upgrades, player, navmeshPriority);
-            
+            base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
+
             var interval = TimeSpan.FromSeconds(1);
-            Subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });
+            ActionSubscription = Observable.Interval(interval).Subscribe(_ => { GoToNearbyItem(); });
             CancellationTokenSource = new CancellationTokenSource();
+
+            SetupUpgrades(helperClassUpgrades);
         }
 
+
+        protected override void ApplyHelperUpgrade(HelperUpgrade upgrade, int index)
+        {
+            if (upgrade == null) return;
+
+            try
+            {
+                switch (index)
+                {
+                    case 0:
+                        // agent speed multiplier/value
+                        if (agent != null)
+                        {
+                            agent.acceleration = upgrade.Value * 10;
+                            agent.speed = upgrade.Value;
+                            Debug.Log($"CatHelper: applied speed upgrade -> {agent.speed:F2}");
+                        }
+
+                        break;
+                    case 1:
+                        // recycle value multiplier
+                        _recycleMultiplier = upgrade.Value;
+                        Debug.Log($"CatHelper: applied recycle multiplier -> {_recycleMultiplier:F2}");
+                        break;
+                    default:
+                        Debug.Log($"CatHelper: received upgrade at index {index} (value={upgrade.Value})");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
 
         private void GoToNearbyItem()
         {
@@ -60,7 +102,7 @@ namespace Eco.Scripts.Helpers
             // sort by ascending distance to player (closest first)
             trashItems.Sort((x, y) =>
                 Vector3.Distance(x.transform.position, Player.transform.position)
-                .CompareTo(Vector3.Distance(y.transform.position, Player.transform.position)));
+                    .CompareTo(Vector3.Distance(y.transform.position, Player.transform.position)));
 
             var food = trashItems[0];
 
@@ -133,7 +175,8 @@ namespace Eco.Scripts.Helpers
                     if (!agent.hasPath && !agent.pathPending)
                     {
                         var recalc = new NavMeshPath();
-                        if (!agent.CalculatePath(food.transform.position, recalc) || recalc.status != NavMeshPathStatus.PathComplete)
+                        if (!agent.CalculatePath(food.transform.position, recalc) ||
+                            recalc.status != NavMeshPathStatus.PathComplete)
                         {
                             DebugState = "Path invalid";
                             break;
@@ -148,9 +191,12 @@ namespace Eco.Scripts.Helpers
                         if (food.CanBeRecycled)
                         {
                             animationController.TriggerAction();
-                            var money = UpgradesCollection.TrashScoreUpgrades[food.TrashType].ScoreForCurrentUpgrade;
+                            var money = ScoreStats.GetScoreForTrash(food.TrashType);
                             await food.RecycleAsync();
-                            CurrencyManager.AddMoney(money);
+                            // apply recycle multiplier from upgrades
+                            var reward = money * _recycleMultiplier;
+                            CurrencyManager.AddMoney(reward);
+                            Debug.Log($"CatHelper: recycled {food.GetName()} reward={reward}");
                         }
 
                         DebugState = "Consumed";
