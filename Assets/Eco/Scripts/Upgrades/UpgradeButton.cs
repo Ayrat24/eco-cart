@@ -15,6 +15,7 @@ public partial class UpgradeButton : VisualElement
     private int _previousLevel;
 
     public readonly Subject<Upgrade> OnUpgradeClicked = new();
+    public Upgrade Upgrade => _upgrade;
 
 
     public UpgradeButton()

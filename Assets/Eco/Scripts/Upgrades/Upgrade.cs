@@ -19,6 +19,7 @@ namespace Eco.Scripts.Upgrades
     
         public AlphabeticNotation Cost { get; private set; }
         public bool Available { get; protected set; }
+        public UnlockableUpgradeType NeedsUpgrade => needsUpgrade;
         
         public readonly ReactiveProperty<int> CurrentLevel = new(1);
     

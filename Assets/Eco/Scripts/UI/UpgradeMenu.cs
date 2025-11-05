@@ -89,6 +89,7 @@ namespace Eco.Scripts.UI
 
             _currencyManager.CurrentMoney.Subscribe(_ => UpdateButtons()).AddTo(ref builder);
             _currencyManager.CurrentMoney.Subscribe(UpdateCurrencyCounter).AddTo(ref builder);
+            UnlockTracker.OnUnlocked.Subscribe(OnUpgradeUnlocked).AddTo(ref builder);
 
             foreach (var category in _upgradesCollection.upgrades)
             {
@@ -151,6 +152,13 @@ namespace Eco.Scripts.UI
             b.UpdatePurchaseAvailability(_currencyManager.CurrentMoney.Value);
             b.OnUpgradeClicked.Subscribe(OnUpgradePurchase).AddTo(ref builder);
 
+            // Check if upgrade's prerequisite is met
+            if (upgrade.NeedsUpgrade != UnlockableUpgradeType.None && 
+                !UnlockTracker.IsUpgradeUnlocked(upgrade.NeedsUpgrade))
+            {
+                b.style.display = DisplayStyle.None;
+            }
+
             page.Add(b);
             _buttons.Add(b);
             return builder;
@@ -178,6 +186,19 @@ namespace Eco.Scripts.UI
             foreach (var btn in _buttons)
             {
                 btn.UpdatePurchaseAvailability(_currencyManager.CurrentMoney.Value);
+            }
+        }
+
+        private void OnUpgradeUnlocked(UnlockableUpgradeType unlockedType)
+        {
+            // Show any upgrades that were waiting for this unlock
+            foreach (var btn in _buttons)
+            {
+                var upgrade = btn.Upgrade;
+                if (upgrade.NeedsUpgrade == unlockedType)
+                {
+                    btn.style.display = DisplayStyle.Flex;
+                }
             }
         }
 
