@@ -24,6 +24,8 @@ namespace Eco.Scripts.World
         private bool _initialized;
         private TreePlanter _treePlanter;
         private UpgradesCollection _upgrades;
+        private CurrencyManager _currencyManager;
+        private PileScoreUpgrade _pileScoreUpgrade;
 
         public const int ChunkSize = 10;
         public int RenderRadius => renderRadius;
@@ -36,10 +38,11 @@ namespace Eco.Scripts.World
         private readonly Dictionary<ChunkType, ObjectPool<Chunk>> _pools = new();
         
         [Inject]
-        public void Initialize(SaveManager saveManager, UpgradesCollection upgrades)
+        public void Initialize(SaveManager saveManager, UpgradesCollection upgrades, CurrencyManager currencyManager)
         {
             _saveManager = saveManager;
             _upgrades = upgrades;
+            _currencyManager = currencyManager;
         }
 
         public void SpawnWorld(WorldPreset worldPreset)
@@ -60,6 +63,9 @@ namespace Eco.Scripts.World
 
             _treePlanter = new TreePlanter(_upgrades, player, this);
             _treePlanter.Init();
+            
+            // Get the PileScoreUpgrade from upgrades collection
+            _pileScoreUpgrade = _upgrades.GetUpgradeType<PileScoreUpgrade>();
 
             Flatten();
             RebuildNavMesh();
@@ -69,10 +75,6 @@ namespace Eco.Scripts.World
 
         private void RebuildNavMesh()
         {
-            // var planeSize = WorldSize;
-            // navMeshPlane.transform.localScale = new Vector3(planeSize, 1, planeSize);
-            // navMeshPlane.collectObjects = CollectObjects.Volume;
-            // navMeshPlane.size = new Vector3(planeSize * 10, 10, planeSize * 10);
             navMeshPlane.BuildNavMesh();
         }
 
@@ -132,7 +134,7 @@ namespace Eco.Scripts.World
                          } else if (type == ChunkType.Pile)
                          {
                              PileChunk pileChunk = (PileChunk)chunk;
-                             pileChunk.Init();
+                             pileChunk.Init(_currencyManager, _pileScoreUpgrade);
                          }
 
                          chunk.transform.parent = transform;

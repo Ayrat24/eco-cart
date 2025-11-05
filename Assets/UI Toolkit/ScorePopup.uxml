@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/ScorePopup.uss?fileID=7433441132597879392&amp;guid=6807c0c7cc694a9695b28a3669a501f7&amp;type=3#ScorePopup" />
+    <Style src="project://database/Assets/Eco/UI/BackgroundColors.uss?fileID=7433441132597879392&amp;guid=404a0c799aeb1484f94faf474cec9a85&amp;type=3#BackgroundColors" />
+    <ui:Label name="Money" text="+100" class="money-label score-popup-container" style="flex-grow: 1; flex-shrink: 1; position: absolute; border-left-color: rgb(56, 102, 65); border-right-color: rgb(56, 102, 65); border-top-color: rgb(56, 102, 65); border-bottom-color: rgb(56, 102, 65);" />
+</ui:UXML>

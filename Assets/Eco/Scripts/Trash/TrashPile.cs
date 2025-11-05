@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Pooling;
@@ -28,6 +29,7 @@ namespace Eco.Scripts.Trash
         {
             _size = size;
             _isCleared = false;
+            _isDigging = false;
 
             // set visual height
             var pos = transform.position;
@@ -112,6 +114,11 @@ namespace Eco.Scripts.Trash
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
+        }
+
+        private void OnDisable()
+        {
+            Clear();
         }
     }
 }

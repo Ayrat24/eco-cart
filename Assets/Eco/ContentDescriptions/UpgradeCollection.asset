@@ -23,6 +23,7 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
+    needsUpgrade: 0
     upgradeGroups:
     - upgrades:
       - {fileID: 11400000, guid: 79173f9eb7095324fb1b151fd5e0bea9, type: 2}
@@ -30,6 +31,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: e7161449fb729e642ac1a1a6ce23bdee, type: 2}
       - {fileID: 11400000, guid: 4c5ba1b840ab070459107101bd8509f5, type: 2}
       - {fileID: 11400000, guid: 11967f29b184bf2418e172174e6cd6a8, type: 2}
+      - {fileID: 11400000, guid: a7192bc3f4359474ebf0ed21a951a57c, type: 2}
   - name: Recycling
     nameLoc:
       m_TableReference:
@@ -40,6 +42,7 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
+    needsUpgrade: 0
     upgradeGroups:
     - upgrades:
       - {fileID: 11400000, guid: 4337a12bc76344e4699a33d91fd09420, type: 2}
@@ -58,6 +61,7 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
+    needsUpgrade: 6
     upgradeGroups:
     - upgrades:
       - {fileID: 11400000, guid: 56d5aa994a726a445bd2db8f4b6e59b6, type: 2}
@@ -81,6 +85,7 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
+    needsUpgrade: 9
     upgradeGroups:
     - upgrades:
       - {fileID: 11400000, guid: a2e26bd82d3b52f458502896929f5bab, type: 2}
@@ -102,6 +107,7 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
+    needsUpgrade: 0
     upgradeGroups:
     - upgrades:
       - {fileID: 11400000, guid: 3cd67880c2f78b240963e01e4d3719e0, type: 2}
@@ -119,6 +125,7 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
+    needsUpgrade: 0
     upgradeGroups:
     - upgrades:
       - {fileID: 11400000, guid: c6b9ab5e08a67154f94814aa362ef9bc, type: 2}

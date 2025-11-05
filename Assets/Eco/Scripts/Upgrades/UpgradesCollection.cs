@@ -55,12 +55,16 @@ namespace Eco.Scripts.Upgrades
 
         public T GetUpgradeType<T>() where T : Upgrade
         {
-            foreach (var upgrade in upgrades.SelectMany(tab => tab.upgradeGroups))
+            foreach (var upgradeGroup in upgrades.SelectMany(tab => tab.upgradeGroups))
             {
-                if (upgrade is T u)
+                foreach (var upgrade in upgradeGroup.upgrades)
                 {
-                    return u;
+                    if (upgrade is T u)
+                    {
+                        return u;
+                    }
                 }
+                
             }
 
             return null;

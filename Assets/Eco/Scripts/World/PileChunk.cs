@@ -13,9 +13,14 @@ namespace Eco.Scripts.World
         [SerializeField] private GameObject butterflies;
         private Tile _tileWithPile;
         private IDisposable _unlockSubscription;
+        private CurrencyManager _currencyManager;
+        private PileScoreUpgrade _pileScoreUpgrade;
 
-        public void Init()
+        public void Init(CurrencyManager currencyManager, PileScoreUpgrade pileScoreUpgrade)
         {
+            _currencyManager = currencyManager;
+            _pileScoreUpgrade = pileScoreUpgrade;
+            
             bool hasSave = SaveManager.FieldTiles.ContainsKey(Position);
             int pileSize = 5; // default size
             int centerIndex = (ChunkSize / 2) * ChunkSize + (ChunkSize / 2);
@@ -101,6 +106,19 @@ namespace Eco.Scripts.World
                 }
             }
 
+            // Award money and show popup
+            if (_currencyManager != null && _pileScoreUpgrade != null)
+            {
+                var reward = _pileScoreUpgrade.ScoreForCurrentUpgrade;
+                _currencyManager.AddMoney(reward);
+                
+                // Show popup at pile position
+                if (pile != null)
+                {
+                    ScoreGainedPopup.Show(pile.transform.position, reward);
+                }
+            }
+            
             // If the upgrades are unlocked, enable visuals when pile cleared
             ShowFlowers();
             ShowButterflies();

@@ -196,6 +196,10 @@ namespace Eco.Scripts.Helpers
                             // apply recycle multiplier from upgrades
                             var reward = money * _recycleMultiplier;
                             CurrencyManager.AddMoney(reward);
+                            
+                            // Show popup at food position
+                            ScoreGainedPopup.Show(transform.position, reward);
+                            
                             Debug.Log($"CatHelper: recycled {food.GetName()} reward={reward}");
                         }
 

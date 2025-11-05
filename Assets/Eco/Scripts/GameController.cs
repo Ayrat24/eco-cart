@@ -17,6 +17,7 @@ namespace Eco.Scripts
         [SerializeField] CameraController cameraController;
         [SerializeField] private Map map;
         [SerializeField] WorldPreset worldPreset;
+        [SerializeField] private ScoreGainedPopup scoreGainedPopup;
 
         private SaveManager _saveManager;
         private WorldController _worldController;
@@ -60,12 +61,18 @@ namespace Eco.Scripts
             PoolManager.Instance.InitializePools(worldPreset.AllowedTrashItems);
 
             _settings.Load();
+            _upgradeCollection.Load(_saveManager);
+            _scoreStats.Init();
+            
+            scoreGainedPopup.Init();
+            
+            await UniTask.NextFrame();
+            
             TerrainPainter.ClearTerrain();
             _worldController.SpawnWorld(worldPreset);
             _progressTracker.Init(worldPreset.TrashPerChunk);
 
-            _upgradeCollection.Load(_saveManager);
-            _scoreStats.Init();
+           
             
             await UniTask.NextFrame();
             gameUI.Init(_upgradeCollection, _currencyManager, _player, _progressTracker);
