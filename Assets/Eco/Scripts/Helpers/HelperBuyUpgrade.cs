@@ -8,6 +8,7 @@ namespace Eco.Scripts.Helpers
     [CreateAssetMenu(fileName = "Helper Buy", menuName = "Helper/Buy")]
     public class HelperBuyUpgrade : SelectableUpgrade
     {
+        [SerializeField] UnlockableUpgradeType upgradeType;
         [SerializeField] private Helper prefab;
         [SerializeField] List<HelperUpgrade> upgrades;
         
@@ -20,7 +21,22 @@ namespace Eco.Scripts.Helpers
 
         protected override void ApplyUpgrade(int level)
         {
+            if (level == 1)
+            {
+                UnlockTracker.UnlockUpgrade(upgradeType);
+            }
+            
             OnPurchase.OnNext(this);
+        }
+        
+        protected override void Load(int level)
+        {
+            base.Load(level);
+            
+            if (level > 0)
+            {
+                UnlockTracker.UnlockUpgrade(upgradeType);
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
     coefficient: 1
     magnitude: 0
   costGrowth: 4
-  needsUpgrade: 0
+  needsUpgrade: 10
   upgradeId: cat score
   upgradeLocalizedName:
     m_TableReference:

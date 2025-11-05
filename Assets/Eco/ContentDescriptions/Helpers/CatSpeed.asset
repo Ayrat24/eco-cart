@@ -16,7 +16,7 @@ MonoBehaviour:
     coefficient: 10
     magnitude: 0
   costGrowth: 2
-  needsUpgrade: 0
+  needsUpgrade: 10
   upgradeId: cat speed
   upgradeLocalizedName:
     m_TableReference:

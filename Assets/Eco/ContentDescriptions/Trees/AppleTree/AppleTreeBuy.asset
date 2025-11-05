@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eadc48912bbc31649aa5db183675ebd0, type: 3}
   m_Name: AppleTreeBuy
   m_EditorClassIdentifier: 
-  baseCost: 50
+  baseCost:
+    coefficient: 0
+    magnitude: 0
   costGrowth: 1.5
+  needsUpgrade: 0
   upgradeId: Apple Tree
   upgradeLocalizedName:
     m_TableReference:
@@ -34,6 +37,7 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 88170e60f72c16249b018b8971ab1460, type: 3}
+  upgradeType: 8
   prefabId: 101
   scoreUpgrade: {fileID: 11400000, guid: f18031bd1af53e04a8718839617c5fb7, type: 2}
   intervalUpgrade: {fileID: 11400000, guid: ea76762c304856749aadfdd9841301e8, type: 2}

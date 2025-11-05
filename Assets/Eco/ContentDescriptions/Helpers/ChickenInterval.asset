@@ -16,7 +16,7 @@ MonoBehaviour:
     coefficient: 1
     magnitude: 0
   costGrowth: 24
-  needsUpgrade: 0
+  needsUpgrade: 11
   upgradeId: chicken interval
   upgradeLocalizedName:
     m_TableReference:

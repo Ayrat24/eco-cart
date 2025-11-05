@@ -55,7 +55,9 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  upgradeType: 12
   prefab: {fileID: 668204378454102749, guid: cd18d5f7509ce664db4a002b69fbc1bd, type: 3}
+  upgrades: []
   references:
     version: 2
     RefIds: []

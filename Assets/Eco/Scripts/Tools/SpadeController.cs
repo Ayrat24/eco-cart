@@ -39,7 +39,7 @@ namespace Eco.Scripts.Tools
 
                 ScanForItems();
             });
-            
+
             _leftStartParent = leftHandIKTarget.parent;
             _rightStartParent = rightHanIKTarget.parent;
         }

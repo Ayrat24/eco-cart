@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b31436f158fdaa4db9ffa630b5b2f9a, type: 3}
   m_Name: PeachInterval
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeIntervalUpgrade
-  baseCost: 20
+  baseCost:
+    coefficient: 0
+    magnitude: 0
   costGrowth: 2
-  needsUpgrade: 0
+  needsUpgrade: 9
   upgradeId: Peach Tree Interva
   upgradeLocalizedName:
     m_TableReference:

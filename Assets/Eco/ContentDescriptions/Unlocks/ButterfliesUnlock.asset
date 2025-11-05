@@ -16,8 +16,8 @@ MonoBehaviour:
     coefficient: 0
     magnitude: 0
   costGrowth: 1
-  needsUpgrade: 3
-  upgradeId: flowers-unlock
+  needsUpgrade: 5
+  upgradeId: butter-unlock
   upgradeLocalizedName:
     m_TableReference:
       m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
@@ -46,7 +46,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  upgradeType: 5
+  upgradeType: 6
   references:
     version: 2
     RefIds: []

@@ -14,6 +14,8 @@ namespace Eco.Scripts.Trash
         [SerializeField] HighlightEffect highlightEffect;
         [SerializeField] private float heightPerSize = 0.1f;
         [SerializeField] private float digDuration = 0.5f;
+        [SerializeField] private ParticleSystem digParticleEffect;
+
         private int _size = 5;
         private bool _isDigging;
         private CancellationTokenSource _cancellationTokenSource;
@@ -64,6 +66,7 @@ namespace Eco.Scripts.Trash
             pileHeight -= heightPerSize;
             _size -= 1;
             Tween.PositionY(transform, pileHeight, digDuration);
+            digParticleEffect.Play();
 
             if (_size <= 0)
             {

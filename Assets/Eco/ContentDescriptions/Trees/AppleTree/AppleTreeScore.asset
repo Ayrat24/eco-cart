@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78c71a706a9c17646b70d975165d956d, type: 3}
   m_Name: AppleTreeScore
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeScoreUpgrade
-  baseCost: 15
+  baseCost:
+    coefficient: 0
+    magnitude: 0
   costGrowth: 1.15
-  needsUpgrade: 0
+  needsUpgrade: 8
   upgradeId: AppleTreeScore
   upgradeLocalizedName:
     m_TableReference:

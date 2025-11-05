@@ -43,6 +43,12 @@ namespace Eco.Scripts.Upgrades
         Spade,
         Smoke,
         Flowers,
-        Butterflies
+        Butterflies,
+        Pine,
+        Apple,
+        Pear,
+        Cat,
+        Chicken,
+        Dog
     }
 }
