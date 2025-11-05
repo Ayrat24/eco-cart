@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Eco.Scripts.Upgrades;
 using LargeNumbers;
 using R3;
+using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.UIElements;
 
@@ -27,6 +28,9 @@ namespace Eco.Scripts.UI
 
         private readonly Dictionary<UpgradesCollection.UpgradeTab, LocalizedString.ChangeHandler> _tabLocHandlers =
             new();
+
+        private readonly Dictionary<Tab, UnlockableUpgradeType> _tabUnlockRequirements = new();
+        private readonly Dictionary<Tab, int> _tabToContentIndex = new(); // Maps tab to its content page index
 
         private bool _menuOpen = true;
         private IDisposable _subscription;
@@ -91,6 +95,7 @@ namespace Eco.Scripts.UI
             _currencyManager.CurrentMoney.Subscribe(UpdateCurrencyCounter).AddTo(ref builder);
             UnlockTracker.OnUnlocked.Subscribe(OnUpgradeUnlocked).AddTo(ref builder);
 
+            int contentIndex = 0;
             foreach (var category in _upgradesCollection.upgrades)
             {
                 var page = new VisualElement();
@@ -103,12 +108,12 @@ namespace Eco.Scripts.UI
                 {
                     var group = _upgradeGroupHolder.Instantiate();
                     var container = group.Q<VisualElement>("UpgradeGroup");
-                    
+
                     foreach (var upgrade in upgradeGroup.upgrades)
                     {
                         builder = SpawnUpgradeButton(container, upgrade, builder);
                     }
-                    
+
                     page.Add(container);
                 }
 
@@ -117,9 +122,19 @@ namespace Eco.Scripts.UI
                 category.nameLoc.StringChanged += handler;
                 _tabLocHandlers[category] = handler;
 
-                _tabView.Add(tab);
+                // Store unlock requirement and content index mapping
+                _tabUnlockRequirements[tab] = category.needsUpgrade;
+                _tabToContentIndex[tab] = contentIndex;
+                
+                // Only add tab to TabView if it's unlocked
+                if (category.needsUpgrade == UnlockableUpgradeType.None ||
+                    UnlockTracker.IsUpgradeUnlocked(category.needsUpgrade))
+                {
+                    _tabView.Add(tab);
+                }
+                
+                contentIndex++;
             }
-
 
             tabView.RegisterCallback<ClickEvent>((_) => SetTab());
             SetTab();
@@ -134,10 +149,24 @@ namespace Eco.Scripts.UI
 
         private void SetTab()
         {
-            var tabIndex = _tabView.selectedTabIndex;
-            for (int i = 0; i < _tabContents.Count; i++)
+            // Get all currently visible tabs
+            var visibleTabs = _tabView.Query<Tab>().ToList();
+            var selectedTabIndex = _tabView.selectedTabIndex;
+            
+            // Hide all content first
+            foreach (var content in _tabContents)
             {
-                _tabContents[i].style.display = i == tabIndex ? DisplayStyle.Flex : DisplayStyle.None;
+                content.style.display = DisplayStyle.None;
+            }
+            
+            // Show content for the selected tab using the mapping
+            if (selectedTabIndex >= 0 && selectedTabIndex < visibleTabs.Count)
+            {
+                var selectedTab = visibleTabs[selectedTabIndex];
+                if (_tabToContentIndex.TryGetValue(selectedTab, out int contentIndex))
+                {
+                    _tabContents[contentIndex].style.display = DisplayStyle.Flex;
+                }
             }
         }
 
@@ -153,7 +182,7 @@ namespace Eco.Scripts.UI
             b.OnUpgradeClicked.Subscribe(OnUpgradePurchase).AddTo(ref builder);
 
             // Check if upgrade's prerequisite is met
-            if (upgrade.NeedsUpgrade != UnlockableUpgradeType.None && 
+            if (upgrade.NeedsUpgrade != UnlockableUpgradeType.None &&
                 !UnlockTracker.IsUpgradeUnlocked(upgrade.NeedsUpgrade))
             {
                 b.style.display = DisplayStyle.None;
@@ -199,6 +228,44 @@ namespace Eco.Scripts.UI
                 {
                     btn.style.display = DisplayStyle.Flex;
                 }
+            }
+
+            // Find tabs that were waiting for this unlock and insert them at the correct position
+            var tabsToUnlock = new List<(Tab tab, int contentIndex)>();
+            foreach (var kvp in _tabUnlockRequirements)
+            {
+                if (kvp.Value == unlockedType && _tabToContentIndex.TryGetValue(kvp.Key, out int contentIndex))
+                {
+                    tabsToUnlock.Add((kvp.Key, contentIndex));
+                }
+            }
+
+            // Sort by content index to maintain original order
+            tabsToUnlock.Sort((a, b) => a.contentIndex.CompareTo(b.contentIndex));
+
+            // Insert each tab at the correct position
+            foreach (var (tab, contentIndex) in tabsToUnlock)
+            {
+                // Find the correct insert position by counting how many currently visible tabs have lower content indices
+                var currentTabs = _tabView.Query<Tab>().ToList();
+                int insertPosition = 0;
+                
+                foreach (var existingTab in currentTabs)
+                {
+                    if (_tabToContentIndex.TryGetValue(existingTab, out int existingContentIndex) && 
+                        existingContentIndex < contentIndex)
+                    {
+                        insertPosition++;
+                    }
+                }
+
+                _tabView.Insert(insertPosition, tab);
+            }
+
+            // Refresh tab display if any tabs were unlocked
+            if (tabsToUnlock.Count > 0)
+            {
+                SetTab();
             }
         }
 

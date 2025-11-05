@@ -100,6 +100,7 @@ namespace Eco.Scripts.Upgrades
         {
             public string name;
             public LocalizedString nameLoc;
+            public UnlockableUpgradeType needsUpgrade;
             public List<UpgradeGroup> upgradeGroups;
         }
 
