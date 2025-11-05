@@ -41,6 +41,8 @@ namespace Eco.Scripts.Upgrades
         Map,
         Cart,
         Spade,
-        Smoke
+        Smoke,
+        Flowers,
+        Butterflies
     }
 }

@@ -13,6 +13,7 @@ namespace Eco.Scripts.World
     public class TreePlanter
     {
         public const int TreeGrassRadius = 12;
+        public const int PileGrassRadius = 6;
         
         private readonly Transform _player;
         private readonly UpgradesCollection _upgrades;

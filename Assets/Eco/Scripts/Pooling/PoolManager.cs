@@ -15,9 +15,6 @@ namespace Eco.Scripts.Pooling
         [SerializeField] private List<Tree> treePrefabs;
         private readonly Dictionary<int, ObjectPool<Tree>> _treePools = new();
 
-        [SerializeField] private TrashPile trashPilePrefab;
-        private ObjectPool<TrashPile> _trashPilePool;
-
         public static PoolManager Instance { get; private set; }
 
 
@@ -35,7 +32,7 @@ namespace Eco.Scripts.Pooling
         public void InitializePools(List<TrashItem> trashPrefabs)
         {
             _trashPrefabs = trashPrefabs;
-            
+
             foreach (var prefab in _trashPrefabs)
             {
                 var objectPool = new ObjectPool<TrashItem>(prefab, 1, transform);
@@ -62,8 +59,6 @@ namespace Eco.Scripts.Pooling
 
                 _treePools[id].ReturnToPool(o);
             }
-            
-            _trashPilePool = new ObjectPool<TrashPile>(trashPilePrefab, 1, transform);
         }
 
         public TrashItem GetTrash(int id)
@@ -88,10 +83,6 @@ namespace Eco.Scripts.Pooling
                 case Tree tree:
                     _treePools[tree.GetPrefabId()].ReturnToPool(tree);
                     break;
-                
-                case TrashPile trashPile:
-                    _trashPilePool.ReturnToPool(trashPile);
-                    break;
             }
         }
 
@@ -102,7 +93,7 @@ namespace Eco.Scripts.Pooling
             {
                 return trashPool.Get();
             }
-            
+
             var pool = new ObjectPool<TrashItem>(trashItem, 0, transform);
             _trashPools.Add(id, pool);
             _ids.Add(id);
@@ -113,11 +104,6 @@ namespace Eco.Scripts.Pooling
         {
             var randomIndex = Random.Range(0, _ids.Count);
             return _trashPools[_ids[randomIndex]].Get();
-        }
-
-        public TrashPile GetTrashPile()
-        {
-            return _trashPilePool.Get();
         }
     }
 }

@@ -36,7 +36,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 21300006, guid: b27bcf37600cca24196520251965a496, type: 3}
+  icon: {fileID: 21300000, guid: 2f2e373f89b818c429f07c6b57dde1e6, type: 3}
   selectString:
     m_TableReference:
       m_TableCollectionName: GameUI

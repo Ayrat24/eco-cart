@@ -4,39 +4,45 @@ using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using HighlightPlus;
 using PrimeTween;
-using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.Trash
 {
-    public class TrashPile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ITileItem,
-        IPooledObject
+    public class TrashPile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ITileItem
     {
         [SerializeField] HighlightEffect highlightEffect;
         [SerializeField] private float heightPerSize = 0.1f;
         [SerializeField] private float digDuration = 0.5f;
         private int _size = 5;
-        private Tile _tile;
         private bool _isDigging;
         private CancellationTokenSource _cancellationTokenSource;
-        public bool CanBeRecycled { get; }
+        private bool _isCleared;
+        public bool CanBeRecycled => false; // piles are owned by chunks; don't auto-return to PoolManager
 
-        public void Initialize(Tile tile, int size)
+        public event System.Action OnPileCleaned;
+        
+        public void Initialize(int size)
         {
             _size = size;
-            _size = 3;
-            _tile = tile;
+            _isCleared = false;
 
+            // set visual height
             var pos = transform.position;
             pos.y = size * heightPerSize;
             transform.position = pos;
+            
+            gameObject.SetActive(true);
         }
 
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+        
         public void Dig()
         {
-            if (_isDigging)
+            if (_isDigging || _isCleared)
             {
                 return;
             }
@@ -53,7 +59,7 @@ namespace Eco.Scripts.Trash
         {
             _isDigging = true;
 
-            //reduce pile size
+            // reduce pile size
             var pileHeight = transform.position.y;
             pileHeight -= heightPerSize;
             _size -= 1;
@@ -61,8 +67,8 @@ namespace Eco.Scripts.Trash
 
             if (_size <= 0)
             {
-                _tile.item = null;
-                PoolManager.Instance.ReturnItem(this);
+                OnCleaned();
+                Clear();
                 return;
             }
 
@@ -82,22 +88,20 @@ namespace Eco.Scripts.Trash
 
         public int GetPrefabId()
         {
-            return 0;
+            // For piles we store their current size in the saved TileData.objectId
+            return _size;
         }
 
-        public void OnSpawn()
+        private void OnCleaned()
         {
-        }
+            if (_isCleared)
+            {
+                return;
+            }
 
-        public void OnDespawn()
-        {
-            Clear();
-            _isDigging = false;
-        }
-
-        private void OnDestroy()
-        {
-            Clear();
+            _isCleared = true;
+            OnPileCleaned?.Invoke();
+            Hide();
         }
 
         private void Clear()
