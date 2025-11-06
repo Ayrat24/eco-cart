@@ -78,11 +78,6 @@ namespace Eco.Scripts.ItemCollecting
 
         public int StorageSize => _maxCargoWeight;
 
-        private void Start()
-        {
-            PlayerClickMovement.OnLeftClicked += EmptyCart;
-        }
-
         public void Init(ItemRecycler recycler, ItemCollector itemCollector)
         {
             _itemRecycler = recycler;
@@ -232,8 +227,6 @@ namespace Eco.Scripts.ItemCollecting
             _cancellationTokenSource = null;
 
             _subscription?.Dispose();
-
-            PlayerClickMovement.OnLeftClicked -= EmptyCart;
         }
 
         public void EmptyCart()

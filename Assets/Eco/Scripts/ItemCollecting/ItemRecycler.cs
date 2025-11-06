@@ -28,16 +28,6 @@ namespace Eco.Scripts.ItemCollecting
             _initialized = true;
         }
 
-        private void LateUpdate()
-        {
-            if (!_initialized)
-            {
-                return;
-            }
-
-            _gainedScoreText.FaceCamera(transform);
-        }
-
         public async UniTask EmptyAsync(List<ICartItem> cartItems, CancellationToken token)
         {
             _gainedScoreText.StartNewRecycle();

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.InputSystem;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Hats;
 using Eco.Scripts.ItemCollecting;
@@ -8,11 +9,14 @@ using UnityEngine;
 using VContainer;
 using R3;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
+using Eco.Scripts.Utils;
 
 namespace Eco.Scripts
 {
     public class Player : MonoBehaviour
     {
+        private Vector2 _lastPointerPosition;
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private ItemCollector itemCollector;
         [SerializeField] private Transform characterModel;
@@ -62,7 +66,50 @@ namespace Eco.Scripts
             toolController.Init();
             _hatController = new HatController(_upgrades, hatParent);
             _hatController.Initialize(saveManager);
+            
+            PlayerClickMovement.OnLeftClicked += EmptyCart;
         }
+
+        private void EmptyCart()
+        {
+            // Don't empty the cart if the click happened over UI
+            if (IsPointerOverUI())
+            {
+                return;
+            }
+
+            _cart?.EmptyCart();
+        }
+        
+        // Minimal UI pointer check using EventSystem.RaycastAll; supports the new Input System.
+         private bool IsPointerOverUI()
+         {
+             if (EventSystem.current == null)
+                 return false;
+
+             // Read pointer position using the new Input System only (Pointer, Mouse, Touchscreen)
+             Vector2 pointerPosition;
+             if (Pointer.current != null)
+             {
+                 pointerPosition = Pointer.current.position.ReadValue();
+             }
+             else if (Mouse.current != null)
+             {
+                 pointerPosition = Mouse.current.position.ReadValue();
+             }
+             else if (Touchscreen.current != null && Touchscreen.current.primaryTouch != null)
+             {
+                 pointerPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+             }
+             else
+             {
+                 // No input device available in this frame; use last known pointer position.
+                 pointerPosition = _lastPointerPosition;
+             }
+
+             // Delegate the actual raycast/filtering to the runtime helper
+             return FindUIBlockers.IsPointerOverUI(pointerPosition);
+         }
 
         private void SpawnNewCart(CartBuyUpgrade.CartData cartData)
         {
@@ -109,9 +156,29 @@ namespace Eco.Scripts
 
         private void OnDestroy()
         {
+            PlayerClickMovement.OnLeftClicked -= EmptyCart;
+
             _subscription?.Dispose();
             toolController?.Clear();
             _hatController?.Clear();
+        }
+
+        private void Update()
+        {
+            // update last known pointer position every frame using the new Input System
+            if (Pointer.current != null)
+            {
+                _lastPointerPosition = Pointer.current.position.ReadValue();
+            }
+            else if (Mouse.current != null)
+            {
+                _lastPointerPosition = Mouse.current.position.ReadValue();
+            }
+            else if (Touchscreen.current != null && Touchscreen.current.primaryTouch != null)
+            {
+                _lastPointerPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+            }
+            // if no input device is available, keep the previous _lastPointerPosition unchanged
         }
     }
 }
