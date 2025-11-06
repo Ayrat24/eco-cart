@@ -32,6 +32,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 4c5ba1b840ab070459107101bd8509f5, type: 2}
       - {fileID: 11400000, guid: 11967f29b184bf2418e172174e6cd6a8, type: 2}
       - {fileID: 11400000, guid: a7192bc3f4359474ebf0ed21a951a57c, type: 2}
+      - {fileID: 11400000, guid: 38d1040a51a8914449884f44f0bdc90b, type: 2}
   - name: Recycling
     nameLoc:
       m_TableReference:

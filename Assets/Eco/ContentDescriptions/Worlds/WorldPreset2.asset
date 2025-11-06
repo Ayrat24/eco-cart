@@ -16,6 +16,7 @@ MonoBehaviour:
   worldSideSize: 15
   seed: 5
   trashPerChunk: 3
+  difficulty: 1
   chunkTypes: 0000000002000000
   allowedTrashItems:
   - {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}

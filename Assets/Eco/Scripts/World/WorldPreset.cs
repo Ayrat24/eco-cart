@@ -12,6 +12,7 @@ namespace Eco.Scripts.World
         [SerializeField] private int worldSideSize = 10;
         [SerializeField] private int seed = 5;
         [SerializeField] private int trashPerChunk = 3;
+        [SerializeField] private int difficulty = 1;
         [SerializeField] private ChunkType[] chunkTypes = new[] { ChunkType.Water };
 
         [SerializeField] private List<TrashItem> allowedTrashItems;
@@ -23,9 +24,9 @@ namespace Eco.Scripts.World
         public ChunkType[] ChunkTypes => chunkTypes;
         public string WorldId => worldId;
         public int TrashPerChunk => trashPerChunk;
-        public List<TrashItem> AllowedTrashItems => allowedTrashItems;
-        public ChunkGenerationRules GenerationRules => generationRules;
 
+        public int Difficulty => difficulty;
+        public List<TrashItem> AllowedTrashItems => allowedTrashItems;
         private Dictionary<Vector2Int, ChunkType> _map = new();
 
         public void GenerateMap()

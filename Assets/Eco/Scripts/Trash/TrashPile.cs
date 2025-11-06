@@ -13,30 +13,53 @@ namespace Eco.Scripts.Trash
     public class TrashPile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ITileItem
     {
         [SerializeField] HighlightEffect highlightEffect;
-        [SerializeField] private float heightPerSize = 0.1f;
         [SerializeField] private float digDuration = 0.5f;
         [SerializeField] private ParticleSystem digParticleEffect;
+        [SerializeField] private Transform pileParent;
 
-        private int _size = 5;
+        private float _heightPerSize;
+        private int _size;
         private bool _isDigging;
-        private CancellationTokenSource _cancellationTokenSource;
         private bool _isCleared;
+        private int _digPower;
+        private CancellationTokenSource _cancellationTokenSource;
         public bool CanBeRecycled => false; // piles are owned by chunks; don't auto-return to PoolManager
 
-        public event System.Action OnPileCleaned;
+        public event Action OnPileCleaned;
         
-        public void Initialize(int size)
+        public void Initialize(int difficulty, int size, int digPower)
         {
             _size = size;
+            _digPower = digPower;
             _isCleared = false;
             _isDigging = false;
+            highlightEffect.highlighted = false;
 
-            // set visual height
-            var pos = transform.position;
-            pos.y = size * heightPerSize;
-            transform.position = pos;
+            var maxSize = PileChunk.DifficultyMultiplier * difficulty;
+            _heightPerSize = 1f / maxSize * digPower;
+
+            var pos = Vector3.zero;
+            pos.y -= (maxSize - size) * _heightPerSize;
+            transform.localPosition = pos;
+            
+            AdjustVisualSizeWithDifficulty(difficulty);
             
             gameObject.SetActive(true);
+        }
+
+        private void AdjustVisualSizeWithDifficulty(int difficulty)
+        {
+            Vector3 s = pileParent.localScale;
+            s.y = difficulty;
+            pileParent.localScale = s;
+            Vector3 p = pileParent.localPosition;
+            p.y = difficulty * 0.5f;
+            pileParent.localPosition = p;
+        }
+
+        public void SetDigPower(int digPower)
+        {
+            _digPower = digPower;
         }
 
         public void Hide()
@@ -63,10 +86,11 @@ namespace Eco.Scripts.Trash
         {
             _isDigging = true;
 
-            // reduce pile size
+            // reduce pile size by dig power
+            int removedSize = Mathf.Min(_digPower, _size); // don't remove more than available
             var pileHeight = transform.position.y;
-            pileHeight -= heightPerSize;
-            _size -= 1;
+            pileHeight -= _heightPerSize * removedSize;
+            _size -= removedSize;
             Tween.PositionY(transform, pileHeight, digDuration);
             digParticleEffect.Play();
 

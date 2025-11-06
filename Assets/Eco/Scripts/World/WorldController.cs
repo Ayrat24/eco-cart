@@ -26,6 +26,7 @@ namespace Eco.Scripts.World
         private UpgradesCollection _upgrades;
         private CurrencyManager _currencyManager;
         private PileScoreUpgrade _pileScoreUpgrade;
+        private DigPowerUpgrade _digPowerUpgrade;
 
         public const int ChunkSize = 10;
         public int RenderRadius => renderRadius;
@@ -66,6 +67,7 @@ namespace Eco.Scripts.World
             
             // Get the PileScoreUpgrade from upgrades collection
             _pileScoreUpgrade = _upgrades.GetUpgradeType<PileScoreUpgrade>();
+            _digPowerUpgrade = _upgrades.GetUpgradeType<DigPowerUpgrade>();
 
             Flatten();
             RebuildNavMesh();
@@ -134,7 +136,7 @@ namespace Eco.Scripts.World
                          } else if (type == ChunkType.Pile)
                          {
                              PileChunk pileChunk = (PileChunk)chunk;
-                             pileChunk.Init(_currencyManager, _pileScoreUpgrade);
+                             pileChunk.Init(_currencyManager, _pileScoreUpgrade, _digPowerUpgrade, _worldPreset.Difficulty);
                          }
 
                          chunk.transform.parent = transform;
