@@ -29,6 +29,7 @@ namespace Eco.Scripts.World
                 for (int y = 0; y < ChunkSize; y++)
                 {
                     Tile t = new Tile(new Vector2Int(x, y));
+                    t.parentChunk = this;
                     tiles[y * ChunkSize + x] = t;
                 }
             }

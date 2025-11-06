@@ -72,7 +72,7 @@ namespace Eco.Scripts.World
             int cleanCount = 0;
             foreach (var tile in tiles)
             {
-                if (tile.ground == (int)TileGroundType.Ground)
+                if (tile.ground == (int)TileGroundType.Grass)
                     greenCount++;
 
                 if (tile.clean)
@@ -98,10 +98,18 @@ namespace Eco.Scripts.World
             float percentage = 0;
             if (_totalTiles > 0)
             {
-                percentage = (float)_cleanTilesTotal / _totalTrashTiles;
+                // Linear progress from 0 to 1
+                float linearProgress = (float)_cleanTilesTotal / _totalTrashTiles;
+                
+                // Apply ease-out square curve: fast at start, slow at end
+                // Formula: 1 - (1 - x)^2
+                float eased = 1f - Mathf.Pow(1f - linearProgress, 2f);
+                
+                percentage = eased;
             }
 
             ClearPercentage.Value = percentage;
+            Debug.LogError(percentage);
         }
 
         private void SetGreenPercentage()
@@ -109,7 +117,14 @@ namespace Eco.Scripts.World
             float percentage = 0;
             if (_totalTiles > 0)
             {
-                percentage = 1 - (float)_greenTilesTotal / _totalTiles;
+                // Linear progress from 0 to 1
+                float linearProgress = (float)_greenTilesTotal / _totalTiles;
+                
+                // Apply ease-out square curve: fast at start, slow at end
+                // Formula: 1 - (1 - x)^2
+                float eased = 1f - Mathf.Pow(1f - linearProgress, 2f);
+                
+                percentage = eased;
             }
 
             GreenPercentage.Value = percentage;

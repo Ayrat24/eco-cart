@@ -12,6 +12,7 @@ namespace Eco.Scripts.World
         public TileObjectType objectType = TileObjectType.Empty;
         public TileGroundType groundType = TileGroundType.Ground;
         public bool containedTrash;
+        public Chunk parentChunk;
         
         public Tile(Vector2Int position)
         {
@@ -24,7 +25,7 @@ namespace Eco.Scripts.World
             {
                 objectType = (int)objectType,
                 containedTrash = containedTrash,
-                clean = objectType is TileObjectType.Empty or TileObjectType.Tree && containedTrash
+                clean = (objectType is TileObjectType.Empty or TileObjectType.Tree) && containedTrash
             };
 
             if (item != null)

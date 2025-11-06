@@ -127,6 +127,8 @@ namespace Eco.Scripts.Trash
             if (_tile != null)
             {
                 _tile.objectType = TileObjectType.Empty;
+                _tile.containedTrash = true;
+                _tile.parentChunk?.SaveTiles();
                 OnItemRecycled?.OnNext(_tile);
                 _tile = null;
             }

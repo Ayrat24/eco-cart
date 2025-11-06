@@ -111,6 +111,7 @@ namespace Eco.Scripts.World
             var tile = _tileWithPile;
             tile.item = null;
             tile.objectType = TileObjectType.Empty;
+            tile.containedTrash = true;
 
             Debug.LogError("here");
 
