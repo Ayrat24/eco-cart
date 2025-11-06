@@ -30,5 +30,10 @@ namespace Eco.Scripts.Upgrades
             Multiplier = 1;
             ApplyUpgrade(level);
         }
+
+        public override string GetDescription(string localizedString)
+        {
+            return string.Format(localizedString, Multiplier);
+        }
     }
 }

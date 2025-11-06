@@ -10,7 +10,7 @@ namespace Eco.Scripts.Trees
         [SerializeField] private int baseScore = 1;
         [SerializeField] private float growth = 1.1f;
     
-        public LargeNumber Score { get; private set; }
+        public AlphabeticNotation Score { get; private set; }
     
         protected override void ApplyUpgrade(int level)
         {
@@ -31,7 +31,7 @@ namespace Eco.Scripts.Trees
 
         public override string GetDescription(string locString)
         {
-            return $"{locString} {Score}";
+            return string.Format(locString, Score);
         }
     }
 }

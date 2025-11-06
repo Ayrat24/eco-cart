@@ -43,7 +43,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 21704123558653952
-    m_Localized: Cat move speed
+    m_Localized: Move speed
     m_Metadata:
       m_Items: []
   - m_Id: 21704850821607424
@@ -51,7 +51,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 21710769835995136
-    m_Localized: Cat score multiplier
+    m_Localized: Score multiplier
     m_Metadata:
       m_Items: []
   - m_Id: 21710807261769728

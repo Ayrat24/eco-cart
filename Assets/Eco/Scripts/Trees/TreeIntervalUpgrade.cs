@@ -25,7 +25,8 @@ namespace Eco.Scripts.Trees
 
         public override string GetDescription(string locString)
         {
-            return $"{locString} {Interval}";
+            var formattedInterval = Interval.ToString("0.##");
+            return string.Format(locString, formattedInterval);
         }
     }
 }

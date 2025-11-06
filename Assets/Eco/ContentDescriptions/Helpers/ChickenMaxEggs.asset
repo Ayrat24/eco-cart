@@ -17,6 +17,7 @@ MonoBehaviour:
     magnitude: 0
   costGrowth: 2.4
   needsUpgrade: 11
+  showLevelInName: 1
   upgradeId: chicken max eggs
   upgradeLocalizedName:
     m_TableReference:

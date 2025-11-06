@@ -17,6 +17,7 @@ MonoBehaviour:
     magnitude: 0
   costGrowth: 1.15
   needsUpgrade: 0
+  showLevelInName: 1
   upgradeId: pile-score
   upgradeLocalizedName:
     m_TableReference:

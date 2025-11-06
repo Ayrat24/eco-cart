@@ -17,6 +17,7 @@ MonoBehaviour:
     magnitude: 0
   costGrowth: 2
   needsUpgrade: 8
+  showLevelInName: 1
   upgradeId: Apple Tree Interval
   upgradeLocalizedName:
     m_TableReference:

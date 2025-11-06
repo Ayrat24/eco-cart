@@ -36,5 +36,12 @@ namespace Eco.Scripts.Trees
                 UnlockTracker.UnlockUpgrade(upgradeType);
             }
         }
+
+        public override string GetDescription(string localizedString)
+        {
+            var level = CurrentLevel.Value;
+            var scorePerSecond = level * ScoreUpgrade.Score / IntervalUpgrade.Interval;
+            return string.Format(localizedString, level, scorePerSecond);
+        }
     }
 }

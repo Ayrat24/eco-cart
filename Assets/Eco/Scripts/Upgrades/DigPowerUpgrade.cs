@@ -18,7 +18,7 @@ namespace Eco.Scripts.Upgrades
 
         protected override void ApplyUpgrade(int level)
         {
-            DigPower = basePower + (level - 1) * powerPerLevel;
+            DigPower = basePower + level * powerPerLevel;
         }
 
         public override string GetDescription(string localizedString)

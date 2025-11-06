@@ -64,7 +64,12 @@ namespace Eco.Scripts.Upgrades
         
         public virtual string GetName(string localizedString)
         {
-            return $"{localizedString} \nlvl:{CurrentLevel.Value}";
+            if (!showLevelInName)
+            {
+                return localizedString;
+            }
+            
+            return $"{localizedString} \nlvl:{CurrentLevel.Value + 1}";
         }
 
         public virtual string GetDescription(string localizedString)

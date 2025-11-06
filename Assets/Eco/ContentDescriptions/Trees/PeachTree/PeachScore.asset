@@ -17,6 +17,7 @@ MonoBehaviour:
     magnitude: 0
   costGrowth: 1.15
   needsUpgrade: 9
+  showLevelInName: 1
   upgradeId: Peach Tree Score
   upgradeLocalizedName:
     m_TableReference:

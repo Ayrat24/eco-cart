@@ -52,11 +52,6 @@ namespace Eco.Scripts.World
                 }
             }
 
-            if(Position == new Vector2Int(-2,0))
-            {
-                Debug.LogError(hasSave + " " + pileSize);
-            }
-
             bool pileExists = pileSize > 0;
             for (int x = 0; x < ChunkSize; x++)
             {

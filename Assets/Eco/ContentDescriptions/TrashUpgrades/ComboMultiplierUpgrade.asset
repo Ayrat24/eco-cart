@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62761380378209a44b39ac922296d296, type: 3}
   m_Name: ComboMultiplierUpgrade
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.ComboMultiplierUpgrade
-  baseCost: 10
+  baseCost:
+    coefficient: 0
+    magnitude: 0
   costGrowth: 1.15
+  needsUpgrade: 0
+  showLevelInName: 1
   upgradeId: Trash Sorting
   upgradeLocalizedName:
     m_TableReference:

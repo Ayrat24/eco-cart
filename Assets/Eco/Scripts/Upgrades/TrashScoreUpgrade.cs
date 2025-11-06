@@ -36,5 +36,10 @@ namespace Eco.Scripts.Upgrades
             
             ScoreForCurrentUpgrade = score;
         }
+
+        public override string GetDescription(string localizedString)
+        {
+            return string.Format(localizedString, ScoreForCurrentUpgrade);
+        }
     }
 }
