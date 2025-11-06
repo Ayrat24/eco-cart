@@ -39,6 +39,40 @@ MonoBehaviour:
     m_Key: unlocks-tab-spade-description
     m_Metadata:
       m_Items: []
+  - m_Id: 10946175085572096
+    m_Key: unlocks-tab-spade-score-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946236213358592
+    m_Key: unlocks-tab-spade-score-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946272200486912
+    m_Key: unlocks-tab-spade-power-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946326416060416
+    m_Key: 'unlocks-tab-spade-power-description
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946356652797952
+    m_Key: unlocks-tab-spade-flowers-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946392983859200
+    m_Key: unlocks-tab-spade-flowers-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946427381346304
+    m_Key: unlocks-tab-spade-butterflies-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946471983575040
+    m_Key: unlocks-tab-spade-butterflies-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

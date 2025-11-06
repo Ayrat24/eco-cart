@@ -43,6 +43,41 @@ MonoBehaviour:
     m_Localized: Allows to clean up piles of trash
     m_Metadata:
       m_Items: []
+  - m_Id: 10946175085572096
+    m_Localized: Pile score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946236213358592
+    m_Localized: 'Increases how much score cleaning a pile yelds. Current score:
+      {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946272200486912
+    m_Localized: Spade power
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946326416060416
+    m_Localized: 'Increses the spade efficiency. Dig for less time! Current power:
+      {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946356652797952
+    m_Localized: Flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946392983859200
+    m_Localized: A field of flowers will appear on cleared piles . Increase Pile
+      score by 50%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946427381346304
+    m_Localized: Butterflies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10946471983575040
+    m_Localized: Butterflies fly around flower fields. Increase Pile score by 100%
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

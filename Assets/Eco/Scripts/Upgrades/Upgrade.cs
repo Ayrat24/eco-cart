@@ -11,6 +11,7 @@ namespace Eco.Scripts.Upgrades
         [SerializeField] protected AlphabeticNotation baseCost;
         [SerializeField] protected float costGrowth = 1.15f;
         [SerializeField] private UnlockableUpgradeType needsUpgrade = UnlockableUpgradeType.None;
+        [SerializeField] bool showLevelInName = false;
         
         public string upgradeId;
         public LocalizedString upgradeLocalizedName;
@@ -59,6 +60,11 @@ namespace Eco.Scripts.Upgrades
             CurrentLevel.Value = level;
             Cost = CalculateCost();
             Available = true;
+        }
+        
+        public virtual string GetName(string localizedString)
+        {
+            return $"{localizedString} \nlvl:{CurrentLevel.Value}";
         }
 
         public virtual string GetDescription(string localizedString)

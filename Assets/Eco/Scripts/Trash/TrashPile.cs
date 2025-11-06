@@ -27,7 +27,7 @@ namespace Eco.Scripts.Trash
 
         public event Action OnPileCleaned;
         
-        public void Initialize(int difficulty, int size, int digPower)
+        public void Initialize(int size, int difficulty, int digPower)
         {
             _size = size;
             _digPower = digPower;

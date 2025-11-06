@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Eco.Scripts.Trash;
 using Eco.Scripts.Upgrades;
 using R3;
@@ -17,7 +19,7 @@ namespace Eco.Scripts.World
         private CurrencyManager _currencyManager;
         private PileScoreUpgrade _pileScoreUpgrade;
         private DigPowerUpgrade _digPowerUpgrade;
-        
+
         public const int DifficultyMultiplier = 5;
 
         public void Init(CurrencyManager currencyManager, PileScoreUpgrade pileScoreUpgrade,
@@ -35,6 +37,7 @@ namespace Eco.Scripts.World
             int centerIndex = (ChunkSize / 2) * ChunkSize + (ChunkSize / 2);
             _tileWithPile = tiles[centerIndex];
 
+
             if (hasSave)
             {
                 var savedTiles = SaveManager.FieldTiles[Position];
@@ -43,6 +46,15 @@ namespace Eco.Scripts.World
                 {
                     pileSize = center.objectId; // size of pile saved in objectId
                 }
+                else
+                {
+                    pileSize = 0; // no pile
+                }
+            }
+
+            if(Position == new Vector2Int(-2,0))
+            {
+                Debug.LogError(hasSave + " " + pileSize);
             }
 
             bool pileExists = pileSize > 0;
@@ -66,6 +78,7 @@ namespace Eco.Scripts.World
                 pile.Hide();
                 ShowFlowers();
                 ShowButterflies();
+                PaintGrass();
             }
 
             // subscribe to unlock events so that if Flowers/Butterflies are unlocked later
@@ -81,7 +94,7 @@ namespace Eco.Scripts.World
         private void SpawnTrashPileAtTile(Tile tile, int size, int difficulty)
         {
             int digPower = _digPowerUpgrade != null ? _digPowerUpgrade.DigPower : 1;
-            pile.Initialize(difficulty,size, digPower);
+            pile.Initialize(size, difficulty, digPower);
             tile.item = pile;
             tile.objectType = TileObjectType.TrashPile;
 
@@ -101,19 +114,14 @@ namespace Eco.Scripts.World
         private void OnPileCleaned()
         {
             var tile = _tileWithPile;
-            if (tile != null)
-            {
-                tile.item = null;
-                tile.objectType = TileObjectType.Empty;
-            }
+            tile.item = null;
+            tile.objectType = TileObjectType.Empty;
 
-            if (pile != null)
-            {
-                pile.OnPileCleaned -= OnPileCleaned;
-            }
+            Debug.LogError("here");
 
-            TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(tile),
-                TreePlanter.PileGrassRadius);
+            pile.OnPileCleaned -= OnPileCleaned;
+
+            PaintGrass();
 
             for (int x = 0; x < ChunkSize; x++)
             {
@@ -125,22 +133,27 @@ namespace Eco.Scripts.World
             }
 
             // Award money and show popup
-            if (_currencyManager != null && _pileScoreUpgrade != null)
-            {
-                var reward = _pileScoreUpgrade.ScoreForCurrentUpgrade;
-                _currencyManager.AddMoney(reward);
+            var reward = _pileScoreUpgrade.ScoreForCurrentUpgrade;
+            _currencyManager.AddMoney(reward);
 
-                // Show popup at pile position
-                if (pile != null)
-                {
-                    ScoreGainedPopup.Show(pile.transform.position, reward);
-                }
-            }
+            ScoreGainedPopup.Show(pile.transform.position, reward);
 
             // If the upgrades are unlocked, enable visuals when pile cleared
             ShowFlowers();
             ShowButterflies();
             SaveTiles();
+        }
+
+        private void PaintGrass()
+        {
+            MakeGrass(this.GetCancellationTokenOnDestroy()).Forget();
+        }
+
+        private async UniTask MakeGrass(CancellationToken cancellationToken)
+        {
+            await UniTask.NextFrame(cancellationToken);
+            TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(_tileWithPile),
+                TreePlanter.PileGrassRadius);
         }
 
         private void OnUpgradeUnlocked(UnlockableUpgradeType upgrade)

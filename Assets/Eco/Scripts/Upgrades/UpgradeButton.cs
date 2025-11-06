@@ -49,6 +49,7 @@ public partial class UpgradeButton : VisualElement
     {
         if (_upgrade.CurrentLevel.Value != _previousLevel)
         {
+            _upgrade.upgradeLocalizedName.RefreshString();
             _upgrade.upgradeLocalizedDescription.RefreshString();
         }
 
@@ -64,7 +65,7 @@ public partial class UpgradeButton : VisualElement
 
     private void OnUpgradeNameStringChanged(string value)
     {
-        nameText.text = value;
+        nameText.text = _upgrade.GetName(value);
     }
 
     private void OnUpgradeDescriptionStringChanged(string value)
