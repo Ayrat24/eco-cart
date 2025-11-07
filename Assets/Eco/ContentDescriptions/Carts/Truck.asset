@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a619cf1f4209e64a8f75b7c7adf03b6, type: 3}
   m_Name: Truck
   m_EditorClassIdentifier: 
-  baseCost: 2
+  baseCost:
+    coefficient: 5126420
+    magnitude: 0
   costGrowth: 1.15
   needsUpgrade: 0
+  showLevelInName: 0
   upgradeId: Truck
   upgradeLocalizedName:
     m_TableReference:

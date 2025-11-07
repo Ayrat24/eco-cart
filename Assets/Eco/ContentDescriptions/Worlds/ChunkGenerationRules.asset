@@ -23,3 +23,8 @@ MonoBehaviour:
     minCount: 1
     maxCount: 100
     weight: 1
+  - type: 3
+    allowedAdjacent: 0100000003000000
+    minCount: 1
+    maxCount: 9999
+    weight: 9999

@@ -37,15 +37,32 @@ namespace Eco.Scripts.World
 
             // Build coordinate list and shuffle it to avoid directional bias
             var coords = new List<Vector2Int>();
+            var borderCoords = new List<Vector2Int>();
+            
             for (int x = -worldSideSize; x <= worldSideSize; x++)
             {
                 for (int y = -worldSideSize; y <= worldSideSize; y++)
                 {
-                    coords.Add(new Vector2Int(x, y));
+                    var coord = new Vector2Int(x, y);
+                    
+                    // Check if this coordinate is on the border (edge of playable area)
+                    bool isBorder = x == -worldSideSize || x == worldSideSize || 
+                                   y == -worldSideSize || y == worldSideSize;
+                    
+                    if (isBorder)
+                    {
+                        // Place Beach chunks on the border
+                        _map[coord] = ChunkType.Beach;
+                        borderCoords.Add(coord);
+                    }
+                    else
+                    {
+                        coords.Add(coord);
+                    }
                 }
             }
 
-            // Fisher-Yates shuffle
+            // Fisher-Yates shuffle for non-border coords
             for (int i = coords.Count - 1; i > 0; i--)
             {
                 int j = Random.Range(0, i + 1);
@@ -60,8 +77,11 @@ namespace Eco.Scripts.World
             {
                 counters[t] = 0;
             }
+            
+            // Add beach count
+            counters[ChunkType.Beach] = borderCoords.Count;
 
-            // Place tiles in shuffled order with respect to rules
+            // Place tiles in shuffled order with respect to rules (only for non-border coords)
             foreach (var coord in coords)
             {
                 var candidates = GetValidCandidates(coord, counters);

@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a619cf1f4209e64a8f75b7c7adf03b6, type: 3}
   m_Name: Mine cart
   m_EditorClassIdentifier: 
-  baseCost: 1
+  baseCost:
+    coefficient: 50000
+    magnitude: 0
   costGrowth: 1.15
   needsUpgrade: 0
+  showLevelInName: 0
   upgradeId: Mine cart
   upgradeLocalizedName:
     m_TableReference:

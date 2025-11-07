@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e41d071a3dd7da4a88afa342f458299, type: 3}
   m_Name: WorldPreset 4
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
-  worldId: world222
+  worldId: 4
   worldSideSize: 5
   seed: 4
   trashPerChunk: 3

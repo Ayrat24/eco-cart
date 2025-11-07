@@ -4,6 +4,7 @@ namespace Eco.Scripts.World
     {
         Field,
         Water,
-        Pile
+        Pile, 
+        Beach
     }
 }

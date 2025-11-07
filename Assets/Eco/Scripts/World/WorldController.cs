@@ -52,8 +52,10 @@ namespace Eco.Scripts.World
             _worldPreset.GenerateMap();
             foreach (var chunkPrefab in chunkPrefabs)
             {
-                //always create water pool
-                if (!_worldPreset.ChunkTypes.Contains(chunkPrefab.type) && chunkPrefab.type != ChunkType.Water)
+                //always create water and beach pools
+                if (!_worldPreset.ChunkTypes.Contains(chunkPrefab.type) && 
+                    chunkPrefab.type != ChunkType.Water && 
+                    chunkPrefab.type != ChunkType.Beach)
                 {
                     continue;
                 }
@@ -133,10 +135,16 @@ namespace Eco.Scripts.World
                          {
                              FieldChunk fieldChunk = (FieldChunk)chunk;
                              fieldChunk.Init(_treePlanter);
-                         } else if (type == ChunkType.Pile)
+                         } 
+                         else if (type == ChunkType.Pile)
                          {
                              PileChunk pileChunk = (PileChunk)chunk;
                              pileChunk.Init(_currencyManager, _pileScoreUpgrade, _digPowerUpgrade, _worldPreset.Difficulty);
+                         }
+                         else if (type == ChunkType.Beach)
+                         {
+                             BeachChunk beachChunk = (BeachChunk)chunk;
+                             beachChunk.Init();
                          }
 
                          chunk.transform.parent = transform;
