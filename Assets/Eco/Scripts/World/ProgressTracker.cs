@@ -25,7 +25,7 @@ namespace Eco.Scripts.World
         private const float GreenThreshold = 0.90f; // 70%
         private bool _thresholdReached = false;
 
-        // total tiles in the world (chunks * chunkSize * chunkSize)
+        // total tiles in the world (chunks * chunkSize * chunkSize), excluding beach tiles
         private int _totalTiles;
         private int _totalTrashTiles;
 
@@ -53,8 +53,14 @@ namespace Eco.Scripts.World
             _worldId = worldId;
             _trashPerTile = trashPerTile;
             _worldSize = _worldController.WorldSize;
-            _totalTiles = _worldSize * _worldSize * WorldController.ChunkSize * WorldController.ChunkSize;
-            _totalTrashTiles = _trashPerTile * (_worldSize * _worldSize);
+            
+            // Calculate total tiles excluding beach chunks (which are on the border)
+            int totalChunks = (2 * _worldSize + 1) * (2 * _worldSize + 1);
+            int beachChunks = 4 * (2 * _worldSize + 1) - 4; // Perimeter chunks
+            int nonBeachChunks = totalChunks - beachChunks;
+            
+            _totalTiles = nonBeachChunks * WorldController.ChunkSize * WorldController.ChunkSize;
+            _totalTrashTiles = _trashPerTile * nonBeachChunks;
             _saveManager.OnChunkUpdated.Subscribe(OnChunkUpdated);
 
             // Initial calculation of clean/green tiles
@@ -70,10 +76,18 @@ namespace Eco.Scripts.World
             if (!_saveManager.FieldTiles.TryGetValue(position, out var tiles))
                 return;
 
-            // ignore world bounds/water
             var size = _worldController.WorldSideSize;
+            
+            // ignore world bounds/water
             if (position.x < -size || position.x > size ||
                 position.y < -size || position.y > size)
+            {
+                return;
+            }
+            
+            // Ignore beach chunks (on the border)
+            if (position.x == -size || position.x == size ||
+                position.y == -size || position.y == size)
             {
                 return;
             }

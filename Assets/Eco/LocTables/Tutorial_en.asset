@@ -26,6 +26,28 @@ MonoBehaviour:
     m_Localized: Hold LMB to recycle waste in your cart
     m_Metadata:
       m_Items: []
+  - m_Id: 22894799277256704
+    m_Localized: The goal of the game is to clean worlds, plant trees and earn a
+      lot of money!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22895318750195712
+    m_Localized: 'Buy upgrades here '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22896025087766528
+    m_Localized: Swap tools here
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22896155421569024
+    m_Localized: Track your progress here. You can always change world by clicking
+      on the planet button!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22898894016868352
+    m_Localized: This bar shows how much weight can your cart hold
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

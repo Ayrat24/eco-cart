@@ -23,6 +23,26 @@ MonoBehaviour:
     m_Key: controls-recycle
     m_Metadata:
       m_Items: []
+  - m_Id: 22894799277256704
+    m_Key: tutor-goal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22895318750195712
+    m_Key: tutor-upgrades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22896025087766528
+    m_Key: tutor-tools
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22896155421569024
+    m_Key: tutor-progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22898894016868352
+    m_Key: tutor-weight
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

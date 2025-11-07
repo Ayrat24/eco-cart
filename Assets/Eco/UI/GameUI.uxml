@@ -46,6 +46,26 @@
                 <UnityEngine.Localization.LocalizedString property="text" table="GUID:163c6de66375d36449912abd2b22eeea" entry="Id(97389637632)" />
             </Bindings>
         </ui:Label>
+        <ui:Label text="Label" emoji-fallback-support="false" style="font-size: 24px; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); position: absolute; background-color: rgb(219, 212, 191); top: 760px; left: -1120px;">
+            <Bindings>
+                <UnityEngine.Localization.LocalizedString property="text" table="GUID:163c6de66375d36449912abd2b22eeea" entry="Id(22896025087766528)" />
+            </Bindings>
+        </ui:Label>
+        <ui:Label text="Label" emoji-fallback-support="false" style="font-size: 24px; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); position: absolute; background-color: rgb(219, 212, 191); top: -62px; left: -1120px;">
+            <Bindings>
+                <UnityEngine.Localization.LocalizedString property="text" table="GUID:163c6de66375d36449912abd2b22eeea" entry="Id(22895318750195712)" />
+            </Bindings>
+        </ui:Label>
+        <ui:Label text="Label" emoji-fallback-support="false" style="font-size: 24px; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); position: absolute; background-color: rgb(219, 212, 191); top: -92px; left: -364px; height: auto; width: 339px; white-space: normal;">
+            <Bindings>
+                <UnityEngine.Localization.LocalizedString property="text" table="GUID:163c6de66375d36449912abd2b22eeea" entry="Id(22896155421569024)" />
+            </Bindings>
+        </ui:Label>
+        <ui:Label text="Label" emoji-fallback-support="false" style="font-size: 24px; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); position: absolute; background-color: rgb(219, 212, 191); top: 801px; left: -669px; width: auto;">
+            <Bindings>
+                <UnityEngine.Localization.LocalizedString property="text" table="GUID:163c6de66375d36449912abd2b22eeea" entry="Id(22898894016868352)" />
+            </Bindings>
+        </ui:Label>
         <ui:Button text="x" name="CloseButton" class="light-green Button" style="position: absolute; height: 50px; width: 50px; top: -27px; left: 722px; font-size: 35px; -unity-text-align: middle-center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 5px; padding-left: 0;" />
     </ui:VisualElement>
     <ui:VisualElement name="BottomCenter" style="flex-grow: 1; position: absolute; bottom: 0; width: 100%; align-self: center; align-content: stretch; align-items: auto; justify-content: center; flex-direction: row; margin-left: -831px; display: flex;">
