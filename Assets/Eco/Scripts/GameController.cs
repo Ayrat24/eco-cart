@@ -86,6 +86,13 @@ namespace Eco.Scripts
             _treeCurrencyEarner.Init();
 
             map.Initialize(_worldController, _saveManager, _player);
+            
+            // Fade in after everything is loaded
+            await UniTask.NextFrame();
+            if (SceneTransition.Instance != null)
+            {
+                await SceneTransition.Instance.FadeIn();
+            }
         }
 
         [ContextMenu("Save Progress")]

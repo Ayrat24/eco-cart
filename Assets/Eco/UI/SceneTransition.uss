@@ -1,0 +1,13 @@
+.background {
+    background-color: rgb(56, 102, 65);
+}
+
+.hide {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.small {
+    background-color: rgba(0, 0, 0, 0);
+    scale: 0 0 0;
+}
+

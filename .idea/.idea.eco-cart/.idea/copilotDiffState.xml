@@ -11,6 +11,23 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/Assets/Eco/UI/SceneTransition.uss">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Eco/UI/SceneTransition.uss" />
+              <option name="originalContent" value=".background {&#10;    background-color: rgb(56, 102, 65);&#10;}&#10;&#10;.hide {&#10;    background-color: rgba(0, 0, 0, 0);&#10;}&#10;&#10;.small {&#10;    background-color: rgba(0, 0, 0, 0);&#10;    scale: 0 0 0;&#10;}&#10;" />
+              <option name="updatedContent" value=".background {&#10;    background-color: rgb(56, 102, 65);&#10;}&#10;&#10;.hide {&#10;    background-color: rgba(0, 0, 0, 0);&#10;}&#10;&#10;.small {&#10;    background-color: rgba(0, 0, 0, 0);&#10;    scale: 0 0 0;&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/Assets/Eco/UI/SceneTransition.uxml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Eco/UI/SceneTransition.uxml" />
+              <option name="updatedContent" value="&lt;ui:UXML xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:ui=&quot;UnityEngine.UIElements&quot; xmlns:uie=&quot;UnityEditor.UIElements&quot; noNamespaceSchemaLocation=&quot;../../../UIElementsSchema/UIElements.xsd&quot; editor-extension-mode=&quot;False&quot;&gt;&#10;    &lt;Style src=&quot;project://database/Assets/Eco/UI/BackgroundColors.uss?fileID=7433441132597879392&amp;amp;guid=404a0c799aeb1484f94faf474cec9a85&amp;amp;type=3#BackgroundColors&quot; /&gt;&#10;    &lt;ui:VisualElement name=&quot;TransitionOverlay&quot; style=&quot;flex-grow: 1; position: absolute; width: 100%; height: 100%; background-color: rgb(56, 102, 65); justify-content: center; align-items: center; display: flex; opacity: 1;&quot;&gt;&#10;        &lt;ui:VisualElement name=&quot;LoadingContainer&quot; style=&quot;flex-grow: 0; align-items: center; justify-content: center;&quot;&gt;&#10;            &lt;ui:VisualElement name=&quot;LoadingSpinner&quot; style=&quot;width: 80px; height: 80px; border-left-color: rgb(242, 232, 207); border-right-color: rgb(242, 232, 207); border-top-color: rgb(242, 232, 207); border-bottom-color: rgb(242, 232, 207); border-left-width: 8px; border-right-width: 8px; border-top-width: 8px; border-bottom-width: 8px; border-top-left-radius: 50%; border-top-right-radius: 50%; border-bottom-right-radius: 50%; border-bottom-left-radius: 50%; margin-bottom: 20px; border-top-color: rgba(242, 232, 207, 0.3); border-right-color: rgba(242, 232, 207, 0.3); border-bottom-color: rgba(242, 232, 207, 0.3);&quot; /&gt;&#10;            &lt;ui:Label text=&quot;Loading...&quot; name=&quot;LoadingText&quot; style=&quot;font-size: 28px; color: rgb(242, 232, 207); -unity-font-definition: url(&amp;quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;amp;type=3#Roboto-Bold&amp;quot;); -unity-text-align: middle-center;&quot; /&gt;&#10;        &lt;/ui:VisualElement&gt;&#10;    &lt;/ui:VisualElement&gt;&#10;&lt;/ui:UXML&gt;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

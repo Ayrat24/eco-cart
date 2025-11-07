@@ -199,14 +199,32 @@ namespace Eco.Scripts
         
         private async UniTask LoadSceneAsync()
         {
+            // Fade out with transition
+            if (SceneTransition.Instance != null)
+            {
+                await SceneTransition.Instance.FadeOut();
+                await UniTask.WaitForSeconds(SceneTransition.FadeDuration);
+            }
+            
             var loadOp = SceneManager.LoadSceneAsync(0);
             while (!loadOp.isDone)
             {
                 await UniTask.Yield();
             }
             
+            Close();
+            
             var gameController = FindFirstObjectByType<GameController>();
             gameController.StartGame();
+            
+            // // Wait a frame for the scene to initialize
+            // await UniTask.NextFrame();
+            //
+            // // Fade in
+            // if (SceneTransition.Instance != null)
+            // {
+            //     await SceneTransition.Instance.FadeIn();
+            // }
         }
 
         private void OnDestroy()

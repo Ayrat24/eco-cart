@@ -25,6 +25,11 @@ namespace Eco.Scripts.Upgrades
 
         public static void UnlockUpgrade(UnlockableUpgradeType upgrade)
         {
+            if (upgrade == UnlockableUpgradeType.None)
+            {
+                return;
+            }
+            
             UnlockableUpgrades[upgrade] = true;
             OnUnlocked.OnNext(upgrade);
         }
