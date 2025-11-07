@@ -101,7 +101,7 @@ namespace Eco.Scripts
             return PlayerPrefs.GetString(LastWorldIdKey, string.Empty);
         }
 
-        public void DeleteProgress()
+        public static void DeleteProgress()
         {
             var path = Application.persistentDataPath;
             try

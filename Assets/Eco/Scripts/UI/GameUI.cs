@@ -11,6 +11,7 @@ namespace Eco.Scripts.UI
         [SerializeField] private VisualTreeAsset upgradeItemTemplate;
         [SerializeField] private VisualTreeAsset upgradeGroupItemTemplate;
         [SerializeField] private VisualTreeAsset cartItemTemplate;
+        [SerializeField] private Settings settings;
 
         private UpgradeMenu _upgradeMenu;
         private CartStorageDisplay _cartStorageDisplay;
@@ -18,6 +19,7 @@ namespace Eco.Scripts.UI
         private ToolSelector _toolSelector;
         private ProgressDisplay _progress;
         private NewWorldPopup _newWorldPopup;
+        private SettingsMenu _settingsMenu;
 
         public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player,
             ProgressTracker progressTracker)
@@ -34,6 +36,9 @@ namespace Eco.Scripts.UI
 
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
+
+            _settingsMenu = new SettingsMenu(uiDocument, settings);
+            _settingsMenu.Init();
 
             _newWorldPopup = new NewWorldPopup(uiDocument);
             _newWorldPopup.Init();
@@ -57,6 +62,7 @@ namespace Eco.Scripts.UI
             _toolSelector.Clear();
             _progress.Clear();
             _newWorldPopup?.Clear();
+            _settingsMenu?.Clear();
             
             if (_newWorldPopup != null)
                 _newWorldPopup.OnAccept -= OnNewWorldAccepted;

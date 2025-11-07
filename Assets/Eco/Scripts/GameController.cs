@@ -122,8 +122,7 @@ namespace Eco.Scripts
         [ContextMenu("Delete Progress")]
         public void DeleteProgress()
         {
-            _saveManager = new SaveManager();
-            _saveManager.DeleteProgress();
+            SaveManager.DeleteProgress();
         }
     }
 }

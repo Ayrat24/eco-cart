@@ -1,0 +1,22 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Eco/UI/BackgroundColors.uss?fileID=7433441132597879392&amp;guid=404a0c799aeb1484f94faf474cec9a85&amp;type=3#BackgroundColors" />
+    <Style src="project://database/Assets/Eco/UI/GameStyle.uss?fileID=7433441132597879392&amp;guid=a847fe3b45fb5dd46b299e93398b68bf&amp;type=3#GameStyle" />
+    <ui:VisualElement name="SettingsMenu" class="white" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; display: none;">
+        <ui:VisualElement name="SettingsDialog" class="white" style="flex-grow: 0; width: 500px; padding-left: 30px; padding-right: 30px; padding-top: 30px; padding-bottom: 30px; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px; border-left-color: rgb(56, 102, 65); border-right-color: rgb(56, 102, 65); border-top-color: rgb(56, 102, 65); border-bottom-color: rgb(56, 102, 65);">
+            <ui:Label text="Settings" style="font-size: 32px; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); -unity-text-align: upper-center; margin-bottom: 20px;" />
+            <ui:VisualElement name="LanguageRow" style="flex-grow: 0; flex-direction: row; margin-bottom: 15px; align-items: center;">
+                <ui:Label text="Language:" style="width: 150px; color: rgb(56, 102, 65); font-size: 18px; -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;);" />
+                <ui:DropdownField name="LanguageDropdown" class="light-green" style="flex-grow: 1; height: 40px; font-size: 16px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="QualityRow" style="flex-grow: 0; flex-direction: row; margin-bottom: 25px; align-items: center;">
+                <ui:Label text="Quality:" style="width: 150px; color: rgb(56, 102, 65); font-size: 18px; -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;);" />
+                <ui:DropdownField name="QualityDropdown" class="light-green" style="flex-grow: 1; height: 40px; font-size: 16px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ButtonRow" style="flex-grow: 0; flex-direction: row; justify-content: space-between;">
+                <ui:Button text="Save" name="SaveSettingsButton" class="light-green Button" style="width: 150px; height: 50px; font-size: 18px;" />
+                <ui:Button text="Close" name="CloseSettingsButton" class="light-green Button" style="width: 150px; height: 50px; font-size: 18px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
+
