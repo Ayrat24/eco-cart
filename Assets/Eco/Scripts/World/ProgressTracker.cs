@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using R3;
 using UnityEngine;
@@ -14,6 +15,14 @@ namespace Eco.Scripts.World
 
         // Tracks percentage of grass tiles (TileGroundType.Ground)
         public readonly ReactiveProperty<float> GreenPercentage = new();
+
+        // Event triggered when both clear and green percentages reach their thresholds
+        public event Action<float, float> OnProgressThresholdReached;
+
+        // Thresholds for triggering the new world popup
+        private const float ClearThreshold = 0.70f; // 70%
+        private const float GreenThreshold = 0.70f; // 70%
+        private bool _thresholdReached = false;
 
         // total tiles in the world (chunks * chunkSize * chunkSize)
         private int _totalTiles;
@@ -91,6 +100,19 @@ namespace Eco.Scripts.World
 
             SetGreenPercentage();
             SetClearPercentage();
+            CheckThresholds();
+        }
+
+        private void CheckThresholds()
+        {
+            // Only trigger once when both thresholds are reached
+            if (!_thresholdReached && 
+                ClearPercentage.Value >= ClearThreshold && 
+                GreenPercentage.Value >= GreenThreshold)
+            {
+                _thresholdReached = true;
+                OnProgressThresholdReached?.Invoke(ClearPercentage.Value, GreenPercentage.Value);
+            }
         }
 
         private void SetClearPercentage()

@@ -17,6 +17,7 @@ namespace Eco.Scripts.UI
         private TutorialMenu _tutorialMenu;
         private ToolSelector _toolSelector;
         private ProgressDisplay _progress;
+        private NewWorldPopup _newWorldPopup;
 
         public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player,
             ProgressTracker progressTracker)
@@ -34,8 +35,18 @@ namespace Eco.Scripts.UI
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
 
-            _progress = new ProgressDisplay(uiDocument, progressTracker);
+            _newWorldPopup = new NewWorldPopup(uiDocument);
+            _newWorldPopup.Init();
+            _newWorldPopup.OnAccept += OnNewWorldAccepted;
+
+            _progress = new ProgressDisplay(uiDocument, progressTracker, _newWorldPopup);
             _progress.Init();
+        }
+
+        private void OnNewWorldAccepted()
+        {
+            // Open the world selector to let player choose a new world
+            WorldSelector.Instance.Open();
         }
 
         public void Clear()
@@ -45,6 +56,10 @@ namespace Eco.Scripts.UI
             _tutorialMenu.Clear();
             _toolSelector.Clear();
             _progress.Clear();
+            _newWorldPopup?.Clear();
+            
+            if (_newWorldPopup != null)
+                _newWorldPopup.OnAccept -= OnNewWorldAccepted;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Eco.Scripts.UI
     {
         private readonly UIDocument _uiDocument;
         private readonly ProgressTracker _progressTracker;
+        private readonly NewWorldPopup _newWorldPopup;
 
         private Button _button;
 
@@ -16,10 +17,11 @@ namespace Eco.Scripts.UI
         private ProgressBar _clearProgressBar;
         private ProgressBar _greenProgressBar;
 
-        public ProgressDisplay(UIDocument uiDocument, ProgressTracker progressTracker)
+        public ProgressDisplay(UIDocument uiDocument, ProgressTracker progressTracker, NewWorldPopup newWorldPopup)
         {
             _uiDocument = uiDocument;
             _progressTracker = progressTracker;
+            _newWorldPopup = newWorldPopup;
         }
 
         public void Init()
@@ -39,9 +41,17 @@ namespace Eco.Scripts.UI
             _progressTracker.GreenPercentage.Subscribe(UpdateGreenProgress).AddTo(ref builder);
             _subscription = builder.Build();
 
+            // Subscribe to threshold reached event
+            _progressTracker.OnProgressThresholdReached += OnThresholdReached;
+
             // Initialize UI with current values
             UpdateClearProgress(_progressTracker.ClearPercentage.Value);
             UpdateGreenProgress(_progressTracker.GreenPercentage.Value);
+        }
+
+        private void OnThresholdReached(float clearPercentage, float greenPercentage)
+        {
+            _newWorldPopup.Show(clearPercentage, greenPercentage);
         }
 
         private void UpdateClearProgress(float percentage)
@@ -64,6 +74,7 @@ namespace Eco.Scripts.UI
             _subscription?.Dispose();
             _subscription = null;
             
+            _progressTracker.OnProgressThresholdReached -= OnThresholdReached;
             _button.clicked -= OpenWorldSelector;
         }
     }
