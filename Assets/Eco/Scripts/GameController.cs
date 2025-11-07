@@ -70,7 +70,7 @@ namespace Eco.Scripts
             
             TerrainPainter.ClearTerrain();
             _worldController.SpawnWorld(worldPreset);
-            _progressTracker.Init(worldPreset.TrashPerChunk);
+            _progressTracker.Init(worldPreset.TrashPerChunk, worldPreset.WorldId);
 
            
             

@@ -1,6 +1,5 @@
 using Eco.Scripts.World;
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,6 +11,7 @@ namespace Eco.Scripts
     {
         [SerializeField] UIDocument uiDocument;
         [SerializeField] WorldPreset[] worldPresets;
+        [SerializeField] VisualTreeAsset worldItemTemplate;
 
         public static WorldSelector Instance { get; private set; }
 
@@ -26,6 +26,18 @@ namespace Eco.Scripts
 
         private VisualElement _container;
         private Button _closeButton;
+        private RadioButtonGroup _worldGroup;
+        
+        // Cached UI elements for each world to avoid rebuilding
+        private class WorldItemUI
+        {
+            public ProgressBar ClearProgress;
+            public Label ClearLabel;
+            public ProgressBar GreenProgress;
+            public Label GreenLabel;
+        }
+        
+        private WorldItemUI[] _worldItemsUI;
         
         private void Awake()
         {
@@ -48,7 +60,13 @@ namespace Eco.Scripts
             _closeButton.clicked += Close;
             
             // The RadioButtonGroup named GroupName is guaranteed to exist in the document.
-            RadioButtonGroup group = root.Q<RadioButtonGroup>(GroupName);
+            _worldGroup = root.Q<RadioButtonGroup>(GroupName);
+            
+            BuildWorldItems();
+        }
+
+        private void BuildWorldItems()
+        {
             RadioButton lastSelected = null;
 
             var lastWorldId = SaveManager.GetLastWorldId();
@@ -57,12 +75,40 @@ namespace Eco.Scripts
                 lastWorldId = worldPresets[0].WorldId;
             }
             
-            // Clear existing and add radio buttons
-            group.Clear();
-            foreach (var preset in worldPresets)
+            // Initialize cache array
+            _worldItemsUI = new WorldItemUI[worldPresets.Length];
+            
+            // Clear existing and add custom world items with progress info
+            _worldGroup.Clear();
+            for (var i = 0; i < worldPresets.Length; i++)
             {
-                var rb = new RadioButton(preset.WorldId);
-                // register callback to handle selection (user action -> reload)
+                var preset = worldPresets[i];
+
+                // Create world item from template
+                var worldItem = worldItemTemplate.CloneTree();
+                var itemRoot = worldItem.Q<VisualElement>("WorldItem");
+
+                // Get the radio button
+                var rb = itemRoot.Q<RadioButton>("WorldRadio");
+                rb.value = false;
+
+                var number = itemRoot.Q<Label>("Number");
+                number.text = (i + 1).ToString();
+                
+                // Cache UI elements for later updates
+                _worldItemsUI[i] = new WorldItemUI
+                {
+                    ClearProgress = itemRoot.Q<ProgressBar>("ClearProgress"),
+                    ClearLabel = itemRoot.Q<Label>("ClearLabel"),
+                    GreenProgress = itemRoot.Q<ProgressBar>("GreenProgress"),
+                    GreenLabel = itemRoot.Q<Label>("GreenLabel")
+                };
+
+                // Update difficulty stars (this doesn't change)
+                var difficultyLabel = itemRoot.Q<Label>("DifficultyLabel");
+                difficultyLabel.text = GetDifficultyStars(preset.Difficulty);
+
+                // Register callback to handle selection (user action -> reload)
                 rb.RegisterValueChangedCallback(evt =>
                 {
                     if (evt.newValue)
@@ -70,8 +116,9 @@ namespace Eco.Scripts
                         SelectPreset(preset, reload: true);
                     }
                 });
-                
-                group.Add(rb);
+
+                // Add the entire item to the group
+                _worldGroup.Add(itemRoot);
 
                 if (lastWorldId == preset.WorldId)
                 {
@@ -79,7 +126,52 @@ namespace Eco.Scripts
                 }
             }
 
-            lastSelected!.value = true;
+            if (lastSelected != null)
+            {
+                lastSelected.value = true;
+            }
+            
+            // Update progress values
+            UpdateWorldProgress();
+        }
+
+        private void UpdateWorldProgress()
+        {
+            if (_worldItemsUI == null) return;
+            
+            for (var i = 0; i < worldPresets.Length; i++)
+            {
+                var preset = worldPresets[i];
+                var progressData = WorldProgressData.LoadForWorld(preset.WorldId);
+                var ui = _worldItemsUI[i];
+
+                // Update progress bars and labels
+                ui.ClearProgress.value = progressData.ClearPercentage * 100f;
+                ui.ClearLabel.text = $"{progressData.ClearPercentage:P0}";
+
+                ui.GreenProgress.value = progressData.GreenPercentage * 100f;
+                ui.GreenLabel.text = $"{progressData.GreenPercentage:P0}";
+            }
+        }
+
+        private string GetDifficultyStars(int difficulty)
+        {
+            // Clamp difficulty between 1 and 5
+            difficulty = Mathf.Clamp(difficulty, 1, 5);
+            
+            string stars = "";
+            for (int i = 0; i < difficulty; i++)
+            {
+                stars += "★";
+            }
+            
+            // Add empty stars for the remaining
+            for (int i = difficulty; i < 5; i++)
+            {
+                stars += "☆";
+            }
+            
+            return stars;
         }
 
         private void Close()
@@ -89,6 +181,8 @@ namespace Eco.Scripts
         
         public void Open()
         {
+            // Only update progress values, don't rebuild the entire UI
+            UpdateWorldProgress();
             _container.RemoveFromClassList(HiddenStateClass);
         }
         

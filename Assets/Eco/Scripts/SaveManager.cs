@@ -118,6 +118,13 @@ namespace Eco.Scripts
                     System.IO.File.Delete(file);
                 }
                 
+                // Delete any world_progress files
+                var progressFiles = System.IO.Directory.GetFiles(path, "world_progress_*.json");
+                foreach (var file in progressFiles)
+                {
+                    System.IO.File.Delete(file);
+                }
+                
                 PlayerPrefs.DeleteKey(LastWorldIdKey);
             }
             catch (System.Exception ex)

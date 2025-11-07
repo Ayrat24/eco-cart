@@ -2792,6 +2792,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c2bacaf8ea0c741458c090b0bb21995b, type: 2}
   - {fileID: 11400000, guid: f8b40eed4f3cea341952c6709709e2ee, type: 2}
   - {fileID: 11400000, guid: a9f9cfa336bb45f448e075763b36fcd2, type: 2}
+  worldItemTemplate: {fileID: 9197481963319205126, guid: dbd29a13d3fa42ca83569a7a1ec4ca6a, type: 3}
 --- !u!4 &2016517047
 Transform:
   m_ObjectHideFlags: 0

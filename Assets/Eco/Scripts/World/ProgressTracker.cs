@@ -10,6 +10,7 @@ namespace Eco.Scripts.World
         private readonly SaveManager _saveManager;
         private readonly WorldController _worldController;
         private int _worldSize;
+        private string _worldId;
 
         public readonly ReactiveProperty<float> ClearPercentage = new();
 
@@ -47,8 +48,9 @@ namespace Eco.Scripts.World
             _worldController = worldController;
         }
 
-        public void Init(int trashPerTile)
+        public void Init(int trashPerTile, string worldId)
         {
+            _worldId = worldId;
             _trashPerTile = trashPerTile;
             _worldSize = _worldController.WorldSize;
             _totalTiles = _worldSize * _worldSize * WorldController.ChunkSize * WorldController.ChunkSize;
@@ -101,6 +103,15 @@ namespace Eco.Scripts.World
             SetGreenPercentage();
             SetClearPercentage();
             CheckThresholds();
+            SaveProgressData();
+        }
+
+        private void SaveProgressData()
+        {
+            if (!string.IsNullOrEmpty(_worldId))
+            {
+                WorldProgressData.SaveForWorld(_worldId, ClearPercentage.Value, GreenPercentage.Value);
+            }
         }
 
         private void CheckThresholds()
