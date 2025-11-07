@@ -16,7 +16,7 @@ MonoBehaviour:
     coefficient: 0
     magnitude: 0
   costGrowth: 1.15
-  needsUpgrade: 0
+  needsUpgrade: 3
   showLevelInName: 1
   upgradeId: pile-score
   upgradeLocalizedName:

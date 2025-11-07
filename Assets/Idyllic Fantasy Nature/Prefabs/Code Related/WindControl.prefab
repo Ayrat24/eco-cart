@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _windStrength: 0.2
-  _windSpeed: 1
+  _windSpeed: 0.2
   _windVariation: 0
-  _waveScale: 1
+  _waveScale: 0.3
   _windDirection: {x: 0.1, y: 0.1}
   _material:
   - {fileID: 2100000, guid: 547d20f3a4675194983b5d880d1fb348, type: 2}

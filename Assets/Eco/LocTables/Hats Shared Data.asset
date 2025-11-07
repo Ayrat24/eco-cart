@@ -79,6 +79,14 @@ MonoBehaviour:
     m_Key: hat-tab-viking-helmet-buy-description
     m_Metadata:
       m_Items: []
+  - m_Id: 1336380972068864
+    m_Key: hat-tab-no-hat-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1336426715148288
+    m_Key: hat-tab-no-hat-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

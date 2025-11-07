@@ -109,7 +109,6 @@ namespace Eco.Scripts.World
             }
 
             ClearPercentage.Value = percentage;
-            Debug.LogError(percentage);
         }
 
         private void SetGreenPercentage()

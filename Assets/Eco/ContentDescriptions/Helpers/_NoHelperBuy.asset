@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6cdbd3d428a8a04bafdc590c38f63fb, type: 3}
-  m_Name: NoHelperBuy
+  m_Name: _NoHelperBuy
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Helpers.HelperBuyUpgrade
   baseCost:
     coefficient: 0
@@ -18,26 +18,26 @@ MonoBehaviour:
   costGrowth: 1.15
   needsUpgrade: 0
   showLevelInName: 0
-  upgradeId: 
+  upgradeId: no-helper
   upgradeLocalizedName:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:425859395da8a1d42977bc912cf51c82
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 23132790159568896
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   upgradeLocalizedDescription:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:425859395da8a1d42977bc912cf51c82
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 23132863392116736
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 0}
+  icon: {fileID: 21300002, guid: b27bcf37600cca24196520251965a496, type: 3}
   selectString:
     m_TableReference:
       m_TableCollectionName: GameUI

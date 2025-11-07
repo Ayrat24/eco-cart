@@ -74,6 +74,14 @@ MonoBehaviour:
     m_Localized: 'Current interval: {0} s'
     m_Metadata:
       m_Items: []
+  - m_Id: 23132790159568896
+    m_Localized: No helper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23132863392116736
+    m_Localized: I can do it on my own!
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
