@@ -10,12 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e41d071a3dd7da4a88afa342f458299, type: 3}
-  m_Name: WorldPreset3
+  m_Name: WorldPreset 1
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
-  worldId: world3
-  worldSideSize: 5
-  seed: 5
-  trashPerChunk: 10
+  worldId: world1
+  worldSideSize: 3
+  seed: 1
+  trashPerChunk: 2
+  difficulty: 1
   chunkTypes: 00000000
-  allowedTrashItems: []
+  allowedTrashItems:
+  - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  - {fileID: 5436418194312970475, guid: 20372a9484874e848ac4b48345b047e3, type: 3}
+  - {fileID: 5985191460338198598, guid: af376ac220b093243b0cc787b2a6810a, type: 3}
   generationRules: {fileID: 11400000, guid: 4804d7d7766530644995014b9eb83967, type: 2}

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PeachBuy
   m_EditorClassIdentifier: 
   baseCost:
-    coefficient: 0
-    magnitude: 0
-  costGrowth: 1.5
+    coefficient: 530
+    magnitude: 1
+  costGrowth: 1.4
   needsUpgrade: 0
   showLevelInName: 0
   upgradeId: Buy A Peach Tree

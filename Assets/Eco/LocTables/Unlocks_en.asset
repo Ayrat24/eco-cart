@@ -78,6 +78,30 @@ MonoBehaviour:
     m_Localized: Butterflies fly around flower fields. Increase Pile score by 100%
     m_Metadata:
       m_Items: []
+  - m_Id: 11337783488540672
+    m_Localized: Tree seeds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11337832914219008
+    m_Localized: Unlock "Trees" tab where trees can be planted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11338591995162624
+    m_Localized: Animal friends
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11338689202352128
+    m_Localized: Unlock "Helpers" tab where you can hire helpers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11339528558080000
+    m_Localized: Wardrobe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11339602365247488
+    m_Localized: Unlocks "Hats" tab where you can equip different headwears
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

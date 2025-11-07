@@ -32,7 +32,7 @@ namespace Eco.Scripts.ItemCollecting
         {
             _gainedScoreText.StartNewRecycle();
             
-            double scoreMultiplier = 1;
+            double scoreMultiplier = _scoreStats.GetComboMultiplier();
             Dictionary<TrashType, double> scoreMultipliers = new();
             
             var listItems = cartItems.ToList();

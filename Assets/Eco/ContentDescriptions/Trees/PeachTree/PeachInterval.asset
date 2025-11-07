@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PeachInterval
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeIntervalUpgrade
   baseCost:
-    coefficient: 0
-    magnitude: 0
-  costGrowth: 2
+    coefficient: 620
+    magnitude: 1
+  costGrowth: 1
   needsUpgrade: 9
   showLevelInName: 1
   upgradeId: Peach Tree Interva

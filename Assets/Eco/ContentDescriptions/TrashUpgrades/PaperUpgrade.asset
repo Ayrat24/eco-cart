@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PaperUpgrade
   m_EditorClassIdentifier: 
   baseCost:
-    coefficient: 0
+    coefficient: 4
     magnitude: 0
-  costGrowth: 1.15
+  costGrowth: 1.75
   needsUpgrade: 0
   showLevelInName: 1
   upgradeId: Paper Score
@@ -38,8 +38,8 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 6f0d086008c752643bb54ca2f1baccf2, type: 3}
-  baseScore: 1
-  scoreGrowth: 1.7
+  baseScore: 4
+  scoreGrowth: 1.5
   color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
   trashType: 1
   references:

@@ -118,8 +118,7 @@ namespace Eco.Scripts.World
         {
             // Only trigger once when both thresholds are reached
             if (!_thresholdReached && 
-                ClearPercentage.Value >= ClearThreshold && 
-                GreenPercentage.Value >= GreenThreshold)
+                ClearPercentage.Value >= ClearThreshold)
             {
                 _thresholdReached = true;
                 OnProgressThresholdReached?.Invoke(ClearPercentage.Value, GreenPercentage.Value);

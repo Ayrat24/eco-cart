@@ -113,8 +113,6 @@ namespace Eco.Scripts.World
             tile.objectType = TileObjectType.Empty;
             tile.containedTrash = true;
 
-            Debug.LogError("here");
-
             pile.OnPileCleaned -= OnPileCleaned;
 
             PaintGrass();

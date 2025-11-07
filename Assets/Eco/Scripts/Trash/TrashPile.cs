@@ -40,6 +40,7 @@ namespace Eco.Scripts.Trash
 
             var pos = Vector3.zero;
             pos.y -= (maxSize - size) * _heightPerSize;
+            pos.y -= 0.1f;
             transform.localPosition = pos;
             
             AdjustVisualSizeWithDifficulty(difficulty);

@@ -9,39 +9,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eadc48912bbc31649aa5db183675ebd0, type: 3}
-  m_Name: PineBuy
-  m_EditorClassIdentifier: 
+  m_Script: {fileID: 11500000, guid: 563666e2a730bd1478e97f85d519bb45, type: 3}
+  m_Name: TreesUnlock
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.UnlockableUpgrade
   baseCost:
-    coefficient: 160
+    coefficient: 225
     magnitude: 0
-  costGrowth: 1.3
+  costGrowth: 1
   needsUpgrade: 0
   showLevelInName: 0
-  upgradeId: Pane A Pine
+  upgradeId: trees-unlock
   upgradeLocalizedName:
     m_TableReference:
-      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
     m_TableEntryReference:
-      m_KeyId: 14903664439296
+      m_KeyId: 11337783488540672
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   upgradeLocalizedDescription:
     m_TableReference:
-      m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
     m_TableEntryReference:
-      m_KeyId: 15062158798848
+      m_KeyId: 11337832914219008
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 2826356ff4a53ed4080881004df8ed2d, type: 3}
-  upgradeType: 7
-  prefabId: 100
-  scoreUpgrade: {fileID: 11400000, guid: 7785a9d66557d8f4cb997a60b0c25c2b, type: 2}
-  intervalUpgrade: {fileID: 11400000, guid: 58e05af49af20b8439621f8b9b0eeb96, type: 2}
+  alreadyPurchasedString:
+    m_TableReference:
+      m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
+    m_TableEntryReference:
+      m_KeyId: 796181655552
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  upgradeType: 13
   references:
     version: 2
     RefIds: []

@@ -25,10 +25,10 @@ namespace Eco.Scripts.Upgrades
             var power = new AlphabeticNotation(scoreGrowth);
             for (int i = 0; i < CurrentLevel.Value; i++)
             {
-                power *= scoreGrowth;
+                power += scoreGrowth;
             }
             
-            var score = baseScore + power;
+            var score = baseScore + baseScore * power;
             if (score.magnitude == 0)
             {
                 score.coefficient = Math.Floor(score.coefficient);

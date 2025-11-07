@@ -39,7 +39,7 @@ namespace Eco.Scripts.Upgrades
                 power *= scoreGrowth;
             }
             
-            var score = baseScore + power;
+            var score = baseScore * power;
 
             var flowersBonus = new AlphabeticNotation(0);
             if (UnlockTracker.IsUpgradeUnlocked(UnlockableUpgradeType.Flowers))

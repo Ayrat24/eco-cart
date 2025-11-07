@@ -10,7 +10,7 @@ namespace Eco.Scripts.Upgrades
         
         protected override void ApplyUpgrade(int level)
         {
-            Multiplier += level * 0.10f;
+            Multiplier += level * 0.50f;
         }
 
         // protected override AlphabeticNotation CalculateCost()
@@ -27,7 +27,7 @@ namespace Eco.Scripts.Upgrades
         protected override void Load(int level)
         {
             base.Load(level);
-            Multiplier = 1;
+            Multiplier = 0;
             ApplyUpgrade(level);
         }
 

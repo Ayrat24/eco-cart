@@ -196,6 +196,11 @@ namespace Eco.Scripts
                 LoadSceneAsync().Forget();
             }
         }
+
+        public void LoadWorld(int worldId)
+        {
+            SelectPreset(worldPresets[worldId]);
+        }
         
         private async UniTask LoadSceneAsync()
         {

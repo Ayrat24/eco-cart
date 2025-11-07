@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 563666e2a730bd1478e97f85d519bb45, type: 3}
-  m_Name: ButterfliesUnlock
+  m_Name: HelperUnlock
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.UnlockableUpgrade
   baseCost:
-    coefficient: 128000
+    coefficient: 2000
     magnitude: 0
   costGrowth: 1
-  needsUpgrade: 5
+  needsUpgrade: 0
   showLevelInName: 0
-  upgradeId: butter-unlock
+  upgradeId: helper-unlock
   upgradeLocalizedName:
     m_TableReference:
       m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
     m_TableEntryReference:
-      m_KeyId: 10946427381346304
+      m_KeyId: 11338591995162624
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -32,12 +32,12 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
     m_TableEntryReference:
-      m_KeyId: 10946471983575040
+      m_KeyId: 11338689202352128
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 21300000, guid: b189a841e8ade9046bbfdfd852de1eac, type: 3}
+  icon: {fileID: 21300000, guid: 16e1f09c14c08ec4c88e8723ef883475, type: 3}
   alreadyPurchasedString:
     m_TableReference:
       m_TableCollectionName: GUID:d8d59123153fafe47b1fc0579c91a16c
@@ -47,7 +47,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  upgradeType: 6
+  upgradeType: 15
   references:
     version: 2
     RefIds: []

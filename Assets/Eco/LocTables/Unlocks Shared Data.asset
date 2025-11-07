@@ -73,6 +73,30 @@ MonoBehaviour:
     m_Key: unlocks-tab-spade-butterflies-description
     m_Metadata:
       m_Items: []
+  - m_Id: 11337783488540672
+    m_Key: unlocks-tab-trees-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11337832914219008
+    m_Key: unlocks-tab-trees-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11338591995162624
+    m_Key: unlocks-tab-helpers-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11338689202352128
+    m_Key: unlocks-tab-helpers-description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11339528558080000
+    m_Key: unlocks-tab-hats-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11339602365247488
+    m_Key: unlocks-tab-hats-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

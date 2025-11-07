@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AppleTreeInterval
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeIntervalUpgrade
   baseCost:
-    coefficient: 0
+    coefficient: 1200
     magnitude: 0
   costGrowth: 2
   needsUpgrade: 8

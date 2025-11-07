@@ -38,6 +38,11 @@ namespace Eco.Scripts.Upgrades
 
         protected virtual AlphabeticNotation CalculateCost()
         {
+            if (CurrentLevel.Value < 1)
+            {
+                return baseCost;
+            }
+            
             var power = new AlphabeticNotation(costGrowth);
             for (int i = 0; i < CurrentLevel.Value; i++)
             {

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e41d071a3dd7da4a88afa342f458299, type: 3}
-  m_Name: WorldPreset2
+  m_Name: WorldPreset 2
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
   worldId: world222
   worldSideSize: 3
-  seed: 5
+  seed: 2
   trashPerChunk: 3
   difficulty: 3
   chunkTypes: 0000000002000000

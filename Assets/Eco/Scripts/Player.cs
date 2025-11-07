@@ -9,8 +9,6 @@ using UnityEngine;
 using VContainer;
 using R3;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using Eco.Scripts.Utils;
 
 namespace Eco.Scripts
 {
@@ -72,44 +70,8 @@ namespace Eco.Scripts
 
         private void EmptyCart()
         {
-            // Don't empty the cart if the click happened over UI
-            if (IsPointerOverUI())
-            {
-                return;
-            }
-
             _cart?.EmptyCart();
         }
-        
-        // Minimal UI pointer check using EventSystem.RaycastAll; supports the new Input System.
-         private bool IsPointerOverUI()
-         {
-             if (EventSystem.current == null)
-                 return false;
-
-             // Read pointer position using the new Input System only (Pointer, Mouse, Touchscreen)
-             Vector2 pointerPosition;
-             if (Pointer.current != null)
-             {
-                 pointerPosition = Pointer.current.position.ReadValue();
-             }
-             else if (Mouse.current != null)
-             {
-                 pointerPosition = Mouse.current.position.ReadValue();
-             }
-             else if (Touchscreen.current != null && Touchscreen.current.primaryTouch != null)
-             {
-                 pointerPosition = Touchscreen.current.primaryTouch.position.ReadValue();
-             }
-             else
-             {
-                 // No input device available in this frame; use last known pointer position.
-                 pointerPosition = _lastPointerPosition;
-             }
-
-             // Delegate the actual raycast/filtering to the runtime helper
-             return FindUIBlockers.IsPointerOverUI(pointerPosition);
-         }
 
         private void SpawnNewCart(CartBuyUpgrade.CartData cartData)
         {
@@ -161,24 +123,6 @@ namespace Eco.Scripts
             _subscription?.Dispose();
             toolController?.Clear();
             _hatController?.Clear();
-        }
-
-        private void Update()
-        {
-            // update last known pointer position every frame using the new Input System
-            if (Pointer.current != null)
-            {
-                _lastPointerPosition = Pointer.current.position.ReadValue();
-            }
-            else if (Mouse.current != null)
-            {
-                _lastPointerPosition = Mouse.current.position.ReadValue();
-            }
-            else if (Touchscreen.current != null && Touchscreen.current.primaryTouch != null)
-            {
-                _lastPointerPosition = Touchscreen.current.primaryTouch.position.ReadValue();
-            }
-            // if no input device is available, keep the previous _lastPointerPosition unchanged
         }
     }
 }

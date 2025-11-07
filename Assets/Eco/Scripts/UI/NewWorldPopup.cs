@@ -43,12 +43,6 @@ namespace Eco.Scripts.UI
         public void Show(float clearPercentage, float greenPercentage)
         {
             if (_isShown) return;
-
-            _messageLabel.text = $"Congratulations! You've made great progress cleaning this world!\n\n" +
-                                 $"Clear: {clearPercentage:P0} | Green: {greenPercentage:P0}\n\n" +
-                                 $"Would you like to start a new world?";
-            
-            
             _popupContainer.style.display = DisplayStyle.Flex;
             _popupContainer.RemoveFromClassList(FadeClassName);
             

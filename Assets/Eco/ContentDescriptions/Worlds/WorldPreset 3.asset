@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e41d071a3dd7da4a88afa342f458299, type: 3}
+  m_Name: WorldPreset 3
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
+  worldId: world222
+  worldSideSize: 4
+  seed: 3
+  trashPerChunk: 3
+  difficulty: 4
+  chunkTypes: 0000000002000000
+  allowedTrashItems:
+  - {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
+  - {fileID: 7278579615988079468, guid: 3978fd362eaf4ca4691854aef9ac0123, type: 3}
+  - {fileID: 1816334190488259090, guid: bdec04a2de665e44a9b750a948d4dda5, type: 3}
+  - {fileID: 3225129494818308931, guid: 00849f3dd48ad084d8236c6e7c35571b, type: 3}
+  generationRules: {fileID: 11400000, guid: 4804d7d7766530644995014b9eb83967, type: 2}

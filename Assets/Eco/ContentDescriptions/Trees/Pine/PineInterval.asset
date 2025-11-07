@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PineInterval
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trees.TreeIntervalUpgrade
   baseCost:
-    coefficient: 0
+    coefficient: 175
     magnitude: 0
-  costGrowth: 2
+  costGrowth: 3
   needsUpgrade: 7
   showLevelInName: 1
   upgradeId: Pine Interval

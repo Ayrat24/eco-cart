@@ -14,6 +14,10 @@ namespace Eco.Scripts.UI
         private DropdownField _languageDropdown;
         private DropdownField _qualityDropdown;
         private Button _saveButton;
+        private Button _resetProgressButton;
+        private VisualElement _confirmationPopup;
+        private Button _cancelResetButton;
+        private Button _confirmResetButton;
 
         public SettingsMenu(UIDocument uiDocument, Settings settings)
         {
@@ -26,24 +30,59 @@ namespace Eco.Scripts.UI
             var root = _uiDocument.rootVisualElement;
 
             _container = root.Q<VisualElement>("SettingsMenu");
+            if (_container == null)
+            {
+                Debug.LogError("SettingsMenu container not found in UI! Make sure SettingsMenu exists in GameUI.uxml");
+                return;
+            }
+
             _openButton = root.Q<Button>("SettingsButton");
+            if (_openButton == null)
+            {
+                Debug.LogError("SettingsButton not found in UI!");
+                return;
+            }
+
             _closeButton = _container.Q<Button>("CloseSettingsButton");
             _languageDropdown = _container.Q<DropdownField>("LanguageDropdown");
             _qualityDropdown = _container.Q<DropdownField>("QualityDropdown");
             _saveButton = _container.Q<Button>("SaveSettingsButton");
+            _resetProgressButton = _container.Q<Button>("ResetProgressButton");
+            _confirmationPopup = _container.Q<VisualElement>("ConfirmationPopup");
+
+            if (_confirmationPopup != null)
+            {
+                _cancelResetButton = _confirmationPopup.Q<Button>("CancelResetButton");
+                _confirmResetButton = _confirmationPopup.Q<Button>("ConfirmResetButton");
+            }
 
             // Setup language dropdown
-            _languageDropdown.choices = new System.Collections.Generic.List<string> { "English", "Русский" };
-            _languageDropdown.index = Settings.LanguageCode == "ru" ? 1 : 0;
+            if (_languageDropdown != null)
+            {
+                _languageDropdown.choices = new System.Collections.Generic.List<string> { "English", "Русский" };
+                _languageDropdown.index = Settings.LanguageCode == "ru" ? 1 : 0;
+            }
 
             // Setup quality dropdown
-            _qualityDropdown.choices = new System.Collections.Generic.List<string> { "Low", "Medium", "High" };
-            _qualityDropdown.index = (int)Settings.DetailQuality;
+            if (_qualityDropdown != null)
+            {
+                _qualityDropdown.choices = new System.Collections.Generic.List<string> { "Low", "Medium", "High" };
+                _qualityDropdown.index = (int)Settings.DetailQuality;
+            }
 
             // Register callbacks
-            _openButton.clicked += Open;
-            _closeButton.clicked += Close;
-            _saveButton.clicked += SaveSettings;
+            if (_openButton != null)
+                _openButton.clicked += Open;
+            if (_closeButton != null)
+                _closeButton.clicked += Close;
+            if (_saveButton != null)
+                _saveButton.clicked += SaveSettings;
+            if (_resetProgressButton != null)
+                _resetProgressButton.clicked += ShowResetConfirmation;
+            if (_cancelResetButton != null)
+                _cancelResetButton.clicked += HideResetConfirmation;
+            if (_confirmResetButton != null)
+                _confirmResetButton.clicked += ConfirmReset;
 
             // Start closed
             Close();
@@ -74,6 +113,24 @@ namespace Eco.Scripts.UI
             Debug.Log($"Settings saved: Language={languageCode}, Quality={Settings.DetailQuality}");
         }
 
+        private void ShowResetConfirmation()
+        {
+            _confirmationPopup.style.display = DisplayStyle.Flex;
+        }
+
+        private void HideResetConfirmation()
+        {
+            _confirmationPopup.style.display = DisplayStyle.None;
+        }
+
+        private void ConfirmReset()
+        {
+            Debug.Log("Resetting all progress...");
+
+            SaveManager.DeleteProgress();
+            WorldSelector.Instance.LoadWorld(0);
+        }
+
         public void Clear()
         {
             if (_openButton != null)
@@ -82,7 +139,12 @@ namespace Eco.Scripts.UI
                 _closeButton.clicked -= Close;
             if (_saveButton != null)
                 _saveButton.clicked -= SaveSettings;
+            if (_resetProgressButton != null)
+                _resetProgressButton.clicked -= ShowResetConfirmation;
+            if (_cancelResetButton != null)
+                _cancelResetButton.clicked -= HideResetConfirmation;
+            if (_confirmResetButton != null)
+                _confirmResetButton.clicked -= ConfirmReset;
         }
     }
 }
-

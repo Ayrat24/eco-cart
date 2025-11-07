@@ -17,7 +17,7 @@ namespace Eco.Scripts.Trees
             var power = new LargeNumber(costGrowth);
             for (int i = 0; i < CurrentLevel.Value; i++)
             {
-                power *= costGrowth;
+                power *= growth;
             }
             
             Score = baseScore * power + level;

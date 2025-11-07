@@ -54,6 +54,9 @@ namespace Eco.Scripts.Upgrades
         Pear,
         Cat,
         Chicken,
-        Dog
+        Dog,
+        Trees,
+        Hats,
+        Helpers
     }
 }

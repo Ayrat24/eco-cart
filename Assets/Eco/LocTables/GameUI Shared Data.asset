@@ -63,6 +63,70 @@ MonoBehaviour:
     m_Key: tab-name-hats
     m_Metadata:
       m_Items: []
+  - m_Id: 23016534177738752
+    m_Key: progress-cleaness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23016589433499648
+    m_Key: progress-greenification
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017367644663808
+    m_Key: warning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017449861410816
+    m_Key: progress-delete-warning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017624826802176
+    m_Key: progress-delete-cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017661334024192
+    m_Key: progress-delete-confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23018409501388800
+    m_Key: progress-delete-button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23018732613791744
+    m_Key: save-button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23018757439877120
+    m_Key: close-button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23019020003307520
+    m_Key: language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23019038529548288
+    m_Key: quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23020017706594304
+    m_Key: difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23020286855081984
+    m_Key: world-select-title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23023662250586112
+    m_Key: world-complete-body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23023680260927488
+    m_Key: world-complete-ok
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23023712519319552
+    m_Key: world-complete-no
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

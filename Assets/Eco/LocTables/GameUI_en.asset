@@ -66,6 +66,73 @@ MonoBehaviour:
     m_Localized: Hats
     m_Metadata:
       m_Items: []
+  - m_Id: 23016534177738752
+    m_Localized: Cleaness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23016589433499648
+    m_Localized: Greenification
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017367644663808
+    m_Localized: Warning!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017449861410816
+    m_Localized: Are you sure you want to reset all progress?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017624826802176
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23017661334024192
+    m_Localized: Reset All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23018409501388800
+    m_Localized: Reset Progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23018732613791744
+    m_Localized: Save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23018757439877120
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23019020003307520
+    m_Localized: 'Language:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23019038529548288
+    m_Localized: 'Quality:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23020017706594304
+    m_Localized: 'Difficulty:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23020286855081984
+    m_Localized: World Selection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23023662250586112
+    m_Localized: 'Congratulations! You''ve made great progress cleaning this world!
+
+      Would
+      you like to start cleaning a new world?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23023680260927488
+    m_Localized: Yes!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23023712519319552
+    m_Localized: Not Now
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
