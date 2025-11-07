@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Eco.Scripts.Utils;
 using PrimeTween;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.ItemCollecting
 {
@@ -173,7 +174,10 @@ namespace Eco.Scripts.ItemCollecting
             {
                 // Parent without preserving world position to ensure local alignment, then zero local transform.
                 itemMbFinalize.transform.SetParent(_cart.DropPoint, false);
-                itemMbFinalize.transform.localPosition = Vector3.zero;
+
+                float offset = 0.02f;
+                var pos = new Vector3(Random.Range(-offset, offset),Random.Range(-offset, offset), Random.Range(-offset, offset));
+                itemMbFinalize.transform.localPosition = pos;
                 itemMbFinalize.transform.localRotation = Quaternion.identity;
             }
             // Keep kinematic true while item is in the cart to prevent physics from moving it off the drop point.
