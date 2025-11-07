@@ -52,6 +52,15 @@ namespace Eco.Scripts.World
             _worldPreset.GenerateMap();
             foreach (var chunkPrefab in chunkPrefabs)
             {
+                // Validate that the chunk prefab type matches its actual class
+                if (!chunkPrefab.ValidateType())
+                {
+                    Debug.LogError($"ChunkPrefab validation failed! Prefab '{chunkPrefab.chunk.name}' " +
+                                   $"is of type {chunkPrefab.chunk.GetType().Name} but has Type property set to {chunkPrefab.type}. " +
+                                   $"Please fix this in the Unity Inspector on the WorldController component.");
+                    continue;
+                }
+                
                 //always create water and beach pools
                 if (!_worldPreset.ChunkTypes.Contains(chunkPrefab.type) && 
                     chunkPrefab.type != ChunkType.Water && 
@@ -120,31 +129,66 @@ namespace Eco.Scripts.World
                      if (!_spawnedChunks.ContainsKey(coord))
                      {
                          Vector3 pos = new Vector3(coord.x * ChunkSize, 0, coord.y * ChunkSize);
-                        var type = _worldPreset.GetChunkType(coord);
+                         var type = _worldPreset.GetChunkType(coord);
+                         
+                         if (!_pools.ContainsKey(type))
+                         {
+                             Debug.LogError($"Pool for chunk type {type} doesn't exist! Skipping chunk at {coord}");
+                             continue;
+                         }
+                         
                          Chunk chunk = _pools[type].Get();
                          chunk.Setup(coord, _saveManager, _worldPreset.TrashPerChunk);
                          
                          if(type == ChunkType.Water)
                          {
-                             WaterChunk waterChunk = (WaterChunk)chunk;
-                             waterChunk.Init();
-                             waterChunk.UpdateWaterCorners(WorldSideSize, coord);
-                             pos.y = -1;
+                             WaterChunk waterChunk = chunk as WaterChunk;
+                             if (waterChunk != null)
+                             {
+                                 waterChunk.Init();
+                                 waterChunk.UpdateWaterCorners(WorldSideSize, coord);
+                                 pos.y = -1;
+                             }
+                             else
+                             {
+                                 Debug.LogError($"Chunk at {coord} is type Water but prefab is not WaterChunk!");
+                             }
                          }
                          else if(type == ChunkType.Field)
                          {
-                             FieldChunk fieldChunk = (FieldChunk)chunk;
-                             fieldChunk.Init(_treePlanter);
+                             FieldChunk fieldChunk = chunk as FieldChunk;
+                             if (fieldChunk != null)
+                             {
+                                 fieldChunk.Init(_treePlanter);
+                             }
+                             else
+                             {
+                                 Debug.LogError($"Chunk at {coord} is type Field but prefab is not FieldChunk!");
+                             }
                          } 
                          else if (type == ChunkType.Pile)
                          {
-                             PileChunk pileChunk = (PileChunk)chunk;
-                             pileChunk.Init(_currencyManager, _pileScoreUpgrade, _digPowerUpgrade, _worldPreset.Difficulty);
+                             PileChunk pileChunk = chunk as PileChunk;
+                             if (pileChunk != null)
+                             {
+                                 pileChunk.Init(_currencyManager, _pileScoreUpgrade, _digPowerUpgrade, _worldPreset.Difficulty);
+                             }
+                             else
+                             {
+                                 Debug.LogError($"Chunk at {coord} is type Pile but prefab is not PileChunk!");
+                             }
                          }
                          else if (type == ChunkType.Beach)
                          {
-                             BeachChunk beachChunk = (BeachChunk)chunk;
-                             beachChunk.Init();
+                             BeachChunk beachChunk = chunk as BeachChunk;
+                             if (beachChunk != null)
+                             {
+                                 beachChunk.Init();
+                             }
+                             else
+                             {
+                                 Debug.LogError($"Chunk at {coord} is type Beach but prefab is not BeachChunk!");
+                             }
                          }
 
                          chunk.transform.parent = transform;
@@ -172,7 +216,28 @@ namespace Eco.Scripts.World
                  var chunk = _spawnedChunks[coord];
                  chunk.SaveTiles();
 
-                 _pools[chunk.Type].ReturnToPool(chunk);
+                 // Validate chunk type matches before returning to pool
+                 bool typeMatches = chunk.Type switch
+                 {
+                     ChunkType.Field => chunk is FieldChunk,
+                     ChunkType.Water => chunk is WaterChunk,
+                     ChunkType.Pile => chunk is PileChunk,
+                     ChunkType.Beach => chunk is BeachChunk,
+                     _ => false
+                 };
+                 
+                 if (!typeMatches)
+                 {
+                     Debug.LogError($"Type mismatch detected! Chunk at {coord} is class {chunk.GetType().Name} " +
+                                    $"but has Type property {chunk.Type}. This will cause pool contamination. " +
+                                    $"Destroying chunk instead of returning to pool.");
+                     Destroy(chunk.gameObject);
+                 }
+                 else
+                 {
+                     _pools[chunk.Type].ReturnToPool(chunk);
+                 }
+                 
                  _spawnedChunks.Remove(coord);
              }
          }
@@ -257,6 +322,27 @@ namespace Eco.Scripts.World
              public ObjectPool<Chunk> CreatePool(int initialSize, Transform parent)
              {
                  return new ObjectPool<Chunk>(chunk, initialSize, parent);
+             }
+             
+             public bool ValidateType()
+             {
+                 if (chunk == null)
+                 {
+                     Debug.LogError("Chunk prefab is null!");
+                     return false;
+                 }
+                 
+                 // Check if the actual chunk class matches the expected type
+                 bool isValid = type switch
+                 {
+                     ChunkType.Field => chunk is FieldChunk,
+                     ChunkType.Water => chunk is WaterChunk,
+                     ChunkType.Pile => chunk is PileChunk,
+                     ChunkType.Beach => chunk is BeachChunk,
+                     _ => false
+                 };
+                 
+                 return isValid;
              }
          }
      }

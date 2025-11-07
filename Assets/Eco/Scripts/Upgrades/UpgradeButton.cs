@@ -1,4 +1,5 @@
 using Eco.Scripts.Upgrades;
+using Eco.Scripts;
 using LargeNumbers;
 using R3;
 using UnityEngine.UIElements;
@@ -54,7 +55,9 @@ public partial class UpgradeButton : VisualElement
         }
 
         button.text = _upgrade.GetButtonText();
-        bool available =_upgrade.Available &&  money >= _upgrade.Cost;
+        
+        // If free upgrades is enabled, make all available upgrades purchasable
+        bool available = _upgrade.Available && (Settings.FreeUpgrades || money >= _upgrade.Cost);
         button.SetEnabled(available);
     }
 

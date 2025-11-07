@@ -8,12 +8,15 @@ namespace Eco.Scripts
     {
         [SerializeField] DetailQualities detailQuality;
         [SerializeField] string defaultLanguageCode = "en";
+        [SerializeField] bool defaultFreeUpgrades = false;
         
         public static DetailQualities DetailQuality { get; private set; }
         public static string LanguageCode { get; private set; }
+        public static bool FreeUpgrades { get; private set; }
 
         private const string DetailQualityKey = "DetailQuality";
         private const string LanguageCodeKey = "LanguageCode";
+        private const string FreeUpgradesKey = "FreeUpgrades";
 
         public void Load()
         {
@@ -24,12 +27,16 @@ namespace Eco.Scripts
             // Load language
             LanguageCode = PlayerPrefs.GetString(LanguageCodeKey, defaultLanguageCode);
             ApplyLanguage();
+            
+            // Load free upgrades
+            FreeUpgrades = PlayerPrefs.GetInt(FreeUpgradesKey, defaultFreeUpgrades ? 1 : 0) == 1;
         }
 
         public void Save()
         {
             PlayerPrefs.SetInt(DetailQualityKey, (int)DetailQuality);
             PlayerPrefs.SetString(LanguageCodeKey, LanguageCode);
+            PlayerPrefs.SetInt(FreeUpgradesKey, FreeUpgrades ? 1 : 0);
             PlayerPrefs.Save();
         }
 
@@ -42,6 +49,11 @@ namespace Eco.Scripts
         {
             LanguageCode = languageCode;
             ApplyLanguage();
+        }
+
+        public static void SetFreeUpgrades(bool enabled)
+        {
+            FreeUpgrades = enabled;
         }
 
         private static void ApplyLanguage()

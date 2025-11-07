@@ -195,7 +195,16 @@ namespace Eco.Scripts.UI
 
         private void OnUpgradePurchase(Upgrade upgrade)
         {
-            _currencyManager.RemoveMoney(upgrade.Cost);
+            // Only deduct money if free upgrades is disabled
+            if (!Settings.FreeUpgrades)
+            {
+                _currencyManager.RemoveMoney(upgrade.Cost);
+            }
+            else
+            {
+                Debug.Log($"[DEBUG] Free upgrade purchased: {upgrade.upgradeId}");
+            }
+            
             upgrade.BuyUpgrade();
             UpdateButtons();
         }

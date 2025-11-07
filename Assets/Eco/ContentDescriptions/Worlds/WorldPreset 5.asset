@@ -10,20 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e41d071a3dd7da4a88afa342f458299, type: 3}
-  m_Name: WorldPreset 2
+  m_Name: WorldPreset 5
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
-  worldId: 2
-  worldSideSize: 4
-  seed: 2
-  trashPerChunk: 3
-  difficulty: 2
+  worldId: 4
+  worldSideSize: 6
+  seed: 5
+  trashPerChunk: 6
+  difficulty: 5
   chunkTypes: 0000000002000000
   allowedTrashItems:
   - {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
   - {fileID: 7278579615988079468, guid: 3978fd362eaf4ca4691854aef9ac0123, type: 3}
-  - {fileID: 6689108122355745422, guid: 09eaba29f4c2aa140a64512073fe2cce, type: 3}
+  - {fileID: 1816334190488259090, guid: bdec04a2de665e44a9b750a948d4dda5, type: 3}
   - {fileID: 3225129494818308931, guid: 00849f3dd48ad084d8236c6e7c35571b, type: 3}
-  - {fileID: 222545294077331183, guid: d2623ef74e5b8444c8e7d3c67527dff7, type: 3}
-  - {fileID: 5436418194312970475, guid: 20372a9484874e848ac4b48345b047e3, type: 3}
-  - {fileID: 1609218187410154598, guid: 0f7680532dc6a324eacc735ae8159d1d, type: 3}
   generationRules: {fileID: 11400000, guid: 4804d7d7766530644995014b9eb83967, type: 2}

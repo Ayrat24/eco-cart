@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2158645638231702453, guid: d3acc342df4ee7849871fb8e0bffc8ef, type: 3}
       propertyPath: m_Name
-      value: BeachChunk Variant
+      value: BeachChunk
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1258492207534636278, guid: d3acc342df4ee7849871fb8e0bffc8ef, type: 3}
@@ -78,4 +78,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d13e371f70d4757ba92ca52a487a85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.BeachChunk
-  type: 0
+  type: 3

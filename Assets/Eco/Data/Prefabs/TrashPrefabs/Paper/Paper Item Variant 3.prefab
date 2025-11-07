@@ -135,6 +135,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5985191460338198598, guid: af376ac220b093243b0cc787b2a6810a, type: 3}
+      propertyPath: weight
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5985191460338198598, guid: af376ac220b093243b0cc787b2a6810a, type: 3}
       propertyPath: itemName
       value: Egg carton
       objectReference: {fileID: 0}

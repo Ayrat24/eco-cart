@@ -13,6 +13,7 @@ namespace Eco.Scripts.UI
         private Button _closeButton;
         private DropdownField _languageDropdown;
         private DropdownField _qualityDropdown;
+        private Toggle _freeUpgradesToggle;
         private Button _saveButton;
         private Button _resetProgressButton;
         private VisualElement _confirmationPopup;
@@ -46,6 +47,7 @@ namespace Eco.Scripts.UI
             _closeButton = _container.Q<Button>("CloseSettingsButton");
             _languageDropdown = _container.Q<DropdownField>("LanguageDropdown");
             _qualityDropdown = _container.Q<DropdownField>("QualityDropdown");
+            _freeUpgradesToggle = _container.Q<Toggle>("FreeUpgradesToggle");
             _saveButton = _container.Q<Button>("SaveSettingsButton");
             _resetProgressButton = _container.Q<Button>("ResetProgressButton");
             _confirmationPopup = _container.Q<VisualElement>("ConfirmationPopup");
@@ -68,6 +70,12 @@ namespace Eco.Scripts.UI
             {
                 _qualityDropdown.choices = new System.Collections.Generic.List<string> { "Low", "Medium", "High" };
                 _qualityDropdown.index = (int)Settings.DetailQuality;
+            }
+
+            // Setup free upgrades toggle
+            if (_freeUpgradesToggle != null)
+            {
+                _freeUpgradesToggle.value = Settings.FreeUpgrades;
             }
 
             // Register callbacks
@@ -107,10 +115,16 @@ namespace Eco.Scripts.UI
             // Update quality
             Settings.SetDetailQuality((Settings.DetailQualities)_qualityDropdown.index);
 
+            // Update free upgrades
+            if (_freeUpgradesToggle != null)
+            {
+                Settings.SetFreeUpgrades(_freeUpgradesToggle.value);
+            }
+
             // Save to PlayerPrefs
             _settings.Save();
 
-            Debug.Log($"Settings saved: Language={languageCode}, Quality={Settings.DetailQuality}");
+            Debug.Log($"Settings saved: Language={languageCode}, Quality={Settings.DetailQuality}, FreeUpgrades={Settings.FreeUpgrades}");
         }
 
         private void ShowResetConfirmation()

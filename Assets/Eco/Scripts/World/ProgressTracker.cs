@@ -21,8 +21,8 @@ namespace Eco.Scripts.World
         public event Action<float, float> OnProgressThresholdReached;
 
         // Thresholds for triggering the new world popup
-        private const float ClearThreshold = 0.70f; // 70%
-        private const float GreenThreshold = 0.70f; // 70%
+        private const float ClearThreshold = 0.90f; // 70%
+        private const float GreenThreshold = 0.90f; // 70%
         private bool _thresholdReached = false;
 
         // total tiles in the world (chunks * chunkSize * chunkSize)

@@ -20,6 +20,9 @@ MonoBehaviour:
   chunkTypes: 00000000
   allowedTrashItems:
   - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  - {fileID: 928404186802903188, guid: 646abc980a27b7f4b86e8922620be9d6, type: 3}
   - {fileID: 5436418194312970475, guid: 20372a9484874e848ac4b48345b047e3, type: 3}
   - {fileID: 5985191460338198598, guid: af376ac220b093243b0cc787b2a6810a, type: 3}
+  - {fileID: 2440660473772889524, guid: 67e602aea1becac4488ba6f9ab6d3fd0, type: 3}
+  - {fileID: 2440660473772889524, guid: 536744ef5ba1c344b94f7e7a4e593b88, type: 3}
   generationRules: {fileID: 11400000, guid: 4804d7d7766530644995014b9eb83967, type: 2}
