@@ -204,6 +204,14 @@ namespace Eco.Scripts
         
         private async UniTask LoadSceneAsync()
         {
+            var oldGameController = FindFirstObjectByType<GameController>();
+            if(oldGameController != null && oldGameController.Initialized)
+            {
+                oldGameController.EndGame();
+                await UniTask.NextFrame();
+            }
+            
+            
             // Fade out with transition
             if (SceneTransition.Instance != null)
             {

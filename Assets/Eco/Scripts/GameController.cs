@@ -29,6 +29,8 @@ namespace Eco.Scripts
         private TreeCurrencyEarner _treeCurrencyEarner;
         private ProgressTracker _progressTracker;
         private ScoreStats _scoreStats;
+        
+        public bool Initialized { get; private set; }
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
@@ -93,10 +95,12 @@ namespace Eco.Scripts
             {
                 await SceneTransition.Instance.FadeIn();
             }
+            
+            Initialized = true;
         }
 
         [ContextMenu("Save Progress")]
-        private void EndGame()
+        public void EndGame()
         {
             _player.Save(_saveManager);
             _currencyManager.Save(_saveManager);
