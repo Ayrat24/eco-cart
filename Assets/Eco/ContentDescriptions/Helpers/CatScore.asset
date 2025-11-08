@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CatScore
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Helpers.HelperUpgrade
   baseCost:
-    coefficient: 1
+    coefficient: 3000
     magnitude: 0
   costGrowth: 4
   needsUpgrade: 10

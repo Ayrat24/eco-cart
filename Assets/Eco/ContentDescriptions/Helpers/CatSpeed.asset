@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CatSpeed
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Helpers.HelperUpgrade
   baseCost:
-    coefficient: 10
+    coefficient: 4600
     magnitude: 0
   costGrowth: 2
   needsUpgrade: 10
@@ -38,7 +38,7 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 217afcf9f482d82479337ac9a76c2930, type: 3}
-  baseValue: 12
+  baseValue: 10
   growth: 0.2
   references:
     version: 2

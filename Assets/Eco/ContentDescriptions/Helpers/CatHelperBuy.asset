@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: CatHelperBuy
   m_EditorClassIdentifier: 
   baseCost:
-    coefficient: 0
+    coefficient: 1000
     magnitude: 0
   costGrowth: 1.15
   needsUpgrade: 0
+  showLevelInName: 0
   upgradeId: Cat Helper
   upgradeLocalizedName:
     m_TableReference:

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldPreset 4
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldPreset
   worldId: 4
-  worldSideSize: 6
+  worldSideSize: 10
   seed: 4
   trashPerChunk: 5
   difficulty: 4
@@ -23,4 +23,6 @@ MonoBehaviour:
   - {fileID: 7278579615988079468, guid: 3978fd362eaf4ca4691854aef9ac0123, type: 3}
   - {fileID: 1816334190488259090, guid: bdec04a2de665e44a9b750a948d4dda5, type: 3}
   - {fileID: 3225129494818308931, guid: 00849f3dd48ad084d8236c6e7c35571b, type: 3}
+  - {fileID: 1609218187410154598, guid: 0f7680532dc6a324eacc735ae8159d1d, type: 3}
+  - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
   generationRules: {fileID: 11400000, guid: 4804d7d7766530644995014b9eb83967, type: 2}

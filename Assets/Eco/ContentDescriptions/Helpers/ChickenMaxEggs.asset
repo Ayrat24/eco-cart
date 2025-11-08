@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ChickenMaxEggs
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Helpers.HelperUpgrade
   baseCost:
-    coefficient: 1
+    coefficient: 9500
     magnitude: 0
   costGrowth: 2.4
   needsUpgrade: 11

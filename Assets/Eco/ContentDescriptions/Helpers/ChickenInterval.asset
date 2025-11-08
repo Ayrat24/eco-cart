@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ChickenInterval
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Helpers.HelperUpgrade
   baseCost:
-    coefficient: 1
+    coefficient: 5600
     magnitude: 0
-  costGrowth: 24
+  costGrowth: 2
   needsUpgrade: 11
   showLevelInName: 1
   upgradeId: chicken interval
