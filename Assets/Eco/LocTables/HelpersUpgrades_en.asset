@@ -82,6 +82,14 @@ MonoBehaviour:
     m_Localized: I can do it on my own!
     m_Metadata:
       m_Items: []
+  - m_Id: 23303335010365440
+    m_Localized: Dog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23303359047921664
+    m_Localized: Brings trash to you
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Eco.Scripts.Trash;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -63,6 +64,11 @@ namespace Eco.Scripts.Pooling
 
         public TrashItem GetTrash(int id)
         {
+            if (!_trashPools.ContainsKey(id))
+            {
+                return _trashPools.Values.ToList()[0].Get();
+            }
+
             return _trashPools[id].Get();
         }
 

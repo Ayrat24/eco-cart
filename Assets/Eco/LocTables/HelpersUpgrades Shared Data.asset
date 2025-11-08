@@ -79,6 +79,14 @@ MonoBehaviour:
     m_Key: helper-tab-no-helper-description
     m_Metadata:
       m_Items: []
+  - m_Id: 23303335010365440
+    m_Key: dog-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23303359047921664
+    m_Key: dog-description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

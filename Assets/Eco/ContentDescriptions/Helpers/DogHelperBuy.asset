@@ -13,25 +13,26 @@ MonoBehaviour:
   m_Name: DogHelperBuy
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Helpers.HelperBuyUpgrade
   baseCost:
-    coefficient: 0
-    magnitude: 0
+    coefficient: 123
+    magnitude: 4
   costGrowth: 1.15
   needsUpgrade: 0
+  showLevelInName: 0
   upgradeId: dog helper
   upgradeLocalizedName:
     m_TableReference:
-      m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableCollectionName: GUID:425859395da8a1d42977bc912cf51c82
     m_TableEntryReference:
-      m_KeyId: 36522470404096
+      m_KeyId: 23303335010365440
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   upgradeLocalizedDescription:
     m_TableReference:
-      m_TableCollectionName: GUID:5dc37383c77562145808713f560ea55c
+      m_TableCollectionName: GUID:425859395da8a1d42977bc912cf51c82
     m_TableEntryReference:
-      m_KeyId: 36522470404096
+      m_KeyId: 23303359047921664
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
