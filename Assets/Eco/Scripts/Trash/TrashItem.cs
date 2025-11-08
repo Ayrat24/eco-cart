@@ -52,7 +52,7 @@ namespace Eco.Scripts.Trash
 
             transform.rotation = Quaternion.Euler(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
             var pos = transform.localPosition;
-            pos.y += 0.6f;
+            pos.y += 0.9f;
             transform.localPosition = pos;
         }
 

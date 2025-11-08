@@ -55,8 +55,8 @@ namespace Eco.Scripts.World
             _worldSize = _worldController.WorldSize;
             
             // Calculate total tiles excluding beach chunks (which are on the border)
-            int totalChunks = (2 * _worldSize + 1) * (2 * _worldSize + 1);
-            int beachChunks = 4 * (2 * _worldSize + 1) - 4; // Perimeter chunks
+            int totalChunks = _worldSize * _worldSize;
+            int beachChunks = 4 * (_worldSize) - 4; // Perimeter chunks
             int nonBeachChunks = totalChunks - beachChunks;
             
             _totalTiles = nonBeachChunks * WorldController.ChunkSize * WorldController.ChunkSize;
