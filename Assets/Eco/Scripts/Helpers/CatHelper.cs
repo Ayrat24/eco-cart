@@ -191,7 +191,7 @@ namespace Eco.Scripts.Helpers
                         if (food.CanBeRecycled)
                         {
                             animationController.TriggerAction();
-                            var money = ScoreStats.GetScoreForTrash(food.TrashType);
+                            var money = ScoreStats.GetScoreForTrash(food.TrashType) * food.GetWeight();
                             await food.RecycleAsync();
                             // apply recycle multiplier from upgrades
                             var reward = money * _recycleMultiplier;

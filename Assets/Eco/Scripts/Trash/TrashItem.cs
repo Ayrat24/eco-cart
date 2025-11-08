@@ -49,6 +49,8 @@ namespace Eco.Scripts.Trash
             var vfx = particleEffect.main;
             vfx.startColor = color;
             ChangeState(false);
+
+            transform.rotation = Quaternion.Euler(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
         }
 
         public void OnPickUp(Transform parent)
@@ -161,7 +163,7 @@ namespace Eco.Scripts.Trash
 
         public int GetWeight()
         {
-            return weight;
+            return weight + (WorldSelector.Instance.SelectedPreset.Difficulty / 2);
         }
 
         public int GetPrefabId()

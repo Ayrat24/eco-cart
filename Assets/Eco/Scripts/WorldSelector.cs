@@ -27,7 +27,7 @@ namespace Eco.Scripts
         private VisualElement _container;
         private Button _closeButton;
         private RadioButtonGroup _worldGroup;
-        
+
         // Cached UI elements for each world to avoid rebuilding
         private class WorldItemUI
         {
@@ -36,9 +36,9 @@ namespace Eco.Scripts
             public ProgressBar GreenProgress;
             public Label GreenLabel;
         }
-        
+
         private WorldItemUI[] _worldItemsUI;
-        
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -58,10 +58,10 @@ namespace Eco.Scripts
             _container = root.Q(ContainerName);
             _closeButton = _container.Q<Button>(CloseButtonName);
             _closeButton.clicked += Close;
-            
+
             // The RadioButtonGroup named GroupName is guaranteed to exist in the document.
             _worldGroup = root.Q<RadioButtonGroup>(GroupName);
-            
+
             BuildWorldItems();
         }
 
@@ -74,10 +74,10 @@ namespace Eco.Scripts
             {
                 lastWorldId = worldPresets[0].WorldId;
             }
-            
+
             // Initialize cache array
             _worldItemsUI = new WorldItemUI[worldPresets.Length];
-            
+
             // Clear existing and add custom world items with progress info
             _worldGroup.Clear();
             for (var i = 0; i < worldPresets.Length; i++)
@@ -94,7 +94,7 @@ namespace Eco.Scripts
 
                 var number = itemRoot.Q<Label>("Number");
                 number.text = (i + 1).ToString();
-                
+
                 // Cache UI elements for later updates
                 _worldItemsUI[i] = new WorldItemUI
                 {
@@ -130,7 +130,7 @@ namespace Eco.Scripts
             {
                 lastSelected.value = true;
             }
-            
+
             // Update progress values
             UpdateWorldProgress();
         }
@@ -138,7 +138,7 @@ namespace Eco.Scripts
         private void UpdateWorldProgress()
         {
             if (_worldItemsUI == null) return;
-            
+
             for (var i = 0; i < worldPresets.Length; i++)
             {
                 var preset = worldPresets[i];
@@ -158,19 +158,19 @@ namespace Eco.Scripts
         {
             // Clamp difficulty between 1 and 5
             difficulty = Mathf.Clamp(difficulty, 1, 5);
-            
+
             string stars = "";
             for (int i = 0; i < difficulty; i++)
             {
                 stars += "★";
             }
-            
+
             // Add empty stars for the remaining
             for (int i = difficulty; i < 5; i++)
             {
                 stars += "☆";
             }
-            
+
             return stars;
         }
 
@@ -178,16 +178,25 @@ namespace Eco.Scripts
         {
             _container.AddToClassList(HiddenStateClass);
         }
-        
+
         public void Open()
         {
             // Only update progress values, don't rebuild the entire UI
             UpdateWorldProgress();
             _container.RemoveFromClassList(HiddenStateClass);
         }
-        
-        private void SelectPreset(WorldPreset preset, bool reload = true)
+
+        private void SelectPreset(WorldPreset preset, bool reload = true, bool save = true)
         {
+            if(save)
+            {
+                var oldGameController = FindFirstObjectByType<GameController>();
+                if (oldGameController != null && oldGameController.Initialized)
+                {
+                    oldGameController.EndGame();
+                }
+            }
+
             SelectedPreset = preset;
             PresetSelected?.Invoke(preset);
 
@@ -197,52 +206,35 @@ namespace Eco.Scripts
             }
         }
 
-        public void LoadWorld(int worldId)
+        public void LoadWorld(int worldId, bool save = true)
         {
-            SelectPreset(worldPresets[worldId]);
+            SelectPreset(worldPresets[worldId], save: save);
         }
-        
+
         private async UniTask LoadSceneAsync()
         {
-            var oldGameController = FindFirstObjectByType<GameController>();
-            if(oldGameController != null && oldGameController.Initialized)
-            {
-                oldGameController.EndGame();
-                await UniTask.NextFrame();
-            }
-            
-            
             // Fade out with transition
             if (SceneTransition.Instance != null)
             {
                 await SceneTransition.Instance.FadeOut();
                 await UniTask.WaitForSeconds(SceneTransition.FadeDuration);
             }
-            
+
             var loadOp = SceneManager.LoadSceneAsync(0);
             while (!loadOp.isDone)
             {
                 await UniTask.Yield();
             }
-            
+
             Close();
-            
+
             var gameController = FindFirstObjectByType<GameController>();
             gameController.StartGame();
-            
-            // // Wait a frame for the scene to initialize
-            // await UniTask.NextFrame();
-            //
-            // // Fade in
-            // if (SceneTransition.Instance != null)
-            // {
-            //     await SceneTransition.Instance.FadeIn();
-            // }
         }
 
         private void OnDestroy()
         {
-            if(_closeButton != null)
+            if (_closeButton != null)
             {
                 _closeButton.clicked -= Close;
             }

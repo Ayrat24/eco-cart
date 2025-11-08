@@ -142,7 +142,7 @@ namespace Eco.Scripts.UI
             Debug.Log("Resetting all progress...");
 
             SaveManager.DeleteProgress();
-            WorldSelector.Instance.LoadWorld(0);
+            WorldSelector.Instance.LoadWorld(0, false);
         }
 
         public void Clear()

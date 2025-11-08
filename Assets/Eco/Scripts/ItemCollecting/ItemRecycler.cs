@@ -45,7 +45,7 @@ namespace Eco.Scripts.ItemCollecting
                 if (item is TrashItem trash)
                 {
                     var baseScore = _scoreStats.GetScoreForTrash(trash.TrashType);
-                    var score = baseScore;
+                    var score = baseScore * trash.GetWeight();
 
                     if (scoreMultipliers.TryGetValue(trash.TrashType, out var currentMultiplier))
                     {

@@ -79,13 +79,70 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       insertIndex: 1
       addedObject: {fileID: 3772951664434804164}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1506916608246496363}
+    - targetCorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 994683773565167912}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
 --- !u!4 &1074433021852604614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
   m_PrefabInstance: {fileID: 3165876983594299456}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4964596836946996470 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  m_PrefabInstance: {fileID: 3165876983594299456}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1506916608246496363
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4964596836946996470}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.19
+  m_Height: 1.42
+  m_Direction: 2
+  m_Center: {x: -0.03, y: 0.18, z: 0}
+--- !u!136 &994683773565167912
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4964596836946996470}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.11
+  m_Height: 2.14
+  m_Direction: 0
+  m_Center: {x: 0, y: 0.18, z: 0}
 --- !u!1001 &3735330110982033967
 PrefabInstance:
   m_ObjectHideFlags: 0
