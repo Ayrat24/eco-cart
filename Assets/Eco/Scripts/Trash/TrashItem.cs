@@ -51,6 +51,9 @@ namespace Eco.Scripts.Trash
             ChangeState(false);
 
             transform.rotation = Quaternion.Euler(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
+            var pos = transform.localPosition;
+            pos.y += 0.6f;
+            transform.localPosition = pos;
         }
 
         public void OnPickUp(Transform parent)
