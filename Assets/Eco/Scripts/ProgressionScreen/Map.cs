@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Eco.Scripts.Pooling;
-using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
@@ -26,8 +25,10 @@ namespace Eco.Scripts.ProgressionScreen
         [SerializeField] private Transform iconParent;
         [SerializeField] private RectTransform playerMarker;
 
-        private readonly List<MapField> _tiles = new List<MapField>();
-        private readonly List<Vector2Int> _visibleIds = new();
+        private readonly Dictionary<Vector2Int, MapField> _tiles = new();
+        private readonly HashSet<Vector2Int> _visibleIds = new();
+        private readonly List<Vector2Int> _idsToHide = new();
+        private readonly HashSet<Vector2Int> _changedIds = new();
         private Vector2Int _centerPoint;
         private ObjectPool<MapField> _pool;
         private WorldController _worldController;
@@ -35,6 +36,8 @@ namespace Eco.Scripts.ProgressionScreen
         private bool _initialized;
         private Player _player;
         private IDisposable _subscription;
+        private Vector3 _lastPlayerPosition = new(float.NaN, 0, 0);
+        private float _lastPlayerYaw = float.NaN;
 
         private const int WorldToCanvasCoef = 100;
 
@@ -48,8 +51,8 @@ namespace Eco.Scripts.ProgressionScreen
             _pool = new ObjectPool<MapField>(field, viewportSize * viewportSize, tileParent);
 
             var builder = new DisposableBuilder();
-            ScrapItem.OnItemRecycled.Subscribe(OnScrapRecycled).AddTo(ref builder);
-            worldController.TreePlanter.OnTreePlanted.Subscribe(OnTreePlanted).AddTo(ref builder);
+            // Every tile change (recycling, planting, piles, chunk saves) ends in a chunk save
+            saveManager.OnChunkUpdated.Subscribe(id => _changedIds.Add(id)).AddTo(ref builder);
             UnlockTracker.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
             _subscription = builder.Build();
 
@@ -76,18 +79,6 @@ namespace Eco.Scripts.ProgressionScreen
             map.SetActive(enable);
         }
 
-        private void OnScrapRecycled(Tile tile)
-        {
-            _worldController.SaveWorld();
-            UpdateVisibleFields();
-        }
-
-        private void OnTreePlanted(int id)
-        {
-            _worldController.SaveWorld();
-            UpdateVisibleFields();
-        }
-
         void Update()
         {
             if (!_initialized)
@@ -97,15 +88,26 @@ namespace Eco.Scripts.ProgressionScreen
 
             UpdatePlayerPosition();
             MoveTiles();
+            RedrawChangedFields();
         }
 
         private void UpdatePlayerPosition()
         {
-            Vector2 playerPos = new Vector2(-_player.transform.position.x, -_player.transform.position.z) * 10;
-            playerMarker.anchoredPosition = -playerPos;
-            playerMarker.rotation = Quaternion.Euler(0, 0, -_player.transform.eulerAngles.y);
-            
-            if(PlayerFollowingEnabled)
+            // Setting anchoredPosition dirties the canvas, so only write what changed
+            var playerTransform = _player.transform;
+            var position = playerTransform.position;
+            var yaw = playerTransform.eulerAngles.y;
+            Vector2 playerPos = new Vector2(-position.x, -position.z) * 10;
+
+            if (position != _lastPlayerPosition || yaw != _lastPlayerYaw)
+            {
+                _lastPlayerPosition = position;
+                _lastPlayerYaw = yaw;
+                playerMarker.anchoredPosition = -playerPos;
+                playerMarker.rotation = Quaternion.Euler(0, 0, -yaw);
+            }
+
+            if (PlayerFollowingEnabled && content.anchoredPosition != playerPos)
             {
                 content.anchoredPosition = playerPos;
             }
@@ -140,30 +142,44 @@ namespace Eco.Scripts.ProgressionScreen
                 }
             }
 
-            //remove and hide tiles that became not visible
-            for (var i = _tiles.Count - 1; i >= 0; i--)
+            // Only fields that scrolled in or out change; the rest keep their texture
+            _idsToHide.Clear();
+            foreach (var id in _tiles.Keys)
             {
-                var t = _tiles[i];
-
-                _pool.ReturnToPool(t);
-                _tiles.RemoveAt(i);
+                if (!_visibleIds.Contains(id))
+                {
+                    _idsToHide.Add(id);
+                }
             }
 
-            //show new tiles
+            foreach (var id in _idsToHide)
+            {
+                _pool.ReturnToPool(_tiles[id]);
+                _tiles.Remove(id);
+            }
+
             foreach (var id in _visibleIds)
             {
-                if (!_saveManager.FieldTiles.TryGetValue(id, out var data))
+                if (!_tiles.ContainsKey(id))
                 {
-                    continue;
+                    ShowField(id);
                 }
-
-                var t = _pool.Get();
-                t.Rect.anchoredPosition = id * WorldToCanvasCoef;
-                t.Initialize(WorldController.ChunkSize, iconParent);
-
-                t.SetTileData(id, data);
-                _tiles.Add(t);
             }
+        }
+
+        private void ShowField(Vector2Int id)
+        {
+            if (!_saveManager.FieldTiles.TryGetValue(id, out var data))
+            {
+                return;
+            }
+
+            var t = _pool.Get();
+            t.Rect.anchoredPosition = id * WorldToCanvasCoef;
+            t.Initialize(WorldController.ChunkSize, iconParent);
+
+            t.SetTileData(id, data);
+            _tiles[id] = t;
         }
 
         private Vector2Int GetMapPosition()
@@ -172,20 +188,27 @@ namespace Eco.Scripts.ProgressionScreen
                 content.anchoredPosition.y / WorldToCanvasCoef));
         }
 
-        private void UpdateVisibleFields()
+        // Redraws only the chunks saved since the last frame, at most once each
+        private void RedrawChangedFields()
         {
-            foreach (var t in _tiles)
+            if (_changedIds.Count == 0)
             {
-                var id = t.Id;
-                if (_saveManager.FieldTiles.TryGetValue(id, out var data))
+                return;
+            }
+
+            foreach (var id in _changedIds)
+            {
+                if (_tiles.TryGetValue(id, out var t))
                 {
-                    t.SetTileData(id, data);
+                    t.SetTileData(id, _saveManager.FieldTiles[id]);
                 }
-                else
+                else if (_visibleIds.Contains(id))
                 {
-                    t.SetAsUndiscovered();
+                    ShowField(id);
                 }
             }
+
+            _changedIds.Clear();
         }
 
         private void OnDestroy()

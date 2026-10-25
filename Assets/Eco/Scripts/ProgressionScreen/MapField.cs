@@ -27,6 +27,8 @@ namespace Eco.Scripts.ProgressionScreen
         private Dictionary<int, Color> _tileColors = new();
         private ObjectPool<Image> _imagePool;
         private List<Image> _spawnedImages = new();
+        private Color[] _colors;
+        private bool _hasId;
 
         public Vector2Int Id => _id;
         public RectTransform Rect => rectTransform;
@@ -65,11 +67,19 @@ namespace Eco.Scripts.ProgressionScreen
 
         public void SetTileData(Vector2Int id, TileData[] data)
         {
+            // Redraws of the same chunk keep the label instead of allocating a new string
+            if (!_hasId || _id != id)
+            {
+                text.text = id.ToString();
+            }
+
             _id = id;
-            text.text = id.ToString();
+            _hasId = true;
+            ReturnTreeIcons();
 
             var size = _texture.width;
-            Color[] colors = new Color[size * size];
+            _colors ??= new Color[size * size];
+            var colors = _colors;
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
@@ -125,6 +135,12 @@ namespace Eco.Scripts.ProgressionScreen
         }
 
         public void OnDespawn()
+        {
+            ReturnTreeIcons();
+        }
+
+        // SetTileData runs again whenever the chunk saves; without this each redraw stacked another icon per tree.
+        private void ReturnTreeIcons()
         {
             foreach (var i in _spawnedImages)
             {

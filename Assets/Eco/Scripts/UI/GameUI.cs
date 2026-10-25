@@ -20,10 +20,13 @@ namespace Eco.Scripts.UI
         private ProgressDisplay _progress;
         private NewWorldPopup _newWorldPopup;
         private SettingsMenu _settingsMenu;
+        private ProgressTracker _progressTracker;
 
         public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player,
             ProgressTracker progressTracker)
         {
+            _progressTracker = progressTracker;
+
             _upgradeMenu = new UpgradeMenu(uiDocument, upgradeItemTemplate, upgradeGroupItemTemplate,
                 upgradesCollection, currencyManager);
             _upgradeMenu.Init();
@@ -50,7 +53,8 @@ namespace Eco.Scripts.UI
 
         private void OnNewWorldAccepted()
         {
-            // Open the world selector to let player choose a new world
+            // Open the world selector to let player choose a new world; it reads progress from disk
+            _progressTracker.SaveProgress();
             WorldSelector.Instance.Open();
         }
 

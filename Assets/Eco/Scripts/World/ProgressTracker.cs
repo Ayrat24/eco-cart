@@ -25,6 +25,7 @@ namespace Eco.Scripts.World
         private const float ClearThreshold = 0.90f; // 70%
         private const float GreenThreshold = 0.90f; // 70%
         private bool _thresholdReached = false;
+        private bool _progressDirty;
 
         // total tiles in the world (chunks * chunkSize * chunkSize), excluding beach tiles
         private int _totalTiles;
@@ -120,15 +121,20 @@ namespace Eco.Scripts.World
             SetGreenPercentage();
             SetClearPercentage();
             CheckThresholds();
-            SaveProgressData();
+            _progressDirty = true;
         }
 
-        private void SaveProgressData()
+        // Chunks save in bursts (hundreds per chunk swap), so the file is written only when the game saves or
+        // the world list is about to read it, not on every chunk update.
+        public void SaveProgress()
         {
-            if (!string.IsNullOrEmpty(_worldId))
+            if (!_progressDirty || string.IsNullOrEmpty(_worldId))
             {
-                WorldProgressData.SaveForWorld(_worldId, ClearPercentage.Value, GreenPercentage.Value);
+                return;
             }
+
+            _progressDirty = false;
+            WorldProgressData.SaveForWorld(_worldId, ClearPercentage.Value, GreenPercentage.Value);
         }
 
         private void CheckThresholds()

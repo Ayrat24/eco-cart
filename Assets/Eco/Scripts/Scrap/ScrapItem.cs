@@ -57,6 +57,24 @@ namespace Eco.Scripts.Scrap
             transform.localPosition = pos;
         }
 
+        // Puts the item back where it last came to rest instead of dropping it; Sleep() follows once physics has
+        // the new transform (see FieldChunk.SleepRestingScrap)
+        public void PlaceAtRest(Pose localPose)
+        {
+            transform.SetLocalPositionAndRotation(localPose.position, localPose.rotation);
+        }
+
+        public bool TryGetRestingPose(out Pose localPose)
+        {
+            localPose = new Pose(transform.localPosition, transform.localRotation);
+            return CanBeRecycled && !rb.isKinematic && rb.IsSleeping();
+        }
+
+        public void Sleep()
+        {
+            rb.Sleep();
+        }
+
         public void OnPickUp(Transform parent)
         {
             if (_isCollected)

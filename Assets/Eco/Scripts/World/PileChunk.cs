@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
@@ -83,6 +81,7 @@ namespace Eco.Scripts.World
             // and there's no pile, we enable those visuals
             _unlockSubscription = UnlockTracker.OnUnlocked.Subscribe(OnUpgradeUnlocked);
 
+            // A loaded chunk already matches its save
             if (!hasSave)
             {
                 SaveTiles();
@@ -97,8 +96,6 @@ namespace Eco.Scripts.World
             tile.objectType = TileObjectType.ScrapPile;
 
             pile.OnPileCleaned += OnPileCleaned;
-
-            SaveTiles();
         }
 
         private void UpdatePileDigPower()
@@ -141,14 +138,9 @@ namespace Eco.Scripts.World
             SaveTiles();
         }
 
+        // TerrainPainter paints on the next frame and skips circles that are already painted
         private void PaintGrass()
         {
-            MakeGrass(this.GetCancellationTokenOnDestroy()).Forget();
-        }
-
-        private async UniTask MakeGrass(CancellationToken cancellationToken)
-        {
-            await UniTask.NextFrame(cancellationToken);
             TerrainPainter.PaintTerrainTexture(TerrainPainter.TerrainTexture.Grass, GetTileWorldPosition(_tileWithPile),
                 TreePlanter.PileGrassRadius);
         }

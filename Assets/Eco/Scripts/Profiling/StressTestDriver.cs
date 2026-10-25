@@ -146,6 +146,11 @@ namespace Eco.Scripts.Profiling
                 return "skipped (no cart or collectSeconds = 0)";
             }
 
+            // Scrap that rolled into reach during Idle can already be in the cart. inCart below doesn't count it,
+            // so it would never be emptied and could leave too little room for any item.
+            PlayerClickMovement.OnLeftClicked?.Invoke();
+            await UniTask.WaitWhile(() => cart.IsEmptying, cancellationToken: token);
+
             int picked = 0, inCart = 0, freedTiles = 0, empties = 0;
             float lastPickup = Time.realtimeSinceStartup;
             using var added = cart.OnItemAdded.Subscribe(_ =>

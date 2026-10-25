@@ -111,6 +111,7 @@ namespace Eco.Scripts
             _worldController.SaveWorld();
 
             _saveManager.Save();
+            _progressTracker.SaveProgress();
 
             _treeCurrencyEarner.Clear();
             gameUI.Clear();

@@ -35,7 +35,7 @@ Gotchas:
 - `Assets/Eco/Scripts/Editor/PipelineDescriptorFix.cs` works around a Pipeline 0.9.1 bug on Unity 6.5: without it the CLI can't discover the editor (`Failed to start publishing the descriptor` in the log). Delete it once the package fixes the bug.
 - The editor idles while unfocused. Run `unity command editor set_auto_tick --enable true` once per session so commands and play mode keep running in the background.
 - `unity command script eval` runs arbitrary code in the editor. Use it for reads and one-off asset authoring.
-- When saving from eval, call `AssetDatabase.SaveAssetIfDirty(asset)` and **never `AssetDatabase.SaveAssets()`**. The editor holds pending Unity 6.5 reserialization of URP/ProjectSettings assets, plus `New Terrain 1.asset` painted during play mode, and `SaveAssets()` writes all of it to disk.
+- When saving from eval, call `AssetDatabase.SaveAssetIfDirty(asset)` and **never `AssetDatabase.SaveAssets()`**. The editor holds pending Unity 6.5 reserialization of URP/ProjectSettings assets, plus `New Terrain 1.asset` painted by older play sessions (play mode now paints a runtime copy), and `SaveAssets()` writes all of it to disk.
 
 Fallbacks without the CLI: compile errors are in `Logs/Editor.log` (`grep -E "error CS" Logs/Editor.log | sort -u`). With the editor closed, run a batch compile:
 

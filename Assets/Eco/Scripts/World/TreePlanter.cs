@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.Trees;
@@ -54,9 +53,6 @@ namespace Eco.Scripts.World
             Tile closestTile = null;
             float closestDistSqr = float.MaxValue;
 
-            Dictionary<Vector2Int, Chunk> groundChunks = _worldController.ActiveChunks.Where(x => x.Value is FieldChunk)
-                .ToDictionary(x => x.Key, x => x.Value);
-
             // Search in surrounding chunks (adjust search range if needed)
             for (int cx = -_worldController.RenderRadius; cx <= _worldController.RenderRadius; cx++)
             {
@@ -64,7 +60,7 @@ namespace Eco.Scripts.World
                 {
                     Vector2Int chunkCoord = new Vector2Int(playerChunkCoord.x + cx, playerChunkCoord.y + cy);
 
-                    if (groundChunks.TryGetValue(chunkCoord, out Chunk field))
+                    if (_worldController.ActiveChunks.TryGetValue(chunkCoord, out Chunk field) && field is FieldChunk)
                     {
                         foreach (var tile in field.Tiles)
                         {

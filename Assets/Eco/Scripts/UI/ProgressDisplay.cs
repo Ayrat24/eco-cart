@@ -66,6 +66,8 @@ namespace Eco.Scripts.UI
 
         private void OpenWorldSelector()
         {
+            // The world list reads progress from disk
+            _progressTracker.SaveProgress();
             WorldSelector.Instance.Open();
         }
 

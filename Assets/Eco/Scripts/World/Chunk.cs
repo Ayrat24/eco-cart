@@ -47,7 +47,12 @@ namespace Eco.Scripts.World
         {
             using var marker = EcoProfilerMarkers.SaveTiles.Auto();
 
-            var saveData = new TileData[tiles.Length];
+            // Overwrite the chunk's existing save array; readers copy what they need straight away
+            if (!SaveManager.FieldTiles.TryGetValue(Position, out var saveData) || saveData.Length != tiles.Length)
+            {
+                saveData = new TileData[tiles.Length];
+            }
+
             for (var i = 0; i < tiles.Length; i++)
             {
                 saveData[i] = tiles[i].GetSaveData();

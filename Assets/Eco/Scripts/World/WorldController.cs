@@ -38,6 +38,15 @@ namespace Eco.Scripts.World
         public int WorldSize => WorldSideSize * 2 + 1;
         
         private readonly Dictionary<ChunkType, ObjectPool<Chunk>> _pools = new();
+        private readonly ScrapRestingPoses _scrapRestingPoses = new();
+
+        // Reused by UpdateWorld on every chunk crossing
+        private readonly HashSet<Vector2Int> _neededChunks = new();
+        private readonly List<Vector2Int> _chunksToRemove = new();
+        private readonly List<FieldChunk> _spawnedFields = new();
+
+        // Width of the slope Flatten adds around the plateau
+        private const float FlattenFalloff = 50;
         
         [Inject]
         public void Initialize(SaveManager saveManager, UpgradesCollection upgrades, CurrencyManager currencyManager)
@@ -53,6 +62,7 @@ namespace Eco.Scripts.World
 
             _worldPreset = worldPreset;
             _worldPreset.GenerateMap();
+            var peakChunkCounts = GetPeakChunkCounts();
             foreach (var chunkPrefab in chunkPrefabs)
             {
                 // Validate that the chunk prefab type matches its actual class
@@ -72,7 +82,8 @@ namespace Eco.Scripts.World
                     continue;
                 }
                 
-                _pools[chunkPrefab.type] = chunkPrefab.CreatePool(renderRadius * renderRadius, transform);
+                _pools[chunkPrefab.type] = chunkPrefab.CreatePool(
+                    peakChunkCounts.GetValueOrDefault(chunkPrefab.type), transform);
             }
             
 
@@ -89,10 +100,54 @@ namespace Eco.Scripts.World
             _initialized = true;
          }
 
+        // The most chunks of each type in view at once from anywhere in the world. Pooling that many during
+        // load means walking to the coast never instantiates chunks mid-game.
+        private Dictionary<ChunkType, int> GetPeakChunkCounts()
+        {
+            var peak = new Dictionary<ChunkType, int>();
+            var inView = new Dictionary<ChunkType, int>();
+            int side = WorldSideSize;
+
+            for (int px = -side; px <= side; px++)
+            {
+                for (int pz = -side; pz <= side; pz++)
+                {
+                    inView.Clear();
+                    for (int x = -renderRadius; x <= renderRadius; x++)
+                    {
+                        for (int z = -renderRadius; z <= renderRadius; z++)
+                        {
+                            var type = _worldPreset.GetChunkType(new Vector2Int(px + x, pz + z));
+                            inView[type] = inView.GetValueOrDefault(type) + 1;
+                        }
+                    }
+
+                    foreach (var pair in inView)
+                    {
+                        if (pair.Value > peak.GetValueOrDefault(pair.Key))
+                        {
+                            peak[pair.Key] = pair.Value;
+                        }
+                    }
+                }
+            }
+
+            return peak;
+        }
+
         private void RebuildNavMesh()
         {
             using var marker = EcoProfilerMarkers.BuildNavMesh.Auto();
 
+            // Bake only the plateau and its slope into the sea, not the whole 1 km terrain
+            var terrain = Terrain.activeTerrain;
+            var terrainSize = terrain.terrainData.size;
+            float side = WorldSize * ChunkSize + FlattenFalloff * 2;
+            var worldCenter = terrain.transform.position + terrainSize / 2;
+
+            navMeshPlane.collectObjects = CollectObjects.Volume;
+            navMeshPlane.center = navMeshPlane.transform.InverseTransformPoint(worldCenter);
+            navMeshPlane.size = new Vector3(side, terrainSize.y, side);
             navMeshPlane.BuildNavMesh();
         }
 
@@ -123,7 +178,9 @@ namespace Eco.Scripts.World
              using var marker = EcoProfilerMarkers.UpdateWorld.Auto();
 
              Vector2Int center = GetPlayerChunkCoord();
-             HashSet<Vector2Int> neededChunks = new();
+             var neededChunks = _neededChunks;
+             neededChunks.Clear();
+             _spawnedFields.Clear();
 
              // Spawn chunks in render radius
              for (int x = -renderRadius; x <= renderRadius; x++)
@@ -146,6 +203,15 @@ namespace Eco.Scripts.World
                          
                          EcoProfilerMarkers.SpawnChunk.Begin();
                          Chunk chunk = _pools[type].Get();
+
+                         // Place the chunk before Init so scrap and trees spawn at their final position
+                         if (type == ChunkType.Water)
+                         {
+                             pos.y = -1;
+                         }
+
+                         chunk.transform.parent = transform;
+                         chunk.transform.SetPositionAndRotation(pos, Quaternion.identity);
                          chunk.Setup(coord, _saveManager, _worldPreset.ScrapPerChunk);
                          
                          if(type == ChunkType.Water)
@@ -155,7 +221,6 @@ namespace Eco.Scripts.World
                              {
                                  waterChunk.Init();
                                  waterChunk.UpdateWaterCorners(WorldSideSize, coord);
-                                 pos.y = -1;
                              }
                              else
                              {
@@ -167,7 +232,8 @@ namespace Eco.Scripts.World
                              FieldChunk fieldChunk = chunk as FieldChunk;
                              if (fieldChunk != null)
                              {
-                                 fieldChunk.Init(_treePlanter);
+                                 fieldChunk.Init(_treePlanter, _scrapRestingPoses);
+                                 _spawnedFields.Add(fieldChunk);
                              }
                              else
                              {
@@ -199,10 +265,6 @@ namespace Eco.Scripts.World
                              }
                          }
 
-                         chunk.transform.parent = transform;
-                         chunk.transform.position = pos;
-                         chunk.transform.rotation = Quaternion.identity;
-
                          chunk.name = $"{type}_Chunk_{coord.x}_{coord.y}";
                          _spawnedChunks[coord] = chunk;
                          EcoProfilerMarkers.SpawnChunk.End();
@@ -210,8 +272,22 @@ namespace Eco.Scripts.World
                  }
              }
 
+             // Scrap that rested before goes straight back to sleep. The new transforms have to reach physics
+             // first, or the sync on the next step would wake the bodies again.
+             if (_spawnedFields.Count > 0)
+             {
+                 Physics.SyncTransforms();
+                 foreach (var field in _spawnedFields)
+                 {
+                     field.SleepRestingScrap();
+                 }
+
+                 _spawnedFields.Clear();
+             }
+
              //remove far-away chunks
-             List<Vector2Int> toRemove = new();
+             var toRemove = _chunksToRemove;
+             toRemove.Clear();
              foreach (var chunkCoord in _spawnedChunks.Keys)
              {
                  if (!neededChunks.Contains(chunkCoord))
@@ -225,6 +301,10 @@ namespace Eco.Scripts.World
                  EcoProfilerMarkers.DespawnChunk.Begin();
                  var chunk = _spawnedChunks[coord];
                  chunk.SaveTiles();
+                 if (chunk is FieldChunk field)
+                 {
+                     field.StoreRestingScrap();
+                 }
 
                  // Validate chunk type matches before returning to pool
                  bool typeMatches = chunk.Type switch
@@ -277,7 +357,7 @@ namespace Eco.Scripts.World
              float normalizedCenterHeight = 10 / maxHeight;
              float normalizedBorderHeight = 0 / maxHeight;
 
-             float falloff = 50;
+             float falloff = FlattenFalloff;
 
              for (int y = 0; y < heightmapHeight; y++)
              {

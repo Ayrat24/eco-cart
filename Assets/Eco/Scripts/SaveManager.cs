@@ -51,7 +51,8 @@ namespace Eco.Scripts
                 serializableDict[$"{pair.Key.x},{pair.Key.y}"] = pair.Value;
             }
 
-            string json = JsonConvert.SerializeObject(serializableDict, Formatting.Indented);
+            // Unindented: a third of the size, and much less to parse and allocate on load
+            string json = JsonConvert.SerializeObject(serializableDict, Formatting.None);
             System.IO.File.WriteAllText($"{SaveDirectory}/field_tiles_{_worldId}.json", json);
         }
 

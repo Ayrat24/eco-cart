@@ -82,45 +82,40 @@ With `profilerCaptureSeconds > 0`, summarize the newest capture as text: main-th
 unity command script eval --timeout 300 --code "return Eco.Scripts.EditorTools.ProfilerCaptureSummary.Summarize();"
 ```
 
-## Baseline (2026-10-25)
+## Results (2026-10-25)
 
-Editor, Intel Ultra 7 265K, RTX 3060 Ti, 1920×1080, default config (629 field chunks, 6,290 scrap, 1,732 trees saved; 121 chunks, about 1,100 scrap and 280 trees loaded at once).
+Editor, Intel Ultra 7 265K, RTX 3060 Ti, 1920×1080, default config (629 field chunks, 6,290 scrap, 1,732 trees saved; 121 chunks, about 1,100 scrap and 280 trees loaded at once). "Before" is the first baseline at `c9a7b36`; "after" is `Logs/StressTest/stress_20261025_144341.txt` with the fixes below.
 
-| Phase | avg ms | p99 ms | max ms | frames >33 ms | Main cost |
+| Phase | avg ms | p99 ms | max ms | frames >33 ms | What changed |
 |---|---|---|---|---|---|
-| Load | — | 607 | 1040 | 8 | SpawnWorld 517 ms (NavMesh 254, first chunks 210), grass paint 416 ms, GC.Collect 399 ms, save load 129 ms |
-| Idle | 2.75 | 4.3 | 7.3 | 0 | Physics about 0.65 ms per step with ~1,100 scrap rigidbodies |
-| Plant | 3.30 | 12.6 | 42.7 | 5 | about 23 ms per tree: a full `SaveWorld` per planted tree |
-| Collect | 3.66 | 8.0 | 63.0 | 20 | about 25 ms per recycled item (up to 45): a full `SaveWorld` per item |
-| Traverse | 3.71 | 14.7 | 64.9 | 46 | grass repaint about 35 ms per chunk crossing (up to 58) |
-| Churn | 7.75 | 132 | 447 | 12 | grass repaint 430 ms, chunk spawn 134 ms, despawn 62 ms per full swap |
+| Load | 19.8 → 16.3 | 607 → 581 | 1040 → 1071 | 8 → 8 | SpawnWorld 517 → 306 ms (NavMesh 254 → 32, grass paint 412 → 4). GC.Collect (~390 ms) and the first chunk spawn (~210 ms) are unchanged |
+| Idle | 2.75 → 2.59 | 4.3 → 4.7 | 7.3 → 13.8 | 0 → 0 | Noise; nothing heavy runs here |
+| Plant | 3.30 → 2.68 | 12.6 → 4.2 | 42.7 → 11.7 | 5 → 0 | One tree costs about 3.5 ms instead of 23 ms |
+| Collect | 3.66 → 2.94 | 8.0 → 4.6 | 63.0 → 33.5 | 20 → 1 | One recycled item costs under 2 ms instead of 25–45 ms |
+| Traverse | 3.71 → 3.02 | 14.7 → 6.2 | 64.9 → 42.2 | 46 → 2 | Grass paint is about 1.2 ms per crossing instead of 35 ms |
+| Churn | 7.75 → 3.05 | 132 → 4.4 | 447 → 136 | 12 → 6 | A full swap costs about 125 ms instead of 450 ms; 13 rigidbodies awake afterwards instead of 442; physics peak 25 → 3 ms |
 
-Steady-state rendering is not the problem on this hardware (Idle averages 2.75 ms). The game hitches because main-thread work happens all at once in a single frame.
+Run-to-run variation is a few percent on averages; single-frame maxima vary more (Idle's max is one 14 ms frame).
 
-## Bottlenecks found
+## Fixed bottlenecks
 
-Ranked by impact on hitches. None are fixed yet; these are the starting points for optimization.
+These were found by the first baseline and fixed on 2026-10-25.
 
-1. **Terrain/grass repainting on every chunk spawn.** `FieldChunk.Init` → `MakeGrass` calls `TerrainPainter.PaintTerrainTexture` once per tree. Each call does `GetAlphamaps`/`SetAlphamaps` and `GetDetailLayer`/`SetDetailLayer` on a 26×26 region, and every `Set*` re-uploads terrain data. A chunk crossing costs about 35 ms; a full swap costs 430 ms. The paint already persists in `TerrainData` after the chunk unloads (only `ClearTerrain` at game start resets it), so repainting areas that are already painted is wasted work. Fixes:
-   - remember which trees or areas are painted and skip them
-   - batch one read/modify/write per chunk instead of one per tree
-   - spread painting over frames
-2. **A world progress file write on every chunk save.** `Chunk.SaveTiles` → `SaveManager.OnChunkUpdated` → `ProgressTracker.OnChunkUpdated` → `WorldProgressData.SaveForWorld` serializes JSON and calls `File.WriteAllText` synchronously, every time. That is about 0.2 ms per call, and calls come in bursts:
-   - ~20 per chunk crossing
-   - 630 in `ProgressTracker.Init` (one per saved chunk)
-   - 1,400 per full chunk swap
-   
-   Fix: mark progress dirty and write it once, on `EndGame` or on a timer.
-3. **`Map` saves the whole world per recycled item and per planted tree.** `Map.OnScrapRecycled` and `Map.OnTreePlanted` call `WorldController.SaveWorld()`, which runs `SaveTiles` on all 121 loaded chunks. Each of those does a progress file write (finding 2), so one item or tree costs about 120 file writes and about 25 ms. The recycled tile's chunk has already saved itself in `ScrapItem.ResetTile`, and `TreePlanter` saves through `MakeGrass`, so `UpdateVisibleFields()` alone should be enough. This is the cheapest fix with the biggest gameplay impact: hitches during the core loop.
-4. **Redundant `SaveTiles` on spawn.** `FieldChunk.Init` saves twice (in `MakeGrass()` and again when there is no save), and `PileChunk.Init` also saves twice. Together with finding 2 this makes spawning cost more than it should.
-5. **Load spikes.**
-   - `RebuildNavMesh` takes 254 ms.
-   - GC.Collect takes 400 ms after the save JSON is parsed. Load allocates 129 MB; the save is written with `Formatting.Indented`, and each chunk allocates `new Tile` ×100 in `Chunk.Setup`.
-   - Pools start too small: chunk pool `renderRadius²` = 25 versus 121 needed, and scrap pools at 1 item. The first spawns `Instantiate`.
-6. **Scrap physics on spawn.** Scrap spawns 0.9 m up with a random rotation, so every newly spawned item falls and wakes. After a full swap, 444 rigidbodies are awake and physics peaks at 24 ms. Spawning on the ground and calling `Rigidbody.Sleep()` would avoid it.
-7. **Steady GC churn of about 18 KB per frame** while moving (`UpdateWorld` allocations, `SaveTiles` arrays, JSON, terrain arrays) causes a roughly 19 ms GC.Collect every 25 s or so.
-8. **Minor:**
-   - `NavMeshObstacle` on every tree costs about 0.2 ms per frame in transform sync.
-   - `Map.Update` sets `anchoredPosition` every frame (about 0.15 ms).
-   - `TreePlanter.PlantTree` builds a LINQ dictionary of active chunks for each tree.
-   - In the editor, `TerrainPainter` edits the `New Terrain 1.asset` TerrainData in place, so a later **File → Save Project** writes painted grass into the asset. Instantiating the TerrainData at runtime would avoid that.
+1. **Terrain/grass repainting on every chunk spawn.** `TerrainPainter.PaintTerrainTexture` now queues a circle. On the next frame `PaintPending` paints the whole queue with one `GetAlphamaps`/`SetAlphamaps` and one `GetDetailLayer`/`SetDetailLayer` over the batch's bounding box. Circles already painted since `ClearTerrain` are skipped: the key includes the grass density, so changing the detail quality still repaints. Unity 6.5 quirk: for a non-square region, `GetDetailLayer` returns z-major data in an array declared `[width, height]`, while `SetDetailLayer` expects `[height, width]`. The painter copies the raw buffer across, so don't index the array that `GetDetailLayer` returns directly.
+2. **World progress file write on every chunk save.** `ProgressTracker` marks progress dirty and `SaveProgress()` writes it in `GameController.EndGame` and just before the world list opens (`GameUI`, `ProgressDisplay`), which is the only place that reads it.
+3. **`Map` saving the whole world per recycled item and per planted tree.** The map no longer calls `SaveWorld()`. It subscribes to `SaveManager.OnChunkUpdated` and redraws only those chunks, once per frame. When it scrolls, only the fields that come into or go out of view change, instead of all 100 being rebuilt. `MapField` reuses its color buffer and returns its tree icons before redrawing; before this, every redraw stacked another icon per tree.
+4. **Redundant `SaveTiles` on spawn.** A chunk loaded from its save no longer saves on spawn (its tiles already match), and new field and pile chunks save once.
+5. **Load spikes.** The NavMesh is baked over the plateau and its 50 m slope (`CollectObjects.Volume`) instead of the whole 1,050 m terrain. Chunk pools are sized at load for the most chunks of each type visible from anywhere in the world, so walking to the coast doesn't instantiate chunks mid-game. `field_tiles_*.json` is written unindented, which makes the file smaller and quicker to parse. `ClearTerrain` writes fresh maps without reading the old ones first. In the editor, play mode paints and flattens a copy of the TerrainData, so `New Terrain 1.asset` is no longer modified.
+6. **Scrap physics on spawn.** When a field chunk despawns, `ScrapRestingPoses` records each sleeping scrap item's local pose. When the chunk respawns, those items go back to that pose and `Sleep()`, after `Physics.SyncTransforms()` so the transform sync doesn't wake them. The pose is taken before the chunk goes back to the pool, because `ObjectPool.ReturnToPool` deactivates it before `OnDespawn`. Chunks are now placed before `Init`, so scrap spawns at its final position. Scrap in a chunk that has never been loaded this session still drops and settles.
+7. **GC churn while moving.** `UpdateWorld` reuses its collections, `SaveTiles` overwrites the chunk's existing save array, and the per-tree terrain arrays and progress JSON are gone. Moving now allocates about 14 KB per frame, against 11 KB standing still (before: 18 KB and 11 KB).
+8. **Minor.** `TreePlanter.PlantTree` no longer builds a LINQ dictionary. `Map.Update` writes `anchoredPosition` only when the player moved or the follow position changed. `FieldChunk` creates its debug `GUIStyle` lazily in `OnDrawGizmos` instead of on every spawn.
+
+The stress test's Collect phase now empties the cart before it starts. Scrap that rolls into reach during Idle used to fill the cart without the driver counting it, and that left Collect with 0 pickups in some runs.
+
+## Known bottlenecks
+
+1. **A full chunk swap in one frame (Churn): about 125 ms.** Most of it is activating about 1,100 scrap items, 280 trees and 121 chunks (`SpawnChunk` about 100 ms, `DespawnChunk` about 26 ms). It only happens on a teleport; walking crosses one boundary at a time. Fix: spread spawning and despawning over several frames.
+2. **Load.** A single GC.Collect of about 390 ms right after the scene loads, plus the first spawn of 121 chunks (about 210 ms). The load allocates about 106 MB. The fade-in hides it, but it adds to load time.
+3. **Chunk crossing: up to about 20 ms.** This is `GameObject` activation (about 3 ms of `ActivateAwakeRecursively`) and the drop of scrap seen for the first time. Occasionally an `Instantiate` adds to it when a scrap pool runs dry, since scrap pools still start at one item per prefab. `Chunk.Setup` still allocates 100 `Tile`s per spawn. Reusing them isn't safe as long as scrap in the cart keeps a reference to its old tile.
+4. **GC.Collect of about 19 ms every 12–25 s while moving.** In the editor, about 80% of the idle 11 KB per frame is Game view `OnGUI`, not game code (Traverse capture, 2026-10-25). Measure a development build before chasing the rest.
+5. **`NavMeshObstacle` on every tree:** about 0.15 ms per frame in `NavMeshObstacle.Transform`.

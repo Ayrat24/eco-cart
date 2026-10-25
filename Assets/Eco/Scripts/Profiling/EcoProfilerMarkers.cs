@@ -26,7 +26,7 @@ namespace Eco.Scripts.Profiling
         public static readonly ProfilerMarker SaveTiles = Create("Eco.Chunk.SaveTiles");
         public static readonly ProfilerMarker ProgressUpdate = Create("Eco.ProgressTracker.OnChunkUpdated");
         public static readonly ProfilerMarker ProgressWrite = Create("Eco.WorldProgressData.SaveForWorld");
-        public static readonly ProfilerMarker PaintTerrain = Create("Eco.TerrainPainter.PaintTerrainTexture");
+        public static readonly ProfilerMarker PaintTerrain = Create("Eco.TerrainPainter.PaintPending");
         public static readonly ProfilerMarker PlantTree = Create("Eco.TreePlanter.PlantTree");
         public static readonly ProfilerMarker ScanForItems = Create("Eco.ItemCollector.ScanForItems");
         public static readonly ProfilerMarker AddToCart = Create("Eco.Cart.AddToCart");

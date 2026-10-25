@@ -20,7 +20,7 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 
 | Area | Key types | Notes |
 |---|---|---|
-| World | `WorldController`, `WorldPreset`, `ChunkGenerationRules`, `Chunk` (+ `FieldChunk`, `PileChunk`, `WaterChunk`, `BeachChunk`), `Tile`, `TileData` | Chunks are 10×10 (`WorldController.ChunkSize`). Map is `(2·WorldSideSize+1)²` chunks, border is always Beach, outside is Water. Chunks within `renderRadius` of the player are pulled from per-type `ObjectPool<Chunk>`s and saved/returned when out of range. The terrain is flattened into a plateau and the NavMesh rebuilt on spawn. |
+| World | `WorldController`, `WorldPreset`, `ChunkGenerationRules`, `Chunk` (+ `FieldChunk`, `PileChunk`, `WaterChunk`, `BeachChunk`), `Tile`, `TileData` | Chunks are 10×10 (`WorldController.ChunkSize`). Map is `(2·WorldSideSize+1)²` chunks, border is always Beach, outside is Water. Chunks within `renderRadius` of the player are pulled from per-type `ObjectPool<Chunk>`s (sized at load for the most of each type visible from anywhere) and saved/returned when out of range. The terrain is flattened into a plateau and the NavMesh baked over the plateau only. `TerrainPainter` queues grass circles and paints each frame's batch with one terrain read/write, skipping circles already painted; in the editor it paints a runtime copy of the TerrainData. `ScrapRestingPoses` lets respawned scrap go back to sleep where it came to rest. |
 | Scrap | `ScrapItem`, `ScrapPile`, `ScrapType` | `ScrapItem` is a pooled physics item (`ICartItem`, `ITileItem`, `IPooledObject`). `ScrapPile` is dug with the spade (`DigPowerUpgrade`) and highlighted with HighlightPlus. |
 | Collecting | `ItemCollector`, `CollectorHand`, `Cart`, `ItemRecycler`, `GainedScoreText` | Collector (a `Tool`) scans a sphere for items and drops them into the cart; the cart empties into the recycler which pays out via `CurrencyManager`. |
 | Player | `Player`, `PlayerClickMovement`, `PlayerAnimation`, `CameraController` | NavMeshAgent click-to-move. Cart and hat are swapped via upgrades. |
@@ -47,8 +47,8 @@ Money uses `LargeNumbers.AlphabeticNotation` (`Assets/Scripts/LargeNumbers`, own
 Written to `SaveManager.SaveDirectory` with Newtonsoft.Json. That is `Application.persistentDataPath`, or `<persistentDataPath>/StressTest/` during a stress test run:
 
 - `progress.json` — `SaveManager.PlayerProgress` (currency, cart, hat, position, upgrade levels, world id). Shared across worlds; position resets when the world id changes.
-- `field_tiles_<worldId>.json` — per-chunk `TileData[]`, keyed `"x,y"`.
-- `world_progress_<worldId>.json` — clear/green progress.
+- `field_tiles_<worldId>.json` — per-chunk `TileData[]`, keyed `"x,y"`, unindented. Written on `GameController.EndGame`; during play chunks save into `SaveManager.FieldTiles` in memory.
+- `world_progress_<worldId>.json` — clear/green progress. `ProgressTracker` marks it dirty on chunk saves and writes it on `EndGame` and right before the world list opens.
 - `PlayerPrefs` — `last_world_id`, settings keys.
 
 `GameController` context menu → **Delete Progress** wipes all of the above.

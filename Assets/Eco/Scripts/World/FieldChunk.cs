@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
+using Eco.Scripts.Scrap;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -16,30 +15,20 @@ namespace Eco.Scripts.World
         [SerializeField] private bool debug;
 
         private TreePlanter _treePlanter;
-        private CancellationTokenSource _cancellationTokenSource;
+        private ScrapRestingPoses _restingPoses;
+        private readonly List<ScrapItem> _restingScrap = new();
 
 #if UNITY_EDITOR
         private GUIStyle _style;
 #endif
 
 
-        public void Init(TreePlanter treePlanter)
+        public void Init(TreePlanter treePlanter, ScrapRestingPoses restingPoses)
         {
             using var marker = EcoProfilerMarkers.FieldChunkInit.Auto();
 
             _treePlanter = treePlanter;
-
-#if UNITY_EDITOR
-            _style = new GUIStyle
-            {
-                normal =
-                {
-                    textColor = Color.magenta
-                },
-                alignment = TextAnchor.MiddleCenter,
-                fontStyle = FontStyle.Bold
-            };
-#endif
+            _restingPoses = restingPoses;
 
             bool hasSave = HasSave;
             if (!hasSave)
@@ -51,10 +40,9 @@ namespace Eco.Scripts.World
                 LoadSave();
             }
 
+            PaintGrass();
 
-            _cancellationTokenSource = new CancellationTokenSource();
-            MakeGrass();
-
+            // A loaded chunk already matches its save
             if (!hasSave)
             {
                 SaveTiles();
@@ -199,7 +187,12 @@ namespace Eco.Scripts.World
                     {
                         case TileObjectType.Scrap:
                             // pass saved contained flag when spawning
-                            SpawnScrapAtTile(tile, savedData.objectId, savedData.containedScrap);
+                            var scrap = SpawnScrapAtTile(tile, savedData.objectId, savedData.containedScrap);
+                            if (_restingPoses.TryTake(Position, index, out var pose))
+                            {
+                                scrap.PlaceAtRest(pose);
+                                _restingScrap.Add(scrap);
+                            }
                             break;
                         case TileObjectType.Tree:
                             _treePlanter.PlantTree(savedData.objectId, tile, this);
@@ -218,13 +211,13 @@ namespace Eco.Scripts.World
 
         public void MakeGrass()
         {
-            MakeGrass(_cancellationTokenSource.Token).Forget();
+            PaintGrass();
             SaveTiles();
         }
 
-        private async UniTask MakeGrass(CancellationToken cancellationToken)
+        // TerrainPainter paints on the next frame and skips circles that are already painted
+        private void PaintGrass()
         {
-            await UniTask.NextFrame(cancellationToken);
             foreach (var tile in tiles)
             {
                 if (tile.objectType == TileObjectType.Tree)
@@ -235,7 +228,7 @@ namespace Eco.Scripts.World
             }
         }
 
-        private void SpawnScrapAtTile(Tile tile, int id = -1, bool contained = true)
+        private ScrapItem SpawnScrapAtTile(Tile tile, int id = -1, bool contained = true)
         {
             var tileWorldPosition =
                 GetTileWorldPosition(tile);
@@ -247,14 +240,40 @@ namespace Eco.Scripts.World
             tile.item = scrap;
             tile.objectType = TileObjectType.Scrap;
             tile.containedScrap = contained;
+            return scrap;
+        }
+
+        /// <summary>
+        /// Called by WorldController once the spawned chunks' transforms have reached physics.
+        /// </summary>
+        public void SleepRestingScrap()
+        {
+            foreach (var scrap in _restingScrap)
+            {
+                scrap.Sleep();
+            }
+
+            _restingScrap.Clear();
+        }
+
+        /// <summary>
+        /// Called by WorldController before the chunk goes back to the pool: the pool deactivates it before
+        /// OnDespawn, and an inactive rigidbody no longer reports whether it was asleep.
+        /// </summary>
+        public void StoreRestingScrap()
+        {
+            for (var i = 0; i < tiles.Length; i++)
+            {
+                if (tiles[i].item is ScrapItem scrap && scrap.TryGetRestingPose(out var pose))
+                {
+                    _restingPoses.Store(Position, i, pose);
+                }
+            }
         }
 
         public override void OnDespawn()
         {
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
-
+            _restingScrap.Clear();
             base.OnDespawn();
         }
 
@@ -265,6 +284,16 @@ namespace Eco.Scripts.World
             {
                 return;
             }
+
+            _style ??= new GUIStyle
+            {
+                normal =
+                {
+                    textColor = Color.magenta
+                },
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold
+            };
 
 
             for (var i = 0; i < tiles.Length; i++)
