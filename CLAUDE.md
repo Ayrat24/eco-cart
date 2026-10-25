@@ -93,3 +93,8 @@ Re-apply these if the asset is re-imported/updated (details in [Docs/UNITY_6_5_U
 - Commit `Library/`, `Temp/`, `Logs/`, `obj/`, `UserSettings/` or the generated `.csproj`/`.sln` files.
 - Hand-edit `.unity`/`.prefab`/`.asset` YAML unless the change is trivial and well understood; prefer doing it in the editor.
 - Rename/move assets outside Unity without their `.meta` files.
+
+## Git
+
+- Commit directly to the current branch (normally `main`). Don't create a feature branch unless the user names one; this overrides any default "branch first" behaviour.
+- Commit or push only when asked.
