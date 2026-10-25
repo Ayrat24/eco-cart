@@ -69,6 +69,7 @@ namespace HighlightPlus {
                 ConfigureInput(ScriptableRenderPassInput.Depth);
             }
 
+#if !UNITY_6000_5_OR_NEWER // URP 17.5 removed the non-RenderGraph (compatibility mode) path
 #if UNITY_2023_3_OR_NEWER
             [Obsolete]
 #endif
@@ -110,6 +111,7 @@ namespace HighlightPlus {
                 CommandBufferPool.Release(cmd);
 
             }
+#endif
 
             static void ExecutePass (PassData passData) {
 

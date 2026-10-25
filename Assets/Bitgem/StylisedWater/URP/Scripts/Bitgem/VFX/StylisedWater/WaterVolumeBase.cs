@@ -77,13 +77,18 @@ namespace Bitgem.VFX.StylisedWater
             }
 
             // ensure a mesh
+#if UNITY_6000_3_OR_NEWER
+            var meshName = "WaterVolume-" + gameObject.GetEntityId();
+#else
+            var meshName = "WaterVolume-" + gameObject.GetInstanceID();
+#endif
             if (mesh == null)
             {
                 mesh = meshFilter.sharedMesh;
-                if (mesh == null || mesh.name != "WaterVolume-" + gameObject.GetInstanceID())
+                if (mesh == null || mesh.name != meshName)
                 {
                     mesh = new UnityEngine.Mesh();
-                    mesh.name = "WaterVolume-" + gameObject.GetInstanceID();
+                    mesh.name = meshName;
                 }
             }
 

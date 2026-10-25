@@ -815,11 +815,13 @@ namespace HighlightPlus {
         }
 
         void CheckVRSupport (int qualityLevel) {
+#if !UNITY_6000_5_OR_NEWER // legacy built-in VR settings were removed in Unity 6.5
             if (qualityLevel == (int)QualityLevel.Highest && PlayerSettings.virtualRealitySupported) {
                 if (PlayerSettings.stereoRenderingPath != StereoRenderingPath.MultiPass) {
                     EditorGUILayout.HelpBox("Highest Quality only supports VR Multi-Pass as CommandBuffers do not support this VR mode yet. Either switch to 'High Quality' or change VR Stereo mode to Multi-Pass.", MessageType.Error);
                 }
             }
+#endif
         }
 
         void CheckDepthTextureSupport (string feature) {

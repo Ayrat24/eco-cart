@@ -2259,7 +2259,11 @@ namespace HighlightPlus {
                 }
                 rms[rmsCount].renderer = renderer;
                 rms[rmsCount].renderWasVisibleDuringSetup = renderer.isVisible;
+#if UNITY_6000_3_OR_NEWER
+                sortingOffset = renderer.gameObject.GetEntityId().GetHashCode() % 0.0001f;
+#else
                 sortingOffset = renderer.gameObject.GetInstanceID() % 0.0001f;
+#endif
 
                 if (renderer.transform != target) {
                     if (renderer.TryGetComponent(out HighlightEffect otherEffect) && otherEffect.enabled && otherEffect.ignore) {
@@ -3291,7 +3295,11 @@ namespace HighlightPlus {
 
                 vertexCount += mesh.vertexCount;
                 combineInstances[count].mesh = mesh;
+#if UNITY_6000_3_OR_NEWER
+                int instanceId = rms[k].renderer.gameObject.GetEntityId().GetHashCode();
+#else
                 int instanceId = rms[k].renderer.gameObject.GetInstanceID();
+#endif
                 if (first < 0) {
                     first = k;
                     combinedMeshesHashId = instanceId;
