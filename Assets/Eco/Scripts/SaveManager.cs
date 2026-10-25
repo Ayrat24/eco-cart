@@ -46,6 +46,8 @@ namespace Eco.Scripts
 
         private void SavePlayerProgress()
         {
+            // Saved position belongs to this world; LoadPlayerProgress resets it when another world loads
+            Progress.worldId = _worldId;
             string json = JsonConvert.SerializeObject(Progress, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
         }

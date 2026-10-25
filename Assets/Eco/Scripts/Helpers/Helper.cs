@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using Eco.Scripts.Upgrades;
 using R3;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Eco.Scripts.Helpers
 {

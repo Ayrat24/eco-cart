@@ -2,10 +2,12 @@ using System;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Upgrades;
 using R3;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Eco.Scripts.Helpers
 {
