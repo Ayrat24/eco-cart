@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.World;
 using LargeNumbers;
 using UnityEngine;
@@ -16,7 +17,11 @@ namespace Eco.Scripts
 
         private string _worldId;
         private const string LastWorldIdKey = "last_world_id";
-        
+
+        // Stress test runs use a sandbox so they never overwrite the player's saves.
+        public static string SaveDirectory =>
+            StressTest.IsActive ? StressTest.SaveDirectory : Application.persistentDataPath;
+
         public void SaveFieldTiles(Vector2Int position, TileData[] tiles)
         {
             _fieldTiles[position] = tiles;
@@ -25,10 +30,16 @@ namespace Eco.Scripts
 
         public void Save()
         {
+            using var marker = EcoProfilerMarkers.SaveGame.Auto();
+
             SaveFieldTiles();
             SavePlayerProgress();
-            
-            PlayerPrefs.SetString(LastWorldIdKey, _worldId);
+
+            // The stress world isn't in WorldSelector's list; remembering it would leave the real game with no world.
+            if (!StressTest.IsActive)
+            {
+                PlayerPrefs.SetString(LastWorldIdKey, _worldId);
+            }
         }
         
         private void SaveFieldTiles()
@@ -41,7 +52,7 @@ namespace Eco.Scripts
             }
 
             string json = JsonConvert.SerializeObject(serializableDict, Formatting.Indented);
-            System.IO.File.WriteAllText($"{Application.persistentDataPath}/field_tiles_{_worldId}.json", json);
+            System.IO.File.WriteAllText($"{SaveDirectory}/field_tiles_{_worldId}.json", json);
         }
 
         private void SavePlayerProgress()
@@ -49,11 +60,13 @@ namespace Eco.Scripts
             // Saved position belongs to this world; LoadPlayerProgress resets it when another world loads
             Progress.worldId = _worldId;
             string json = JsonConvert.SerializeObject(Progress, Formatting.Indented);
-            System.IO.File.WriteAllText(Application.persistentDataPath + "/progress.json", json);
+            System.IO.File.WriteAllText(SaveDirectory + "/progress.json", json);
         }
 
         public void Load(string worldId)
         {
+            using var marker = EcoProfilerMarkers.LoadGame.Auto();
+
             _worldId = worldId;
             LoadPlayerProgress();
             LoadFieldTiles();
@@ -61,7 +74,7 @@ namespace Eco.Scripts
         
         private void LoadPlayerProgress()
         {
-            string path = $"{Application.persistentDataPath}/progress.json";
+            string path = $"{SaveDirectory}/progress.json";
 
             if (System.IO.File.Exists(path))
             {
@@ -81,7 +94,7 @@ namespace Eco.Scripts
 
         private void LoadFieldTiles()
         {
-            string path = $"{Application.persistentDataPath}/field_tiles_{_worldId}.json";
+            string path = $"{SaveDirectory}/field_tiles_{_worldId}.json";
             _fieldTiles.Clear();
 
             if (System.IO.File.Exists(path))
@@ -105,7 +118,7 @@ namespace Eco.Scripts
 
         public static void DeleteProgress()
         {
-            var path = Application.persistentDataPath;
+            var path = SaveDirectory;
             try
             {
                 // Delete explicit progress file

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using R3;
@@ -49,6 +50,8 @@ namespace Eco.Scripts.ItemCollecting
 
         private void ScanForItems()
         {
+            using var marker = EcoProfilerMarkers.ScanForItems.Auto();
+
             Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
             int count = Physics.OverlapSphereNonAlloc(center, sphereCollider.radius, _colliders, layerMask);
 

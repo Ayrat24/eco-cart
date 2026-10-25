@@ -1,3 +1,4 @@
+using Eco.Scripts.Profiling;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -11,7 +12,7 @@ namespace Eco.Scripts.World
 
         public static WorldProgressData LoadForWorld(string worldId)
         {
-            string path = $"{Application.persistentDataPath}/world_progress_{worldId}.json";
+            string path = $"{SaveManager.SaveDirectory}/world_progress_{worldId}.json";
             
             if (!System.IO.File.Exists(path))
             {
@@ -32,6 +33,8 @@ namespace Eco.Scripts.World
 
         public static void SaveForWorld(string worldId, float clearPercentage, float greenPercentage)
         {
+            using var marker = EcoProfilerMarkers.ProgressWrite.Auto();
+
             var data = new WorldProgressData
             {
                 ClearPercentage = clearPercentage,
@@ -41,7 +44,7 @@ namespace Eco.Scripts.World
             try
             {
                 string json = JsonConvert.SerializeObject(data, Formatting.Indented);
-                string path = $"{Application.persistentDataPath}/world_progress_{worldId}.json";
+                string path = $"{SaveManager.SaveDirectory}/world_progress_{worldId}.json";
                 System.IO.File.WriteAllText(path, json);
             }
             catch (System.Exception ex)
@@ -52,7 +55,7 @@ namespace Eco.Scripts.World
 
         public static void DeleteForWorld(string worldId)
         {
-            string path = $"{Application.persistentDataPath}/world_progress_{worldId}.json";
+            string path = $"{SaveManager.SaveDirectory}/world_progress_{worldId}.json";
             
             if (System.IO.File.Exists(path))
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
@@ -43,6 +44,8 @@ namespace Eco.Scripts.World
 
         private void PlantTree(int id)
         {
+            using var marker = EcoProfilerMarkers.PlantTree.Auto();
+
             Vector3 playerPos = _player.position; // Player world position
             Vector2Int playerChunkCoord = _worldController.GetPlayerChunkCoord();
             int chunkSize = 10;

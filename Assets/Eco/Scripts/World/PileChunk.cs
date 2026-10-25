@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using R3;
@@ -25,6 +26,8 @@ namespace Eco.Scripts.World
         public void Init(CurrencyManager currencyManager, PileScoreUpgrade pileScoreUpgrade,
             DigPowerUpgrade digPowerUpgrade, int worldPresetDifficulty)
         {
+            using var marker = EcoProfilerMarkers.PileChunkInit.Auto();
+
             _currencyManager = currencyManager;
             _pileScoreUpgrade = pileScoreUpgrade;
             _digPowerUpgrade = digPowerUpgrade;

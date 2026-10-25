@@ -9,19 +9,43 @@ Guide for AI agents and contributors working in this repo. See [README.md](READM
 - Main/only build scene: `Assets/_Recovery/0 (1).unity`. `Assets/Eco/Scenes/Playground.unity` is a test scene.
 - Branch `version-2` is active development; `main` is the base.
 
-## Checking for compile errors
+## Unity CLI (driving the open editor)
 
-There is no CLI build. With the editor open, Unity recompiles when its window gets focus; errors are written to `Logs/Editor.log` in the project:
+Use the `unity` CLI (Unity CLI beta, `C:\Users\<user>\AppData\Local\Unity\bin\unity.exe`, on PATH) whenever you need the editor to do something: recompile, read the console, enter/exit play mode, run menu items, run C#. It talks to the open editor through the `com.unity.pipeline` package (in `Packages/manifest.json`). Prefer it over focusing the editor window or tailing `Editor.log`.
 
 ```bash
-grep -E "error CS" "Logs/Editor.log" | sort -u
+unity status                                     # is the editor reachable? (port, state)
+unity command                                    # list every command group
+unity command editor status                      # compiling? play mode?
+unity command script recompile                   # works while the editor is unfocused
+unity command script recompile_status            # poll until "completed"
+unity command console status                     # compilationFailed flag + counts
+unity command console get                        # console entries (Editor or play mode)
+unity command editor invoke_menu --path "Eco/Profiling/Run Stress Test"
+unity command editor.playmode start              # / stop / pause
+unity command script eval --code "return UnityEngine.Application.dataPath;"
+unity command script eval_file --file path/to/snippet.cs   # longer C#; last statement returns
 ```
 
-If the editor is closed, a batch compile works:
+Add `--json` for machine-readable output. Many write commands (settings, delete, build target switch) need `--confirm true` and support `--dry_run true`. Command reference: `Library/PackageCache/com.unity.pipeline@*/Documentation~/index.md`.
+
+Gotchas:
+
+- If `unity status` lists nothing, the editor isn't open, is mid domain reload, or its server is down. Wait a few seconds; if it stays empty, use **Window → Pipeline → Start Server** in the editor.
+- `Assets/Eco/Scripts/Editor/PipelineDescriptorFix.cs` works around a Pipeline 0.9.1 bug on Unity 6.5: without it the CLI can't discover the editor (`Failed to start publishing the descriptor` in the log). Delete it once the package fixes the bug.
+- The editor idles while unfocused. Run `unity command editor set_auto_tick --enable true` once per session so commands and play mode keep running in the background.
+- `unity command script eval` runs arbitrary code in the editor. Use it for reads and one-off asset authoring.
+- When saving from eval, call `AssetDatabase.SaveAssetIfDirty(asset)` and **never `AssetDatabase.SaveAssets()`**. The editor holds pending Unity 6.5 reserialization of URP/ProjectSettings assets, plus `New Terrain 1.asset` painted during play mode, and `SaveAssets()` writes all of it to disk.
+
+Fallbacks without the CLI: compile errors are in `Logs/Editor.log` (`grep -E "error CS" Logs/Editor.log | sort -u`). With the editor closed, run a batch compile:
 
 ```bash
 "C:/Program Files/Unity/Hub/Editor/6000.5.2f1-x86_64/Editor/Unity.exe" -batchmode -quit -projectPath . -logFile Logs/batch.log
 ```
+
+## Profiling
+
+Run the worst-case stress test (**Eco → Profiling → Run Stress Test**, or the `invoke_menu` command above) before and after any performance change, and compare the reports in `Logs/StressTest/`. Wrap new heavy code in a marker from `EcoProfilerMarkers` so it shows up in the report. See [Docs/PROFILING.md](Docs/PROFILING.md) for phases, config, baseline numbers and known bottlenecks.
 
 ## Code conventions (match existing code)
 
@@ -34,6 +58,8 @@ If the editor is closed, a batch compile works:
 - Gameplay tuning lives in ScriptableObjects under `Assets/Eco/ContentDescriptions/`, not in code.
 - Player-facing text goes through Unity Localization tables in `Assets/Eco/LocTables/` (en + ru).
 - Pooled objects implement `IPooledObject` and go through `PoolManager` / `ObjectPool<T>`.
+- Editor-only code goes in `Assets/Eco/Scripts/Editor/` with namespace `Eco.Scripts.EditorTools`. A namespace ending in `.Editor` would hide `UnityEditor.Editor` from every `Eco.Scripts.*` editor class.
+- Save files are read and written under `SaveManager.SaveDirectory`, never `Application.persistentDataPath` directly; the stress test redirects it to a sandbox.
 
 ## Unity 6.5 API rules
 
@@ -58,6 +84,7 @@ Re-apply these if the asset is re-imported/updated (details in [Docs/UNITY_6_5_U
 ## Packages
 
 - Git packages (`Packages/manifest.json`) are pinned to tags: UniTask `#2.5.11`, R3 `#1.3.1`, VContainer `#1.19.0`. Keep them pinned — an unpinned URL silently resolves to whatever commit is locked.
+- `com.unity.pipeline` (experimental) is the editor side of the `unity` CLI. Install or upgrade it with `unity pipeline install` / `unity pipeline upgrade`. It is editor tooling only and isn't enabled in player builds by default.
 - R3 core and Newtonsoft.Json come from NuGetForUnity (`Assets/packages.config`, `Assets/Packages/`); keep the R3 NuGet version in step with the R3 Unity package.
 - Don't edit `Library/PackageCache/` — changes are lost on re-resolve. Upgrade the package or embed it under `Packages/` instead.
 

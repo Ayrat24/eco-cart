@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Eco.Scripts.Profiling;
 using R3;
 using UnityEngine;
 
@@ -72,6 +73,8 @@ namespace Eco.Scripts.World
 
         private void OnChunkUpdated(Vector2Int position)
         {
+            using var marker = EcoProfilerMarkers.ProgressUpdate.Auto();
+
             // get tiles for this chunk; if none, ignore
             if (!_saveManager.FieldTiles.TryGetValue(position, out var tiles))
                 return;

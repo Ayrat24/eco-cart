@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7244ed6a1d47c944bbaa77cc6f0c05e9, type: 3}
+  m_Name: StressTestConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Profiling.StressTestConfig
+  basePreset: {fileID: 11400000, guid: 2514daa1ba3f2a74e9b1a8f11c1cf8fb, type: 2}
+  worldSideSize: 14
+  seed: 1
+  scrapPerChunk: 10
+  treeSpacing: 6
+  clearingRadiusChunks: 1
+  treePrefabs:
+  - {fileID: 7904050286246554922, guid: bf7dd45aef76d594bb1661035534a554, type: 3}
+  - {fileID: 2643080944994226074, guid: 4be689cb88984974db84848f32c735f1, type: 3}
+  - {fileID: 1379802774980950167, guid: 8237e940ba40544498bd0a8eea22097d, type: 3}
+  detailQuality: 2
+  idleSeconds: 5
+  treesToPlant: 10
+  plantInterval: 0.5
+  collectSeconds: 20
+  collectLoopSize: 8
+  churnJumps: 6
+  churnInterval: 1
+  moveSpeed: 15
+  routeRadiusChunks: 10
+  laps: 1
+  maxTraverseSeconds: 180
+  profilerCaptureSeconds: 0
+  quitWhenDone: 1

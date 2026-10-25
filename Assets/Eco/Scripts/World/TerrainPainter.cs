@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Profiling;
 using UnityEngine;
 
 namespace Eco.Scripts.World
@@ -7,6 +8,8 @@ namespace Eco.Scripts.World
     {
         public static void ClearTerrain()
         {
+            using var marker = EcoProfilerMarkers.ClearTerrain.Auto();
+
             var data = Terrain.activeTerrain.terrainData;
             float[,,] splatmap = data.GetAlphamaps(0, 0, data.alphamapWidth, data.alphamapHeight);
 
@@ -42,6 +45,8 @@ namespace Eco.Scripts.World
 
         public static void PaintTerrainTexture(TerrainTexture texture, Vector3 worldPosition, int radius)
         {
+            using var marker = EcoProfilerMarkers.PaintTerrain.Auto();
+
             Terrain terrain = Terrain.activeTerrain;
             TerrainData data = terrain.terrainData;
             int layerIndex = (int)texture;

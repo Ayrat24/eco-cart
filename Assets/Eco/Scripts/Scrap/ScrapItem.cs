@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.ItemCollecting;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
 using PrimeTween;
@@ -86,6 +87,8 @@ namespace Eco.Scripts.Scrap
 
         public void Recycle()
         {
+            // Covers the synchronous part up to the first await: tile reset, save, tween setup.
+            using var marker = EcoProfilerMarkers.RecycleScrap.Auto();
             RecycleAsync().Forget();
         }
 

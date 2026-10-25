@@ -1,3 +1,4 @@
+using Eco.Scripts.Profiling;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 
@@ -22,8 +23,10 @@ namespace Eco.Scripts
         {
             // Load detail quality
             int savedDetailQuality = PlayerPrefs.GetInt(DetailQualityKey, (int)detailQuality);
-            DetailQuality = (DetailQualities)savedDetailQuality;
-            
+            DetailQuality = StressTest.IsActive
+                ? StressTest.Config.DetailQuality
+                : (DetailQualities)savedDetailQuality;
+
             // Load language
             LanguageCode = PlayerPrefs.GetString(LanguageCodeKey, defaultLanguageCode);
             ApplyLanguage();

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -24,6 +25,8 @@ namespace Eco.Scripts.World
 
         public void Init(TreePlanter treePlanter)
         {
+            using var marker = EcoProfilerMarkers.FieldChunkInit.Auto();
+
             _treePlanter = treePlanter;
 
 #if UNITY_EDITOR

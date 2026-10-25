@@ -1,3 +1,4 @@
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using UnityEngine;
 
@@ -44,6 +45,8 @@ namespace Eco.Scripts.World
 
         public void SaveTiles()
         {
+            using var marker = EcoProfilerMarkers.SaveTiles.Auto();
+
             var saveData = new TileData[tiles.Length];
             for (var i = 0; i < tiles.Length; i++)
             {

@@ -34,6 +34,7 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 | UI | `GameUI`, `UpgradeMenu`, `CartStorageDisplay`, `SettingsMenu`, `TutorialMenu`, `HudController`, `SceneTransition`, `ScoreGainedPopup` | UI Toolkit (`Assets/Eco/UI/*.uxml/.uss`) for HUD/menus; uGUI for the map. |
 | Localization | `LocalizationManager`, `Assets/Eco/LocTables/` | Unity Localization, locales `en` and `ru`. Tables: CartUpgrades, GameUI, Hats, HelpersUpgrades, Tutorial, … |
 | Settings | `Settings` (SO) | Detail quality, language, free-upgrades cheat; stored in `PlayerPrefs`. |
+| Profiling | `StressTest`, `StressTestSeeder`, `StressTestDriver`, `StressTestConfig`, `EcoProfilerMarkers` | Worst-case stress test and profiler markers on the heavy paths; see [PROFILING.md](PROFILING.md). Editor menus live in `Scripts/Editor/` (`Eco.Scripts.EditorTools`). |
 
 ## Reactive state
 
@@ -43,7 +44,7 @@ Money uses `LargeNumbers.AlphabeticNotation` (`Assets/Scripts/LargeNumbers`, own
 
 ## Save data
 
-Written to `Application.persistentDataPath` with Newtonsoft.Json:
+Written to `SaveManager.SaveDirectory` with Newtonsoft.Json. That is `Application.persistentDataPath`, or `<persistentDataPath>/StressTest/` during a stress test run:
 
 - `progress.json` — `SaveManager.PlayerProgress` (currency, cart, hat, position, upgrade levels, world id). Shared across worlds; position resets when the world id changes.
 - `field_tiles_<worldId>.json` — per-chunk `TileData[]`, keyed `"x,y"`.

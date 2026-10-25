@@ -46,4 +46,5 @@ My code is in `Assets/Eco/Scripts/`.
 
 - [Docs/ARCHITECTURE.md](Docs/ARCHITECTURE.md) — systems, boot flow, save data
 - [Docs/UNITY_6_5_UPGRADE.md](Docs/UNITY_6_5_UPGRADE.md) — package and code changes made for Unity 6.5
+- [Docs/PROFILING.md](Docs/PROFILING.md) — worst-case stress test, profiler markers, baseline numbers and known bottlenecks
 - [CLAUDE.md](CLAUDE.md) — conventions and gotchas for contributors and AI agents

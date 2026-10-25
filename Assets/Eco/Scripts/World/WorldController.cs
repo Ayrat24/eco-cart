@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.Upgrades;
 using Unity.AI.Navigation;
@@ -48,6 +49,8 @@ namespace Eco.Scripts.World
 
         public void SpawnWorld(WorldPreset worldPreset)
         {
+            using var marker = EcoProfilerMarkers.SpawnWorld.Auto();
+
             _worldPreset = worldPreset;
             _worldPreset.GenerateMap();
             foreach (var chunkPrefab in chunkPrefabs)
@@ -88,6 +91,8 @@ namespace Eco.Scripts.World
 
         private void RebuildNavMesh()
         {
+            using var marker = EcoProfilerMarkers.BuildNavMesh.Auto();
+
             navMeshPlane.BuildNavMesh();
         }
 
@@ -115,6 +120,8 @@ namespace Eco.Scripts.World
 
          private void UpdateWorld()
          {
+             using var marker = EcoProfilerMarkers.UpdateWorld.Auto();
+
              Vector2Int center = GetPlayerChunkCoord();
              HashSet<Vector2Int> neededChunks = new();
 
@@ -137,6 +144,7 @@ namespace Eco.Scripts.World
                              continue;
                          }
                          
+                         EcoProfilerMarkers.SpawnChunk.Begin();
                          Chunk chunk = _pools[type].Get();
                          chunk.Setup(coord, _saveManager, _worldPreset.ScrapPerChunk);
                          
@@ -197,6 +205,7 @@ namespace Eco.Scripts.World
 
                          chunk.name = $"{type}_Chunk_{coord.x}_{coord.y}";
                          _spawnedChunks[coord] = chunk;
+                         EcoProfilerMarkers.SpawnChunk.End();
                      }
                  }
              }
@@ -213,6 +222,7 @@ namespace Eco.Scripts.World
 
              foreach (var coord in toRemove)
              {
+                 EcoProfilerMarkers.DespawnChunk.Begin();
                  var chunk = _spawnedChunks[coord];
                  chunk.SaveTiles();
 
@@ -239,11 +249,14 @@ namespace Eco.Scripts.World
                  }
                  
                  _spawnedChunks.Remove(coord);
+                 EcoProfilerMarkers.DespawnChunk.End();
              }
          }
 
          public void Flatten()
          {
+             using var marker = EcoProfilerMarkers.FlattenTerrain.Auto();
+
              var terrain = Terrain.activeTerrain;
              TerrainData data = terrain.terrainData;
 

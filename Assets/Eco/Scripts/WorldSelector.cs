@@ -1,3 +1,4 @@
+using Eco.Scripts.Profiling;
 using Eco.Scripts.World;
 using System;
 using Cysharp.Threading.Tasks;
@@ -61,6 +62,13 @@ namespace Eco.Scripts
 
             // The RadioButtonGroup named GroupName is guaranteed to exist in the document.
             _worldGroup = root.Q<RadioButtonGroup>(GroupName);
+
+            if (StressTest.IsActive)
+            {
+                // The stress world isn't in the list; skip the UI so the last played world isn't loaded instead.
+                SelectPreset(StressTest.Preset, save: false);
+                return;
+            }
 
             BuildWorldItems();
         }

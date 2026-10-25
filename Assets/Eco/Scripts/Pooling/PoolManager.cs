@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Scrap;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -32,6 +33,8 @@ namespace Eco.Scripts.Pooling
 
         public void InitializePools(List<ScrapItem> scrapPrefabs)
         {
+            using var marker = EcoProfilerMarkers.InitPools.Auto();
+
             _scrapPrefabs = scrapPrefabs;
 
             foreach (var prefab in _scrapPrefabs)

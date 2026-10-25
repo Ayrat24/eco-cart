@@ -29,6 +29,17 @@ namespace Eco.Scripts.World
         public List<ScrapItem> AllowedScrapItems => allowedScrapItems;
         private Dictionary<Vector2Int, ChunkType> _map = new();
 
+        /// <summary>Runtime copy with a different id/size/scrap count; the asset itself is left untouched.</summary>
+        public WorldPreset CreateVariant(string id, int sideSize, int scrapCount)
+        {
+            var variant = Instantiate(this);
+            variant.name = $"{name} ({id})";
+            variant.worldId = id;
+            variant.worldSideSize = sideSize;
+            variant.scrapPerChunk = scrapCount;
+            return variant;
+        }
+
         public void GenerateMap()
         {
             _map = new Dictionary<Vector2Int, ChunkType>();

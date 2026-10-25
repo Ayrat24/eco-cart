@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Profiling;
 using Eco.Scripts.Upgrades;
 using R3;
 using Unity.Mathematics;
@@ -148,6 +149,8 @@ namespace Eco.Scripts.ItemCollecting
 
         public bool AddToCart(ICartItem item, Collider coll)
         {
+            using var marker = EcoProfilerMarkers.AddToCart.Auto();
+
             if (item == null || coll == null || coll.gameObject == null || !coll.gameObject.activeInHierarchy)
             {
                 return false;
