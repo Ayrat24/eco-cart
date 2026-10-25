@@ -75,7 +75,7 @@ namespace Eco.Scripts.Helpers
                 return;
             }
 
-            _state = "Going to trash";
+            _state = "Going to scrap";
             agent.destination = shortestCollider.transform.position;
         }
 

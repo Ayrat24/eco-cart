@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6833360886212349647}
   - component: {fileID: 1837355646683545368}
   m_Layer: 12
-  m_Name: TrashPile
+  m_Name: ScrapPile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,7 +303,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 078870ea863afcb48af776c17da89457, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trash.TrashPile
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Scrap.ScrapPile
   highlightEffect: {fileID: 2653330373487340688}
   heightPerSize: 0.1
   digDuration: 0.5

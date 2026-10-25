@@ -138,7 +138,7 @@ namespace Eco.Scripts.World
                          }
                          
                          Chunk chunk = _pools[type].Get();
-                         chunk.Setup(coord, _saveManager, _worldPreset.TrashPerChunk);
+                         chunk.Setup(coord, _saveManager, _worldPreset.ScrapPerChunk);
                          
                          if(type == ChunkType.Water)
                          {

@@ -2,7 +2,7 @@
 
 A game made for GameDeve Goethe 2025. Theme is ecology.
 
-Push your cart around an overgrown, littered island, collect and recycle trash, dig out trash piles, plant trees and hire animal helpers until the world is clean and green — then move on to the next world.
+Push your cart around an overgrown, littered island, collect and recycle scrap, dig out scrap piles, plant trees and hire animal helpers until the world is clean and green — then move on to the next world.
 
 My code is in `Assets/Eco/Scripts/`.
 

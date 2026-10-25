@@ -1,6 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Utils;
 using R3;
 using UnityEngine;
@@ -72,7 +72,7 @@ namespace Eco.Scripts.Tools
                 return;
             }
 
-            var pile = shortestCollider.gameObject.GetComponent<TrashPile>();
+            var pile = shortestCollider.gameObject.GetComponent<ScrapPile>();
             if (pile == null)
             {
                 return;
@@ -81,14 +81,14 @@ namespace Eco.Scripts.Tools
             Dig(pile);
         }
 
-        private void Dig(TrashPile trashPile)
+        private void Dig(ScrapPile scrapPile)
         {
             if (!Active)
             {
                 return;
             }
 
-            trashPile.Dig();
+            scrapPile.Dig();
             animator.SetTrigger(DigTriggerId);
         }
 

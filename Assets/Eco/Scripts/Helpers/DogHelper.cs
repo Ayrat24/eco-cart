@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.ItemCollecting;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
@@ -51,14 +51,14 @@ namespace Eco.Scripts.Helpers
                 return;
             }
 
-            // ask cart for most common TrashType
-            var mostCommon = TrashType.Food;
+            // ask cart for most common ScrapType
+            var mostCommon = ScrapType.Food;
             Debug.Log($"DogHelper: cart item count={1}, mostCommon={mostCommon}");
 
-            // note: `mostCommon` is an enum (TrashType) and cannot be null; if cart-probing logic
+            // note: `mostCommon` is an enum (ScrapType) and cannot be null; if cart-probing logic
             // is added later it should set an explicit 'none' value or make the type nullable
 
-            // search for TrashItems of this type around player
+            // search for ScrapItems of this type around player
             Vector3 center = Player.transform.position;
             float radiusConfigured = (searchRadius > 0) ? searchRadius : maxDistanceFromPlayer;
             float radiusToUse = Mathf.Max(radiusConfigured, maxDistanceFromPlayer);
@@ -66,12 +66,12 @@ namespace Eco.Scripts.Helpers
             int count = Physics.OverlapSphereNonAlloc(center, radiusToUse, _colliders, layerMaskVal);
             Debug.Log($"DogHelper: OverlapSphere found {count} colliders (radius {radiusToUse:F1})");
 
-            var candidates = new List<TrashItem>();
+            var candidates = new List<ScrapItem>();
             for (int i = 0; i < count; i++)
             {
                 var col = _colliders[i];
                 if (col == null) continue;
-                if (!col.TryGetComponent<TrashItem>(out var t)) continue;
+                if (!col.TryGetComponent<ScrapItem>(out var t)) continue;
 
                 // skip if already in cart or being picked up
                 bool inDrop = (_cart != null && _cart.DropPoint != null) && t.transform.IsChildOf(_cart.DropPoint);
@@ -80,7 +80,7 @@ namespace Eco.Scripts.Helpers
                 if (!t.CanBeRecycled) continue;
                 if (!t.gameObject.activeInHierarchy) continue;
 
-                if (t.TrashType == mostCommon)
+                if (t.ScrapType == mostCommon)
                 {
                     candidates.Add(t);
                 }
@@ -96,7 +96,7 @@ namespace Eco.Scripts.Helpers
             }
 
             // pick the furthest from the player (but within maxDistanceFromPlayer)
-            TrashItem chosen = null;
+            ScrapItem chosen = null;
             float maxDist = -1f;
             foreach (var it in candidates)
             {
@@ -155,7 +155,7 @@ namespace Eco.Scripts.Helpers
             animationController.GoingToTarget = false;
         }
 
-        private async UniTask BringItemAsync(TrashItem target, CancellationToken token)
+        private async UniTask BringItemAsync(ScrapItem target, CancellationToken token)
         {
             const float pollIntervalSeconds = 0.15f;
             const float maxWaitSeconds = 25f;
@@ -227,18 +227,18 @@ namespace Eco.Scripts.Helpers
         }
 
         // Small helpers extracted from BringItemAsync
-        private bool IsTargetValid(TrashItem target)
+        private bool IsTargetValid(ScrapItem target)
         {
             return target != null && target.gameObject != null && target.gameObject.activeInHierarchy;
         }
 
-        private async UniTask<bool> MoveToItemAsync(TrashItem item, float stoppingDistance, CancellationToken token, float pollIntervalSeconds, float maxWaitSeconds)
+        private async UniTask<bool> MoveToItemAsync(ScrapItem item, float stoppingDistance, CancellationToken token, float pollIntervalSeconds, float maxWaitSeconds)
         {
             if (item == null) return false;
             return await MoveToPositionAsync(item.transform, stoppingDistance, token, pollIntervalSeconds, maxWaitSeconds);
         }
 
-        private void PickupAndHold(TrashItem target)
+        private void PickupAndHold(ScrapItem target)
         {
             try
             {
@@ -260,7 +260,7 @@ namespace Eco.Scripts.Helpers
         }
 
         // Repeatedly follow the position in front of the player and wait until the item is picked up or timeout
-        private async UniTask<bool> MoveToFrontAndWaitAsync(TrashItem target, CancellationToken token, float pollIntervalSeconds, float maxWaitSeconds)
+        private async UniTask<bool> MoveToFrontAndWaitAsync(ScrapItem target, CancellationToken token, float pollIntervalSeconds, float maxWaitSeconds)
         {
             if (Player == null) return false;
 
@@ -351,7 +351,7 @@ namespace Eco.Scripts.Helpers
         }
 
         // Drop the item at a short offset in front of the player so ItemCollector can detect it.
-        private void DropItemNearPlayer(TrashItem target)
+        private void DropItemNearPlayer(ScrapItem target)
         {
             if (target == null) return;
 
@@ -392,7 +392,7 @@ namespace Eco.Scripts.Helpers
             return pos;
         }
 
-        private void ParentToHold(TrashItem target)
+        private void ParentToHold(ScrapItem target)
         {
             var hold = (holdPoint != null) ? holdPoint : this.transform;
             target.OnPickUp(hold);
@@ -411,7 +411,7 @@ namespace Eco.Scripts.Helpers
             Debug.Log($"DogHelper: made '{target.GetName()}' kinematic and marked as being picked up");
         }
 
-        private void ReleaseTarget(TrashItem target)
+        private void ReleaseTarget(ScrapItem target)
         {
             if (target == null) return;
 

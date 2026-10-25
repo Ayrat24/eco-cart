@@ -11,7 +11,7 @@ namespace Eco.Scripts.World
         public Vector2Int position;
         public TileObjectType objectType = TileObjectType.Empty;
         public TileGroundType groundType = TileGroundType.Ground;
-        public bool containedTrash;
+        public bool containedScrap;
         public Chunk parentChunk;
         
         public Tile(Vector2Int position)
@@ -24,8 +24,8 @@ namespace Eco.Scripts.World
             var data = new TileData
             {
                 objectType = (int)objectType,
-                containedTrash = containedTrash,
-                clean = (objectType is TileObjectType.Empty or TileObjectType.Tree) && containedTrash
+                containedScrap = containedScrap,
+                clean = (objectType is TileObjectType.Empty or TileObjectType.Tree) && containedScrap
             };
 
             if (item != null)
@@ -50,9 +50,9 @@ namespace Eco.Scripts.World
     public enum TileObjectType
     {
         Empty,
-        Trash,
+        Scrap,
         Tree,
-        TrashPile
+        ScrapPile
     }
 
     public enum TileGroundType

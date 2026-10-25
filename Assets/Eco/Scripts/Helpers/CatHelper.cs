@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
@@ -17,7 +17,7 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private int playerStopDistance = 8;
 
         private readonly Collider[] _colliders = new Collider[50];
-        private const TrashType Food = TrashType.Food;
+        private const ScrapType Food = ScrapType.Food;
 
         private bool _goingToTarget;
 
@@ -84,27 +84,27 @@ namespace Eco.Scripts.Helpers
             Vector3 center = transform.position;
             int count = Physics.OverlapSphereNonAlloc(center, searchRadius, _colliders, groundItemsMask);
 
-            List<TrashItem> trashItems = new List<TrashItem>();
+            List<ScrapItem> scrapItems = new List<ScrapItem>();
             for (int i = 0; i < count; i++)
             {
-                if (_colliders[i].TryGetComponent<TrashItem>(out var trashItem) && trashItem.TrashType == Food)
+                if (_colliders[i].TryGetComponent<ScrapItem>(out var scrapItem) && scrapItem.ScrapType == Food)
                 {
-                    trashItems.Add(trashItem);
+                    scrapItems.Add(scrapItem);
                 }
             }
 
-            if (trashItems.Count == 0)
+            if (scrapItems.Count == 0)
             {
                 ReturnToPlayer();
                 return;
             }
 
             // sort by ascending distance to player (closest first)
-            trashItems.Sort((x, y) =>
+            scrapItems.Sort((x, y) =>
                 Vector3.Distance(x.transform.position, Player.transform.position)
                     .CompareTo(Vector3.Distance(y.transform.position, Player.transform.position)));
 
-            var food = trashItems[0];
+            var food = scrapItems[0];
 
             if (Vector3.Distance(food.transform.position, Player.transform.position) > maxDistanceFromPlayer)
             {
@@ -121,8 +121,8 @@ namespace Eco.Scripts.Helpers
             {
                 // if we can't reach this food, try the next candidate (or return to player)
                 // remove this unreachable item and try again
-                trashItems.RemoveAt(0);
-                if (trashItems.Count > 0)
+                scrapItems.RemoveAt(0);
+                if (scrapItems.Count > 0)
                 {
                     // attempt the next item on the next tick
                     return;
@@ -137,7 +137,7 @@ namespace Eco.Scripts.Helpers
             _goingToTarget = true;
             animationController.GoingToTarget = true;
 
-            DebugState = "Going to trash";
+            DebugState = "Going to scrap";
 
             // start the async consumer which will watch arrival, existence and path validity
             ConsumeFoodAsync(food, CancellationTokenSource.Token).Forget();
@@ -153,7 +153,7 @@ namespace Eco.Scripts.Helpers
             animationController.GoingToTarget = false;
         }
 
-        private async UniTask ConsumeFoodAsync(TrashItem food, CancellationToken token)
+        private async UniTask ConsumeFoodAsync(ScrapItem food, CancellationToken token)
         {
             // Robust waiting loop: poll state periodically, abort on timeout or if target disappears or path becomes invalid
             const float pollIntervalSeconds = 0.2f;
@@ -191,7 +191,7 @@ namespace Eco.Scripts.Helpers
                         if (food.CanBeRecycled)
                         {
                             animationController.TriggerAction();
-                            var money = ScoreStats.GetScoreForTrash(food.TrashType) * food.GetWeight();
+                            var money = ScoreStats.GetScoreForScrap(food.ScrapType) * food.GetWeight();
                             await food.RecycleAsync();
                             // apply recycle multiplier from upgrades
                             var reward = money * _recycleMultiplier;

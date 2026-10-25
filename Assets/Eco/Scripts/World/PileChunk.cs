@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
@@ -10,7 +10,7 @@ namespace Eco.Scripts.World
 {
     public class PileChunk : Chunk
     {
-        [SerializeField] private TrashPile pile;
+        [SerializeField] private ScrapPile pile;
         [SerializeField] private GameObject flowers;
         [SerializeField] private GameObject butterflies;
         private Tile _tileWithPile;
@@ -64,7 +64,7 @@ namespace Eco.Scripts.World
 
             if (pileExists)
             {
-                SpawnTrashPileAtTile(_tileWithPile, pileSize, worldPresetDifficulty);
+                SpawnScrapPileAtTile(_tileWithPile, pileSize, worldPresetDifficulty);
                 flowers.SetActive(false);
                 butterflies.SetActive(false);
             }
@@ -86,12 +86,12 @@ namespace Eco.Scripts.World
             }
         }
 
-        private void SpawnTrashPileAtTile(Tile tile, int size, int difficulty)
+        private void SpawnScrapPileAtTile(Tile tile, int size, int difficulty)
         {
             int digPower = _digPowerUpgrade != null ? _digPowerUpgrade.DigPower : 1;
             pile.Initialize(size, difficulty, digPower);
             tile.item = pile;
-            tile.objectType = TileObjectType.TrashPile;
+            tile.objectType = TileObjectType.ScrapPile;
 
             pile.OnPileCleaned += OnPileCleaned;
 
@@ -111,7 +111,7 @@ namespace Eco.Scripts.World
             var tile = _tileWithPile;
             tile.item = null;
             tile.objectType = TileObjectType.Empty;
-            tile.containedTrash = true;
+            tile.containedScrap = true;
 
             pile.OnPileCleaned -= OnPileCleaned;
 
@@ -153,7 +153,7 @@ namespace Eco.Scripts.World
         private void OnUpgradeUnlocked(UnlockableUpgradeType upgrade)
         {
             // Only enable visuals if the pile is not present
-            bool pilePresent = _tileWithPile is { objectType: TileObjectType.TrashPile };
+            bool pilePresent = _tileWithPile is { objectType: TileObjectType.ScrapPile };
 
             if (pilePresent)
             {

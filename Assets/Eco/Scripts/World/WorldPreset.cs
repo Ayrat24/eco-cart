@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using UnityEngine;
 
 namespace Eco.Scripts.World
@@ -11,11 +11,11 @@ namespace Eco.Scripts.World
         [SerializeField] private string worldId;
         [SerializeField] private int worldSideSize = 10;
         [SerializeField] private int seed = 5;
-        [SerializeField] private int trashPerChunk = 3;
+        [SerializeField] private int scrapPerChunk = 3;
         [SerializeField] private int difficulty = 1;
         [SerializeField] private ChunkType[] chunkTypes = new[] { ChunkType.Water };
 
-        [SerializeField] private List<TrashItem> allowedTrashItems;
+        [SerializeField] private List<ScrapItem> allowedScrapItems;
 
         // Rules asset that controls adjacency, min/max and weights for chunk generation
         [SerializeField] private ChunkGenerationRules generationRules;
@@ -23,10 +23,10 @@ namespace Eco.Scripts.World
         public int WorldSideSize => worldSideSize;
         public ChunkType[] ChunkTypes => chunkTypes;
         public string WorldId => worldId;
-        public int TrashPerChunk => trashPerChunk;
+        public int ScrapPerChunk => scrapPerChunk;
 
         public int Difficulty => difficulty;
-        public List<TrashItem> AllowedTrashItems => allowedTrashItems;
+        public List<ScrapItem> AllowedScrapItems => allowedScrapItems;
         private Dictionary<Vector2Int, ChunkType> _map = new();
 
         public void GenerateMap()

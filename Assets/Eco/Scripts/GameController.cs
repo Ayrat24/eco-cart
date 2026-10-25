@@ -60,7 +60,7 @@ namespace Eco.Scripts
             worldPreset = WorldSelector.Instance.SelectedPreset;
             _saveManager.Load(worldPreset.WorldId);
 
-            PoolManager.Instance.InitializePools(worldPreset.AllowedTrashItems);
+            PoolManager.Instance.InitializePools(worldPreset.AllowedScrapItems);
 
             _settings.Load();
             _upgradeCollection.Load(_saveManager);
@@ -72,7 +72,7 @@ namespace Eco.Scripts
             
             TerrainPainter.ClearTerrain();
             _worldController.SpawnWorld(worldPreset);
-            _progressTracker.Init(worldPreset.TrashPerChunk, worldPreset.WorldId);
+            _progressTracker.Init(worldPreset.ScrapPerChunk, worldPreset.WorldId);
 
            
             

@@ -14,15 +14,15 @@ namespace Eco.Scripts.World
         public Tile[] Tiles => tiles;
         public ChunkType Type => type;
         protected bool HasSave => SaveManager.FieldTiles.ContainsKey(Position);
-        protected int TrashPerChunk;
+        protected int ScrapPerChunk;
 
 
-        public void Setup(Vector2Int position, SaveManager saveManager, int trashPerChunk)
+        public void Setup(Vector2Int position, SaveManager saveManager, int scrapPerChunk)
         {
             Position = position;
             SaveManager = saveManager;
             ChunkSize = WorldController.ChunkSize;
-            TrashPerChunk = trashPerChunk;
+            ScrapPerChunk = scrapPerChunk;
             
             for (int x = 0; x < ChunkSize; x++)
             {

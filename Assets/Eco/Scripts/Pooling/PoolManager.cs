@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.World;
 using UnityEngine;
 using Tree = Eco.Scripts.Trees.Tree;
@@ -9,8 +9,8 @@ namespace Eco.Scripts.Pooling
 {
     public class PoolManager : MonoBehaviour
     {
-        private List<TrashItem> _trashPrefabs;
-        private readonly Dictionary<int, ObjectPool<TrashItem>> _trashPools = new();
+        private List<ScrapItem> _scrapPrefabs;
+        private readonly Dictionary<int, ObjectPool<ScrapItem>> _scrapPools = new();
         private readonly List<int> _ids = new();
 
         [SerializeField] private List<Tree> treePrefabs;
@@ -30,22 +30,22 @@ namespace Eco.Scripts.Pooling
             Instance = this;
         }
 
-        public void InitializePools(List<TrashItem> trashPrefabs)
+        public void InitializePools(List<ScrapItem> scrapPrefabs)
         {
-            _trashPrefabs = trashPrefabs;
+            _scrapPrefabs = scrapPrefabs;
 
-            foreach (var prefab in _trashPrefabs)
+            foreach (var prefab in _scrapPrefabs)
             {
-                var objectPool = new ObjectPool<TrashItem>(prefab, 1, transform);
+                var objectPool = new ObjectPool<ScrapItem>(prefab, 1, transform);
                 var o = objectPool.Get();
 
                 var id = o.GetPrefabId();
 
                 //TODO: optimize getting id without spawning it first!!!
-                _trashPools.Add(id, objectPool);
+                _scrapPools.Add(id, objectPool);
                 _ids.Add(id);
 
-                _trashPools[id].ReturnToPool(o);
+                _scrapPools[id].ReturnToPool(o);
             }
 
             foreach (var prefab in treePrefabs)
@@ -62,14 +62,14 @@ namespace Eco.Scripts.Pooling
             }
         }
 
-        public TrashItem GetTrash(int id)
+        public ScrapItem GetScrap(int id)
         {
-            if (!_trashPools.ContainsKey(id))
+            if (!_scrapPools.ContainsKey(id))
             {
-                return _trashPools.Values.ToList()[0].Get();
+                return _scrapPools.Values.ToList()[0].Get();
             }
 
-            return _trashPools[id].Get();
+            return _scrapPools[id].Get();
         }
 
         public Tree GetTree(int id)
@@ -81,9 +81,9 @@ namespace Eco.Scripts.Pooling
         {
             switch (item)
             {
-                case TrashItem trashItem:
-                    var id = trashItem.GetPrefabId();
-                    _trashPools[id].ReturnToPool(trashItem);
+                case ScrapItem scrapItem:
+                    var id = scrapItem.GetPrefabId();
+                    _scrapPools[id].ReturnToPool(scrapItem);
                     break;
 
                 case Tree tree:
@@ -92,24 +92,24 @@ namespace Eco.Scripts.Pooling
             }
         }
 
-        public TrashItem GetTrash(TrashItem trashItem)
+        public ScrapItem GetScrap(ScrapItem scrapItem)
         {
-            var id = trashItem.GetPrefabId();
-            if (_trashPools.TryGetValue(id, out var trashPool))
+            var id = scrapItem.GetPrefabId();
+            if (_scrapPools.TryGetValue(id, out var scrapPool))
             {
-                return trashPool.Get();
+                return scrapPool.Get();
             }
 
-            var pool = new ObjectPool<TrashItem>(trashItem, 0, transform);
-            _trashPools.Add(id, pool);
+            var pool = new ObjectPool<ScrapItem>(scrapItem, 0, transform);
+            _scrapPools.Add(id, pool);
             _ids.Add(id);
             return pool.Get();
         }
 
-        public TrashItem GetRandomTrash()
+        public ScrapItem GetRandomScrap()
         {
             var randomIndex = Random.Range(0, _ids.Count);
-            return _trashPools[_ids[randomIndex]].Get();
+            return _scrapPools[_ids[randomIndex]].Get();
         }
     }
 }

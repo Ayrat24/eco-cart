@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 9433306361856
-    m_Localized: Gatherer collects waste to his cart and recycles it
+    m_Localized: Gatherer collects scrap to his cart and recycles it
     m_Metadata:
       m_Items: []
   - m_Id: 6857036459405312
@@ -87,7 +87,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 23303359047921664
-    m_Localized: Brings trash to you
+    m_Localized: Brings scrap to you
     m_Metadata:
       m_Items: []
   references:

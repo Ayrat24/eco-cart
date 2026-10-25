@@ -1,16 +1,17 @@
 using System;
+using Eco.Scripts.Scrap;
 using LargeNumbers;
 using UnityEngine;
 
 namespace Eco.Scripts.Upgrades
 {
-    [CreateAssetMenu(menuName = "Upgrade/TrashScoreUpgrade")]
-    public class TrashScoreUpgrade : Upgrade
+    [CreateAssetMenu(menuName = "Upgrade/ScrapScoreUpgrade")]
+    public class ScrapScoreUpgrade : Upgrade
     {
         [SerializeField] private int baseScore;
         [SerializeField] private float scoreGrowth = 1.1f;
         [SerializeField] private Color color;
-        public TrashType trashType;
+        public ScrapType scrapType;
         public AlphabeticNotation ScoreForCurrentUpgrade { get; private set; }
         public Color Color => color;
         

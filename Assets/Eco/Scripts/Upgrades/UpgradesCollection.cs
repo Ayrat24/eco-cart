@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eco.Scripts.Scrap;
 using UnityEngine;
 using UnityEngine.Localization;
 
@@ -10,19 +11,19 @@ namespace Eco.Scripts.Upgrades
     public class UpgradesCollection : ScriptableObject
     {
         public List<UpgradeTab> upgrades = new();
-        public readonly Dictionary<TrashType, TrashScoreUpgrade> TrashScoreUpgrades = new();
+        public readonly Dictionary<ScrapType, ScrapScoreUpgrade> ScrapScoreUpgrades = new();
 
         public void Load(SaveManager saveManager)
         {
-            TrashScoreUpgrades.Clear();
+            ScrapScoreUpgrades.Clear();
 
             foreach (var upgradeGroup in upgrades.SelectMany(tab => tab.upgradeGroups))
             {
                 foreach (var upgrade in upgradeGroup.upgrades)
                 {
-                    if (upgrade is TrashScoreUpgrade trashScoreUpgrade)
+                    if (upgrade is ScrapScoreUpgrade scrapScoreUpgrade)
                     {
-                        TrashScoreUpgrades.Add(trashScoreUpgrade.trashType, trashScoreUpgrade);
+                        ScrapScoreUpgrades.Add(scrapScoreUpgrade.scrapType, scrapScoreUpgrade);
                     }
                 }
             }

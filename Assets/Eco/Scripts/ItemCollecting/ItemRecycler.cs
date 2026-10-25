@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -33,7 +33,7 @@ namespace Eco.Scripts.ItemCollecting
             _gainedScoreText.StartNewRecycle();
             
             double scoreMultiplier = _scoreStats.GetComboMultiplier();
-            Dictionary<TrashType, double> scoreMultipliers = new();
+            Dictionary<ScrapType, double> scoreMultipliers = new();
             
             var listItems = cartItems.ToList();
             for (var i = listItems.Count - 1; i >= 0; i--)
@@ -42,25 +42,25 @@ namespace Eco.Scripts.ItemCollecting
                 await UniTask.WaitForSeconds(0.15f, cancellationToken: token);
                 item.Recycle();
 
-                if (item is TrashItem trash)
+                if (item is ScrapItem scrap)
                 {
-                    var baseScore = _scoreStats.GetScoreForTrash(trash.TrashType);
-                    var score = baseScore * trash.GetWeight();
+                    var baseScore = _scoreStats.GetScoreForScrap(scrap.ScrapType);
+                    var score = baseScore * scrap.GetWeight();
 
-                    if (scoreMultipliers.TryGetValue(trash.TrashType, out var currentMultiplier))
+                    if (scoreMultipliers.TryGetValue(scrap.ScrapType, out var currentMultiplier))
                     {
                         score = currentMultiplier * score;
-                        scoreMultipliers[trash.TrashType] += scoreMultiplier;
+                        scoreMultipliers[scrap.ScrapType] += scoreMultiplier;
                     }
                     else
                     {
                         currentMultiplier = 1;
-                        scoreMultipliers[trash.TrashType] = currentMultiplier + scoreMultiplier;
+                        scoreMultipliers[scrap.ScrapType] = currentMultiplier + scoreMultiplier;
                     }
                     
                     _currencyManager.AddMoney(score);
-                    var color = _scoreStats.GetColor(trash.TrashType);
-                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b> Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color> Type:<b>{trash.TrashType}</b>", color);
+                    var color = _scoreStats.GetColor(scrap.ScrapType);
+                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b> Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color> Type:<b>{scrap.ScrapType}</b>", color);
                     _gainedScoreText.UpdateTotalLabel(score);
                 }
             }

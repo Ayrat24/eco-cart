@@ -3882,7 +3882,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1796366133817090748, guid: 178cd6aa8a67fd8489aa908ec01f9609, type: 3}
       propertyPath: m_Name
-      value: TrashPile
+      value: ScrapPile
       objectReference: {fileID: 0}
     - target: {fileID: 1796366133817090748, guid: 178cd6aa8a67fd8489aa908ec01f9609, type: 3}
       propertyPath: m_IsActive
@@ -3960,7 +3960,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 078870ea863afcb48af776c17da89457, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Trash.TrashPile
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Scrap.ScrapPile
 --- !u!4 &8526108845199858899 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2554868743509360571, guid: 178cd6aa8a67fd8489aa908ec01f9609, type: 3}

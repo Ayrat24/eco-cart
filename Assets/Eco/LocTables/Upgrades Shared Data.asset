@@ -16,43 +16,43 @@ MonoBehaviour:
   m_TableCollectionNameGuidString: b958da43275a91c46a38f0b71faa67b2
   m_Entries:
   - m_Id: 78016147456
-    m_Key: trash-tab-food-score-upgrade-name
+    m_Key: scrap-tab-food-score-upgrade-name
     m_Metadata:
       m_Items: []
   - m_Id: 10213383991296
-    m_Key: trash-tab-food-score-upgrade-description
+    m_Key: scrap-tab-food-score-upgrade-description
     m_Metadata:
       m_Items: []
   - m_Id: 11693897805824
-    m_Key: trash-tab-paper-score-upgrade-name
+    m_Key: scrap-tab-paper-score-upgrade-name
     m_Metadata:
       m_Items: []
   - m_Id: 11711492911104
-    m_Key: trash-tab-paper-score-upgrade-description
+    m_Key: scrap-tab-paper-score-upgrade-description
     m_Metadata:
       m_Items: []
   - m_Id: 11838404161536
-    m_Key: trash-tab-glass-score-upgrade-name
+    m_Key: scrap-tab-glass-score-upgrade-name
     m_Metadata:
       m_Items: []
   - m_Id: 11870943571968
-    m_Key: trash-tab-glass-score-upgrade-description
+    m_Key: scrap-tab-glass-score-upgrade-description
     m_Metadata:
       m_Items: []
   - m_Id: 11897933918208
-    m_Key: trash-tab-plastic-score-upgrade-name
+    m_Key: scrap-tab-plastic-score-upgrade-name
     m_Metadata:
       m_Items: []
   - m_Id: 11962337456128
-    m_Key: trash-tab-plastic-score-upgrade-description
+    m_Key: scrap-tab-plastic-score-upgrade-description
     m_Metadata:
       m_Items: []
   - m_Id: 13008547868672
-    m_Key: trash-tab-combo-upgrade-name
+    m_Key: scrap-tab-combo-upgrade-name
     m_Metadata:
       m_Items: []
   - m_Id: 13111115378688
-    m_Key: trash-tab-combo-upgrade-description
+    m_Key: scrap-tab-combo-upgrade-description
     m_Metadata:
       m_Items: []
   - m_Id: 14903664439296

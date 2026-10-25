@@ -16,7 +16,7 @@ namespace Eco.Scripts.ProgressionScreen
         [SerializeField] private Image treeIconPrefab;
 
         [SerializeField] private List<TileColor> tileColors;
-        [SerializeField] private Color trashColor;
+        [SerializeField] private Color scrapColor;
 
         [SerializeField] private Sprite[] treeSprites;
 
@@ -76,9 +76,9 @@ namespace Eco.Scripts.ProgressionScreen
                 {
                     int index = x + y * size;
                     var tileData = data[index];
-                    if (tileData.objectType == (int)TileObjectType.Trash)
+                    if (tileData.objectType == (int)TileObjectType.Scrap)
                     {
-                        colors[index] = trashColor;
+                        colors[index] = scrapColor;
                         continue;
                     }
 

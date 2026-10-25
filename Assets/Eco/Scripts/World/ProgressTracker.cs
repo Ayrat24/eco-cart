@@ -27,14 +27,14 @@ namespace Eco.Scripts.World
 
         // total tiles in the world (chunks * chunkSize * chunkSize), excluding beach tiles
         private int _totalTiles;
-        private int _totalTrashTiles;
+        private int _totalScrapTiles;
 
         // total green tiles across the world
         private int _greenTilesTotal;
 
         // total clean tiles across the world
         private int _cleanTilesTotal;
-        private int _trashPerTile;
+        private int _scrapPerTile;
 
         // per-chunk green tile counts to allow replacing counts on updates
         private readonly Dictionary<Vector2Int, int> _greenTilesPerChunk = new();
@@ -48,10 +48,10 @@ namespace Eco.Scripts.World
             _worldController = worldController;
         }
 
-        public void Init(int trashPerTile, string worldId)
+        public void Init(int scrapPerTile, string worldId)
         {
             _worldId = worldId;
-            _trashPerTile = trashPerTile;
+            _scrapPerTile = scrapPerTile;
             _worldSize = _worldController.WorldSize;
             
             // Calculate total tiles excluding beach chunks (which are on the border)
@@ -60,7 +60,7 @@ namespace Eco.Scripts.World
             int nonBeachChunks = totalChunks - beachChunks;
             
             _totalTiles = nonBeachChunks * WorldController.ChunkSize * WorldController.ChunkSize;
-            _totalTrashTiles = _trashPerTile * nonBeachChunks;
+            _totalScrapTiles = _scrapPerTile * nonBeachChunks;
             _saveManager.OnChunkUpdated.Subscribe(OnChunkUpdated);
 
             // Initial calculation of clean/green tiles
@@ -145,7 +145,7 @@ namespace Eco.Scripts.World
             if (_totalTiles > 0)
             {
                 // Linear progress from 0 to 1
-                float linearProgress = (float)_cleanTilesTotal / _totalTrashTiles;
+                float linearProgress = (float)_cleanTilesTotal / _totalScrapTiles;
                 
                 // Apply ease-out square curve: fast at start, slow at end
                 // Formula: 1 - (1 - x)^2

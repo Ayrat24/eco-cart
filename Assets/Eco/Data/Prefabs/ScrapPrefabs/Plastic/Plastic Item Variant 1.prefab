@@ -195,7 +195,7 @@ PrefabInstance:
       value: Plastic bottle
       objectReference: {fileID: 0}
     - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
-      propertyPath: trashType
+      propertyPath: scrapType
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}

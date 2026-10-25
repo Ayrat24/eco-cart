@@ -41,7 +41,7 @@ MonoBehaviour:
   baseScore: 4
   scoreGrowth: 1.5
   color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
-  trashType: 1
+  scrapType: 1
   references:
     version: 2
     RefIds: []

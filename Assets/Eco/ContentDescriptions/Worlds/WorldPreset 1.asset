@@ -15,10 +15,10 @@ MonoBehaviour:
   worldId: 1
   worldSideSize: 3
   seed: 1
-  trashPerChunk: 2
+  scrapPerChunk: 2
   difficulty: 1
   chunkTypes: 00000000
-  allowedTrashItems:
+  allowedScrapItems:
   - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
   - {fileID: 928404186802903188, guid: 646abc980a27b7f4b86e8922620be9d6, type: 3}
   - {fileID: 5436418194312970475, guid: 20372a9484874e848ac4b48345b047e3, type: 3}

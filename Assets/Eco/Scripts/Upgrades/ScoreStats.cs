@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Eco.Scripts.Scrap;
 using LargeNumbers;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Eco.Scripts.Upgrades
     {
         private readonly UpgradesCollection _upgradesCollection;
         
-        private Dictionary<TrashType, TrashScoreUpgrade> _trashUpgrades;
+        private Dictionary<ScrapType, ScrapScoreUpgrade> _scrapUpgrades;
         private ComboMultiplierUpgrade _combo;
         
         public ScoreStats(UpgradesCollection upgradesCollection)
@@ -18,13 +19,13 @@ namespace Eco.Scripts.Upgrades
 
         public void Init()
         {
-            _trashUpgrades = _upgradesCollection.TrashScoreUpgrades;
+            _scrapUpgrades = _upgradesCollection.ScrapScoreUpgrades;
             _combo = _upgradesCollection.GetUpgradeType<ComboMultiplierUpgrade>();
         }
 
-        public AlphabeticNotation GetScoreForTrash(TrashType type)
+        public AlphabeticNotation GetScoreForScrap(ScrapType type)
         {
-            if (_trashUpgrades.TryGetValue(type, out var value))
+            if (_scrapUpgrades.TryGetValue(type, out var value))
             {
                 return value.ScoreForCurrentUpgrade;
             }
@@ -37,9 +38,9 @@ namespace Eco.Scripts.Upgrades
             return _combo.Multiplier;
         }
 
-        public Color GetColor(TrashType type)
+        public Color GetColor(ScrapType type)
         {
-            if (_trashUpgrades.TryGetValue(type, out var t))
+            if (_scrapUpgrades.TryGetValue(type, out var t))
                 return t.Color;
             return Color.white;
         }

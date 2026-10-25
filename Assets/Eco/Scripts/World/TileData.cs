@@ -1,4 +1,4 @@
-using UnityEngine.Serialization;
+using Newtonsoft.Json;
 
 namespace Eco.Scripts.World
 {
@@ -9,6 +9,9 @@ namespace Eco.Scripts.World
         public int objectId;
         public int ground;
         public bool clean;
-        public bool containedTrash;
+
+        // Keeps the pre-rename JSON key so existing field_tiles saves still load
+        [JsonProperty("containedTrash")]
+        public bool containedScrap;
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Eco.Scripts.Pooling;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
@@ -15,13 +15,13 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private int maxDistanceFromPlayer = 15;
         [SerializeField] private LayerMask groundItemsMask;
         [SerializeField] private int playerStopDistance = 8;
-        [SerializeField] private TrashItem eggPrefab;
+        [SerializeField] private ScrapItem eggPrefab;
         [SerializeField] private float eggReplaceDistanceFromPlayer = 20;
 
         private bool _initialized;
 
-        private ObjectPool<TrashItem> _eggPool;
-        private readonly HashSet<TrashItem> _activeEggs = new();
+        private ObjectPool<ScrapItem> _eggPool;
+        private readonly HashSet<ScrapItem> _activeEggs = new();
 
         // runtime-configurable values (affected by upgrades)
         private int _currentMaxConcurrentEggs;
@@ -33,7 +33,7 @@ namespace Eco.Scripts.Helpers
             base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
 
             var maxConcurrentEggs = (int)Upgrades[0].Value;
-            _eggPool = new ObjectPool<TrashItem>(eggPrefab, maxConcurrentEggs, PoolManager.Instance.transform);
+            _eggPool = new ObjectPool<ScrapItem>(eggPrefab, maxConcurrentEggs, PoolManager.Instance.transform);
 
             // initialize runtime values from serialized defaults
             _currentMaxConcurrentEggs = Mathf.Max(1, maxConcurrentEggs);
@@ -96,7 +96,7 @@ namespace Eco.Scripts.Helpers
             if (_activeEggs.Count >= _currentMaxConcurrentEggs)
             {
                 // try to find an active egg that is far away from the player and reuse it
-                TrashItem farEgg = null;
+                ScrapItem farEgg = null;
                 var playerPos = Player.transform.position;
                 var replaceDistSq = eggReplaceDistanceFromPlayer * eggReplaceDistanceFromPlayer;
 
@@ -156,7 +156,7 @@ namespace Eco.Scripts.Helpers
             _activeEggs.Add(egg);
         }
 
-        private void ReturnEggToPool(TrashItem egg)
+        private void ReturnEggToPool(ScrapItem egg)
         {
             if (egg == null) return;
 
@@ -169,9 +169,9 @@ namespace Eco.Scripts.Helpers
             _eggPool.ReturnToPool(egg);
         }
 
-        private void OnEggReturnedToPool(TrashItem egg)
+        private void OnEggReturnedToPool(ScrapItem egg)
         {
-            // Called from TrashItem.OnDespawn when this item was returned to any pool.
+            // Called from ScrapItem.OnDespawn when this item was returned to any pool.
             // Make this idempotent and non-throwing.
             if (egg == null) return;
 

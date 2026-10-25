@@ -8,9 +8,9 @@ using PrimeTween;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Eco.Scripts.Trash
+namespace Eco.Scripts.Scrap
 {
-    public class TrashPile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ITileItem
+    public class ScrapPile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ITileItem
     {
         [SerializeField] HighlightEffect highlightEffect;
         [SerializeField] private float digDuration = 0.5f;

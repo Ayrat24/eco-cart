@@ -7,13 +7,13 @@ using R3;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Eco.Scripts.Trash
+namespace Eco.Scripts.Scrap
 {
-    public class TrashItem : MonoBehaviour, ICartItem, ITileItem, IPooledObject
+    public class ScrapItem : MonoBehaviour, ICartItem, ITileItem, IPooledObject
     {
-        [SerializeField] string itemName = "trash";
+        [SerializeField] string itemName = "scrap";
         [SerializeField] private int prefabTypeId;
-        [SerializeField] private TrashType trashType;
+        [SerializeField] private ScrapType scrapType;
         [SerializeField] private Color color = Color.wheat;
         [SerializeField] private int weight = 1;
         [SerializeField] private Rigidbody rb;
@@ -24,17 +24,17 @@ namespace Eco.Scripts.Trash
         private Tile _tile;
         private bool _isBeingPickedUp;
 
-        public TrashType TrashType => trashType;
+        public ScrapType ScrapType => scrapType;
         public static readonly Subject<Tile> OnItemRecycled = new();
 
         // Optional callback that, when set, will be used to return this item to a custom pool.
         // If null, the code will fall back to using PoolManager.Instance.ReturnItem(this).
-        public System.Action<TrashItem> ReturnToPoolCallback { get; set; }
+        public System.Action<ScrapItem> ReturnToPoolCallback { get; set; }
 
         // Notifies an external owner that this item was returned to any pool (called from OnDespawn).
         // Owners should use this to update tracking state but should NOT attempt to return the
         // item to a pool again from inside this callback.
-        public System.Action<TrashItem> OnReturnedToPool { get; set; }
+        public System.Action<ScrapItem> OnReturnedToPool { get; set; }
 
         public bool IsBeingPickedUp
         {
@@ -132,7 +132,7 @@ namespace Eco.Scripts.Trash
             if (_tile != null)
             {
                 _tile.objectType = TileObjectType.Empty;
-                _tile.containedTrash = true;
+                _tile.containedScrap = true;
                 _tile.parentChunk?.SaveTiles();
                 OnItemRecycled?.OnNext(_tile);
                 _tile = null;

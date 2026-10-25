@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 208576442368
-    m_Localized: Unlock map that shows your location, unrecycled trash, planted trees
+    m_Localized: Unlock map that shows your location, unrecycled scrap, planted trees
       and more!
     m_Metadata:
       m_Items: []
@@ -40,7 +40,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2228378205679616
-    m_Localized: Allows to clean up piles of trash
+    m_Localized: Allows to clean up piles of scrap
     m_Metadata:
       m_Items: []
   - m_Id: 10946175085572096

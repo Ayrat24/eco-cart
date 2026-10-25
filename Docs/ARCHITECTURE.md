@@ -1,6 +1,6 @@
 # Architecture
 
-Eco Cart is a cozy clean-up incremental game: the player pushes a cart around a chunked world, collects trash, recycles it for money, digs out trash piles, plants trees and buys upgrades/helpers until the world is clean and green enough to unlock the next one.
+Eco Cart is a cozy clean-up incremental game: the player pushes a cart around a chunked world, collects scrap, recycles it for money, digs out scrap piles, plants trees and buys upgrades/helpers until the world is clean and green enough to unlock the next one.
 
 All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespaces and compiles into `Assembly-CSharp` (there is no game asmdef).
 
@@ -21,7 +21,7 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 | Area | Key types | Notes |
 |---|---|---|
 | World | `WorldController`, `WorldPreset`, `ChunkGenerationRules`, `Chunk` (+ `FieldChunk`, `PileChunk`, `WaterChunk`, `BeachChunk`), `Tile`, `TileData` | Chunks are 10×10 (`WorldController.ChunkSize`). Map is `(2·WorldSideSize+1)²` chunks, border is always Beach, outside is Water. Chunks within `renderRadius` of the player are pulled from per-type `ObjectPool<Chunk>`s and saved/returned when out of range. The terrain is flattened into a plateau and the NavMesh rebuilt on spawn. |
-| Trash | `TrashItem`, `TrashPile`, `TrashType` | `TrashItem` is a pooled physics item (`ICartItem`, `ITileItem`, `IPooledObject`). `TrashPile` is dug with the spade (`DigPowerUpgrade`) and highlighted with HighlightPlus. |
+| Scrap | `ScrapItem`, `ScrapPile`, `ScrapType` | `ScrapItem` is a pooled physics item (`ICartItem`, `ITileItem`, `IPooledObject`). `ScrapPile` is dug with the spade (`DigPowerUpgrade`) and highlighted with HighlightPlus. |
 | Collecting | `ItemCollector`, `CollectorHand`, `Cart`, `ItemRecycler`, `GainedScoreText` | Collector (a `Tool`) scans a sphere for items and drops them into the cart; the cart empties into the recycler which pays out via `CurrencyManager`. |
 | Player | `Player`, `PlayerClickMovement`, `PlayerAnimation`, `CameraController` | NavMeshAgent click-to-move. Cart and hat are swapped via upgrades. |
 | Tools | `ToolController`, `Tool`, `SpadeController`, `UI/ToolSelector` | Collector hands vs spade. |
@@ -30,7 +30,7 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 | Upgrades | `Upgrade` (abstract SO), `UpgradesCollection`, `UnlockTracker`, `UnlockableUpgrade`, `SelectableUpgrade`, `ScoreStats` | Each upgrade is a ScriptableObject in `Assets/Eco/ContentDescriptions/`; level is saved in `PlayerProgress.UpgradeLevels`. Cost = `baseCost · costGrowth^level`. `needsUpgrade` gates visibility through `UnlockTracker`. |
 | Progress | `ProgressTracker`, `WorldProgressData`, `UI/ProgressDisplay`, `UI/NewWorldPopup` | Tracks clear % and green %; at 90% / 90% it raises `OnProgressThresholdReached` → new-world popup. |
 | Map | `ProgressionScreen/Map`, `MapField`, `MapInputHandler` | Unlockable minimap built from save data. |
-| Pooling | `PoolManager` (singleton), `ObjectPool<T>`, `IPooledObject` | Trash and tree prefabs. |
+| Pooling | `PoolManager` (singleton), `ObjectPool<T>`, `IPooledObject` | Scrap and tree prefabs. |
 | UI | `GameUI`, `UpgradeMenu`, `CartStorageDisplay`, `SettingsMenu`, `TutorialMenu`, `HudController`, `SceneTransition`, `ScoreGainedPopup` | UI Toolkit (`Assets/Eco/UI/*.uxml/.uss`) for HUD/menus; uGUI for the map. |
 | Localization | `LocalizationManager`, `Assets/Eco/LocTables/` | Unity Localization, locales `en` and `ru`. Tables: CartUpgrades, GameUI, Hats, HelpersUpgrades, Tutorial, … |
 | Settings | `Settings` (SO) | Detail quality, language, free-upgrades cheat; stored in `PlayerPrefs`. |
@@ -57,7 +57,7 @@ Written to `Application.persistentDataPath` with Newtonsoft.Json:
 `Assets/Eco/ContentDescriptions/`:
 
 - `Worlds/` — `WorldPreset 1..5`, `ChunkGenerationRules`
-- `Carts/`, `Hats/`, `Helpers/`, `Trees/`, `TrashUpgrades/`, `Unlocks/` — upgrade assets
+- `Carts/`, `Hats/`, `Helpers/`, `Trees/`, `ScrapUpgrades/`, `Unlocks/` — upgrade assets
 - `UpgradeCollection.asset` — tabs/groups shown in the upgrade menu
 - `TreeCatalogue.asset`, `GameSettings.asset`
 

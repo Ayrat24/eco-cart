@@ -41,7 +41,7 @@ namespace Eco.Scripts.World
             bool hasSave = HasSave;
             if (!hasSave)
             {
-                CreateTrash();
+                CreateScrap();
             }
             else
             {
@@ -63,10 +63,10 @@ namespace Eco.Scripts.World
             }
         }
 
-        private void CreateTrash()
+        private void CreateScrap()
         {
             int totalTiles = ChunkSize * ChunkSize;
-            int target = Mathf.Clamp(TrashPerChunk, 0, totalTiles);
+            int target = Mathf.Clamp(ScrapPerChunk, 0, totalTiles);
             if (target == 0) return;
 
             // Grid dimensions (cols x rows) approximating target cells
@@ -172,7 +172,7 @@ namespace Eco.Scripts.World
 
             foreach (var index in selected)
             {
-                SpawnTrashAtTile(Tiles[index], -1, false);
+                SpawnScrapAtTile(Tiles[index], -1, false);
             }
         }
 
@@ -190,13 +190,13 @@ namespace Eco.Scripts.World
                     tile.groundType = (TileGroundType)savedData.ground;
                     var tileStatus = (TileObjectType)savedData.objectType;
                     tile.objectType = tileStatus;
-                    tile.containedTrash = savedData.containedTrash;
+                    tile.containedScrap = savedData.containedScrap;
 
                     switch (tileStatus)
                     {
-                        case TileObjectType.Trash:
+                        case TileObjectType.Scrap:
                             // pass saved contained flag when spawning
-                            SpawnTrashAtTile(tile, savedData.objectId, savedData.containedTrash);
+                            SpawnScrapAtTile(tile, savedData.objectId, savedData.containedScrap);
                             break;
                         case TileObjectType.Tree:
                             _treePlanter.PlantTree(savedData.objectId, tile, this);
@@ -232,18 +232,18 @@ namespace Eco.Scripts.World
             }
         }
 
-        private void SpawnTrashAtTile(Tile tile, int id = -1, bool contained = true)
+        private void SpawnScrapAtTile(Tile tile, int id = -1, bool contained = true)
         {
             var tileWorldPosition =
                 GetTileWorldPosition(tile);
 
-            var trash = id <= 0 ? PoolManager.Instance.GetRandomTrash() : PoolManager.Instance.GetTrash(id);
-            trash.transform.parent = transform;
-            trash.transform.position = tileWorldPosition;
-            trash.Initialize(tile);
-            tile.item = trash;
-            tile.objectType = TileObjectType.Trash;
-            tile.containedTrash = contained;
+            var scrap = id <= 0 ? PoolManager.Instance.GetRandomScrap() : PoolManager.Instance.GetScrap(id);
+            scrap.transform.parent = transform;
+            scrap.transform.position = tileWorldPosition;
+            scrap.Initialize(tile);
+            tile.item = scrap;
+            tile.objectType = TileObjectType.Scrap;
+            tile.containedScrap = contained;
         }
 
         public override void OnDespawn()

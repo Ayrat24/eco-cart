@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 532caf7c28db21b469e10047ea2ecfc8, type: 3}
-  m_Name: GlassUpgrade
+  m_Name: FoodUpgrade
   m_EditorClassIdentifier: 
   baseCost:
-    coefficient: 2
+    coefficient: 1
     magnitude: 0
   costGrowth: 1.75
   needsUpgrade: 0
   showLevelInName: 1
-  upgradeId: Glass Score
+  upgradeId: trash-tab-food-score-upgrade-name
   upgradeLocalizedName:
     m_TableReference:
       m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
     m_TableEntryReference:
-      m_KeyId: 11838404161536
+      m_KeyId: 78016147456
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -32,16 +32,16 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
     m_TableEntryReference:
-      m_KeyId: 11870943571968
+      m_KeyId: 10213383991296
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 21300000, guid: 7c44f787972ad634cb5cdee36146cab1, type: 3}
-  baseScore: 2
+  icon: {fileID: 21300000, guid: a0a6a65ebbe1b6b4eb7591d520fb76a9, type: 3}
+  baseScore: 1
   scoreGrowth: 1.5
-  color: {r: 0.3921569, g: 0.5843138, b: 0.9294118, a: 1}
-  trashType: 3
+  color: {r: 1, g: 0.627451, b: 0.4784314, a: 1}
+  scrapType: 0
   references:
     version: 2
     RefIds: []

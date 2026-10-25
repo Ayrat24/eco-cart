@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Eco.Scripts.Pooling;
-using Eco.Scripts.Trash;
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
@@ -48,7 +48,7 @@ namespace Eco.Scripts.ProgressionScreen
             _pool = new ObjectPool<MapField>(field, viewportSize * viewportSize, tileParent);
 
             var builder = new DisposableBuilder();
-            TrashItem.OnItemRecycled.Subscribe(OnTrashRecycled).AddTo(ref builder);
+            ScrapItem.OnItemRecycled.Subscribe(OnScrapRecycled).AddTo(ref builder);
             worldController.TreePlanter.OnTreePlanted.Subscribe(OnTreePlanted).AddTo(ref builder);
             UnlockTracker.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
             _subscription = builder.Build();
@@ -76,7 +76,7 @@ namespace Eco.Scripts.ProgressionScreen
             map.SetActive(enable);
         }
 
-        private void OnTrashRecycled(Tile tile)
+        private void OnScrapRecycled(Tile tile)
         {
             _worldController.SaveWorld();
             UpdateVisibleFields();
