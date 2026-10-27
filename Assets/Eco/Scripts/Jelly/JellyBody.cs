@@ -71,9 +71,7 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private Vector3 rippleShape = new(2.2f, 0.25f, 2.5f);
 
         [Header("Growth")]
-        [Tooltip("Body volumes added per unit of weight inside.")]
-        [SerializeField] private float growthPerWeight = 0.15f;
-        [SerializeField] private float maxGrowth = 2f;
+        [Tooltip("Spring the body grows and shrinks on; how much it grows is set by the stomach.")]
         [SerializeField] private float growthStiffness = 60f;
         [SerializeField] private float growthDamping = 6f;
 
@@ -147,7 +145,7 @@ namespace Eco.Scripts.Jelly
         private float _jiggleEnergy;
         private float _growth = 1f;
         private float _growthVelocity;
-        private float _fillWeight;
+        private float _growthTarget = 1f;
         private float _mouthOpen;
         private int _mouthRequests;
         private float _digest;
@@ -157,6 +155,9 @@ namespace Eco.Scripts.Jelly
         public float WorldScale => baseScale * _growth;
         public float Stretch => Mathf.Max(0.2f, 1f + _squash);
         public float RestHeight => shape.Height;
+
+        /// <summary>Volume of the body at its normal size, in cubic metres.</summary>
+        public float BaseVolume => shape.Volume * baseScale * baseScale * baseScale;
         public Vector3 Velocity => _velocity;
         public Vector3 Acceleration => _acceleration;
 
@@ -257,10 +258,10 @@ namespace Eco.Scripts.Jelly
             return shape.CreateMesh();
         }
 
-        /// <summary>Sets how much weight is inside; the body grows to fit it.</summary>
-        public void SetFill(float weight)
+        /// <summary>Size to grow to, relative to normal (1). The body springs there with a little overshoot.</summary>
+        public void SetGrowth(float growth)
         {
-            _fillWeight = Mathf.Max(0f, weight);
+            _growthTarget = Mathf.Max(0.1f, growth);
         }
 
         public void SetDigesting(bool digesting)
@@ -469,8 +470,7 @@ namespace Eco.Scripts.Jelly
             _squash += _squashVelocity * dt;
 
             // Growth overshoots a little, so every swallow and every dissolve wobbles
-            float growthTarget = Mathf.Min(maxGrowth, Mathf.Pow(1f + growthPerWeight * _fillWeight, 1f / 3f));
-            float growthForce = (growthTarget - _growth) * growthStiffness - _growthVelocity * growthDamping;
+            float growthForce = (_growthTarget - _growth) * growthStiffness - _growthVelocity * growthDamping;
             _growthVelocity += growthForce * dt;
             _growth += _growthVelocity * dt;
         }

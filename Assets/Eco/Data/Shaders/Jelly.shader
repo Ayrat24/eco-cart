@@ -1,8 +1,9 @@
 // Semi-transparent jelly for the player creature and its tentacles.
 // With _JELLY_REFRACTION the scene behind is read from the camera opaque texture, bent and tinted by how much
-// jelly the view ray crosses, so swallowed items read as floating inside. Without it (no opaque texture, e.g. the
-// Mobile quality level) the surface alpha-blends instead. JellyBody switches the keyword to match the pipeline.
-// _JELLY_BODY turns on the wobble / squash / ground contact / mouth deformation driven by JellyBody.
+// jelly the view ray crosses. Without it (no opaque texture, e.g. the Mobile quality level) the surface
+// alpha-blends instead. JellyBody switches the keyword to match the pipeline.
+// _JELLY_BODY turns on the wobble / squash / ground contact / mouth deformation driven by JellyBody, and shows the
+// swallowed items JellyInsidePass draws into _JellyInsideTexture, tinted the same wherever they are.
 Shader "Eco/Jelly"
 {
     Properties
@@ -15,6 +16,7 @@ Shader "Eco/Jelly"
         _Thickness("Thickness (metres)", Float) = 2
         [Toggle(_JELLY_REFRACTION)] _RefractionOn("Refraction (needs Opaque Texture)", Float) = 1
         _Refraction("Refraction Strength", Range(0, 0.2)) = 0.04
+        _InsideMinDepth("Swallowed Items Min Tint Depth (metres)", Float) = 0.12
 
         [Header(Lighting)]
         _Wrap("Diffuse Wrap", Range(0, 1)) = 0.6
@@ -99,6 +101,12 @@ Shader "Eco/Jelly"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareOpaqueTexture.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 
+            // Set by JellyInsidePass
+            TEXTURE2D(_JellyInsideTexture);
+            SAMPLER(sampler_JellyInsideTexture);
+            TEXTURE2D_FLOAT(_JellyInsideDepth);
+            SAMPLER(sampler_JellyInsideDepth);
+
             struct Attributes
             {
                 float4 positionOS : POSITION;
@@ -177,9 +185,9 @@ Shader "Eco/Jelly"
 
                 float3 color;
                 float alpha;
-            #if defined(_JELLY_REFRACTION)
                 float2 screenUV = GetNormalizedScreenSpaceUV(input.positionCS);
                 float fragmentDepth = -TransformWorldToView(input.positionWS).z;
+            #if defined(_JELLY_REFRACTION)
                 float2 uv = screenUV + TransformWorldToViewDir(n).xy * (_Refraction * (1.0 - fresnel));
                 float sceneDepth = LinearEyeDepth(SampleSceneDepth(uv), _ZBufferParams);
                 if (sceneDepth < fragmentDepth)
@@ -195,9 +203,28 @@ Shader "Eco/Jelly"
                 color = SampleSceneColor(uv) * transmittance + scatter * (1.0 - transmittance);
                 alpha = 1.0;
             #else
+                float2 uv = screenUV;
                 float3 transmittance = exp(-absorb * viewThickness);
                 color = scatter;
                 alpha = max(_MinAlpha, 1.0 - dot(transmittance, 1.0 / 3.0));
+            #endif
+
+            #if defined(_JELLY_BODY)
+                // Swallowed items, drawn on their own by JellyInsidePass (premultiplied colour, alpha = coverage), so
+                // transparent ones show too and nothing outside the body is drawn. They are tinted by the jelly in
+                // front of them; parts poking out through the surface get the thinnest tint rather than none
+                float4 inside = SAMPLE_TEXTURE2D(_JellyInsideTexture, sampler_JellyInsideTexture, uv);
+                float insideDepth = LinearEyeDepth(
+                    SAMPLE_TEXTURE2D(_JellyInsideDepth, sampler_JellyInsideDepth, uv).r, _ZBufferParams);
+                float itemThickness = clamp(insideDepth - fragmentDepth, _InsideMinDepth,
+                    max(viewThickness, _InsideMinDepth));
+                float3 itemTransmittance = exp(-absorb * itemThickness);
+                float3 items = inside.rgb * itemTransmittance + scatter * ((1.0 - itemTransmittance) * inside.a);
+
+                // Items over whatever the jelly shows behind them
+                float combinedAlpha = inside.a + alpha * (1.0 - inside.a);
+                color = (items + color * (alpha * (1.0 - inside.a))) / max(combinedAlpha, 1e-4);
+                alpha = combinedAlpha;
             #endif
 
                 float3 surface = specular + reflection * (_ReflectStrength * (0.04 + 0.96 * fresnel))

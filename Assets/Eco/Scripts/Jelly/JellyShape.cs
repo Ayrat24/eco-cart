@@ -35,6 +35,9 @@ namespace Eco.Scripts.Jelly
         public float Height { get; private set; }
         public float MaxRadius { get; private set; }
 
+        /// <summary>Enclosed volume at unit scale, ignoring the base lumps.</summary>
+        public float Volume { get; private set; }
+
         /// <summary>Resamples the profile into evenly spaced rings. Call before anything else.</summary>
         public void Build()
         {
@@ -81,6 +84,15 @@ namespace Eco.Scripts.Jelly
 
             _ringNormal[0] = Vector2.down;
             _ringNormal[rings - 1] = Vector2.up;
+
+            // Stack of conical slices between neighbouring rings; slices under an overhang count negative
+            Volume = 0f;
+            for (int i = 0; i < rings - 1; i++)
+            {
+                float r0 = _ringRadius[i];
+                float r1 = _ringRadius[i + 1];
+                Volume += Mathf.PI / 3f * (_ringHeight[i + 1] - _ringHeight[i]) * (r0 * r0 + r0 * r1 + r1 * r1);
+            }
         }
 
         /// <summary>

@@ -10,6 +10,8 @@ namespace Eco.Scripts.ItemCollecting
         void Recycle();
         UniTask RecycleAsync();
         void Dissolve();
+        // Moves the item's renderers to a layer until it next spawns from its pool
+        void SetRendererLayer(int layer);
         void SetInCartState(bool inCart);
         void MakeKinematic(bool isKinematic);
         bool IsBeingPickedUp { get; set; }

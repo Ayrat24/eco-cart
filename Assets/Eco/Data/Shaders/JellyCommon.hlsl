@@ -10,6 +10,7 @@ CBUFFER_START(UnityPerMaterial)
     float _MinAlpha;
     float _Thickness;
     float _Refraction;
+    float _InsideMinDepth;
 
     float _Wrap;
     float _SpecPower;

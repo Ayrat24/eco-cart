@@ -24,6 +24,8 @@ namespace Eco.Scripts.Scrap
         private bool _isCollected;
         private Tile _tile;
         private bool _isBeingPickedUp;
+        private Renderer[] _renderers;
+        private int[] _rendererLayers;
 
         public ScrapType ScrapType => scrapType;
         public static readonly Subject<Tile> OnItemRecycled = new();
@@ -178,6 +180,37 @@ namespace Eco.Scripts.Scrap
             }
         }
 
+        public void SetRendererLayer(int layer)
+        {
+            if (_renderers == null)
+            {
+                _renderers = GetComponentsInChildren<Renderer>(true);
+                _rendererLayers = new int[_renderers.Length];
+                for (int i = 0; i < _renderers.Length; i++)
+                {
+                    _rendererLayers[i] = _renderers[i].gameObject.layer;
+                }
+            }
+
+            foreach (var itemRenderer in _renderers)
+            {
+                itemRenderer.gameObject.layer = layer;
+            }
+        }
+
+        private void RestoreRendererLayers()
+        {
+            if (_renderers == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _renderers.Length; i++)
+            {
+                _renderers[i].gameObject.layer = _rendererLayers[i];
+            }
+        }
+
         public void SetInCartState(bool inCart)
         {
             ChangeState(inCart);
@@ -225,6 +258,7 @@ namespace Eco.Scripts.Scrap
             transform.localScale = Vector3.one;
             ChangeState(false);
             MakeKinematic(false);
+            RestoreRendererLayers();
 
             _isBeingPickedUp = false;
             _isCollected = false;

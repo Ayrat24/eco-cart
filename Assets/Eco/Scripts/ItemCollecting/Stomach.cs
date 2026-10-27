@@ -13,38 +13,19 @@ namespace Eco.Scripts.ItemCollecting
 {
     /// <summary>
     /// The jelly's belly, which took over from the cart. A tentacle reserves room for an item as it reaches for it
-    /// and then pushes it in through the mouth; inside, items float in the goo and the body grows to fit them.
-    /// Recycling dissolves them one by one and the body shrinks back.
+    /// and then pushes it in through the mouth; inside, items float in the goo and the body grows by their size.
+    /// Recycling dissolves them one by one and the body shrinks back. Tuning is in <see cref="StomachSettings"/>.
+    /// The stomach's capacity is weight from the upgrades and doesn't depend on size.
     /// Lives on a child of the creature root with an identity local pose; swallowed items are parented to it.
     /// </summary>
     [DefaultExecutionOrder(105)]
     public class Stomach : MonoBehaviour
     {
         [SerializeField] private JellyBody body;
+        [SerializeField] private StomachSettings settings;
 
-        [Header("Swallowing")]
-        [Tooltip("Swallowed items shrink to this share of their size...")]
-        [SerializeField, Range(0.1f, 1f)] private float itemScale = 0.6f;
-        [Tooltip("...and to at most this size, in metres.")]
-        [SerializeField] private float maxItemSize = 0.7f;
-        [SerializeField] private float entrySpeed = 1.5f;
-
-        [Header("Floating")]
-        [Tooltip("Centre of the space items float in, as a share of the body height.")]
-        [SerializeField, Range(0f, 1f)] private float cavityHeight = 0.42f;
-        [Tooltip("Size of that space: x/z as a share of the body radius there, y as a share of the body height.")]
-        [SerializeField] private Vector3 cavitySize = new(0.72f, 0.3f, 0.72f);
-        [Tooltip("Net pull down through the goo, m/s².")]
-        [SerializeField] private float sinking = 0.8f;
-        [Tooltip("Share of velocity lost per second.")]
-        [SerializeField] private float viscosity = 3f;
-        [SerializeField] private float wallStiffness = 40f;
-        [SerializeField] private float separationStiffness = 25f;
-        [Tooltip("Share of the body's acceleration items feel, so they slosh when it starts and stops.")]
-        [SerializeField] private float slosh = 0.5f;
-        [SerializeField] private float drift = 0.4f;
-        [Tooltip("Degrees per second items tumble at.")]
-        [SerializeField] private float tumble = 40f;
+        // Swallowed items move to this layer: the renderers draw it only inside the jelly (JellyInsideFeature)
+        private const string SwallowedLayerName = "Swallowed Item";
 
         private const float MaxSpeed = 4f;
 
@@ -53,6 +34,7 @@ namespace Eco.Scripts.ItemCollecting
         private readonly List<Vector3> _forces = new();
 
         private bool _isEmptying;
+        private int _swallowedLayer;
         private CancellationTokenSource _cancellationTokenSource;
         private ItemRecycler _itemRecycler;
         private ItemCollector _itemCollector;
@@ -91,6 +73,7 @@ namespace Eco.Scripts.ItemCollecting
             public Vector3 Velocity;
             public Vector3 SpinAxis;
             public float Radius;
+            public float Volume;
             public float Seed;
             public bool Dissolving;
         }
@@ -99,6 +82,12 @@ namespace Eco.Scripts.ItemCollecting
         {
             _itemRecycler = recycler;
             _itemCollector = itemCollector;
+
+            _swallowedLayer = LayerMask.NameToLayer(SwallowedLayerName);
+            if (_swallowedLayer < 0)
+            {
+                Debug.LogError($"Layer '{SwallowedLayerName}' is missing: swallowed items will draw outside the jelly.");
+            }
         }
 
         public void SetStats(CartBuyUpgrade.CartData stats)
@@ -144,14 +133,9 @@ namespace Eco.Scripts.ItemCollecting
         /// <summary>Uniform local scale the item should be squeezed to by the time it goes through the mouth.</summary>
         public float GetSwallowedScale(ICartItem item)
         {
-            if (item is not Component component)
-            {
-                return itemScale;
-            }
-
-            float scale = component.transform.localScale.x;
-            float size = MaxComponent(GetBounds(component).size);
-            return size > 0f ? scale * Mathf.Min(itemScale, maxItemSize / size) : scale * itemScale;
+            return item is Component component
+                ? component.transform.localScale.x * settings.ItemScale
+                : settings.ItemScale;
         }
 
         /// <summary>Takes an item that a tentacle pushed through the mouth; it floats inside from now on.</summary>
@@ -163,18 +147,24 @@ namespace Eco.Scripts.ItemCollecting
             }
 
             item.OnPickUp(transform);
+            if (_swallowedLayer >= 0)
+            {
+                item.SetRendererLayer(_swallowedLayer);
+            }
 
             _floating.Add(new FloatingItem
             {
                 Item = item,
                 Transform = component.transform,
-                Velocity = transform.InverseTransformDirection(-body.MouthNormal + Vector3.down * 0.3f) * entrySpeed,
+                Velocity = transform.InverseTransformDirection(-body.MouthNormal + Vector3.down * 0.3f) *
+                           settings.EntrySpeed,
                 SpinAxis = Random.onUnitSphere,
                 Radius = MaxComponent(GetBounds(component).extents) * 0.8f,
+                Volume = GetVolume(component),
                 Seed = Random.Range(0f, 100f)
             });
 
-            body.SetFill(SwallowedWeight());
+            UpdateGrowth();
             body.Poke(body.MouthPosition, 0.05f);
             body.Squash(-0.6f);
         }
@@ -225,14 +215,14 @@ namespace Eco.Scripts.ItemCollecting
                 }
             }
 
-            body.SetFill(SwallowedWeight());
+            UpdateGrowth();
             OnItemRemoved.OnNext(item);
         }
 
         private void ClearItems()
         {
             _items.Clear();
-            body.SetFill(0f);
+            body.SetGrowth(1f);
 
             OnItemRemoved.OnNext(null);
             OnStatusChanged.OnNext(StomachState.Empty);
@@ -253,18 +243,20 @@ namespace Eco.Scripts.ItemCollecting
             return IsFull ? StomachState.Full : StomachState.HasItems;
         }
 
-        private int SwallowedWeight()
+        // The body takes on volume for every item inside: growth in size is the cube root of that
+        private void UpdateGrowth()
         {
-            int weight = 0;
+            float volume = 0f;
             foreach (var floating in _floating)
             {
                 if (!floating.Dissolving)
                 {
-                    weight += floating.Item.GetWeight();
+                    volume += floating.Volume;
                 }
             }
 
-            return weight;
+            float growth = Mathf.Pow(1f + settings.GrowthPerItemVolume * volume / body.BaseVolume, 1f / 3f);
+            body.SetGrowth(Mathf.Min(settings.MaxGrowth, growth));
         }
 
         private void LateUpdate()
@@ -279,6 +271,8 @@ namespace Eco.Scripts.ItemCollecting
                 }
             }
 
+            JellyInsideFeature.IsEmpty = _floating.Count == 0;
+
             float dt = Mathf.Min(Time.deltaTime, 1f / 30f);
             if (_floating.Count == 0 || dt <= 0f)
             {
@@ -289,12 +283,16 @@ namespace Eco.Scripts.ItemCollecting
 
             float scale = body.WorldScale;
             float stretch = body.Stretch;
+            float cavityHeight = settings.CavityHeight;
+            var cavitySize = settings.CavitySize;
             var center = body.RestToParent(new Vector3(0f, cavityHeight * body.RestHeight, 0f));
             float radius = body.RestRadiusAt(cavityHeight) * scale / Mathf.Sqrt(stretch);
             var radii = new Vector3(radius * cavitySize.x, body.RestHeight * scale * stretch * cavitySize.y,
                 radius * cavitySize.z);
 
-            var push = new Vector3(0f, -sinking, 0f) - transform.InverseTransformDirection(body.Acceleration) * slosh;
+            var push = new Vector3(0f, -settings.Sinking, 0f) -
+                       transform.InverseTransformDirection(body.Acceleration) * settings.Slosh;
+            float drift = settings.Drift;
             float time = Time.timeSinceLevelLoad * 0.5f;
 
             _forces.Clear();
@@ -313,7 +311,7 @@ namespace Eco.Scripts.ItemCollecting
                 if (outside > 0f)
                 {
                     var wallNormal = new Vector3(scaled.x / inner.x, scaled.y / inner.y, scaled.z / inner.z).normalized;
-                    force -= wallNormal * (outside * Mathf.Min(inner.x, Mathf.Min(inner.y, inner.z)) * wallStiffness);
+                    force -= wallNormal * (outside * Mathf.Min(inner.x, Mathf.Min(inner.y, inner.z)) * settings.WallStiffness);
                     float outward = Vector3.Dot(item.Velocity, wallNormal);
                     if (outward > 0f)
                     {
@@ -348,13 +346,13 @@ namespace Eco.Scripts.ItemCollecting
                     }
 
                     var direction = distance > 1e-4f ? delta / distance : Random.onUnitSphere;
-                    var separation = direction * ((minDistance - distance) * separationStiffness);
+                    var separation = direction * ((minDistance - distance) * settings.SeparationStiffness);
                     _forces[i] -= separation;
                     _forces[j] += separation;
                 }
             }
 
-            float damping = Mathf.Exp(-viscosity * dt);
+            float damping = Mathf.Exp(-settings.Viscosity * dt);
             for (int i = 0; i < _floating.Count; i++)
             {
                 var item = _floating[i];
@@ -362,7 +360,8 @@ namespace Eco.Scripts.ItemCollecting
                 item.Transform.localPosition += item.Velocity * dt;
 
                 item.SpinAxis = (item.SpinAxis + Random.insideUnitSphere * dt).normalized;
-                item.Transform.localRotation = Quaternion.AngleAxis(tumble * dt, item.SpinAxis) * item.Transform.localRotation;
+                item.Transform.localRotation =
+                    Quaternion.AngleAxis(settings.Tumble * dt, item.SpinAxis) * item.Transform.localRotation;
             }
         }
 
@@ -391,6 +390,24 @@ namespace Eco.Scripts.ItemCollecting
             return bounds;
         }
 
+        // Bounding box volume at the item's current size, whichever way it is turned
+        private static float GetVolume(Component component)
+        {
+            float volume = 0f;
+            foreach (var renderer in component.GetComponentsInChildren<Renderer>())
+            {
+                if (renderer is ParticleSystemRenderer or TrailRenderer)
+                {
+                    continue;
+                }
+
+                var size = Vector3.Scale(renderer.localBounds.size, renderer.transform.lossyScale);
+                volume += Mathf.Abs(size.x * size.y * size.z);
+            }
+
+            return volume;
+        }
+
         private static float MaxComponent(Vector3 v)
         {
             return Mathf.Max(v.x, Mathf.Max(v.y, v.z));
@@ -398,6 +415,7 @@ namespace Eco.Scripts.ItemCollecting
 
         private void OnDestroy()
         {
+            JellyInsideFeature.IsEmpty = true;
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;

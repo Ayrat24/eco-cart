@@ -485,9 +485,9 @@ MonoBehaviour:
   tip: {fileID: 300152628}
   sides: 12
   segments: 18
-  rootRadius: 0.16
-  midRadius: 0.075
-  tipRadius: 0.11
+  rootRadius: 0.26
+  midRadius: 0.12
+  tipRadius: 0.17
   embedDepth: 0.2
   swayAmplitude: 0.06
   swaySpeed: 5
@@ -2046,18 +2046,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.ItemCollecting.Stomach
   body: {fileID: 1359656892}
-  itemScale: 0.6
-  maxItemSize: 0.7
-  entrySpeed: 1.5
-  cavityHeight: 0.42
-  cavitySize: {x: 0.72, y: 0.3, z: 0.72}
-  sinking: 0.8
-  viscosity: 3
-  wallStiffness: 40
-  separationStiffness: 25
-  slosh: 0.5
-  drift: 0.4
-  tumble: 40
+  settings: {fileID: 11400000, guid: 07d7303300af338419f8f855adbec403, type: 2}
 --- !u!1 &1170024281
 GameObject:
   m_ObjectHideFlags: 0
@@ -2394,9 +2383,9 @@ MonoBehaviour:
   tip: {fileID: 1242998707}
   sides: 12
   segments: 18
-  rootRadius: 0.16
-  midRadius: 0.075
-  tipRadius: 0.11
+  rootRadius: 0.26
+  midRadius: 0.12
+  tipRadius: 0.17
   embedDepth: 0.2
   swayAmplitude: 0.06
   swaySpeed: 5
@@ -2595,10 +2584,14 @@ MonoBehaviour:
     maxAngle: 180
   anchorStep: 0.12
   anchorSpacing: 0.45
-  mouthClearance: 0.45
+  mouthHandClearance: 40
   mouthHeight: 0.58
   mouthShape: {x: 0.32, y: 0.13, z: 0.22, w: 0.25}
   mouthOpenSpeed: 7
+  mouthFacesCamera: 1
+  mouthCameraLeeway: 35
+  mouthCameraOffset: 0
+  mouthTurnSpeed: 270
   leanStiffness: 55
   leanDamping: 5
   leanInertia: 0.035
@@ -2613,8 +2606,6 @@ MonoBehaviour:
   jiggle: {x: 0.006, y: 2.5, z: 1.5}
   jiggleDecay: 3
   rippleShape: {x: 2.2, y: 0.25, z: 2.5}
-  growthPerWeight: 0.15
-  maxGrowth: 2
   growthStiffness: 60
   growthDamping: 6
   sink: 0.05
@@ -3072,9 +3063,9 @@ MonoBehaviour:
   tip: {fileID: 1786035298}
   sides: 12
   segments: 18
-  rootRadius: 0.16
-  midRadius: 0.075
-  tipRadius: 0.11
+  rootRadius: 0.26
+  midRadius: 0.12
+  tipRadius: 0.17
   embedDepth: 0.2
   swayAmplitude: 0.06
   swaySpeed: 5
@@ -3642,9 +3633,9 @@ MonoBehaviour:
   tip: {fileID: 849247568}
   sides: 12
   segments: 18
-  rootRadius: 0.16
-  midRadius: 0.075
-  tipRadius: 0.11
+  rootRadius: 0.26
+  midRadius: 0.12
+  tipRadius: 0.17
   embedDepth: 0.2
   swayAmplitude: 0.06
   swaySpeed: 5

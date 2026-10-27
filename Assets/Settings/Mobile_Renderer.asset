@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &-3990988841038231500
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -43,17 +43,20 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: -3990988841038231500}
-  m_RendererFeatureMap: 34485e53cb289dc8
-  m_UseNativeRenderPass: 1
+  - {fileID: 608377708618362088}
+  m_RendererFeatureMap: 34485e53cb289dc8e8ac767b4d647108
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
-  m_AssetVersion: 2
+  m_AssetVersion: 3
+  m_PrepassLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294959103
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294959103
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -69,3 +72,21 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+  m_TileOnlyMode: 0
+--- !u!114 &608377708618362088
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2acc137c34dd4944496516b2916731c3, type: 3}
+  m_Name: JellyInsideFeature
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.JellyInsideFeature
+  m_Active: 1
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8192
+  resolutionScale: 1

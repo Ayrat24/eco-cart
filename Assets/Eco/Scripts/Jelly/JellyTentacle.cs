@@ -17,9 +17,10 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private Transform tip;
         [SerializeField, Range(4, 24)] private int sides = 12;
         [SerializeField, Range(4, 48)] private int segments = 18;
-        [SerializeField] private float rootRadius = 0.16f;
-        [SerializeField] private float midRadius = 0.075f;
-        [SerializeField] private float tipRadius = 0.11f;
+        [Tooltip("Radii at the body's base size, in metres; they grow and shrink with the body.")]
+        [SerializeField] private float rootRadius = 0.26f;
+        [SerializeField] private float midRadius = 0.12f;
+        [SerializeField] private float tipRadius = 0.17f;
         [Tooltip("How deep inside the body the tentacle starts, so it grows out of the surface.")]
         [SerializeField] private float embedDepth = 0.2f;
         [SerializeField] private float swayAmplitude = 0.06f;
@@ -149,7 +150,7 @@ namespace Eco.Scripts.Jelly
 
         private void BuildTube()
         {
-            float thickness = Mathf.Sqrt(_body.Growth) * Mathf.SmoothStep(0f, 1f, Visibility);
+            float thickness = _body.Growth * Mathf.SmoothStep(0f, 1f, Visibility);
 
             var tangent = (_centerline[1] - _centerline[0]).normalized;
             var frameNormal = Vector3.Cross(tangent, Vector3.up);
