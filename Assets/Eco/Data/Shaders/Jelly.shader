@@ -40,7 +40,8 @@ Shader "Eco/Jelly"
         _Jiggle("Jiggle (amplitude, speed, frequency)", Vector) = (0.01, 2.5, 1.5, 0)
 
         [Header(Mouth)]
-        _MouthCenter("Mouth Centre (xyz rest position, w open)", Vector) = (0, 0.9, 0.8, 0)
+        _MouthCenter("Mouth Centre (xyz rest position turned to the front, w open)", Vector) = (0, 0.9, 0.8, 0)
+        [HideInInspector] _MouthRotation("Mouth Rotation (sin, cos of its angle)", Vector) = (0, 1, 0, 0)
         _MouthShape("Mouth Shape (half width, half height, depth, smile)", Vector) = (0.3, 0.12, 0.25, 0.25)
         _MouthLine("Closed Mouth Line", Range(0, 1)) = 0.3
         _MouthColor("Mouth Colour", Color) = (0.02, 0.12, 0.12, 0.9)
@@ -210,8 +211,7 @@ Shader "Eco/Jelly"
                 float2 mouthUV = JellyMouthUV(input.restOS.xyz);
                 float mouthHeight = lerp(_MouthLine, 1.0, _MouthCenter.w);
                 float mouthShape = mouthUV.x * mouthUV.x + (mouthUV.y * mouthUV.y) / (mouthHeight * mouthHeight);
-                float mouth = (1.0 - smoothstep(0.65, 1.0, mouthShape))
-                    * saturate((input.restOS.z - _MouthCenter.z * 0.5) * 8.0) * _MouthColor.a;
+                float mouth = (1.0 - smoothstep(0.65, 1.0, mouthShape)) * JellyMouthSide(input.restOS.xyz) * _MouthColor.a;
                 color = lerp(color, _MouthColor.rgb * (ambient + lightColor * 0.3), mouth);
                 alpha = max(alpha, mouth);
 

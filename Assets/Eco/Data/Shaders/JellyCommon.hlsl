@@ -32,6 +32,7 @@ CBUFFER_START(UnityPerMaterial)
     float4 _Jiggle;
 
     float4 _MouthCenter;
+    float4 _MouthRotation;
     float4 _MouthShape;
     float _MouthLine;
     float4 _MouthColor;
@@ -51,17 +52,32 @@ CBUFFER_END
 // Eco.Scripts.Jelly.JellyDeformation mirrors everything here except the jiggle and ripples, so hands and the
 // mouth can be placed on the deformed surface from C#. Keep the two in sync.
 
+// The mouth slides around the body. _MouthRotation holds the sin and cos of its angle around y; turning a rest
+// position by it puts the mouth in front (+z), where _MouthCenter.xyz describes it.
+float3 JellyToMouthSpace(float3 rest)
+{
+    float s = _MouthRotation.x;
+    float c = _MouthRotation.y;
+    return float3(rest.x * c - rest.z * s, rest.y, rest.z * c + rest.x * s);
+}
+
 float2 JellyMouthUV(float3 rest)
 {
-    float2 uv = (rest.xy - _MouthCenter.xy) / _MouthShape.xy;
+    float2 uv = (JellyToMouthSpace(rest).xy - _MouthCenter.xy) / _MouthShape.xy;
     uv.y -= _MouthShape.w * uv.x * uv.x;
     return uv;
+}
+
+// 1 on the mouth's side of the body, 0 on the far side
+float JellyMouthSide(float3 rest)
+{
+    return saturate((JellyToMouthSpace(rest).z - _MouthCenter.z * 0.5) * 8.0);
 }
 
 float JellyMouthMask(float3 rest)
 {
     float2 uv = JellyMouthUV(rest);
-    return saturate(1.0 - dot(uv, uv)) * saturate((rest.z - _MouthCenter.z * 0.5) * 8.0);
+    return saturate(1.0 - dot(uv, uv)) * JellyMouthSide(rest);
 }
 
 float JellyRipple(float3 rest, float4 ripple, float amplitude)

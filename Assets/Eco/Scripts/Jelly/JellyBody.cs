@@ -30,14 +30,23 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private float anchorStep = 0.12f;
         [Tooltip("Tentacles growing at the same time keep at least this far apart, at unit body scale.")]
         [SerializeField] private float anchorSpacing = 0.45f;
-        [Tooltip("No tentacles this close to the mouth, at unit body scale.")]
-        [SerializeField] private float mouthClearance = 0.45f;
+        [Tooltip("No new tentacles within this many degrees either side of the mouth, at any height.")]
+        [SerializeField, Range(0f, 180f)] private float mouthHandClearance = 40f;
 
         [Header("Mouth")]
         [SerializeField, Range(0f, 1f)] private float mouthHeight = 0.58f;
         [Tooltip("Half width, half height, how deep the lips sink when open, smile curve. Unit body scale.")]
         [SerializeField] private Vector4 mouthShape = new(0.32f, 0.13f, 0.22f, 0.25f);
         [SerializeField] private float mouthOpenSpeed = 7f;
+        [Tooltip("Slide the mouth around the body toward the camera so it stays in view. Off: it stays at the front.")]
+        [SerializeField] private bool mouthFacesCamera = true;
+        [Tooltip("Degrees the mouth may stray from straight at the camera; within that it leans toward the front " +
+                 "(the direction of travel). 0 = always dead on the camera; above ~60 it starts to turn out of view.")]
+        [SerializeField, Range(0f, 90f)] private float mouthCameraLeeway = 35f;
+        [Tooltip("Shifts the camera-facing spot around the body, in degrees (positive = the creature's right).")]
+        [SerializeField, Range(-90f, 90f)] private float mouthCameraOffset;
+        [Tooltip("Degrees per second the mouth slides around the body.")]
+        [SerializeField] private float mouthTurnSpeed = 270f;
 
         [Header("Wobble")]
         [SerializeField] private float leanStiffness = 55f;
@@ -98,6 +107,7 @@ namespace Eco.Scripts.Jelly
         private static readonly int GroundSpreadId = Shader.PropertyToID("_GroundSpread");
         private static readonly int JiggleId = Shader.PropertyToID("_Jiggle");
         private static readonly int MouthCenterId = Shader.PropertyToID("_MouthCenter");
+        private static readonly int MouthRotationId = Shader.PropertyToID("_MouthRotation");
         private static readonly int MouthShapeId = Shader.PropertyToID("_MouthShape");
         private static readonly int RippleAmpId = Shader.PropertyToID("_RippleAmp");
         private static readonly int RippleShapeId = Shader.PropertyToID("_RippleShape");
@@ -118,8 +128,11 @@ namespace Eco.Scripts.Jelly
         private Material _material;
         private bool _refraction;
         private JellyDeformParams _deform;
-        private Vector3 _mouthRest;
-        private Vector3 _mouthRestNormal;
+        private Camera _camera;
+        private Vector3 _mouthFront;
+        private float _mouthProfile;
+        private float _mouthAngle;
+        private bool _mouthPlaced;
 
         private Vector3 _lastPosition;
         private Vector3 _velocity;
@@ -171,7 +184,8 @@ namespace Eco.Scripts.Jelly
             _material.EnableKeyword(BodyKeyword);
             _refraction = _material.IsKeywordEnabled(RefractionKeyword);
 
-            shape.Evaluate(0f, shape.HeightToProfile(mouthHeight), out _mouthRest, out _mouthRestNormal, out _);
+            _mouthProfile = shape.HeightToProfile(mouthHeight);
+            shape.Evaluate(0f, _mouthProfile, out _mouthFront, out _, out _);
             BuildAnchorCandidates();
 
             for (int i = 0; i < RippleCount; i++)
@@ -225,6 +239,7 @@ namespace Eco.Scripts.Jelly
 
             transform.localScale = Vector3.one * WorldScale;
 
+            UpdateMouthAngle(deltaTime);
             UpdateDeformParams();
             UpdateMouthPose();
             UpdateRefraction();
@@ -292,7 +307,7 @@ namespace Eco.Scripts.Jelly
             for (int i = 0; i < _candidates.Count; i++)
             {
                 var candidate = _candidates[i];
-                if (IsNearTakenAnchor(candidate.Position))
+                if (IsNearTakenAnchor(candidate.Position) || IsInMouthStrip(candidate.Angle))
                 {
                     continue;
                 }
@@ -355,6 +370,12 @@ namespace Eco.Scripts.Jelly
             normal = transform.TransformDirection(localNormal).normalized;
         }
 
+        // The vertical strip of the body the mouth is on
+        private bool IsInMouthStrip(float angle)
+        {
+            return Mathf.Abs(Mathf.DeltaAngle(angle * Mathf.Rad2Deg, _mouthAngle)) < mouthHandClearance;
+        }
+
         private bool IsNearTakenAnchor(Vector3 restPosition)
         {
             foreach (int index in _takenAnchors)
@@ -388,11 +409,6 @@ namespace Eco.Scripts.Jelly
                     }
 
                     shape.Evaluate(angle, profileT, out var position, out var normal, out _);
-                    if ((position - _mouthRest).sqrMagnitude < mouthClearance * mouthClearance)
-                    {
-                        continue;
-                    }
-
                     _candidates.Add(new AnchorCandidate
                         { Angle = angle, ProfileT = profileT, Position = position, Normal = normal });
                 }
@@ -466,18 +482,90 @@ namespace Eco.Scripts.Jelly
             _deform.Squash = _squash;
             _deform.Sink = sink;
             _deform.GroundSpread = groundSpread;
-            _deform.MouthCenter = _mouthRest;
+            _deform.MouthCenter = _mouthFront;
+            _deform.MouthAngle = _mouthAngle * Mathf.Deg2Rad;
             _deform.MouthOpen = Smooth(_mouthOpen);
             _deform.MouthShape = mouthShape;
         }
 
         private void UpdateMouthPose()
         {
-            var tangent = new Vector3(1f, 0f, 0f);
-            JellyDeformation.DeformSurface(_mouthRest, _mouthRestNormal, tangent, _deform, out var local,
-                out var localNormal);
-            MouthPosition = transform.TransformPoint(local);
-            MouthNormal = transform.TransformDirection(localNormal).normalized;
+            GetSurfacePose(_mouthAngle * Mathf.Deg2Rad, _mouthProfile, out var position, out var normal);
+            MouthPosition = position;
+            MouthNormal = normal;
+        }
+
+        private void UpdateMouthAngle(float deltaTime)
+        {
+            float target = 0f;
+            if (mouthFacesCamera && TryGetCameraAngle(out float cameraAngle))
+            {
+                // As close to the front as the leeway allows. With the front out of reach and the camera nearly
+                // straight behind, keep to the side the mouth is already on so it doesn't flip across
+                float toFront = Mathf.DeltaAngle(cameraAngle, 0f);
+                float offset = Mathf.Abs(toFront) <= mouthCameraLeeway
+                    ? toFront
+                    : Mathf.Sign(Mathf.Abs(toFront) > 150f ? Mathf.DeltaAngle(cameraAngle, _mouthAngle) : toFront)
+                      * mouthCameraLeeway;
+                target = AvoidTakenAnchors(cameraAngle + offset, cameraAngle);
+            }
+
+            _mouthAngle = _mouthPlaced
+                ? Mathf.MoveTowardsAngle(_mouthAngle, target, mouthTurnSpeed * deltaTime)
+                : target;
+            _mouthPlaced = true;
+        }
+
+        // Angle of the camera around the body, in degrees (0 = front)
+        private bool TryGetCameraAngle(out float angle)
+        {
+            if (_camera == null || !_camera.isActiveAndEnabled)
+            {
+                _camera = Camera.main;
+            }
+
+            angle = 0f;
+            if (_camera == null)
+            {
+                return false;
+            }
+
+            var toCamera = transform.InverseTransformDirection(_camera.transform.position - transform.position);
+            if (toCamera.x * toCamera.x + toCamera.z * toCamera.z < 1e-6f)
+            {
+                return false;
+            }
+
+            angle = Mathf.Atan2(toCamera.x, toCamera.z) * Mathf.Rad2Deg + mouthCameraOffset;
+            return true;
+        }
+
+        // Moves the mouth off tentacles that are already out (the spade's, say), as long as it stays in the leeway
+        private float AvoidTakenAnchors(float target, float cameraAngle)
+        {
+            foreach (int index in _takenAnchors)
+            {
+                float anchorAngle = _candidates[index].Angle * Mathf.Rad2Deg;
+                float offset = Mathf.DeltaAngle(anchorAngle, target);
+                if (Mathf.Abs(offset) >= mouthHandClearance)
+                {
+                    continue;
+                }
+
+                float side = offset >= 0f ? 1f : -1f;
+                float nearSide = anchorAngle + side * mouthHandClearance;
+                float farSide = anchorAngle - side * mouthHandClearance;
+                if (Mathf.Abs(Mathf.DeltaAngle(cameraAngle, nearSide)) <= mouthCameraLeeway)
+                {
+                    target = nearSide;
+                }
+                else if (Mathf.Abs(Mathf.DeltaAngle(cameraAngle, farSide)) <= mouthCameraLeeway)
+                {
+                    target = farSide;
+                }
+            }
+
+            return target;
         }
 
         private void UpdateRefraction()
@@ -511,7 +599,9 @@ namespace Eco.Scripts.Jelly
             _material.SetFloat(SinkId, sink);
             _material.SetFloat(GroundSpreadId, groundSpread);
             _material.SetVector(JiggleId, new Vector4(jiggleAmplitude, jiggle.y, jiggle.z, 0f));
-            _material.SetVector(MouthCenterId, new Vector4(_mouthRest.x, _mouthRest.y, _mouthRest.z, _deform.MouthOpen));
+            _material.SetVector(MouthCenterId, new Vector4(_mouthFront.x, _mouthFront.y, _mouthFront.z, _deform.MouthOpen));
+            _material.SetVector(MouthRotationId,
+                new Vector4(Mathf.Sin(_deform.MouthAngle), Mathf.Cos(_deform.MouthAngle), 0f, 0f));
             _material.SetFloat(DigestId, _digest);
             _material.SetVector(RippleAmpId, _rippleAmplitudes);
             for (int i = 0; i < RippleCount; i++)
@@ -550,24 +640,28 @@ namespace Eco.Scripts.Jelly
             if (!Application.isPlaying)
             {
                 shape.Build();
-                shape.Evaluate(0f, shape.HeightToProfile(mouthHeight), out _mouthRest, out _mouthRestNormal, out _);
+                _mouthProfile = shape.HeightToProfile(mouthHeight);
+                shape.Evaluate(0f, _mouthProfile, out _mouthFront, out _, out _);
                 BuildAnchorCandidates();
             }
 
-            Gizmos.color = new Color(0.3f, 1f, 0.6f, 0.8f);
+            // Spots tentacles can grow from; grey ones are in the mouth's strip right now
             float size = 0.025f * (Application.isPlaying ? WorldScale : baseScale);
             foreach (var candidate in _candidates)
             {
                 var position = Application.isPlaying
                     ? transform.TransformPoint(candidate.Position)
                     : transform.position + transform.rotation * (candidate.Position * baseScale);
+                Gizmos.color = IsInMouthStrip(candidate.Angle)
+                    ? new Color(0.5f, 0.5f, 0.5f, 0.6f)
+                    : new Color(0.3f, 1f, 0.6f, 0.8f);
                 Gizmos.DrawSphere(position, size);
             }
 
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(Application.isPlaying
                 ? MouthPosition
-                : transform.position + transform.rotation * (_mouthRest * baseScale), size * 3f);
+                : transform.position + transform.rotation * (_mouthFront * baseScale), size * 3f);
         }
 #endif
     }

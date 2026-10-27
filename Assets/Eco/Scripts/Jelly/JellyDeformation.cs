@@ -55,9 +55,15 @@ namespace Eco.Scripts.Jelly
 
         public static float MouthMask(Vector3 rest, in JellyDeformParams d)
         {
-            float u = (rest.x - d.MouthCenter.x) / d.MouthShape.x;
+            // Turn the body so the mouth faces +z
+            float sin = Mathf.Sin(d.MouthAngle);
+            float cos = Mathf.Cos(d.MouthAngle);
+            float x = rest.x * cos - rest.z * sin;
+            float z = rest.z * cos + rest.x * sin;
+
+            float u = (x - d.MouthCenter.x) / d.MouthShape.x;
             float v = (rest.y - d.MouthCenter.y) / d.MouthShape.y - d.MouthShape.w * u * u;
-            return Mathf.Clamp01(1f - (u * u + v * v)) * Mathf.Clamp01((rest.z - d.MouthCenter.z * 0.5f) * 8f);
+            return Mathf.Clamp01(1f - (u * u + v * v)) * Mathf.Clamp01((z - d.MouthCenter.z * 0.5f) * 8f);
         }
     }
 }
