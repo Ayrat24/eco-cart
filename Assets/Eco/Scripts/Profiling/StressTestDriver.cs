@@ -140,28 +140,28 @@ namespace Eco.Scripts.Profiling
         private async UniTask<string> CollectAsync(Player player, CancellationToken token)
         {
             var agent = player.GetComponent<NavMeshAgent>();
-            var cart = player.GetComponentInChildren<Cart>();
-            if (cart == null || _config.CollectSeconds <= 0f)
+            var stomach = player.Stomach;
+            if (stomach == null || _config.CollectSeconds <= 0f)
             {
-                return "skipped (no cart or collectSeconds = 0)";
+                return "skipped (no stomach or collectSeconds = 0)";
             }
 
-            // Scrap that rolled into reach during Idle can already be in the cart. inCart below doesn't count it,
-            // so it would never be emptied and could leave too little room for any item.
+            // Scrap that rolled into reach during Idle can already be swallowed. inStomach below doesn't count it,
+            // so it would never be recycled and could leave too little room for any item.
             PlayerClickMovement.OnLeftClicked?.Invoke();
-            await UniTask.WaitWhile(() => cart.IsEmptying, cancellationToken: token);
+            await UniTask.WaitWhile(() => stomach.IsEmptying, cancellationToken: token);
 
-            int picked = 0, inCart = 0, freedTiles = 0, empties = 0;
+            int picked = 0, inStomach = 0, freedTiles = 0, empties = 0;
             float lastPickup = Time.realtimeSinceStartup;
-            using var added = cart.OnItemAdded.Subscribe(_ =>
+            using var added = stomach.OnItemAdded.Subscribe(_ =>
             {
                 picked++;
-                inCart++;
+                inStomach++;
                 lastPickup = Time.realtimeSinceStartup;
             });
             using var recycled = ScrapItem.OnItemRecycled.Subscribe(_ => freedTiles++);
 
-            // Drive a small loop at the cart's own speed so the collector hands keep finding scrap.
+            // Drive a small loop at the player's own speed so the tentacles keep finding scrap.
             var origin = player.transform.position;
             float s = _config.CollectLoopSize;
             var corners = new[]
@@ -179,11 +179,11 @@ namespace Eco.Scripts.Profiling
 
                 // Item weights rarely add up to exactly full, so also empty once pickups stall.
                 bool stalled = Time.realtimeSinceStartup - lastPickup > 2f;
-                if (inCart > 0 && !cart.IsEmptying && (cart.IsFull || stalled))
+                if (inStomach > 0 && !stomach.IsEmptying && (stomach.IsFull || stalled))
                 {
                     // Same path as the player's left click.
                     PlayerClickMovement.OnLeftClicked?.Invoke();
-                    inCart = 0;
+                    inStomach = 0;
                     empties++;
                 }
 
@@ -195,17 +195,17 @@ namespace Eco.Scripts.Profiling
             }
 
             agent.ResetPath();
-            if (inCart > 0)
+            if (inStomach > 0)
             {
                 PlayerClickMovement.OnLeftClicked?.Invoke();
                 empties++;
             }
 
             // Let the last recycle animations finish inside this phase.
-            await UniTask.WaitWhile(() => cart.IsEmptying, cancellationToken: token);
+            await UniTask.WaitWhile(() => stomach.IsEmptying, cancellationToken: token);
             await UniTask.WaitForSeconds(1.5f, cancellationToken: token);
 
-            return $"picked up {picked} scrap, {freedTiles} tiles freed by recycling, cart emptied {empties}x";
+            return $"picked up {picked} scrap, {freedTiles} tiles freed by recycling, stomach emptied {empties}x";
         }
 
         private async UniTask<string> ChurnAsync(Player player, WorldController world, CancellationToken token)

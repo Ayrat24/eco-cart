@@ -1,212 +1,238 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Eco.Scripts.Utils;
-using PrimeTween;
+using Eco.Scripts.Jelly;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.ItemCollecting
 {
+    /// <summary>
+    /// One of the jelly's grabbing tentacles. For each pickup it grows out of whichever part of the hand zones
+    /// faces the item, stretches to it, carries it to the mouth, squeezes it in and pulls back into the body.
+    /// </summary>
     public class CollectorHand : MonoBehaviour
     {
         [SerializeField] string handName;
-        [SerializeField] Transform ikTarget;
-        [SerializeField] IKExtendBones ik;
-        [SerializeField] private Vector3 animationMiddlePoint;
+        [SerializeField] private JellyTentacle tentacle;
 
-        [SerializeField] private float pickAnimationDuration;
-        [SerializeField] private float placeAnimationDuration;
-        [SerializeField] private float swingBackAnimationDuration;
+        [SerializeField] private float pickAnimationDuration = 0.3f;
+        [SerializeField] private float placeAnimationDuration = 0.45f;
+        [SerializeField] private float swallowAnimationDuration = 0.12f;
+        [SerializeField] private float swingBackAnimationDuration = 0.25f;
+        [Tooltip("How high the tentacle lifts an item on its way to the mouth, in metres.")]
+        [SerializeField] private float carryArcHeight = 1.2f;
 
-        private Vector3 _initialPosition;
-        private Transform _baseATargetParent;
+        private Stomach _stomach;
+        private JellyBody _body;
         private bool _animationInProgress;
-        private Cart _cart;
-        private IDisposable _subscription;
         private CancellationTokenSource _cancellationTokenSource;
-        private readonly List<Tween> _tweens = new();
 
-        public Vector3 Position => ikTarget.TransformPoint(_initialPosition);
         public bool IsFree => !_animationInProgress;
 
-        private void Start()
+        public void Init(Stomach stomach)
         {
-            _initialPosition = ikTarget.localPosition;
-            _baseATargetParent = ikTarget.parent;
-        }
+            _stomach = stomach;
+            _body = stomach.Body;
 
-        public void Init(Cart cart)
-        {
-            _cart = cart;
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public void PlayAnimation(ICartItem item, Collider other)
         {
-            PlayPickUpAnimationAsync(item, other, _cancellationTokenSource.Token).Forget();
+            var itemTransform = item is Component component ? component.transform : other.transform;
+            if (!_body.TryTakeAnchor(itemTransform.position, out var anchor))
+            {
+                RollbackItem(item);
+                return;
+            }
+
+            PlayPickUpAnimationAsync(item, itemTransform, anchor, _cancellationTokenSource.Token).Forget();
         }
 
-        private async UniTask PlayPickUpAnimationAsync(ICartItem item, Collider other, CancellationToken token)
+        private async UniTask PlayPickUpAnimationAsync(ICartItem item, Transform itemTransform, JellyAnchor anchor,
+            CancellationToken token)
         {
             _animationInProgress = true;
+            tentacle.Show(_body, anchor);
 
-            // Helper: non-throwing wait that respects cancellation token
-            async UniTask<bool> WaitSeconds(float seconds, CancellationToken ct)
+            bool grabbed = false;
+            bool mouthOpen = false;
+            bool completed = false;
+
+            // Step 1: grow out of the body and stretch to the item
+            bool reached = await AnimateAsync(pickAnimationDuration, t =>
             {
-                float waited = 0f;
-                while (waited < seconds)
+                if (!IsAlive(itemTransform))
                 {
-                    if (ct.IsCancellationRequested) return false;
-                    await UniTask.Yield();
-                    waited += Time.deltaTime;
+                    return false;
                 }
+
+                var from = tentacle.SurfacePosition;
+                var target = itemTransform.position;
+                tentacle.TipPosition = Vector3.Lerp(from, target, EaseOutCubic(t)) + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 0.4f);
+                tentacle.TipDirection = Vector3.Lerp(target - from, Vector3.down, t);
+                tentacle.Visibility = Mathf.Clamp01(t * 3f);
                 return true;
-            }
+            }, token);
 
-            void CleanupAndClearTweens()
+            if (reached)
             {
-                _animationInProgress = false;
-                foreach (var tween in _tweens) tween.Stop();
-                _tweens.Clear();
-            }
+                // Step 2: grab it and carry it to the mouth, squeezing it down to its swallowed size
+                grabbed = true;
+                item.MakeKinematic(true);
+                itemTransform.SetParent(tentacle.Tip, true);
+                _body.Poke(tentacle.SurfacePosition, 0.03f);
 
-            void RollbackItem(ICartItem it)
-            {
-                if (it == null) return;
-                _cart.RemoveFromCart(it);
-                it.SetPickedUpStatus(false);
-                it.SetInCartState(false);
-            }
+                _body.OpenMouth();
+                mouthOpen = true;
 
-            // Resolve the item's root transform (ICartItem implementations are MonoBehaviours at runtime)
-            var itemMb = item as MonoBehaviour;
-            var itemTransform = itemMb != null ? itemMb.transform : (other != null ? other.transform : null);
+                var grabPoint = tentacle.TipPosition;
+                var heldOffset = itemTransform.localPosition;
+                float startScale = itemTransform.localScale.x;
+                float endScale = _stomach.GetSwallowedScale(item);
 
-            // Basic null checks - item or other might be destroyed during async work
-            if (item == null || itemTransform == null)
-            {
-                RollbackItem(item);
-                CleanupAndClearTweens();
-                return;
-            }
-
-            // Step 1: Place hand on the item (use item's root transform)
-            ik.Target = ikTarget;
-            ikTarget.parent = itemTransform;
-            ik.enabled = true;
-
-            _tweens.Add(Tween.LocalPosition(ikTarget, Vector3.zero, pickAnimationDuration));
-
-            var waitedPick = await WaitSeconds(pickAnimationDuration, token);
-            if (!waitedPick)
-            {
-                // cancelled
-                RollbackItem(item);
-                CleanupAndClearTweens();
-                return;
-            }
-
-            // Step 2 : Place hand above the drop point
-            if (itemTransform == null)
-            {
-                RollbackItem(item);
-                CleanupAndClearTweens();
-                return;
-            }
-
-            // Reparent the item to the DropPoint but preserve its world position so it doesn't jump.
-            var itemMbLocal = item as MonoBehaviour;
-            if (itemMbLocal != null && _cart != null && _cart.DropPoint != null)
-            {
-                // Parent the item to the drop point but preserve world position first so there's no jump.
-                itemMbLocal.transform.SetParent(_cart.DropPoint, true);
-
-                // Compute local-space quadratic Bezier control so the curve is relative to the moving DropPoint.
-                Vector3 startLocal = itemMbLocal.transform.localPosition;
-                Vector3 targetLocal = Vector3.zero;
-                // Convert animationMiddlePoint (designer offset) into DropPoint local space.
-                Vector3 middleLocal = _cart.DropPoint.InverseTransformVector(animationMiddlePoint);
-                Vector3 controlLocal = (startLocal + targetLocal) * 0.5f + middleLocal;
-
-                _tweens.Add(Tween.Custom(0f, 1f, placeAnimationDuration, ease: Ease.Linear, onValueChange: (t) =>
+                bool carried = await AnimateAsync(placeAnimationDuration, t =>
                 {
-                    float u = 1 - t;
-                    Vector3 pos = u * u * startLocal + 2 * u * t * controlLocal + t * t * targetLocal;
-                    itemMbLocal.transform.localPosition = pos;
-                }));
+                    if (!IsAlive(itemTransform))
+                    {
+                        return false;
+                    }
+
+                    float e = EaseInOutSine(t);
+                    var lips = _body.MouthPosition + _body.MouthNormal * (0.35f * _body.WorldScale);
+                    var control = (grabPoint + lips) * 0.5f + Vector3.up * carryArcHeight;
+                    float u = 1f - e;
+                    tentacle.TipPosition = u * u * grabPoint + 2f * u * e * control + e * e * lips;
+                    tentacle.TipDirection = Vector3.Lerp(Vector3.down, -_body.MouthNormal, e);
+                    itemTransform.localPosition = Vector3.Lerp(heldOffset, Vector3.zero, e);
+                    itemTransform.localScale = Vector3.one * Mathf.Lerp(startScale, endScale, e);
+                    return true;
+                }, token);
+
+                // Step 3: push it through the mouth
+                if (carried)
+                {
+                    var lipsPoint = tentacle.TipPosition;
+                    completed = await AnimateAsync(swallowAnimationDuration, t =>
+                    {
+                        if (!IsAlive(itemTransform))
+                        {
+                            return false;
+                        }
+
+                        var inside = _body.MouthPosition - _body.MouthNormal * (0.25f * _body.WorldScale);
+                        tentacle.TipPosition = Vector3.Lerp(lipsPoint, inside, EaseInCubic(t));
+                        return true;
+                    }, token);
+                }
+            }
+
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if (completed)
+            {
+                _stomach.Swallow(item);
+                item.SetPickedUpStatus(false);
             }
             else
             {
-                // Fallback: animate world-space quadratic Bezier, re-sampling target each frame so we follow a moving DropPoint.
-                Vector3 startWorldPos = itemTransform.position;
-                _tweens.Add(Tween.Custom(0f, 1f, placeAnimationDuration, ease: Ease.Linear, onValueChange: (t) =>
+                if (grabbed && IsAlive(itemTransform))
                 {
-                    Vector3 currentTarget = (_cart != null && _cart.DropPoint != null) ? _cart.DropPoint.position : startWorldPos;
-                    Vector3 control = (startWorldPos + currentTarget) * 0.5f + animationMiddlePoint;
-                    float u = 1 - t;
-                    Vector3 pos = u * u * startWorldPos + 2 * u * t * control + t * t * currentTarget;
-                    if (itemTransform != null) itemTransform.position = pos;
-                }));
-            }
+                    itemTransform.SetParent(null, true);
+                    item.MakeKinematic(false);
+                }
 
-            var waitedPlace = await WaitSeconds(placeAnimationDuration, token);
-            if (!waitedPlace)
-            {
-                // cancelled during placement
                 RollbackItem(item);
-                CleanupAndClearTweens();
+            }
+
+            if (mouthOpen)
+            {
+                _body.CloseMouth();
+            }
+
+            // Step 4: pull back into the body
+            var retractFrom = tentacle.TipPosition;
+            await AnimateAsync(swingBackAnimationDuration, t =>
+            {
+                tentacle.TipPosition = Vector3.Lerp(retractFrom, tentacle.SurfacePosition, EaseInCubic(t));
+                tentacle.TipDirection = Vector3.zero;
+                tentacle.Visibility = 1f - Mathf.SmoothStep(0f, 1f, (t - 0.5f) * 2f);
+                return true;
+            }, token);
+
+            if (token.IsCancellationRequested)
+            {
                 return;
             }
 
-            if (itemTransform == null)
+            tentacle.Hide();
+            _body.ReleaseAnchor(anchor);
+            _animationInProgress = false;
+        }
+
+        private void RollbackItem(ICartItem item)
+        {
+            if (item == null)
             {
-                RollbackItem(item);
-                CleanupAndClearTweens();
                 return;
             }
 
-            // Finalize pickup: parent the item to the drop point and keep it kinematic so it follows the cart exactly.
-            item.OnPickUp(_cart.DropPoint);
-            var itemMbFinalize = item as MonoBehaviour;
-            if (itemMbFinalize != null && _cart != null && _cart.DropPoint != null)
-            {
-                // Parent without preserving world position to ensure local alignment, then zero local transform.
-                itemMbFinalize.transform.SetParent(_cart.DropPoint, false);
-
-                float offset = 0.02f;
-                var pos = new Vector3(Random.Range(-offset, offset),Random.Range(-offset, offset), Random.Range(-offset, offset));
-                itemMbFinalize.transform.localPosition = pos;
-                itemMbFinalize.transform.localRotation = Quaternion.identity;
-            }
-            // Keep kinematic true while item is in the cart to prevent physics from moving it off the drop point.
-            item.MakeKinematic(true);
-
-            // Step 3: Return hand to the body
-            ikTarget.parent = _baseATargetParent;
-            if (itemTransform != null)
-                ikTarget.position = itemTransform.position;
-            ik.Target = ikTarget;
-            
-            item.MakeKinematic(false);
-            _tweens.Add(Tween.LocalPosition(ikTarget, _initialPosition, swingBackAnimationDuration));
-
-            var waitedSwing = await WaitSeconds(swingBackAnimationDuration, token);
-            if (!waitedSwing)
-            {
-                // cancelled during swing back - treat as done but ensure cleanup
-                CleanupAndClearTweens();
-                return;
-            }
-
-            ik.enabled = false;
-
-            // Completed successfully: clear picked up flag so other systems consider it placed.
+            _stomach.Release(item);
             item.SetPickedUpStatus(false);
+            item.SetInCartState(false);
+        }
 
-            
-            CleanupAndClearTweens();
+        private static bool IsAlive(Transform itemTransform)
+        {
+            return itemTransform != null && itemTransform.gameObject.activeInHierarchy;
+        }
+
+        // Runs step(t) once per frame, t from 0 to 1 over the duration, just before LateUpdate so the tentacle
+        // rebuilds from this frame's tip. False if cancelled or step gave up.
+        private static async UniTask<bool> AnimateAsync(float duration, Func<float, bool> step, CancellationToken token)
+        {
+            float time = 0f;
+            while (true)
+            {
+                float t = duration > 0f ? Mathf.Clamp01(time / duration) : 1f;
+                if (!step(t))
+                {
+                    return false;
+                }
+
+                if (t >= 1f)
+                {
+                    return true;
+                }
+
+                if (await UniTask.Yield(PlayerLoopTiming.PreLateUpdate, token).SuppressCancellationThrow())
+                {
+                    return false;
+                }
+
+                time += Time.deltaTime;
+            }
+        }
+
+        private static float EaseOutCubic(float t)
+        {
+            float u = 1f - t;
+            return 1f - u * u * u;
+        }
+
+        private static float EaseInCubic(float t)
+        {
+            return t * t * t;
+        }
+
+        private static float EaseInOutSine(float t)
+        {
+            return 0.5f - 0.5f * Mathf.Cos(t * Mathf.PI);
         }
 
         public void Clear()
@@ -214,15 +240,6 @@ namespace Eco.Scripts.ItemCollecting
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
-
-            foreach (var tween in _tweens)
-            {
-                tween.Stop();
-            }
-
-            _tweens.Clear();
-
-            _subscription?.Dispose();
         }
     }
 }

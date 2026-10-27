@@ -35,11 +35,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 36522470404096
-    m_Localized: Cart is empty
+    m_Localized: Belly is empty
     m_Metadata:
       m_Items: []
   - m_Id: 36580674760704
-    m_Localized: Cart is full
+    m_Localized: Belly is full
     m_Metadata:
       m_Items: []
   - m_Id: 36600664813568

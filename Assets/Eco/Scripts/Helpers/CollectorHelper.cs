@@ -15,7 +15,7 @@ namespace Eco.Scripts.Helpers
     {
         [SerializeField] NavMeshAgent agent;
         [SerializeField] private int searchRadius;
-        [SerializeField] private Cart cart;
+        [SerializeField] private Stomach stomach;
         [SerializeField] ItemCollector itemCollector;
         [SerializeField] private int playerStopDistance = 8;
         
@@ -31,7 +31,7 @@ namespace Eco.Scripts.Helpers
 
             agent.avoidancePriority = navmeshPriority;
             
-            //itemCollector.Init(currencyManager, upgrades, cart);
+            //itemCollector.Init(currencyManager, upgrades, stomach);
 
             var interval = TimeSpan.FromSeconds(1);
             _subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });
@@ -39,10 +39,10 @@ namespace Eco.Scripts.Helpers
 
         private void GoToNearbyItem()
         {
-            if (cart.IsFull)
+            if (stomach != null && stomach.IsFull)
             {
                 _state = "Emptying";
-                cart.EmptyCart();
+                stomach.Recycle();
                 return;
             }
 

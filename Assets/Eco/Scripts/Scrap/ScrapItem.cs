@@ -84,6 +84,7 @@ namespace Eco.Scripts.Scrap
 
             _isCollected = true;
             transform.parent = parent;
+            MakeKinematic(true);
         }
 
         private void ChangeState(bool inCart)
@@ -92,15 +93,6 @@ namespace Eco.Scripts.Scrap
             const int groundLayer = 7;
 
             gameObject.layer = inCart ? cartLayer : groundLayer;
-        }
-
-        public void OnFallenOut()
-        {
-            ResetTile();
-            SetPickedUpStatus(false);
-            ChangeState(false);
-            _isCollected = false;
-            transform.parent = null;
         }
 
         public void Recycle()
@@ -138,6 +130,32 @@ namespace Eco.Scripts.Scrap
             particleEffect.Play();
 
             await UniTask.WaitForSeconds(0.5f);
+            ReturnToPool();
+        }
+
+        public void Dissolve()
+        {
+            using var marker = EcoProfilerMarkers.RecycleScrap.Auto();
+            DissolveAsync().Forget();
+        }
+
+        // Melts away where it floats inside the jelly instead of flying off
+        private async UniTask DissolveAsync()
+        {
+            const float duration = 0.7f;
+
+            MakeKinematic(true);
+            SetPickedUpStatus(false);
+            ResetTile();
+            gameObject.layer = 0;
+
+            Tween.Scale(transform, transform.localScale, Vector3.zero, duration, Ease.InBack);
+            await UniTask.WaitForSeconds(duration);
+            ReturnToPool();
+        }
+
+        private void ReturnToPool()
+        {
             if (ReturnToPoolCallback != null)
             {
                 ReturnToPoolCallback.Invoke(this);
@@ -165,9 +183,11 @@ namespace Eco.Scripts.Scrap
             ChangeState(inCart);
         }
 
+        // Held, swallowed or flying items don't bump into anything
         public void MakeKinematic(bool isKinematic)
         {
             rb.isKinematic = isKinematic;
+            rb.detectCollisions = !isKinematic;
         }
 
         public void SetPickedUpStatus(bool status)
@@ -204,6 +224,7 @@ namespace Eco.Scripts.Scrap
             
             transform.localScale = Vector3.one;
             ChangeState(false);
+            MakeKinematic(false);
 
             _isBeingPickedUp = false;
             _isCollected = false;

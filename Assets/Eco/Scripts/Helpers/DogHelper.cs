@@ -19,7 +19,7 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private Transform holdPoint; // where the dog holds picked items
 
         private readonly Collider[] _colliders = new Collider[100];
-        private Cart _cart;
+        private Stomach _stomach;
         private bool _goingToTarget;
 
         public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
@@ -27,11 +27,7 @@ namespace Eco.Scripts.Helpers
         {
             base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
 
-            // Try to find existing cart (player spawns cart as child)
-            _cart = player.GetComponentInChildren<Cart>();
-
-            // listen for cart changes from player as well
-            player.OnCartChanged.Subscribe(c => { _cart = c; });
+            _stomach = player.Stomach;
 
             var interval = TimeSpan.FromSeconds(1);
             ActionSubscription = Observable.Interval(interval).Subscribe(_ => { TickFind(); });
@@ -44,18 +40,18 @@ namespace Eco.Scripts.Helpers
         {
             if (_goingToTarget) return;
 
-            if (_cart == null)
+            if (_stomach == null)
             {
-                DebugState = "No cart - following player";
+                DebugState = "No stomach - following player";
                 ReturnToPlayer();
                 return;
             }
 
-            // ask cart for most common ScrapType
+            // ask stomach for most common ScrapType
             var mostCommon = ScrapType.Food;
-            Debug.Log($"DogHelper: cart item count={1}, mostCommon={mostCommon}");
+            Debug.Log($"DogHelper: stomach item count={1}, mostCommon={mostCommon}");
 
-            // note: `mostCommon` is an enum (ScrapType) and cannot be null; if cart-probing logic
+            // note: `mostCommon` is an enum (ScrapType) and cannot be null; if stomach-probing logic
             // is added later it should set an explicit 'none' value or make the type nullable
 
             // search for ScrapItems of this type around player
@@ -73,9 +69,8 @@ namespace Eco.Scripts.Helpers
                 if (col == null) continue;
                 if (!col.TryGetComponent<ScrapItem>(out var t)) continue;
 
-                // skip if already in cart or being picked up
-                bool inDrop = (_cart != null && _cart.DropPoint != null) && t.transform.IsChildOf(_cart.DropPoint);
-                if (inDrop) continue;
+                // skip if already swallowed or being picked up
+                if (t.transform.IsChildOf(_stomach.transform)) continue;
                 if (t.IsBeingPickedUp) continue;
                 if (!t.CanBeRecycled) continue;
                 if (!t.gameObject.activeInHierarchy) continue;

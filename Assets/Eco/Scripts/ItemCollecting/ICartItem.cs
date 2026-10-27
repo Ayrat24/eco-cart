@@ -7,9 +7,9 @@ namespace Eco.Scripts.ItemCollecting
     public interface ICartItem
     {
         void OnPickUp(Transform parent);
-        void OnFallenOut();
         void Recycle();
         UniTask RecycleAsync();
+        void Dissolve();
         void SetInCartState(bool inCart);
         void MakeKinematic(bool isKinematic);
         bool IsBeingPickedUp { get; set; }

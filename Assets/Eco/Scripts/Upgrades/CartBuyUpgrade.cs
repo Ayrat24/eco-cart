@@ -1,11 +1,11 @@
 using System;
-using Eco.Scripts.ItemCollecting;
 using R3;
 using UnityEngine;
 using UnityEngine.Localization;
 
 namespace Eco.Scripts.Upgrades
 {
+    // Was the cart choice; now sizes the jelly's stomach and sets its speed
     [CreateAssetMenu(menuName = "Upgrade/CartBuyUpgrade")]
     public class CartBuyUpgrade : SelectableUpgrade
     {
@@ -34,14 +34,11 @@ namespace Eco.Scripts.Upgrades
         [Serializable]
         public struct CartData
         {
-            public Cart prefab;
-            public Vector3 offset;
             [HideInInspector] public string id;
             public int carryingCapacity;
             public int moveSpeed;
             public Vector3 cameraOffset;
             public float menuCameraOffset;
-            public Vector3 characterModelOffset;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -28,7 +29,8 @@ namespace Eco.Scripts.ItemCollecting
             _initialized = true;
         }
 
-        public async UniTask EmptyAsync(List<ICartItem> cartItems, CancellationToken token)
+        /// <summary>Dissolves the items one by one, paying out for each; onRecycled fires as each one goes.</summary>
+        public async UniTask EmptyAsync(List<ICartItem> cartItems, Action<ICartItem> onRecycled, CancellationToken token)
         {
             _gainedScoreText.StartNewRecycle();
             
@@ -40,7 +42,8 @@ namespace Eco.Scripts.ItemCollecting
             {
                 var item = listItems[i];
                 await UniTask.WaitForSeconds(0.15f, cancellationToken: token);
-                item.Recycle();
+                item.Dissolve();
+                onRecycled?.Invoke(item);
 
                 if (item is ScrapItem scrap)
                 {

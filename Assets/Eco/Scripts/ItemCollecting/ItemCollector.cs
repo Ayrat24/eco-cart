@@ -17,18 +17,18 @@ namespace Eco.Scripts.ItemCollecting
         [SerializeField] private List<CollectorHand> hands;
 
         private readonly Collider[] _colliders = new Collider[20];
-        private Cart _cart;
+        private Stomach _stomach;
         private IDisposable _subscription;
 
         public LayerMask LayerMask => layerMask;
 
-        public void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Cart cart)
+        public void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Stomach stomach)
         {
-            _cart = cart;
+            _stomach = stomach;
 
             foreach (var hand in hands)
             {
-                hand.Init(cart);
+                hand.Init(stomach);
             }
 
             sphereCollider.includeLayers = layerMask;
@@ -36,7 +36,7 @@ namespace Eco.Scripts.ItemCollecting
             _subscription?.Dispose();
             _subscription = Observable.IntervalFrame(10).Subscribe(_ =>
              {
-                 if (!Active || !cart.CanAddItems || !HasFreeHands())
+                 if (!Active || !stomach.CanAddItems || !HasFreeHands())
                  {
                      return;
                  }
@@ -45,15 +45,19 @@ namespace Eco.Scripts.ItemCollecting
              });
 
             itemRecycler.Init(currencyManager, scoreStats);
-            cart.Init(itemRecycler, this);
+            stomach.Init(itemRecycler, this);
         }
 
         private void ScanForItems()
         {
             using var marker = EcoProfilerMarkers.ScanForItems.Auto();
 
-            Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
-            int count = Physics.OverlapSphereNonAlloc(center, sphereCollider.radius, _colliders, layerMask);
+            // Reach grows with the body
+            float growth = _stomach.Body.Growth;
+            var localCenter = sphereCollider.center;
+            localCenter.z *= growth;
+            Vector3 center = sphereCollider.transform.TransformPoint(localCenter);
+            int count = Physics.OverlapSphereNonAlloc(center, sphereCollider.radius * growth, _colliders, layerMask);
 
             if (count == 0)
             {
@@ -87,28 +91,27 @@ namespace Eco.Scripts.ItemCollecting
                 if (item.IsBeingPickedUp)
                     continue;
 
-                // Check if cart can accept this item
-                if (!_cart.CanFitItem(item))
+                // Check if the stomach has room for this item
+                if (!_stomach.CanFitItem(item))
                     continue;
 
-                // Find the closest free hand for this item
-                if (!GetClosestFreeHand(col.transform.position, out var hand))
+                if (!GetFreeHand(out var hand))
                     continue;
 
-                // Double-check item still not being picked (race) and hand/cart still valid
-                if (item.IsBeingPickedUp || _cart.IsFull || !hand.IsFree)
+                // Double-check item still not being picked (race) and hand/stomach still valid
+                if (item.IsBeingPickedUp || _stomach.IsFull || !hand.IsFree)
                     continue;
 
                 // Reserve the item immediately so no other scan picks it.
-                // Mark as in-cart and mark as being picked up; do this in a safe order and rollback on failure.
+                // Mark as in-stomach and mark as being picked up; do this in a safe order and rollback on failure.
                 item.SetInCartState(true);
                 item.SetPickedUpStatus(true);
 
-                // Attempt to add to cart. If AddToCart returns false, rollback reservation immediately.
+                // Attempt to reserve room in the stomach. If that fails, rollback reservation immediately.
                 bool added = false;
                 try
                 {
-                    added = _cart.AddToCart(item, col);
+                    added = _stomach.Reserve(item);
                 }
                 catch (Exception)
                 {
@@ -124,15 +127,15 @@ namespace Eco.Scripts.ItemCollecting
                 }
 
                 // Start hand animation (runs async). We intentionally don't wait here. If animation later fails internally
-                // it must clean up its own state; AddToCart already recorded the item in the cart.
+                // it must clean up its own state; Reserve already counted the item in the stomach.
                 try
                 {
                     hand.PlayAnimation(item, col);
                 }
                 catch (Exception)
                 {
-                    // If PlayAnimation threw synchronously (unlikely), rollback the cart entry and flags.
-                    try { _cart.RemoveFromCart(item); } catch { }
+                    // If PlayAnimation threw synchronously (unlikely), rollback the stomach entry and flags.
+                    try { _stomach.Release(item); } catch { }
                     try { item.SetPickedUpStatus(false); } catch { }
                     try { item.SetInCartState(false); } catch { }
                     continue;
@@ -156,30 +159,20 @@ namespace Eco.Scripts.ItemCollecting
             return false;
         }
 
-        private bool GetClosestFreeHand(Vector3 itemPos, out CollectorHand freeHand)
+        // Hands sprout wherever on the body faces the item, so any free one will do
+        private bool GetFreeHand(out CollectorHand freeHand)
         {
-            freeHand = null;
-            float minDistance = float.MaxValue;
-            bool foundHand = false;
-
             foreach (var hand in hands)
             {
-                if (!hand.IsFree)
-                {
-                    continue;
-                }
-
-                var distance = Vector3.Distance(hand.Position, itemPos);
-
-                if (distance < minDistance)
+                if (hand.IsFree)
                 {
                     freeHand = hand;
-                    minDistance = distance;
-                    foundHand = true;
+                    return true;
                 }
             }
 
-            return foundHand;
+            freeHand = null;
+            return false;
         }
 
         public bool AllHandsAreFree()
@@ -216,7 +209,6 @@ namespace Eco.Scripts.ItemCollecting
 
         public override UniTask Enable()
         {
-            _cart.gameObject.SetActive(true);
             Active = true;
             return UniTask.CompletedTask;
         }
@@ -225,7 +217,6 @@ namespace Eco.Scripts.ItemCollecting
         {
             Active = false;
             await UniTask.WaitUntil(AllHandsAreFree);
-            _cart.gameObject.SetActive(false);
         }
     }
 }

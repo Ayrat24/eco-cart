@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 97389637632
-    m_Localized: Hold LMB to recycle scrap in your cart
+    m_Localized: Hold LMB to recycle the scrap in your belly
     m_Metadata:
       m_Items: []
   - m_Id: 22894799277256704
@@ -45,7 +45,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22898894016868352
-    m_Localized: This bar shows how much weight can your cart hold
+    m_Localized: This bar shows how much weight your belly can hold
     m_Metadata:
       m_Items: []
   references:

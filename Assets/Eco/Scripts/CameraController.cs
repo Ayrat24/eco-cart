@@ -15,7 +15,7 @@ namespace Eco.Scripts
         private IDisposable _subscription;
         private Player _player;
 
-        private Cart _cart;
+        private Stomach _stomach;
         private Tween _xTween;
         private Tween _yTween;
         private Tween _zTween;
@@ -27,23 +27,23 @@ namespace Eco.Scripts
 
             var builder = new DisposableBuilder();
             
-            _player.OnCartChanged.Subscribe(OnCartChanged).AddTo(ref builder);
+            _player.OnStomachChanged.Subscribe(OnStomachChanged).AddTo(ref builder);
             UpgradeMenu.OnOpen.Subscribe(OnMenuOpened).AddTo(ref builder);
             
             _subscription = builder.Build();
         }
 
-        private void OnCartChanged(Cart cart)
+        private void OnStomachChanged(Stomach stomach)
         {
-            _cart = cart;
+            _stomach = stomach;
 
             var zStart = cinemachineFollow.FollowOffset.z;
-            var zEnd = cart.CartData.cameraOffset.z;
+            var zEnd = stomach.Stats.cameraOffset.z;
             _xTween = Tween.Custom(zStart, zEnd, 0.5f,
                 f => cinemachineFollow.FollowOffset.z = f);
 
             var yStart = cinemachineFollow.FollowOffset.y;
-            var yEnd = cart.CartData.cameraOffset.y;
+            var yEnd = stomach.Stats.cameraOffset.y;
             _yTween = Tween.Custom(yStart, yEnd, 0.5f,
                 f => cinemachineFollow.FollowOffset.y = f);
 
@@ -53,7 +53,7 @@ namespace Eco.Scripts
             }
             
             var xStart = cinemachineFollow.FollowOffset.x;
-            var xEnd = cart.CartData.menuCameraOffset;
+            var xEnd = stomach.Stats.menuCameraOffset;
             _zTween = Tween.Custom(xStart, xEnd, 0.5f,
                 f => cinemachineFollow.FollowOffset.x = f);
         }
@@ -62,7 +62,7 @@ namespace Eco.Scripts
         {
             _menuOpened = isOpen;
             
-            if (_cart == null)
+            if (_stomach == null)
             {
                 return;
             }
@@ -70,13 +70,13 @@ namespace Eco.Scripts
             if (isOpen)
             {
                 var start = cinemachineFollow.FollowOffset.x;
-                var offset = _cart.CartData.menuCameraOffset;
+                var offset = _stomach.Stats.menuCameraOffset;
                 Tween.Custom(start, offset, 0.4f,
                     f => cinemachineFollow.FollowOffset.x = f);
             }
             else
             {
-                var start = _cart.CartData.menuCameraOffset;
+                var start = _stomach.Stats.menuCameraOffset;
                 var offset = 0;
                 Tween.Custom(start, offset, 0.4f,
                     f => cinemachineFollow.FollowOffset.x = f);

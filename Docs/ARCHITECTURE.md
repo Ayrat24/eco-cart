@@ -1,6 +1,6 @@
 # Architecture
 
-Eco Cart is a cozy clean-up incremental game: the player pushes a cart around a chunked world, collects scrap, recycles it for money, digs out scrap piles, plants trees and buys upgrades/helpers until the world is clean and green enough to unlock the next one.
+Eco Cart is a cozy clean-up incremental game: the player is a jelly creature that roams a chunked world, swallows scrap, recycles it for money, digs out scrap piles, plants trees and buys upgrades/helpers until the world is clean and green enough to unlock the next one.
 
 All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespaces and compiles into `Assembly-CSharp` (there is no game asmdef).
 
@@ -22,8 +22,9 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 |---|---|---|
 | World | `WorldController`, `WorldPreset`, `ChunkGenerationRules`, `Chunk` (+ `FieldChunk`, `PileChunk`, `WaterChunk`, `BeachChunk`), `Tile`, `TileData` | Chunks are 10×10 (`WorldController.ChunkSize`). Map is `(2·WorldSideSize+1)²` chunks, border is always Beach, outside is Water. Chunks within `renderRadius` of the player are pulled from per-type `ObjectPool<Chunk>`s (sized at load for the most of each type visible from anywhere) and saved/returned when out of range. The terrain is flattened into a plateau and the NavMesh baked over the plateau only. `TerrainPainter` queues grass circles and paints each frame's batch with one terrain read/write, skipping circles already painted; in the editor it paints a runtime copy of the TerrainData. `ScrapRestingPoses` lets respawned scrap go back to sleep where it came to rest. |
 | Scrap | `ScrapItem`, `ScrapPile`, `ScrapType` | `ScrapItem` is a pooled physics item (`ICartItem`, `ITileItem`, `IPooledObject`). `ScrapPile` is dug with the spade (`DigPowerUpgrade`) and highlighted with HighlightPlus. |
-| Collecting | `ItemCollector`, `CollectorHand`, `Cart`, `ItemRecycler`, `GainedScoreText` | Collector (a `Tool`) scans a sphere for items and drops them into the cart; the cart empties into the recycler which pays out via `CurrencyManager`. |
-| Player | `Player`, `PlayerClickMovement`, `PlayerAnimation`, `CameraController` | NavMeshAgent click-to-move. Cart and hat are swapped via upgrades. |
+| Collecting | `ItemCollector`, `CollectorHand`, `Stomach`, `ItemRecycler`, `GainedScoreText` | Collector (a `Tool`) scans a sphere for items; a `CollectorHand` grows a tentacle out of the body, carries the item to the mouth and the `Stomach` takes it. Swallowed items float inside and the body grows. Recycling dissolves them through the recycler, which pays out via `CurrencyManager`. Capacity and speed still come from the `CartBuyUpgrade` assets. |
+| Player | `Player`, `PlayerClickMovement`, `CameraController` | NavMeshAgent click-to-move. Stomach size/speed and hat are swapped via upgrades. |
+| Jelly | `JellyBody`, `JellyShape`, `JellyDeformation`, `JellyTentacle`, `JellyHandZone`, shaders `Eco/Jelly` and `Eco/JellyContactShadow` | The player's body. `JellyBody` builds the mesh and runs springs for lean, squash, growth and the mouth; the `Eco/Jelly` shader does the deforming (wobble, ground contact, mouth) and draws the body semi-transparent by refracting the camera opaque texture. `JellyDeformation` mirrors the shader on the CPU so tentacles, the mouth, the hat and the spade sit on the visible surface. Tentacles grow from spots inside the body's hand zones and are hidden when not in use. **Eco → Jelly → Bake Body Preview Mesh** refreshes the edit-time mesh. |
 | Tools | `ToolController`, `Tool`, `SpadeController`, `UI/ToolSelector` | Collector hands vs spade. |
 | Helpers | `HelperManager`, `Helper` (+ `CatHelper`, `DogHelper`, `ChickenHelper`, `CollectorHelper`), `HelperUpgrade` | NavMesh AI companions bought as upgrades. |
 | Trees | `TreePlanter`, `Tree`, `TreeCatalogue`, `TreeCurrencyEarner`, `Tree*Upgrade` | Planted trees turn ground green and generate passive income. |
@@ -31,7 +32,7 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 | Progress | `ProgressTracker`, `WorldProgressData`, `UI/ProgressDisplay`, `UI/NewWorldPopup` | Tracks clear % and green %; at 90% / 90% it raises `OnProgressThresholdReached` → new-world popup. |
 | Map | `ProgressionScreen/Map`, `MapField`, `MapInputHandler` | Unlockable minimap built from save data. |
 | Pooling | `PoolManager` (singleton), `ObjectPool<T>`, `IPooledObject` | Scrap and tree prefabs. |
-| UI | `GameUI`, `UpgradeMenu`, `CartStorageDisplay`, `SettingsMenu`, `TutorialMenu`, `HudController`, `SceneTransition`, `ScoreGainedPopup` | UI Toolkit (`Assets/Eco/UI/*.uxml/.uss`) for HUD/menus; uGUI for the map. |
+| UI | `GameUI`, `UpgradeMenu`, `CartStorageDisplay` (stomach fill bar), `SettingsMenu`, `TutorialMenu`, `HudController`, `SceneTransition`, `ScoreGainedPopup` | UI Toolkit (`Assets/Eco/UI/*.uxml/.uss`) for HUD/menus; uGUI for the map. |
 | Localization | `LocalizationManager`, `Assets/Eco/LocTables/` | Unity Localization, locales `en` and `ru`. Tables: CartUpgrades, GameUI, Hats, HelpersUpgrades, Tutorial, … |
 | Settings | `Settings` (SO) | Detail quality, language, free-upgrades cheat; stored in `PlayerPrefs`. |
 | Profiling | `StressTest`, `StressTestSeeder`, `StressTestDriver`, `StressTestConfig`, `EcoProfilerMarkers` | Worst-case stress test and profiler markers on the heavy paths; see [PROFILING.md](PROFILING.md). Editor menus live in `Scripts/Editor/` (`Eco.Scripts.EditorTools`). |

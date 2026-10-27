@@ -35,8 +35,8 @@ namespace Eco.Scripts.Profiling
         [SerializeField, Min(0)] private float idleSeconds = 5f;
         [SerializeField, Min(0)] private int treesToPlant = 10;
         [SerializeField, Min(0)] private float plantInterval = 0.5f;
-        [Tooltip("Collect phase: drive a small loop around the spawn at the cart's own speed, picking up scrap " +
-                 "and emptying the cart into the recycler whenever it is full.")]
+        [Tooltip("Collect phase: drive a small loop around the spawn at the player's own speed, swallowing scrap " +
+                 "and recycling it whenever the stomach is full.")]
         [SerializeField, Min(0)] private float collectSeconds = 20f;
         [SerializeField, Min(1)] private float collectLoopSize = 8f;
         [Tooltip("Churn phase: teleports between two spots far enough apart that every loaded chunk is " +
@@ -44,7 +44,7 @@ namespace Eco.Scripts.Profiling
         [SerializeField, Min(0)] private int churnJumps = 6;
         [SerializeField, Min(0)] private float churnInterval = 1f;
         [SerializeField, Min(1)] private float moveSpeed = 15f;
-        [Tooltip("The cart drives a square loop this many chunks from the world centre.")]
+        [Tooltip("The player drives a square loop this many chunks from the world centre.")]
         [SerializeField, Min(1)] private int routeRadiusChunks = 10;
         [SerializeField, Min(1)] private int laps = 1;
         [SerializeField, Min(1)] private float maxTraverseSeconds = 180f;

@@ -26,7 +26,7 @@ namespace Eco.Scripts.UI
         private readonly LocalizedString _cartRecyclingTextLocalized  = new (LocTableName, CartRecyclingLocString);
 
         private IDisposable _playerSubscription;
-        private IDisposable _cartSubscription;
+        private IDisposable _stomachSubscription;
         private readonly Dictionary<ICartItem, VisualElement> _items = new();
         private readonly Dictionary<VisualElement, string> _tooltipDescriptions = new();
         private readonly List<VisualElement> _freeVisualElements = new();
@@ -49,22 +49,29 @@ namespace Eco.Scripts.UI
         {
             _container = _uiDocument.rootVisualElement.Q<VisualElement>("CartStorage");
             _label = _container.Q<Label>("CartStatus");
-            _playerSubscription = _player.OnCartChanged.Subscribe(OnCartChanged);
+            _playerSubscription = _player.OnStomachChanged.Subscribe(OnStomachChanged);
         }
 
-        private void OnCartChanged(Cart cart)
+        private void OnStomachChanged(Stomach stomach)
         {
-            _cartSubscription?.Dispose();
+            _stomachSubscription?.Dispose();
 
-            _storageSize = cart.StorageSize;
+            _storageSize = stomach.StorageSize;
 
             var builder = new DisposableBuilder();
-            cart.OnItemAdded.Subscribe(OnItemAdded).AddTo(ref builder);
-            cart.OnItemRemoved.Subscribe(OnItemRemoved).AddTo(ref builder);
-            cart.OnStatusChanged.Subscribe(OnCartStatusChanged).AddTo(ref builder);
-            _cartSubscription = builder.Build();
-            
-            OnCartStatusChanged(Cart.CartState.Empty);
+            stomach.OnItemAdded.Subscribe(OnItemAdded).AddTo(ref builder);
+            stomach.OnItemRemoved.Subscribe(OnItemRemoved).AddTo(ref builder);
+            stomach.OnStatusChanged.Subscribe(OnStomachStatusChanged).AddTo(ref builder);
+            _stomachSubscription = builder.Build();
+
+            // Capacity changes no longer empty the stomach, so resize what is already shown
+            foreach (var (item, visualElement) in _items)
+            {
+                visualElement.style.width = Length.Percent((float)item.GetWeight() / _storageSize * 100);
+            }
+
+            OnStomachStatusChanged(_items.Count == 0 ? Stomach.StomachState.Empty
+                : stomach.IsFull ? Stomach.StomachState.Full : Stomach.StomachState.HasItems);
         }
 
         private void OnItemAdded(ICartItem item)
@@ -130,20 +137,20 @@ namespace Eco.Scripts.UI
             _freeVisualElements.Add(visualElement);
         }
 
-        private void OnCartStatusChanged(Cart.CartState cartState)
+        private void OnStomachStatusChanged(Stomach.StomachState state)
         {
-            switch (cartState)
+            switch (state)
             {
-                case Cart.CartState.Full:
+                case Stomach.StomachState.Full:
                     DisplayLabel(CartFullText);
                     break;
-                case Cart.CartState.Recycling:
+                case Stomach.StomachState.Recycling:
                     DisplayLabel(CartRecyclingText);
                     break;
-                case Cart.CartState.Empty:
+                case Stomach.StomachState.Empty:
                     DisplayLabel(CartEmptyText);
                     break;
-                case Cart.CartState.HasItems:
+                case Stomach.StomachState.HasItems:
                     _label.AddToClassList(DisappearClassName);
                     _label.style.display = DisplayStyle.None;
                     break;
@@ -195,7 +202,7 @@ namespace Eco.Scripts.UI
 
         public void Clear()
         {
-            _cartSubscription?.Dispose();
+            _stomachSubscription?.Dispose();
             _playerSubscription?.Dispose();
         }
     }
