@@ -30,23 +30,9 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private float anchorStep = 0.12f;
         [Tooltip("Tentacles growing at the same time keep at least this far apart, at unit body scale.")]
         [SerializeField] private float anchorSpacing = 0.45f;
-        [Tooltip("No new tentacles within this many degrees either side of the mouth, at any height.")]
-        [SerializeField, Range(0f, 180f)] private float mouthHandClearance = 40f;
 
         [Header("Mouth")]
-        [SerializeField, Range(0f, 1f)] private float mouthHeight = 0.58f;
-        [Tooltip("Half width, half height, how deep the lips sink when open, smile curve. Unit body scale.")]
-        [SerializeField] private Vector4 mouthShape = new(0.32f, 0.13f, 0.22f, 0.25f);
-        [SerializeField] private float mouthOpenSpeed = 7f;
-        [Tooltip("Slide the mouth around the body toward the camera so it stays in view. Off: it stays at the front.")]
-        [SerializeField] private bool mouthFacesCamera = true;
-        [Tooltip("Degrees the mouth may stray from straight at the camera; within that it leans toward the front " +
-                 "(the direction of travel). 0 = always dead on the camera; above ~60 it starts to turn out of view.")]
-        [SerializeField, Range(0f, 90f)] private float mouthCameraLeeway = 35f;
-        [Tooltip("Shifts the camera-facing spot around the body, in degrees (positive = the creature's right).")]
-        [SerializeField, Range(-90f, 90f)] private float mouthCameraOffset;
-        [Tooltip("Degrees per second the mouth slides around the body.")]
-        [SerializeField] private float mouthTurnSpeed = 270f;
+        [SerializeField] private JellyMouthSettings mouth;
 
         [Header("Wobble")]
         [SerializeField] private float leanStiffness = 55f;
@@ -107,6 +93,9 @@ namespace Eco.Scripts.Jelly
         private static readonly int MouthCenterId = Shader.PropertyToID("_MouthCenter");
         private static readonly int MouthRotationId = Shader.PropertyToID("_MouthRotation");
         private static readonly int MouthShapeId = Shader.PropertyToID("_MouthShape");
+        private static readonly int MouthLineId = Shader.PropertyToID("_MouthLine");
+        private static readonly int MouthColorId = Shader.PropertyToID("_MouthColor");
+        private static readonly int MouthThroatId = Shader.PropertyToID("_MouthThroat");
         private static readonly int RippleAmpId = Shader.PropertyToID("_RippleAmp");
         private static readonly int RippleShapeId = Shader.PropertyToID("_RippleShape");
         private static readonly int DigestId = Shader.PropertyToID("_Digest");
@@ -131,6 +120,8 @@ namespace Eco.Scripts.Jelly
         private float _mouthProfile;
         private float _mouthAngle;
         private bool _mouthPlaced;
+        private Vector2 _mouthSize;
+        private float _mouthStripHalfAngle;
 
         private Vector3 _lastPosition;
         private Vector3 _velocity;
@@ -147,7 +138,7 @@ namespace Eco.Scripts.Jelly
         private float _growthVelocity;
         private float _growthTarget = 1f;
         private float _mouthOpen;
-        private int _mouthRequests;
+        private readonly List<Vector2> _mouthRequests = new();
         private float _digest;
         private bool _digesting;
 
@@ -185,8 +176,8 @@ namespace Eco.Scripts.Jelly
             _material.EnableKeyword(BodyKeyword);
             _refraction = _material.IsKeywordEnabled(RefractionKeyword);
 
-            _mouthProfile = shape.HeightToProfile(mouthHeight);
-            shape.Evaluate(0f, _mouthProfile, out _mouthFront, out _, out _);
+            _mouthSize = mouth.Size;
+            UpdateMouthOpening(0f);
             BuildAnchorCandidates();
 
             for (int i = 0; i < RippleCount; i++)
@@ -195,7 +186,6 @@ namespace Eco.Scripts.Jelly
             }
 
             _material.SetFloat(JellyHeightId, shape.Height);
-            _material.SetVector(MouthShapeId, mouthShape);
             _material.SetVector(RippleShapeId, rippleShape);
 
             UpdateDeformParams();
@@ -234,7 +224,7 @@ namespace Eco.Scripts.Jelly
                 Simulate(step);
             }
 
-            _mouthOpen = Mathf.MoveTowards(_mouthOpen, _mouthRequests > 0 ? 1f : 0f, mouthOpenSpeed * deltaTime);
+            UpdateMouthOpening(deltaTime);
             _digest = Mathf.MoveTowards(_digest, _digesting ? 1f : 0f, digestFadeSpeed * deltaTime);
             _jiggleEnergy *= Mathf.Exp(-jiggleDecay * deltaTime);
 
@@ -269,14 +259,16 @@ namespace Eco.Scripts.Jelly
             _digesting = digesting;
         }
 
-        public void OpenMouth()
+        /// <summary>Opens the mouth wide enough for an item this size (its two longest sides, in metres).</summary>
+        public void OpenMouth(Vector2 itemSize)
         {
-            _mouthRequests++;
+            _mouthRequests.Add(itemSize);
         }
 
-        public void CloseMouth()
+        /// <summary>Takes back an <see cref="OpenMouth"/> made with the same size.</summary>
+        public void CloseMouth(Vector2 itemSize)
         {
-            _mouthRequests = Mathf.Max(0, _mouthRequests - 1);
+            _mouthRequests.Remove(itemSize);
         }
 
         /// <summary>Kicks the body vertically: negative squashes it down, positive stretches it up.</summary>
@@ -371,10 +363,10 @@ namespace Eco.Scripts.Jelly
             normal = transform.TransformDirection(localNormal).normalized;
         }
 
-        // The vertical strip of the body the mouth is on
+        // The vertical strip of the body the mouth is on, as wide as the mouth is right now
         private bool IsInMouthStrip(float angle)
         {
-            return Mathf.Abs(Mathf.DeltaAngle(angle * Mathf.Rad2Deg, _mouthAngle)) < mouthHandClearance;
+            return Mathf.Abs(Mathf.DeltaAngle(angle * Mathf.Rad2Deg, _mouthAngle)) < _mouthStripHalfAngle;
         }
 
         private bool IsNearTakenAnchor(Vector3 restPosition)
@@ -485,7 +477,7 @@ namespace Eco.Scripts.Jelly
             _deform.MouthCenter = _mouthFront;
             _deform.MouthAngle = _mouthAngle * Mathf.Deg2Rad;
             _deform.MouthOpen = Smooth(_mouthOpen);
-            _deform.MouthShape = mouthShape;
+            _deform.MouthShape = new Vector4(_mouthSize.x, _mouthSize.y, mouth.Depth, mouth.Smile);
         }
 
         private void UpdateMouthPose()
@@ -498,22 +490,44 @@ namespace Eco.Scripts.Jelly
         private void UpdateMouthAngle(float deltaTime)
         {
             float target = 0f;
-            if (mouthFacesCamera && TryGetCameraAngle(out float cameraAngle))
+            if (mouth.FacesCamera && TryGetCameraAngle(out float cameraAngle))
             {
                 // As close to the front as the leeway allows. With the front out of reach and the camera nearly
                 // straight behind, keep to the side the mouth is already on so it doesn't flip across
                 float toFront = Mathf.DeltaAngle(cameraAngle, 0f);
-                float offset = Mathf.Abs(toFront) <= mouthCameraLeeway
+                float offset = Mathf.Abs(toFront) <= mouth.CameraLeeway
                     ? toFront
                     : Mathf.Sign(Mathf.Abs(toFront) > 150f ? Mathf.DeltaAngle(cameraAngle, _mouthAngle) : toFront)
-                      * mouthCameraLeeway;
+                      * mouth.CameraLeeway;
                 target = AvoidTakenAnchors(cameraAngle + offset, cameraAngle);
             }
 
             _mouthAngle = _mouthPlaced
-                ? Mathf.MoveTowardsAngle(_mouthAngle, target, mouthTurnSpeed * deltaTime)
+                ? Mathf.MoveTowardsAngle(_mouthAngle, target, mouth.TurnSpeed * deltaTime)
                 : target;
             _mouthPlaced = true;
+        }
+
+        private void UpdateMouthOpening(float deltaTime)
+        {
+            // Wide enough for the biggest item on its way in, never smaller than the mouth at rest
+            var target = mouth.Size;
+            foreach (var itemSize in _mouthRequests)
+            {
+                var fit = itemSize * (0.5f * mouth.ItemMargin / WorldScale);
+                target = Vector2.Max(target, Vector2.Min(fit, mouth.MaxOpenSize));
+            }
+
+            float blend = 1f - Mathf.Exp(-mouth.OpenSpeed * deltaTime);
+            _mouthSize = Vector2.Lerp(_mouthSize, target, blend);
+            _mouthOpen = Mathf.MoveTowards(_mouthOpen, _mouthRequests.Count > 0 ? 1f : 0f, mouth.OpenSpeed * deltaTime);
+
+            _mouthProfile = shape.HeightToProfile(mouth.Height);
+            shape.Evaluate(0f, _mouthProfile, out _mouthFront, out _, out _);
+
+            float radius = Mathf.Max(0.01f, shape.RadiusAtHeight(mouth.Height));
+            float halfAngle = Mathf.Asin(Mathf.Clamp01(_mouthSize.x / radius)) * Mathf.Rad2Deg;
+            _mouthStripHalfAngle = Mathf.Max(mouth.HandClearance, halfAngle + 10f);
         }
 
         // Angle of the camera around the body, in degrees (0 = front)
@@ -536,7 +550,7 @@ namespace Eco.Scripts.Jelly
                 return false;
             }
 
-            angle = Mathf.Atan2(toCamera.x, toCamera.z) * Mathf.Rad2Deg + mouthCameraOffset;
+            angle = Mathf.Atan2(toCamera.x, toCamera.z) * Mathf.Rad2Deg + mouth.CameraOffset;
             return true;
         }
 
@@ -547,19 +561,19 @@ namespace Eco.Scripts.Jelly
             {
                 float anchorAngle = _candidates[index].Angle * Mathf.Rad2Deg;
                 float offset = Mathf.DeltaAngle(anchorAngle, target);
-                if (Mathf.Abs(offset) >= mouthHandClearance)
+                if (Mathf.Abs(offset) >= mouth.HandClearance)
                 {
                     continue;
                 }
 
                 float side = offset >= 0f ? 1f : -1f;
-                float nearSide = anchorAngle + side * mouthHandClearance;
-                float farSide = anchorAngle - side * mouthHandClearance;
-                if (Mathf.Abs(Mathf.DeltaAngle(cameraAngle, nearSide)) <= mouthCameraLeeway)
+                float nearSide = anchorAngle + side * mouth.HandClearance;
+                float farSide = anchorAngle - side * mouth.HandClearance;
+                if (Mathf.Abs(Mathf.DeltaAngle(cameraAngle, nearSide)) <= mouth.CameraLeeway)
                 {
                     target = nearSide;
                 }
-                else if (Mathf.Abs(Mathf.DeltaAngle(cameraAngle, farSide)) <= mouthCameraLeeway)
+                else if (Mathf.Abs(Mathf.DeltaAngle(cameraAngle, farSide)) <= mouth.CameraLeeway)
                 {
                     target = farSide;
                 }
@@ -600,6 +614,10 @@ namespace Eco.Scripts.Jelly
             _material.SetFloat(GroundSpreadId, groundSpread);
             _material.SetVector(JiggleId, new Vector4(jiggleAmplitude, jiggle.y, jiggle.z, 0f));
             _material.SetVector(MouthCenterId, new Vector4(_mouthFront.x, _mouthFront.y, _mouthFront.z, _deform.MouthOpen));
+            _material.SetVector(MouthShapeId, _deform.MouthShape);
+            _material.SetFloat(MouthLineId, mouth.ClosedLine);
+            _material.SetColor(MouthColorId, mouth.Color);
+            _material.SetVector(MouthThroatId, new Vector4(mouth.ThroatDarkness, mouth.LipHighlight, 0f, 0f));
             _material.SetVector(MouthRotationId,
                 new Vector4(Mathf.Sin(_deform.MouthAngle), Mathf.Cos(_deform.MouthAngle), 0f, 0f));
             _material.SetFloat(DigestId, _digest);
@@ -637,11 +655,16 @@ namespace Eco.Scripts.Jelly
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
+            if (mouth == null)
+            {
+                return;
+            }
+
             if (!Application.isPlaying)
             {
                 shape.Build();
-                _mouthProfile = shape.HeightToProfile(mouthHeight);
-                shape.Evaluate(0f, _mouthProfile, out _mouthFront, out _, out _);
+                _mouthSize = mouth.Size;
+                UpdateMouthOpening(0f);
                 BuildAnchorCandidates();
             }
 

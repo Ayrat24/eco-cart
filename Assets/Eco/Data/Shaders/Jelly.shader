@@ -41,12 +41,13 @@ Shader "Eco/Jelly"
         _ContactColor("Contact Line Colour", Color) = (0.7, 1, 0.95, 1)
         _Jiggle("Jiggle (amplitude, speed, frequency)", Vector) = (0.01, 2.5, 1.5, 0)
 
-        [Header(Mouth)]
+        [Header(Mouth (set from JellyMouthSettings while playing))]
         _MouthCenter("Mouth Centre (xyz rest position turned to the front, w open)", Vector) = (0, 0.9, 0.8, 0)
         [HideInInspector] _MouthRotation("Mouth Rotation (sin, cos of its angle)", Vector) = (0, 1, 0, 0)
         _MouthShape("Mouth Shape (half width, half height, depth, smile)", Vector) = (0.3, 0.12, 0.25, 0.25)
         _MouthLine("Closed Mouth Line", Range(0, 1)) = 0.3
         _MouthColor("Mouth Colour", Color) = (0.02, 0.12, 0.12, 0.9)
+        _MouthThroat("Mouth Throat (darkness, lip highlight)", Vector) = (0.75, 0.6, 0, 0)
 
         [Header(Ripples)]
         [HideInInspector] _Ripple0("Ripple 0", Vector) = (0, 0, 0, -1000)
@@ -238,8 +239,15 @@ Shader "Eco/Jelly"
                 float2 mouthUV = JellyMouthUV(input.restOS.xyz);
                 float mouthHeight = lerp(_MouthLine, 1.0, _MouthCenter.w);
                 float mouthShape = mouthUV.x * mouthUV.x + (mouthUV.y * mouthUV.y) / (mouthHeight * mouthHeight);
-                float mouth = (1.0 - smoothstep(0.65, 1.0, mouthShape)) * JellyMouthSide(input.restOS.xyz) * _MouthColor.a;
-                color = lerp(color, _MouthColor.rgb * (ambient + lightColor * 0.3), mouth);
+                float mouthSide = JellyMouthSide(input.restOS.xyz);
+                float mouth = (1.0 - smoothstep(0.65, 1.0, mouthShape)) * mouthSide * _MouthColor.a;
+
+                // Open, it darkens toward the middle like a deep hole and gets a lighter lip around the rim
+                float mouthOpen = _MouthCenter.w;
+                float throat = 1.0 - _MouthThroat.x * mouthOpen * saturate(1.0 - mouthShape);
+                color = lerp(color, _MouthColor.rgb * (ambient + lightColor * 0.3) * throat, mouth);
+                float lip = smoothstep(0.6, 0.85, mouthShape) * (1.0 - smoothstep(0.85, 1.15, mouthShape));
+                color += scatter * (lip * _MouthThroat.y * mouthOpen * mouthSide);
                 alpha = max(alpha, mouth);
 
                 // Digesting: bubbles fizz up through the body

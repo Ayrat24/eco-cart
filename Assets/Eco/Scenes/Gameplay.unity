@@ -2584,14 +2584,7 @@ MonoBehaviour:
     maxAngle: 180
   anchorStep: 0.12
   anchorSpacing: 0.45
-  mouthHandClearance: 40
-  mouthHeight: 0.58
-  mouthShape: {x: 0.32, y: 0.13, z: 0.22, w: 0.25}
-  mouthOpenSpeed: 7
-  mouthFacesCamera: 1
-  mouthCameraLeeway: 35
-  mouthCameraOffset: 0
-  mouthTurnSpeed: 270
+  mouth: {fileID: 11400000, guid: 0232940ecb1f53f409d38235c18f484a, type: 2}
   leanStiffness: 55
   leanDamping: 5
   leanInertia: 0.035

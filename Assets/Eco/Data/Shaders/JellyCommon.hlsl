@@ -37,6 +37,7 @@ CBUFFER_START(UnityPerMaterial)
     float4 _MouthShape;
     float _MouthLine;
     float4 _MouthColor;
+    float4 _MouthThroat;
 
     float4 _Ripple0;
     float4 _Ripple1;
@@ -81,6 +82,11 @@ float JellyMouthMask(float3 rest)
     return saturate(1.0 - dot(uv, uv)) * JellyMouthSide(rest);
 }
 
+float JellyMouthDent(float mask)
+{
+    return smoothstep(0.0, 0.6, mask);
+}
+
 float JellyRipple(float3 rest, float4 ripple, float amplitude)
 {
     float age = max(_Time.y - ripple.w, 0.0);
@@ -105,9 +111,8 @@ float3 JellyDeform(float3 p, float3 n)
     float3 rest = p;
     float h01 = saturate(p.y / _JellyHeight);
 
-    // The lips sink inward as the mouth opens
-    float mouth = JellyMouthMask(rest);
-    p -= n * (_MouthShape.z * _MouthCenter.w * mouth * mouth);
+    // The mouth sinks inward as it opens: steep sides and a flat bottom, so it reads as a hole
+    p -= n * (_MouthShape.z * _MouthCenter.w * JellyMouthDent(JellyMouthMask(rest)));
 
     p += n * JellySurfaceOffset(rest, h01);
 

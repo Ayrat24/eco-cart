@@ -59,6 +59,7 @@ namespace Eco.Scripts.ItemCollecting
 
             bool grabbed = false;
             bool mouthOpen = false;
+            var mouthSize = Vector2.zero;
             bool completed = false;
 
             // Step 1: grow out of the body and stretch to the item
@@ -85,7 +86,8 @@ namespace Eco.Scripts.ItemCollecting
                 itemTransform.SetParent(tentacle.Tip, true);
                 _body.Poke(tentacle.SurfacePosition, 0.03f);
 
-                _body.OpenMouth();
+                mouthSize = _stomach.GetSwallowedSize(item);
+                _body.OpenMouth(mouthSize);
                 mouthOpen = true;
 
                 var grabPoint = tentacle.TipPosition;
@@ -152,7 +154,7 @@ namespace Eco.Scripts.ItemCollecting
 
             if (mouthOpen)
             {
-                _body.CloseMouth();
+                _body.CloseMouth(mouthSize);
             }
 
             // Step 4: pull back into the body

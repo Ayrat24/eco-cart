@@ -16,8 +16,7 @@ namespace Eco.Scripts.Jelly
             var rest = p;
             float h01 = Mathf.Clamp01(p.y / d.Height);
 
-            float mouth = MouthMask(rest, d);
-            p -= n * (d.MouthShape.z * d.MouthOpen * mouth * mouth);
+            p -= n * (d.MouthShape.z * d.MouthOpen * MouthDent(MouthMask(rest, d)));
 
             float stretch = Mathf.Max(0.2f, 1f + d.Squash);
             float spread = 1f / Mathf.Sqrt(stretch);
@@ -51,6 +50,12 @@ namespace Eco.Scripts.Jelly
             var alongBitangent = Deform(p + bitangent * NeighbourOffset, n, d) - position;
             var cross = Vector3.Cross(alongTangent, alongBitangent);
             normal = cross.sqrMagnitude > 1e-12f ? cross.normalized : n;
+        }
+
+        public static float MouthDent(float mask)
+        {
+            float t = Mathf.Clamp01(mask / 0.6f);
+            return t * t * (3f - 2f * t);
         }
 
         public static float MouthMask(Vector3 rest, in JellyDeformParams d)

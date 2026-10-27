@@ -138,6 +138,37 @@ namespace Eco.Scripts.ItemCollecting
                 : settings.ItemScale;
         }
 
+        /// <summary>The item's two longest sides once swallowed, in metres; the mouth opens to fit them.</summary>
+        public Vector2 GetSwallowedSize(ICartItem item)
+        {
+            if (item is not Component component)
+            {
+                return Vector2.zero;
+            }
+
+            // The largest renderer, measured along its own axes so the way the item lies doesn't matter
+            var largest = Vector3.zero;
+            foreach (var renderer in component.GetComponentsInChildren<Renderer>())
+            {
+                if (renderer is ParticleSystemRenderer or TrailRenderer)
+                {
+                    continue;
+                }
+
+                var size = Vector3.Scale(renderer.localBounds.size, renderer.transform.lossyScale);
+                size = new Vector3(Mathf.Abs(size.x), Mathf.Abs(size.y), Mathf.Abs(size.z));
+                if (size.x * size.y * size.z > largest.x * largest.y * largest.z)
+                {
+                    largest = size;
+                }
+            }
+
+            float longest = MaxComponent(largest);
+            float shortest = Mathf.Min(largest.x, Mathf.Min(largest.y, largest.z));
+            float middle = largest.x + largest.y + largest.z - longest - shortest;
+            return new Vector2(longest, middle) * settings.ItemScale;
+        }
+
         /// <summary>Takes an item that a tentacle pushed through the mouth; it floats inside from now on.</summary>
         public void Swallow(ICartItem item)
         {
