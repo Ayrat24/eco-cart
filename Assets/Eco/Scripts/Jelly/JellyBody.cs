@@ -21,15 +21,8 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private float baseScale = 1.2f;
 
         [Header("Hands")]
-        [Tooltip("Body areas tentacles can grow from.")]
-        [SerializeField] private List<JellyHandZone> handZones = new()
-        {
-            new JellyHandZone { minHeight = 0.18f, maxHeight = 0.82f, minAngle = -180f, maxAngle = 180f }
-        };
-        [Tooltip("Spacing of the candidate spots inside the hand zones, at unit body scale.")]
-        [SerializeField] private float anchorStep = 0.12f;
-        [Tooltip("Tentacles growing at the same time keep at least this far apart, at unit body scale.")]
-        [SerializeField] private float anchorSpacing = 0.45f;
+        [Tooltip("Where tentacles grow, how they look and how pickups are timed.")]
+        [SerializeField] private JellyHandSettings hands;
 
         [Header("Mouth")]
         [SerializeField] private JellyMouthSettings mouth;
@@ -146,6 +139,7 @@ namespace Eco.Scripts.Jelly
         public float WorldScale => baseScale * _growth;
         public float Stretch => Mathf.Max(0.2f, 1f + _squash);
         public float RestHeight => shape.Height;
+        public JellyHandSettings Hands => hands;
 
         /// <summary>Volume of the body at its normal size, in cubic metres.</summary>
         public float BaseVolume => shape.Volume * baseScale * baseScale * baseScale;
@@ -157,6 +151,10 @@ namespace Eco.Scripts.Jelly
 
         /// <summary>World direction the mouth faces.</summary>
         public Vector3 MouthNormal { get; private set; }
+
+        /// <summary>World position of the middle of the mouth where it meets the body surface, however far it has
+        /// sunk in.</summary>
+        public Vector3 MouthLips { get; private set; }
 
         private struct AnchorCandidate
         {
@@ -373,7 +371,7 @@ namespace Eco.Scripts.Jelly
         {
             foreach (int index in _takenAnchors)
             {
-                if ((_candidates[index].Position - restPosition).sqrMagnitude < anchorSpacing * anchorSpacing)
+                if ((_candidates[index].Position - restPosition).sqrMagnitude < hands.AnchorSpacing * hands.AnchorSpacing)
                 {
                     return true;
                 }
@@ -385,6 +383,7 @@ namespace Eco.Scripts.Jelly
         private void BuildAnchorCandidates()
         {
             _candidates.Clear();
+            float anchorStep = hands.AnchorStep;
             int heightSteps = Mathf.Max(1, Mathf.CeilToInt(shape.Height / anchorStep));
             for (int h = 0; h <= heightSteps; h++)
             {
@@ -410,7 +409,7 @@ namespace Eco.Scripts.Jelly
 
         private bool InHandZone(float height01, float angleDegrees)
         {
-            foreach (var zone in handZones)
+            foreach (var zone in hands.Zones)
             {
                 if (zone.Contains(height01, angleDegrees))
                 {
@@ -485,6 +484,12 @@ namespace Eco.Scripts.Jelly
             GetSurfacePose(_mouthAngle * Mathf.Deg2Rad, _mouthProfile, out var position, out var normal);
             MouthPosition = position;
             MouthNormal = normal;
+
+            var closed = _deform;
+            closed.MouthOpen = 0f;
+            shape.Evaluate(_mouthAngle * Mathf.Deg2Rad, _mouthProfile, out var rest, out var restNormal, out var tangent);
+            JellyDeformation.DeformSurface(rest, restNormal, tangent, closed, out var lips, out _);
+            MouthLips = transform.TransformPoint(lips);
         }
 
         private void UpdateMouthAngle(float deltaTime)
@@ -655,7 +660,7 @@ namespace Eco.Scripts.Jelly
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (mouth == null)
+            if (mouth == null || hands == null)
             {
                 return;
             }

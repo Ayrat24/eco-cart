@@ -228,22 +228,30 @@ Shader "Eco/Jelly"
                 alpha = combinedAlpha;
             #endif
 
-                float3 surface = specular + reflection * (_ReflectStrength * (0.04 + 0.96 * fresnel))
-                    + _RimColor.rgb * (fresnel * 0.5) * (ambient + lightColor * 0.5)
-                    + _ContactColor.rgb * (contactLine * 0.35);
-                color += surface;
-                alpha = saturate(alpha + fresnel * 0.4 + Luminance(specular));
-
+                float shine = 1.0;
             #if defined(_JELLY_BODY)
                 // Mouth: a thin closed line that widens into a dark opening
                 float2 mouthUV = JellyMouthUV(input.restOS.xyz);
-                float mouthHeight = lerp(_MouthLine, 1.0, _MouthCenter.w);
+                float mouthOpen = _MouthCenter.w;
+                float mouthHeight = lerp(_MouthLine, 1.0, mouthOpen);
                 float mouthShape = mouthUV.x * mouthUV.x + (mouthUV.y * mouthUV.y) / (mouthHeight * mouthHeight);
                 float mouthSide = JellyMouthSide(input.restOS.xyz);
+
+                // The open mouth's steep walls turn the sharp highlight and the edge glow into a saw-tooth along
+                // the triangles; the lip highlight below lights the rim instead
+                shine = 1.0 - mouthOpen * mouthSide * (1.0 - smoothstep(1.0, 1.4, mouthShape));
+            #endif
+
+                float3 surface = (specular + reflection * (_ReflectStrength * (0.04 + 0.96 * fresnel))
+                    + _RimColor.rgb * (fresnel * 0.5) * (ambient + lightColor * 0.5)) * shine
+                    + _ContactColor.rgb * (contactLine * 0.35);
+                color += surface;
+                alpha = saturate(alpha + (fresnel * 0.4 + Luminance(specular)) * shine);
+
+            #if defined(_JELLY_BODY)
                 float mouth = (1.0 - smoothstep(0.65, 1.0, mouthShape)) * mouthSide * _MouthColor.a;
 
                 // Open, it darkens toward the middle like a deep hole and gets a lighter lip around the rim
-                float mouthOpen = _MouthCenter.w;
                 float throat = 1.0 - _MouthThroat.x * mouthOpen * saturate(1.0 - mouthShape);
                 color = lerp(color, _MouthColor.rgb * (ambient + lightColor * 0.3) * throat, mouth);
                 float lip = smoothstep(0.6, 0.85, mouthShape) * (1.0 - smoothstep(0.85, 1.15, mouthShape));

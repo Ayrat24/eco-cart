@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Jelly;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.ItemCollecting
 {
@@ -14,13 +15,6 @@ namespace Eco.Scripts.ItemCollecting
     {
         [SerializeField] string handName;
         [SerializeField] private JellyTentacle tentacle;
-
-        [SerializeField] private float pickAnimationDuration = 0.3f;
-        [SerializeField] private float placeAnimationDuration = 0.45f;
-        [SerializeField] private float swallowAnimationDuration = 0.12f;
-        [SerializeField] private float swingBackAnimationDuration = 0.25f;
-        [Tooltip("How high the tentacle lifts an item on its way to the mouth, in metres.")]
-        [SerializeField] private float carryArcHeight = 1.2f;
 
         private Stomach _stomach;
         private JellyBody _body;
@@ -57,13 +51,18 @@ namespace Eco.Scripts.ItemCollecting
             _animationInProgress = true;
             tentacle.Show(_body, anchor);
 
+            // Timing and carry come from the body's hand settings; each pickup varies a little
+            var hands = _body.Hands;
+            float pace = 1f + Random.Range(-hands.TimingVariation, hands.TimingVariation);
+            float carryArcHeight = hands.CarryArcHeight;
+
             bool grabbed = false;
             bool mouthOpen = false;
             var mouthSize = Vector2.zero;
             bool completed = false;
 
             // Step 1: grow out of the body and stretch to the item
-            bool reached = await AnimateAsync(pickAnimationDuration, t =>
+            bool reached = await AnimateAsync(hands.ReachDuration * pace, t =>
             {
                 if (!IsAlive(itemTransform))
                 {
@@ -95,37 +94,46 @@ namespace Eco.Scripts.ItemCollecting
                 float startScale = itemTransform.localScale.x;
                 float endScale = _stomach.GetSwallowedScale(item);
 
-                bool carried = await AnimateAsync(placeAnimationDuration, t =>
+                float approach = hands.MouthApproachDistance * _body.Growth + mouthSize.x * 0.5f;
+
+                bool carried = await AnimateAsync(hands.CarryDuration * pace, t =>
                 {
                     if (!IsAlive(itemTransform))
                     {
                         return false;
                     }
 
+                    // Lift the item off the ground, then swing round to line it up in front of the mouth so it
+                    // arrives head-on rather than along the body
                     float e = EaseInOutSine(t);
-                    var lips = _body.MouthPosition + _body.MouthNormal * (0.35f * _body.WorldScale);
-                    var control = (grabPoint + lips) * 0.5f + Vector3.up * carryArcHeight;
-                    float u = 1f - e;
-                    tentacle.TipPosition = u * u * grabPoint + 2f * u * e * control + e * e * lips;
-                    tentacle.TipDirection = Vector3.Lerp(Vector3.down, -_body.MouthNormal, e);
+                    var normal = _body.MouthNormal;
+                    var front = _body.MouthLips + normal * approach;
+                    var lift = grabPoint + Vector3.up * carryArcHeight;
+                    var lineUp = front + normal * (approach * 0.8f) + Vector3.up * (carryArcHeight * 0.5f);
+                    tentacle.TipPosition = CubicBezier(grabPoint, lift, lineUp, front, e);
+                    tentacle.TipDirection = Vector3.Lerp(Vector3.down, -normal, e);
                     itemTransform.localPosition = Vector3.Lerp(heldOffset, Vector3.zero, e);
                     itemTransform.localScale = Vector3.one * Mathf.Lerp(startScale, endScale, e);
                     return true;
                 }, token);
 
-                // Step 3: push it through the mouth
+                // Step 3: the arm holds still in front of the mouth while its hand stretches in with the item
                 if (carried)
                 {
-                    var lipsPoint = tentacle.TipPosition;
-                    completed = await AnimateAsync(swallowAnimationDuration, t =>
+                    completed = await AnimateAsync(hands.PushDuration * pace, t =>
                     {
                         if (!IsAlive(itemTransform))
                         {
                             return false;
                         }
 
-                        var inside = _body.MouthPosition - _body.MouthNormal * (0.25f * _body.WorldScale);
-                        tentacle.TipPosition = Vector3.Lerp(lipsPoint, inside, EaseInCubic(t));
+                        var normal = _body.MouthNormal;
+                        var front = _body.MouthLips + normal * approach;
+                        var inside = _body.MouthPosition - normal * (0.25f * _body.WorldScale);
+                        tentacle.TipPosition = front;
+                        tentacle.TipDirection = -normal;
+                        tentacle.ReachPosition = Vector3.Lerp(front, inside, EaseInCubic(t));
+                        tentacle.ReachWeight = 1f;
                         return true;
                     }, token);
                 }
@@ -157,13 +165,19 @@ namespace Eco.Scripts.ItemCollecting
                 _body.CloseMouth(mouthSize);
             }
 
-            // Step 4: pull back into the body
+            // Step 4: the hand snaps back to the arm, then the arm pulls back into the body
             var retractFrom = tentacle.TipPosition;
-            await AnimateAsync(swingBackAnimationDuration, t =>
+            var reachFrom = tentacle.ReachPosition;
+            float reachWeight = tentacle.ReachWeight;
+            await AnimateAsync(hands.RetractDuration * pace, t =>
             {
-                tentacle.TipPosition = Vector3.Lerp(retractFrom, tentacle.SurfacePosition, EaseInCubic(t));
+                float hand = Mathf.Clamp01(t / 0.3f);
+                float arm = Mathf.Clamp01((t - 0.3f) / 0.7f);
+                tentacle.ReachPosition = Vector3.Lerp(reachFrom, tentacle.TipPosition, hand);
+                tentacle.ReachWeight = reachWeight * (1f - hand);
+                tentacle.TipPosition = Vector3.Lerp(retractFrom, tentacle.SurfacePosition, EaseInCubic(arm));
                 tentacle.TipDirection = Vector3.zero;
-                tentacle.Visibility = 1f - Mathf.SmoothStep(0f, 1f, (t - 0.5f) * 2f);
+                tentacle.Visibility = 1f - Mathf.SmoothStep(0f, 1f, (arm - 0.5f) * 2f);
                 return true;
             }, token);
 
@@ -219,6 +233,12 @@ namespace Eco.Scripts.ItemCollecting
 
                 time += Time.deltaTime;
             }
+        }
+
+        private static Vector3 CubicBezier(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+        {
+            float u = 1f - t;
+            return u * u * u * p0 + 3f * u * u * t * p1 + 3f * u * t * t * p2 + t * t * t * p3;
         }
 
         private static float EaseOutCubic(float t)

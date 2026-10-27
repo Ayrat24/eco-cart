@@ -20,8 +20,8 @@ namespace Eco.Scripts.Jelly
             new(0.33f, 1.46f), new(0f, 1.52f)
         };
 
-        [SerializeField, Range(8, 128)] private int segments = 64;
-        [SerializeField, Range(8, 128)] private int rings = 56;
+        [SerializeField, Range(8, 128)] private int segments = 96;
+        [SerializeField, Range(8, 128)] private int rings = 112;
         [SerializeField, Range(0f, 0.3f)] private float lumpAmplitude = 0.07f;
         [SerializeField] private float lumpHeight = 0.22f;
         [SerializeField] private int lumpSeed = 3;

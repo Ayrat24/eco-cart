@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2debf4a09c6b8d643a76cc98ee57f23d, type: 3}
   m_Name: MouthSettings
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.JellyMouthSettings
-  height: 0.58
+  height: 0.785
   facesCamera: 1
   cameraLeeway: 35
   cameraOffset: 0
   turnSpeed: 270
-  handClearance: 40
+  handClearance: 80
   size: {x: 0.32, y: 0.13}
   smile: 0.25
   closedLine: 0.22

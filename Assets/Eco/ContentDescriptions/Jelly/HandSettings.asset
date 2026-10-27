@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccc6376c761e8a744b89dd785129a3b7, type: 3}
+  m_Name: HandSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.JellyHandSettings
+  zones:
+  - minHeight: 0.18
+    maxHeight: 0.82
+    minAngle: -180
+    maxAngle: 180
+  anchorStep: 0.12
+  anchorSpacing: 0.45
+  sides: 12
+  segments: 28
+  rootRadius: 0.26
+  midRadius: 0.12
+  tipRadius: 0.17
+  embedDepth: 0.2
+  swayAmplitude: 0.06
+  swaySpeed: 5
+  reachDuration: 0.3
+  carryDuration: 0.45
+  pushDuration: 0.25
+  retractDuration: 0.25
+  timingVariation: 0.1
+  carryArcHeight: 1.2
+  mouthApproachDistance: 0.7
