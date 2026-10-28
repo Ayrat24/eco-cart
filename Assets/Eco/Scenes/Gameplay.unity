@@ -4246,6 +4246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.CameraController
   cinemachineFollow: {fileID: 373018841}
+  zoomSettings: {fileID: 11400000, guid: 2b74c5aa1c877b747b3143d99bc690ee, type: 2}
 --- !u!1001 &3229151788748917416
 PrefabInstance:
   m_ObjectHideFlags: 0
