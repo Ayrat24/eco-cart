@@ -27,9 +27,11 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private int lumpSeed = 3;
 
         private const int SamplesPerSpan = 32;
+        private const int RadiusTableSize = 64;
 
         private float[] _ringRadius;
         private float[] _ringHeight;
+        private float[] _radiusByHeight;
         private Vector2[] _ringNormal;
 
         public float Height { get; private set; }
@@ -84,6 +86,12 @@ namespace Eco.Scripts.Jelly
 
             _ringNormal[0] = Vector2.down;
             _ringNormal[rings - 1] = Vector2.up;
+
+            _radiusByHeight = new float[RadiusTableSize + 1];
+            for (int i = 0; i <= RadiusTableSize; i++)
+            {
+                _radiusByHeight[i] = RadiusAtHeight((float)i / RadiusTableSize);
+            }
 
             // Stack of conical slices between neighbouring rings; slices under an overhang count negative
             Volume = 0f;
@@ -143,6 +151,14 @@ namespace Eco.Scripts.Jelly
             }
 
             return 1f;
+        }
+
+        /// <summary><see cref="RadiusAtHeight"/> from a lookup table: cheap enough for many queries a frame.</summary>
+        public float RadiusAtHeightFast(float height01)
+        {
+            float x = Mathf.Clamp01(height01) * RadiusTableSize;
+            int i = Mathf.Min((int)x, RadiusTableSize - 1);
+            return Mathf.Lerp(_radiusByHeight[i], _radiusByHeight[i + 1], x - i);
         }
 
         public float RadiusAtHeight(float height01)

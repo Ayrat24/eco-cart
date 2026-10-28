@@ -41,11 +41,11 @@ namespace Eco.Scripts.Jelly
         /// <summary>World position of the tip.</summary>
         public Vector3 TipPosition { get; set; }
 
-        /// <summary>World direction the tip points at the end; zero to point along the tentacle.</summary>
-        public Vector3 TipDirection { get; set; }
-
         /// <summary>0 = not grown out at all, 1 = full thickness.</summary>
         public float Visibility { get; set; }
+
+        /// <summary>0..1: how much the arm comes in to its tip heading toward the body, so a hand can carry on into it.</summary>
+        public float ArriveInward { get; set; }
 
         /// <summary>
         /// World point the hand stretches out to from the end of the arm, which keeps its shape. Used while
@@ -86,8 +86,8 @@ namespace Eco.Scripts.Jelly
             _swaySeed = Random.Range(0f, 10f);
             UpdateSurface();
             TipPosition = SurfacePosition;
-            TipDirection = Vector3.zero;
             Visibility = 0f;
+            ArriveInward = 0f;
             ReachWeight = 0f;
         }
 
@@ -145,33 +145,29 @@ namespace Eco.Scripts.Jelly
             var surface = SurfacePosition;
             var normal = SurfaceNormal;
             var end = TipPosition;
-            var toTip = end - surface;
-            float length = toTip.magnitude;
-            var tipDirection = TipDirection.sqrMagnitude > 1e-6f
-                ? TipDirection.normalized
-                : length > 1e-4f ? toTip / length : normal;
-
-            var c1 = surface + normal * (length * 0.45f);
-            var c2 = end - tipDirection * (length * 0.35f);
-
-            var side = Vector3.Cross(normal, toTip);
-            side = side.sqrMagnitude > 1e-6f ? side.normalized : Vector3.Cross(normal, Vector3.up).normalized;
             var hands = _body.Hands;
+            float length = Vector3.Distance(surface, end);
+
+            // The arm arcs round the body from its root to the tip, on the side it grew from, never through it
+            var arc = new JellyBodyArc(_body, surface, end, _body.SideOf(surface),
+                hands.MidRadius * _body.Growth + 0.05f, length * 0.15f, hands.ArcBulge * _body.Growth, ArriveInward);
+
+            var swaySide = Vector3.Cross(Vector3.up, end - surface);
+            swaySide = swaySide.sqrMagnitude > 1e-6f ? swaySide.normalized : Vector3.Cross(Vector3.up, normal).normalized;
             float time = Time.timeSinceLevelLoad * hands.SwaySpeed + _swaySeed;
 
-            // The arm, sampled finely so the rings can be spread evenly along it
-            _armLengths[0] = 0f;
+            // Sampled finely so the rings can be spread evenly along it
             for (int k = 0; k <= ArmSamples; k++)
             {
                 float s = (float)k / ArmSamples;
-                float u = 1f - s;
-                var point = u * u * u * surface + 3f * u * u * s * c1 + 3f * u * s * s * c2 + s * s * s * end;
                 float sway = Mathf.Sin(time - s * 6f) * hands.SwayAmplitude * Mathf.Sin(s * Mathf.PI) * Mathf.Min(1f, length);
-                _armPoints[k] = point + side * sway;
-                if (k > 0)
-                {
-                    _armLengths[k] = _armLengths[k - 1] + Vector3.Distance(_armPoints[k - 1], _armPoints[k]);
-                }
+                _armPoints[k] = arc.Evaluate(s) + swaySide * sway;
+            }
+
+            _armLengths[0] = 0f;
+            for (int k = 1; k <= ArmSamples; k++)
+            {
+                _armLengths[k] = _armLengths[k - 1] + Vector3.Distance(_armPoints[k - 1], _armPoints[k]);
             }
 
             // The hand grows out of the arm's end, setting off the way the arm points so there is no corner

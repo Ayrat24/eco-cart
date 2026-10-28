@@ -341,6 +341,43 @@ namespace Eco.Scripts.Jelly
             GetSurfacePose(angleDegrees * Mathf.Deg2Rad, shape.HeightToProfile(height01), out position, out normal);
         }
 
+        /// <summary>Point on the body's vertical axis at a world height, following the lean of the body.</summary>
+        public Vector3 AxisPoint(float worldHeight)
+        {
+            var position = transform.position;
+            float h01 = Mathf.Clamp01((worldHeight - position.y) / (shape.Height * Stretch * WorldScale));
+            var lean = _lean * (h01 * h01 * (3f - 2f * h01));
+            return new Vector3(position.x + lean.x, worldHeight, position.z + lean.z);
+        }
+
+        /// <summary>The body's radius at a world height in metres, squash included; 0 above the top.</summary>
+        public float RadiusAtWorldHeight(float worldHeight)
+        {
+            float stretch = Stretch;
+            float y = (worldHeight - transform.position.y) / WorldScale + sink;
+            if (y > shape.Height * stretch)
+            {
+                return 0f;
+            }
+
+            return shape.RadiusAtHeightFast(y / (shape.Height * stretch)) / Mathf.Sqrt(stretch) * WorldScale;
+        }
+
+        /// <summary>
+        /// Which way round the body to go from a point to the mouth: the point's sideways offset from the line through
+        /// the mouth, flat, in world space.
+        /// </summary>
+        public Vector3 SideOf(Vector3 worldPoint)
+        {
+            var toPoint = worldPoint - transform.position;
+            var facing = MouthNormal;
+            toPoint.y = 0f;
+            facing.y = 0f;
+            facing = facing.sqrMagnitude > 1e-6f ? facing.normalized : transform.forward;
+            var side = toPoint - facing * Vector3.Dot(toPoint, facing);
+            return side.sqrMagnitude > 1e-4f ? side.normalized : Vector3.Cross(Vector3.up, facing);
+        }
+
         /// <summary>Rest-shape radius at a height (0 = ground, 1 = top), at unit body scale.</summary>
         public float RestRadiusAt(float height01)
         {

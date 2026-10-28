@@ -49,6 +49,8 @@ namespace Eco.Scripts.Jelly
         [SerializeField, Range(0f, 0.5f)] private float timingVariation = 0.1f;
         [Tooltip("How high an item is lifted on its way to the mouth, in metres.")]
         [SerializeField, Min(0f)] private float carryArcHeight = 1.2f;
+        [Tooltip("How far arms and carried items bow out from the body when going round it, per half turn.")]
+        [SerializeField, Min(0f)] private float arcBulge = 0.5f;
         [Tooltip("The arm lines the item up this far in front of the mouth before the hand pushes it in, plus " +
                  "half the item's length.")]
         [SerializeField, Min(0f)] private float mouthApproachDistance = 0.7f;
@@ -70,6 +72,7 @@ namespace Eco.Scripts.Jelly
         public float RetractDuration => retractDuration;
         public float TimingVariation => timingVariation;
         public float CarryArcHeight => carryArcHeight;
+        public float ArcBulge => arcBulge;
         public float MouthApproachDistance => mouthApproachDistance;
     }
 }

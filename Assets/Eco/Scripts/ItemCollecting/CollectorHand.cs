@@ -72,7 +72,6 @@ namespace Eco.Scripts.ItemCollecting
                 var from = tentacle.SurfacePosition;
                 var target = itemTransform.position;
                 tentacle.TipPosition = Vector3.Lerp(from, target, EaseOutCubic(t)) + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 0.4f);
-                tentacle.TipDirection = Vector3.Lerp(target - from, Vector3.down, t);
                 tentacle.Visibility = Mathf.Clamp01(t * 3f);
                 return true;
             }, token);
@@ -95,6 +94,8 @@ namespace Eco.Scripts.ItemCollecting
                 float endScale = _stomach.GetSwallowedScale(item);
 
                 float approach = hands.MouthApproachDistance * _body.Growth + mouthSize.x * 0.5f;
+                float itemClearance = hands.TipRadius * _body.Growth + mouthSize.x * 0.5f;
+                var aroundSide = _body.SideOf(tentacle.SurfacePosition);
 
                 bool carried = await AnimateAsync(hands.CarryDuration * pace, t =>
                 {
@@ -103,15 +104,14 @@ namespace Eco.Scripts.ItemCollecting
                         return false;
                     }
 
-                    // Lift the item off the ground, then swing round to line it up in front of the mouth so it
-                    // arrives head-on rather than along the body
+                    // Lift the item and swing it along a smooth arc round the body, clear of it, to line it up in
+                    // front of the mouth
                     float e = EaseInOutSine(t);
-                    var normal = _body.MouthNormal;
-                    var front = _body.MouthLips + normal * approach;
-                    var lift = grabPoint + Vector3.up * carryArcHeight;
-                    var lineUp = front + normal * (approach * 0.8f) + Vector3.up * (carryArcHeight * 0.5f);
-                    tentacle.TipPosition = CubicBezier(grabPoint, lift, lineUp, front, e);
-                    tentacle.TipDirection = Vector3.Lerp(Vector3.down, -normal, e);
+                    var front = _body.MouthLips + _body.MouthNormal * approach;
+                    var arc = new JellyBodyArc(_body, grabPoint, front, aroundSide, itemClearance, carryArcHeight,
+                        hands.ArcBulge * _body.Growth, 1f);
+                    tentacle.TipPosition = arc.Evaluate(e);
+                    tentacle.ArriveInward = e;
                     itemTransform.localPosition = Vector3.Lerp(heldOffset, Vector3.zero, e);
                     itemTransform.localScale = Vector3.one * Mathf.Lerp(startScale, endScale, e);
                     return true;
@@ -131,7 +131,7 @@ namespace Eco.Scripts.ItemCollecting
                         var front = _body.MouthLips + normal * approach;
                         var inside = _body.MouthPosition - normal * (0.25f * _body.WorldScale);
                         tentacle.TipPosition = front;
-                        tentacle.TipDirection = -normal;
+                        tentacle.ArriveInward = 1f;
                         tentacle.ReachPosition = Vector3.Lerp(front, inside, EaseInCubic(t));
                         tentacle.ReachWeight = 1f;
                         return true;
@@ -165,18 +165,24 @@ namespace Eco.Scripts.ItemCollecting
                 _body.CloseMouth(mouthSize);
             }
 
-            // Step 4: the hand snaps back to the arm, then the arm pulls back into the body
+            // Step 4: the hand snaps back to the arm, then the arm reels back in along its own arc
             var retractFrom = tentacle.TipPosition;
             var reachFrom = tentacle.ReachPosition;
             float reachWeight = tentacle.ReachWeight;
+            var retractSide = _body.SideOf(tentacle.SurfacePosition);
+            float arriveInward = tentacle.ArriveInward;
             await AnimateAsync(hands.RetractDuration * pace, t =>
             {
                 float hand = Mathf.Clamp01(t / 0.3f);
                 float arm = Mathf.Clamp01((t - 0.3f) / 0.7f);
                 tentacle.ReachPosition = Vector3.Lerp(reachFrom, tentacle.TipPosition, hand);
                 tentacle.ReachWeight = reachWeight * (1f - hand);
-                tentacle.TipPosition = Vector3.Lerp(retractFrom, tentacle.SurfacePosition, EaseInCubic(arm));
-                tentacle.TipDirection = Vector3.zero;
+                var surface = tentacle.SurfacePosition;
+                var arc = new JellyBodyArc(_body, surface, retractFrom, retractSide,
+                    hands.MidRadius * _body.Growth + 0.05f, Vector3.Distance(surface, retractFrom) * 0.15f,
+                    hands.ArcBulge * _body.Growth, arriveInward);
+                tentacle.TipPosition = arc.Evaluate(1f - EaseInCubic(arm));
+                tentacle.ArriveInward = arriveInward * (1f - arm);
                 tentacle.Visibility = 1f - Mathf.SmoothStep(0f, 1f, (arm - 0.5f) * 2f);
                 return true;
             }, token);
@@ -233,12 +239,6 @@ namespace Eco.Scripts.ItemCollecting
 
                 time += Time.deltaTime;
             }
-        }
-
-        private static Vector3 CubicBezier(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
-        {
-            float u = 1f - t;
-            return u * u * u * p0 + 3f * u * u * t * p1 + 3f * u * t * t * p2 + t * t * t * p3;
         }
 
         private static float EaseOutCubic(float t)

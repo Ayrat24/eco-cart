@@ -87,7 +87,6 @@ namespace Eco.Scripts.Tools
 
             float reach = 1f - (1f - _grip) * (1f - _grip);
             tentacle.TipPosition = Vector3.Lerp(tentacle.SurfacePosition, grip.position, reach);
-            tentacle.TipDirection = spadeMount.forward;
             tentacle.Visibility = Mathf.Clamp01(_grip * 3f);
         }
 
