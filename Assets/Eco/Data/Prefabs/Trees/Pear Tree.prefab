@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4308299755468856024, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
       propertyPath: m_Name
-      value: Pear Tree Variant
+      value: Pear Tree
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -62,8 +62,28 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8298402829362636242, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4673470876093746787}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4308299755468856024, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4800026321477765917}
   m_SourcePrefab: {fileID: 100100000, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
+--- !u!1 &1440112538823445750 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4308299755468856024, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
+  m_PrefabInstance: {fileID: 2897619358399845934}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4800026321477765917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440112538823445750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b5b5b73458f354a8bc0bed427ef401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldBounds
 --- !u!4 &6566160417259156476 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8298402829362636242, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
@@ -77,6 +97,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6566160417259156476}
     m_Modifications:
+    - target: {fileID: 2352935628247011077, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 69be1d85025a6f24d83b580a844d9d31, type: 2}
+    - target: {fileID: 2352935628247011077, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: be8474c41a815a54ba47c04b6bd4a48f, type: 2}
     - target: {fileID: 2479184009378418726, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
       propertyPath: m_Name
       value: PT_Fruit_Tree_01_pears
@@ -137,6 +165,22 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7532243803686030394, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: be8474c41a815a54ba47c04b6bd4a48f, type: 2}
+    - target: {fileID: 7532243803686030394, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 69be1d85025a6f24d83b580a844d9d31, type: 2}
+    - target: {fileID: 8580298009914301585, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 69be1d85025a6f24d83b580a844d9d31, type: 2}
+    - target: {fileID: 8580298009914301585, guid: b62637568d07eb141b948ab45ea8c3d4, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: be8474c41a815a54ba47c04b6bd4a48f, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

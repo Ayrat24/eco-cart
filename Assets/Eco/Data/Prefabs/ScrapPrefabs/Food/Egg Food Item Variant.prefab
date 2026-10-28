@@ -87,13 +87,33 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7022821101383588370}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3717913145014067861}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
 --- !u!4 &133169648503800766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2667911586336761990, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
   m_PrefabInstance: {fileID: 2656928501444029240}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5464538395761407886 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8001417500736216246, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
+  m_PrefabInstance: {fileID: 2656928501444029240}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3717913145014067861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464538395761407886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b5b5b73458f354a8bc0bed427ef401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldBounds
 --- !u!1001 &7420995299787374073
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -158,6 +178,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 50249e50f93eade40b988a5d4e06e7c8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9b0587291f8ee8743940c6e8a46b83da, type: 2}
     - target: {fileID: 919132149155446097, guid: 50249e50f93eade40b988a5d4e06e7c8, type: 3}
       propertyPath: m_Name
       value: egg

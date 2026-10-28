@@ -310,6 +310,7 @@ GameObject:
   m_Component:
   - component: {fileID: 144762168}
   - component: {fileID: 144762167}
+  - component: {fileID: 144762169}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -358,6 +359,23 @@ Transform:
   - {fileID: 1509035207}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &144762169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144762166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ea3f20bf9f810c4486393631708f769, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldController
+  followTarget: {fileID: 1863505816}
+  settings: {fileID: 11400000, guid: e8076803fd76c984fa7860afa5fe4182, type: 2}
+  curvature: 0.012
+  flatRadius: 6
+  previewInEditMode: 1
 --- !u!1 &182155755
 GameObject:
   m_ObjectHideFlags: 0
@@ -3260,7 +3278,7 @@ Terrain:
   m_TreeMaximumFullLODCount: 50
   m_DetailObjectDistance: 80
   m_DetailObjectDensity: 1
-  m_HeightmapPixelError: 5
+  m_HeightmapPixelError: 1
   m_SplatMapDistance: 1000
   m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
@@ -3271,7 +3289,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
+  m_MaterialTemplate: {fileID: 2100000, guid: 90086abc3bb14064aa4ee6b9ea1d5535, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1

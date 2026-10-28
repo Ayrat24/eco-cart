@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2653330373487340688}
   - component: {fileID: 6833360886212349647}
   - component: {fileID: 1837355646683545368}
+  - component: {fileID: 3076689090954096115}
   m_Layer: 12
   m_Name: ScrapPile
   m_TagString: Untagged
@@ -69,7 +70,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f7a6eda984000374aae9eb73afd11b4e, type: 2}
+  - {fileID: 2100000, guid: 79403f8df76414448b82283c0e7d2704, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -91,6 +92,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2653330373487340688
 MonoBehaviour:
@@ -305,7 +307,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Scrap.ScrapPile
   highlightEffect: {fileID: 2653330373487340688}
-  heightPerSize: 0.1
   digDuration: 0.5
   digParticleEffect: {fileID: 0}
   pileParent: {fileID: 0}
@@ -331,3 +332,15 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4579454407841743219, guid: ee0935d270276134c88b4a5697cacd99, type: 3}
+--- !u!114 &3076689090954096115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796366133817090748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b5b5b73458f354a8bc0bed427ef401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldBounds

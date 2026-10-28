@@ -1,4 +1,5 @@
 using System;
+using Eco.Scripts.World;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -65,7 +66,12 @@ public class PlayerClickMovement : MonoBehaviour
         {
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundMask))
+            var curvedWorld = CurvedWorldController.Active;
+            RaycastHit hit;
+            bool hitGround = curvedWorld != null
+                ? curvedWorld.RaycastGround(ray, out hit, 100f, groundMask)
+                : Physics.Raycast(ray, out hit, 100f, groundMask);
+            if (hitGround)
             {
                 _agent.SetDestination(hit.point);
             }

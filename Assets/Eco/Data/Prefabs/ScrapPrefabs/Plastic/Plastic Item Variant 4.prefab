@@ -64,6 +64,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: f2ec8410bde3a814ba25dfcc4027a44f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: eee9cd445e928914e87489c62aa5f974, type: 2}
+    - target: {fileID: -7511558181221131132, guid: f2ec8410bde3a814ba25dfcc4027a44f, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6353a2a6d4350a745b57d7789a41b118, type: 2}
     - target: {fileID: 919132149155446097, guid: f2ec8410bde3a814ba25dfcc4027a44f, type: 3}
       propertyPath: m_Name
       value: DwarfBottle

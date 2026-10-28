@@ -56,6 +56,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6873912444871011428, guid: 1caa73a6296593c46bb83d678ff6609b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7137b835af916514bb7073e9b1329cbe, type: 2}
+    - target: {fileID: 6873912444871011428, guid: 1caa73a6296593c46bb83d678ff6609b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5f29c4410425d6e49b150cec93a12c54, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -116,7 +124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4308299755468856024, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
       propertyPath: m_Name
-      value: Tree Base Variant
+      value: Pine Tree
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -124,10 +132,30 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8298402829362636242, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4708247547573853677}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4308299755468856024, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 143383712854879200}
   m_SourcePrefab: {fileID: 100100000, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
 --- !u!4 &2704808052731471425 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8298402829362636242, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
   m_PrefabInstance: {fileID: 6242184796335588243}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7884279243208841547 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4308299755468856024, guid: d07e04a2c2e4b9c428b095e9d4cb2be0, type: 3}
+  m_PrefabInstance: {fileID: 6242184796335588243}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &143383712854879200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7884279243208841547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b5b5b73458f354a8bc0bed427ef401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldBounds

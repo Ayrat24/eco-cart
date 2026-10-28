@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: bcc01ac8a779f5c4594489e232312d03, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: dd032a6b8803d4c45a18da1e70bfc656, type: 2}
     - target: {fileID: 919132149155446097, guid: bcc01ac8a779f5c4594489e232312d03, type: 3}
       propertyPath: m_Name
       value: uploads_files_2057299_Fish+skeleton (1)
@@ -275,6 +279,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: bcc01ac8a779f5c4594489e232312d03, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: dd032a6b8803d4c45a18da1e70bfc656, type: 2}
     - target: {fileID: 919132149155446097, guid: bcc01ac8a779f5c4594489e232312d03, type: 3}
       propertyPath: m_Name
       value: uploads_files_2057299_Fish+skeleton

@@ -34,7 +34,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &588014602246953468
 TrailRenderer:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -80,6 +80,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Time: 0.2
   m_PreviewTimeScale: 1
   m_Parameters:
@@ -156,7 +157,6 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
@@ -172,6 +172,7 @@ GameObject:
   - component: {fileID: 2813956914866972884}
   - component: {fileID: 6272244744961851877}
   - component: {fileID: 5484698834941378176}
+  - component: {fileID: 6318755415385518288}
   m_Layer: 0
   m_Name: Food Item Variant 1
   m_TagString: Untagged
@@ -267,6 +268,18 @@ CapsuleCollider:
   m_Height: 0.78
   m_Direction: 1
   m_Center: {x: 0, y: 0.32, z: 0}
+--- !u!114 &6318755415385518288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8001417500736216246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b5b5b73458f354a8bc0bed427ef401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldBounds
 --- !u!1001 &1831882621365088561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -342,6 +355,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2667911586336761990}
     m_Modifications:
+    - target: {fileID: 1075939477352978540, guid: 97ae4acfac07bd14a962c26d607749fc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b3dd4b73327007e41af3338d0eb3ea46, type: 2}
     - target: {fileID: 1580338169698466233, guid: 97ae4acfac07bd14a962c26d607749fc, type: 3}
       propertyPath: m_Layer
       value: 0
