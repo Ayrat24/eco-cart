@@ -165,25 +165,12 @@ namespace Eco.Scripts.ItemCollecting
                 _body.CloseMouth(mouthSize);
             }
 
-            // Step 4: the hand snaps back to the arm, then the arm reels back in along its own arc
-            var retractFrom = tentacle.TipPosition;
-            var reachFrom = tentacle.ReachPosition;
-            float reachWeight = tentacle.ReachWeight;
-            var retractSide = _body.SideOf(tentacle.SurfacePosition);
-            float arriveInward = tentacle.ArriveInward;
+            // Step 4: shrink back the way it came: the hand slides out of the mouth, then the arm reels into its root
+            tentacle.BeginRetract();
             await AnimateAsync(hands.RetractDuration * pace, t =>
             {
-                float hand = Mathf.Clamp01(t / 0.3f);
-                float arm = Mathf.Clamp01((t - 0.3f) / 0.7f);
-                tentacle.ReachPosition = Vector3.Lerp(reachFrom, tentacle.TipPosition, hand);
-                tentacle.ReachWeight = reachWeight * (1f - hand);
-                var surface = tentacle.SurfacePosition;
-                var arc = new JellyBodyArc(_body, surface, retractFrom, retractSide,
-                    hands.MidRadius * _body.Growth + 0.05f, Vector3.Distance(surface, retractFrom) * 0.15f,
-                    hands.ArcBulge * _body.Growth, arriveInward);
-                tentacle.TipPosition = arc.Evaluate(1f - EaseInCubic(arm));
-                tentacle.ArriveInward = arriveInward * (1f - arm);
-                tentacle.Visibility = 1f - Mathf.SmoothStep(0f, 1f, (arm - 0.5f) * 2f);
+                tentacle.Retraction = EaseInOutSine(t);
+                tentacle.Visibility = 1f - Mathf.SmoothStep(0f, 1f, (t - 0.8f) / 0.2f);
                 return true;
             }, token);
 

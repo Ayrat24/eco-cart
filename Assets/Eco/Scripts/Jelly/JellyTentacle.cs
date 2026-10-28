@@ -30,6 +30,13 @@ namespace Eco.Scripts.Jelly
         private readonly Vector3[] _armPoints = new Vector3[ArmSamples + 1];
         private readonly float[] _armLengths = new float[ArmSamples + 1];
 
+        // Shape held while retracting, in this transform's space so it moves with the creature
+        private bool _retracting;
+        private bool _built;
+        private Vector3[] _retractPath;
+        private float[] _retractLengths;
+        private float _retractThinning;
+
         private Mesh _mesh;
         private Vector3[] _centerline;
         private Vector3[] _vertices;
@@ -55,6 +62,11 @@ namespace Eco.Scripts.Jelly
 
         /// <summary>0 = no hand beyond the arm, 1 = it stretches all the way to <see cref="ReachPosition"/>.</summary>
         public float ReachWeight { get; set; }
+
+        /// <summary>
+        /// After <see cref="BeginRetract"/>: 0 = full length, 1 = shrunk back into its root along the shape it had.
+        /// </summary>
+        public float Retraction { get; set; }
 
         /// <summary>Where the tentacle leaves the body surface, as of the last update.</summary>
         public Vector3 SurfacePosition { get; private set; }
@@ -89,12 +101,40 @@ namespace Eco.Scripts.Jelly
             Visibility = 0f;
             ArriveInward = 0f;
             ReachWeight = 0f;
+            _retracting = false;
+            _built = false;
         }
 
         public void Hide()
         {
             _shown = false;
+            _retracting = false;
             meshRenderer.enabled = false;
+        }
+
+        /// <summary>
+        /// Holds the tentacle's current shape, hand included; from now on it only shrinks back along it, tip first,
+        /// as <see cref="Retraction"/> goes from 0 to 1.
+        /// </summary>
+        public void BeginRetract()
+        {
+            int count = _segments + 1;
+            if (_retractPath == null || _retractPath.Length != count)
+            {
+                _retractPath = new Vector3[count];
+                _retractLengths = new float[count];
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                // Not drawn yet (given up straight away): there is no shape to hold, so it all sits at the root
+                _retractPath[i] = transform.InverseTransformPoint(_built ? _centerline[i] : SurfacePosition);
+                _retractLengths[i] = i == 0 ? 0f : _retractLengths[i - 1] + Vector3.Distance(_retractPath[i - 1], _retractPath[i]);
+            }
+
+            _retractThinning = _thinning;
+            _retracting = true;
+            Retraction = 0f;
         }
 
         // Sized from the settings on each show, so ring and side counts can be tweaked while playing
@@ -134,7 +174,16 @@ namespace Eco.Scripts.Jelly
             using var marker = EcoProfilerMarkers.JellyTentacle.Auto();
 
             UpdateSurface();
-            BuildCenterline();
+            if (_retracting)
+            {
+                BuildRetractingCenterline();
+            }
+            else
+            {
+                BuildCenterline();
+                _built = true;
+            }
+
             BuildTube();
 
             meshRenderer.enabled = Visibility > 0.001f;
@@ -205,6 +254,30 @@ namespace Eco.Scripts.Jelly
 
             // A stretched-out tentacle gets a little thinner all along
             _thinning = armLength > 1e-4f ? Mathf.Pow(armLength / total, 0.25f) : 1f;
+        }
+
+        // The held shape cut short from the tip: the rings spread over what is left, from the surface outward
+        private void BuildRetractingCenterline()
+        {
+            float surface = _retractLengths[1];
+            float reach = Mathf.Lerp(_retractLengths[_segments], surface, Mathf.Clamp01(Retraction));
+
+            _centerline[0] = transform.TransformPoint(_retractPath[0]);
+            int k = 1;
+            for (int i = 1; i <= _segments; i++)
+            {
+                float target = Mathf.Lerp(surface, reach, (i - 1f) / (_segments - 1));
+                while (k < _segments - 1 && _retractLengths[k + 1] < target)
+                {
+                    k++;
+                }
+
+                float span = _retractLengths[k + 1] - _retractLengths[k];
+                float t = span > 1e-6f ? Mathf.Clamp01((target - _retractLengths[k]) / span) : 0f;
+                _centerline[i] = transform.TransformPoint(Vector3.Lerp(_retractPath[k], _retractPath[k + 1], t));
+            }
+
+            _thinning = _retractThinning;
         }
 
         private void BuildTube()
