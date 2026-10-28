@@ -26,6 +26,7 @@ namespace Eco.Scripts.World
         public Transform FollowTarget { get => followTarget; set => followTarget = value; }
         public float Curvature => settings != null ? settings.Curvature : curvature;
         public float FlatRadius => settings != null ? settings.FlatRadius : flatRadius;
+        public Vector4 BendParameters => _current;
         public WorldVisualSettings Settings
         {
             get => settings;

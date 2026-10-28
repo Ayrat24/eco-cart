@@ -44,7 +44,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -3990988841038231500}
   - {fileID: 608377708618362088}
-  m_RendererFeatureMap: 34485e53cb289dc8e8ac767b4d647108
+  - {fileID: 1436568357223085094}
+  m_RendererFeatureMap: 34485e53cb289dc8e8ac767b4d6471082634d9434fb7ef13
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 3
@@ -90,3 +91,17 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8192
   resolutionScale: 1
+--- !u!114 &1436568357223085094
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df399d3d14e4b3340be31381417c0f8e, type: 3}
+  m_Name: Curved World Atmosphere
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Rendering.CurvedAtmosphereFeature
+  m_Active: 1
+  material: {fileID: 2100000, guid: 450ac32fe1dbfaf48997a1edd8b7e531, type: 2}

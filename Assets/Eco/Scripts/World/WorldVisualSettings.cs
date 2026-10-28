@@ -14,11 +14,35 @@ namespace Eco.Scripts.World
         [Tooltip("Radius around the player that stays flat for close interactions.")]
         [SerializeField, Min(0)] private float flatRadius = 6;
 
+        [Header("Atmosphere")]
+        [SerializeField] private bool atmosphereEnabled = true;
+        [SerializeField] private Color atmosphereHorizonColor = new Color(0.48f, 0.76f, 1f);
+        [SerializeField] private Color atmosphereSpaceColor = new Color(0.06f, 0.22f, 0.55f);
+        [SerializeField, Range(0, 1)] private float atmosphereStrength = 0.85f;
+        [Tooltip("Width of the horizon rim in world units. The sky band extends this far; the planet-side band is one quarter as wide. The interior remains clear.")]
+        [SerializeField, Min(0.1f)] private float atmosphereThickness = 4;
+        [Tooltip("Falloff shape within the rim. The effect is always zero outside its thickness.")]
+        [SerializeField, Range(0.5f, 3)] private float atmosphereSoftness = 1.3f;
+        [Tooltip("Fade out the rim when its closest approach is nearer than this view distance.")]
+        [SerializeField, Min(0)] private float atmosphereStartDistance = 20;
+        [SerializeField, Min(1)] private float atmosphereFullDistance = 65;
+        [Tooltip("Unbent ground/water height used to align the atmospheric horizon.")]
+        [SerializeField] private float atmosphereSurfaceHeight;
+
         public event Action Changed;
         public float WorldRadius => worldRadius;
         public float DistortionStrength => distortionStrength;
         public float Curvature => distortionEnabled ? distortionStrength / (2 * Mathf.Max(25, worldRadius)) : 0;
         public float FlatRadius => flatRadius;
+        public bool AtmosphereEnabled => atmosphereEnabled;
+        public Color AtmosphereHorizonColor => atmosphereHorizonColor;
+        public Color AtmosphereSpaceColor => atmosphereSpaceColor;
+        public float AtmosphereStrength => atmosphereStrength;
+        public float AtmosphereThickness => atmosphereThickness;
+        public float AtmosphereSoftness => atmosphereSoftness;
+        public float AtmosphereStartDistance => atmosphereStartDistance;
+        public float AtmosphereFullDistance => atmosphereFullDistance;
+        public float AtmosphereSurfaceHeight => atmosphereSurfaceHeight;
 
         public void InitializeFromCurvature(float curvature, float interactionRadius)
         {
@@ -33,6 +57,11 @@ namespace Eco.Scripts.World
             worldRadius = Mathf.Max(25, worldRadius);
             distortionStrength = Mathf.Clamp(distortionStrength, 0, 2);
             flatRadius = Mathf.Max(0, flatRadius);
+            atmosphereStrength = Mathf.Clamp01(atmosphereStrength);
+            atmosphereThickness = Mathf.Max(0.1f, atmosphereThickness);
+            atmosphereSoftness = Mathf.Clamp(atmosphereSoftness, 0.5f, 3);
+            atmosphereStartDistance = Mathf.Max(0, atmosphereStartDistance);
+            atmosphereFullDistance = Mathf.Max(atmosphereStartDistance + 1, atmosphereFullDistance);
             Changed?.Invoke();
         }
     }

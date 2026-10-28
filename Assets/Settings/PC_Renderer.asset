@@ -29,7 +29,8 @@ MonoBehaviour:
   - {fileID: 1956993156227358763}
   - {fileID: 4999443201433638304}
   - {fileID: 8889066521999407959}
-  m_RendererFeatureMap: ad6b866f10d7b46c2b60cd30e8a2281ba09531801a976145577b97cce74e5c7b
+  - {fileID: 7458261115103183935}
+  m_RendererFeatureMap: ad6b866f10d7b46c2b60cd30e8a2281ba09531801a976145577b97cce74e5c7b3f84d5f7f7108167
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 0}
   m_AssetVersion: 3
@@ -96,6 +97,20 @@ MonoBehaviour:
   clearStencil: 0
   previewInEditMode: 1
   showInPreviewCamera: 1
+--- !u!114 &7458261115103183935
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df399d3d14e4b3340be31381417c0f8e, type: 3}
+  m_Name: Curved World Atmosphere
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Rendering.CurvedAtmosphereFeature
+  m_Active: 1
+  material: {fileID: 2100000, guid: 450ac32fe1dbfaf48997a1edd8b7e531, type: 2}
 --- !u!114 &7833122117494664109
 MonoBehaviour:
   m_ObjectHideFlags: 1

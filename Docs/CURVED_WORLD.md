@@ -13,6 +13,23 @@ Effective curvature is `Distortion Strength / (2 * World Radius)`, preserving th
 
 The **World → Curved World Controller** still holds its scene-specific **Follow Target** and **Preview In Edit Mode** controls, plus the shared Settings reference. Older scenes without an assigned asset retain their previous serialized curvature until migrated with Apply Curved World.
 
+### Atmosphere and space transition
+
+The **Atmosphere** section in the same settings asset controls a blue rim only at the curved planet's silhouette and the adjoining skybox:
+
+- **Atmosphere Enabled / Strength**: toggle or blend out the effect. Disabling world distortion also skips the atmosphere pass.
+- **Horizon Color / Space Color**: the color near the curved surface and the deeper tint as the band fades into the original skybox. Stars remain visible beyond the gradient.
+- **Thickness**: sky-side band height in world units. The planet-side band is one quarter as wide. The effect is exactly zero outside these limits.
+- **Softness**: falloff exponent within the bounded rim; it never adds a fullscreen haze.
+- **Start Distance / Full Distance**: fade the rim by distance to the view ray's closest approach to the curved surface.
+- **Surface Height**: the unbent reference elevation for the horizon, normally near ground/water level. Adjust for worlds built at a different elevation.
+
+`CurvedAtmosphereFeature` runs before post-processing, after the sky and water, on the PC and Mobile gameplay renderers. It alpha-blends directly into the camera color target (no color copy), requests no depth texture, and preserves camera alpha. It does not change the depth-copy schedule or the water's depth/refraction inputs. Overlay cameras, previews and reflections are skipped. Screen-space overlay UI renders afterward. It supports perspective and orthographic view rays and uses the controller's published bend, including edit-mode preview state.
+
+The shader finds each complete view ray's closest approach to the same parabolic surface with four analytic Newton iterations, then fades only around zero tangent height. It must not clamp the ray to scene depth: that made terrain and seabed intersections look like atmospheric surfaces, tinting the planet interior and revealing seabed-shaped patches over water. This is a stylized rim, not volumetric light scattering. It follows the underlying curved reference surface rather than individual trees, mountain silhouettes or finite chunk edges. Geometry that overlaps the narrow rim can receive its tint; the remainder of the planet and ocean stays unchanged.
+
+**Eco → Rendering → Apply Curved Atmosphere** installs or repairs the feature and material on both gameplay renderers without touching vendor/demo renderers. The material references the shader so player builds include it. CPU pass recording is tracked by `Eco.CurvedWorld.RecordAtmosphere`; the render pass is labeled `Eco.CurvedWorld.Atmosphere` in the GPU profiler.
+
 The deformation is `y -= curvature * max(0, distanceXZFromPlayer - flatRadius)^2`. Colliders, navigation, and saved world coordinates are unchanged. Right-click movement maps the screen ray back into the original physics world with short segments, so the click follows the displayed ground. Positions and normals are bent consistently; this is a curved horizon illusion, not a closed spherical planet.
 
 ## Assets and integration
@@ -42,6 +59,8 @@ Validated in the connected Unity 6000.5.2f1 / URP 17.5 editor, including shader 
 Focused checks: all 24 mesh renderers across the target prefabs use curved materials; all seven shaders report no compilation errors; nine ground-ray targets have a maximum position error of 0.0055 units; 64 transformed tree/scrap bounding-box corners remain inside the updated render bounds. Curvature zero preserves positions exactly.
 
 Water animation regression: a GPU probe renders the generated graph's animated normal texture with fixed geometry and time, then moves the bend origin. Before the normal separation, 16,382 of 16,384 pixels changed; afterward, zero changed. Advancing time still changed 16,379 pixels, confirming animation remains active. The probe isolates texture phase from intended changes in geometry, lighting, and screen-space refraction; its script is retained locally in `Logs/CurvedWorld/verify-water-animation.cs`.
+
+Atmosphere validation: 2,160 analytic ray cases across curvature, flat radius, camera offset and viewing angle matched a numerical closest-height search within 0.000001 world units. The 2026-10-28 stress runs (`stress_20261028_172036.txt` before, `stress_20261028_172833.txt` after) completed all phases at 3840×2160. Traverse median was 13.90 ms before and 15.17 ms after; the baseline had substantial editor stalls, so this is only a rough comparison, not an isolated GPU cost. Atmosphere pass recording averaged approximately 0.004 ms per Traverse frame. Player saves were protected by the existing stress-test sandbox.
 
 On this editor/machine at 3840×2160, median Traverse frame time was 5.70 ms before and 7.01 ms with the bend; maximum rendered triangles increased from about 0.97 M to 1.76 M. These are editor measurements, not a target-device benchmark. The final test's Idle average includes a deliberate screenshot pause and should not be used for comparison. Existing unrelated `UpgradeButton`/Toon package diagnostics were also observed; none were errors in the new shaders.
 
