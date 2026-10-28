@@ -1,0 +1,617 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a595cc50bbd473d48961ff68e2a34edf, type: 3}
+  m_Name: UpgradeTree
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Upgrades.UpgradeTree
+  nodes:
+  - id: bigger-belly
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057119
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: ef6d8caf5e0a1ed4ab10f86597fb2850, type: 3}
+    position: {x: 0, y: 0}
+    maxLevel: 5
+    baseCost:
+      coefficient: 15
+      magnitude: 0
+    costGrowth: 1.6
+    requirement: 0
+    requires: []
+    effects:
+    - rid: 3845993366043230362
+  - id: quick-wobble
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057120
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: d3bc888ed30a92a42afe01a7f42bbe74, type: 3}
+    position: {x: -480, y: 220}
+    maxLevel: 5
+    baseCost:
+      coefficient: 25
+      magnitude: 0
+    costGrowth: 1.6
+    requirement: 0
+    requires:
+    - bigger-belly
+    effects:
+    - rid: 3845993366043230363
+  - id: extra-tentacle
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057121
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 5a8b3dc7553e94541ac460db0590a805, type: 3}
+    position: {x: 0, y: 220}
+    maxLevel: 2
+    baseCost:
+      coefficient: 60
+      magnitude: 0
+    costGrowth: 4
+    requirement: 0
+    requires:
+    - bigger-belly
+    effects:
+    - rid: 3845993366043230364
+  - id: paper-value
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057124
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 6f0d086008c752643bb54ca2f1baccf2, type: 3}
+    position: {x: 480, y: 220}
+    maxLevel: 5
+    baseCost:
+      coefficient: 20
+      magnitude: 0
+    costGrowth: 1.75
+    requirement: 0
+    requires:
+    - bigger-belly
+    effects:
+    - rid: 3845993366043230365
+  - id: pine-seeds
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057130
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 2826356ff4a53ed4080881004df8ed2d, type: 3}
+    position: {x: -720, y: 440}
+    maxLevel: 1
+    baseCost:
+      coefficient: 150
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - quick-wobble
+    effects:
+    - rid: 3845993366043230366
+  - id: apple-seeds
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057131
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 88170e60f72c16249b018b8971ab1460, type: 3}
+    position: {x: -720, y: 660}
+    maxLevel: 1
+    baseCost:
+      coefficient: 600
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - pine-seeds
+    effects:
+    - rid: 3845993366043230367
+  - id: pear-seeds
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057132
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: fd223362f33d9f0419f8446dac1d3eb6, type: 3}
+    position: {x: -720, y: 880}
+    maxLevel: 1
+    baseCost:
+      coefficient: 2
+      magnitude: 1
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - apple-seeds
+    effects:
+    - rid: 3845993366043230368
+  - id: cat-friend
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057133
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 217afcf9f482d82479337ac9a76c2930, type: 3}
+    position: {x: -240, y: 440}
+    maxLevel: 1
+    baseCost:
+      coefficient: 300
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - quick-wobble
+    effects:
+    - rid: 3845993366043230369
+  - id: chicken-friend
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057134
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 6535632b79fa99f49a31fb5b048d28cd, type: 3}
+    position: {x: -240, y: 660}
+    maxLevel: 1
+    baseCost:
+      coefficient: 900
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - cat-friend
+    effects:
+    - rid: 3845993366043230370
+  - id: dog-friend
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057135
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 16e1f09c14c08ec4c88e8723ef883475, type: 3}
+    position: {x: -240, y: 880}
+    maxLevel: 1
+    baseCost:
+      coefficient: 2.5
+      magnitude: 1
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - chicken-friend
+    effects:
+    - rid: 3845993366043230371
+  - id: long-reach
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057122
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 5a8b3dc7553e94541ac460db0590a805, type: 3}
+    position: {x: 0, y: 440}
+    maxLevel: 4
+    baseCost:
+      coefficient: 50
+      magnitude: 0
+    costGrowth: 1.8
+    requirement: 0
+    requires:
+    - extra-tentacle
+    effects:
+    - rid: 3845993366043230372
+  - id: stretchy-stomach
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057123
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: df67b2cb53bb74541b337ad18c0e9500, type: 3}
+    position: {x: 0, y: 660}
+    maxLevel: 5
+    baseCost:
+      coefficient: 400
+      magnitude: 0
+    costGrowth: 1.8
+    requirement: 0
+    requires:
+    - long-reach
+    effects:
+    - rid: 3845993366043230373
+  - id: food-value
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057125
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: a0a6a65ebbe1b6b4eb7591d520fb76a9, type: 3}
+    position: {x: 240, y: 440}
+    maxLevel: 5
+    baseCost:
+      coefficient: 15
+      magnitude: 0
+    costGrowth: 1.75
+    requirement: 0
+    requires:
+    - paper-value
+    effects:
+    - rid: 3845993366043230374
+  - id: plastic-value
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057126
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 568b0373a0c30db4d92c54d355896ecb, type: 3}
+    position: {x: 480, y: 440}
+    maxLevel: 5
+    baseCost:
+      coefficient: 60
+      magnitude: 0
+    costGrowth: 1.75
+    requirement: 0
+    requires:
+    - paper-value
+    effects:
+    - rid: 3845993366043230375
+  - id: glass-value
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057127
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 7c44f787972ad634cb5cdee36146cab1, type: 3}
+    position: {x: 720, y: 440}
+    maxLevel: 5
+    baseCost:
+      coefficient: 40
+      magnitude: 0
+    costGrowth: 1.75
+    requirement: 0
+    requires:
+    - paper-value
+    effects:
+    - rid: 3845993366043230376
+  - id: sorting-instinct
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057128
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: a5fd1d31c7504cd4083d950f36ed7511, type: 3}
+    position: {x: 480, y: 660}
+    maxLevel: 1
+    baseCost:
+      coefficient: 250
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - food-value
+    - plastic-value
+    - glass-value
+    effects:
+    - rid: 3845993366043230377
+  - id: combo-master
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 151893818212057129
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: a5fd1d31c7504cd4083d950f36ed7511, type: 3}
+    position: {x: 480, y: 880}
+    maxLevel: 4
+    baseCost:
+      coefficient: 400
+      magnitude: 0
+    costGrowth: 2
+    requirement: 0
+    requires:
+    - sorting-instinct
+    effects:
+    - rid: 3845993366043230378
+  references:
+    version: 2
+    RefIds:
+    - rid: 3845993366043230362
+      type: {class: MaxWeightEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        weightPerLevel: 5
+    - rid: 3845993366043230363
+      type: {class: MoveSpeedEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        speedPerLevel: 1
+    - rid: 3845993366043230364
+      type: {class: LimbCountEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        limbsPerLevel: 1
+    - rid: 3845993366043230365
+      type: {class: ScrapScoreEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        scrapType: 1
+        scorePerLevel: 5
+    - rid: 3845993366043230366
+      type: {class: UnlockTreeEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: 56d5aa994a726a445bd2db8f4b6e59b6, type: 2}
+    - rid: 3845993366043230367
+      type: {class: UnlockTreeEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}
+    - rid: 3845993366043230368
+      type: {class: UnlockTreeEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: f7504cbf56c1e39459908e8aaf696323, type: 2}
+    - rid: 3845993366043230369
+      type: {class: UnlockPetEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        pet: {fileID: 11400000, guid: a2e26bd82d3b52f458502896929f5bab, type: 2}
+    - rid: 3845993366043230370
+      type: {class: UnlockPetEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        pet: {fileID: 11400000, guid: 8d944b28b3980944eb24a9a805e6becc, type: 2}
+    - rid: 3845993366043230371
+      type: {class: UnlockPetEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        pet: {fileID: 11400000, guid: 7be8c3f3efc96334c99100c3fc77e42a, type: 2}
+    - rid: 3845993366043230372
+      type: {class: LimbRangeEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        rangePerLevel: 0.5
+    - rid: 3845993366043230373
+      type: {class: MaxWeightEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        weightPerLevel: 10
+    - rid: 3845993366043230374
+      type: {class: ScrapScoreEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        scrapType: 0
+        scorePerLevel: 1
+    - rid: 3845993366043230375
+      type: {class: ScrapScoreEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        scrapType: 2
+        scorePerLevel: 10
+    - rid: 3845993366043230376
+      type: {class: ScrapScoreEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        scrapType: 3
+        scorePerLevel: 3
+    - rid: 3845993366043230377
+      type: {class: ComboUnlockEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data: 
+    - rid: 3845993366043230378
+      type: {class: ComboMultiplierEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        multiplierPerLevel: 0.25

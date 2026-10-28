@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Scrap;
 using Eco.Scripts.Trees;
-using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
 using UnityEngine;
@@ -68,16 +67,15 @@ namespace Eco.Scripts.Profiling
             var resolver = await WaitForGameAsync(token);
             var player = resolver.Resolve<Player>();
             var world = resolver.Resolve<WorldController>();
-            var upgrades = resolver.Resolve<UpgradesCollection>();
-            EndPhase(world);
+EndPhase(world);
 
             BeginPhase("Idle");
             await UniTask.WaitForSeconds(_config.IdleSeconds, cancellationToken: token);
             EndPhase(world);
 
             BeginPhase("Plant");
-            int planted = await PlantTreesAsync(upgrades, token);
-            _current.Notes = $"tree purchases: {planted}";
+            int planted = await PlantTreesAsync(world, token);
+            _current.Notes = $"trees planted: {planted}";
             EndPhase(world);
 
             BeginPhase("Collect");
@@ -118,23 +116,27 @@ namespace Eco.Scripts.Profiling
             }
         }
 
-        private async UniTask<int> PlantTreesAsync(UpgradesCollection upgrades, CancellationToken token)
+        private async UniTask<int> PlantTreesAsync(WorldController world, CancellationToken token)
         {
-            var treeUpgrades = upgrades.GetUpgradeTypes<TreeBuyUpgrade>();
-            if (treeUpgrades.Count == 0 || _config.TreePrefabs.Count == 0)
+            if (_config.TreePrefabs.Count == 0)
             {
                 return 0;
             }
 
+            int planted = 0;
             for (int i = 0; i < _config.TreesToPlant; i++)
             {
-                // Same path as buying a tree in the upgrade menu, minus the cost.
+                // Same path as planting from the game, minus the cost.
                 var prefab = _config.TreePrefabs[i % _config.TreePrefabs.Count];
-                treeUpgrades[0].OnPurchase.OnNext(prefab.GetPrefabId());
+                if (world.TreePlanter.PlantTree(prefab.GetPrefabId()))
+                {
+                    planted++;
+                }
+
                 await UniTask.WaitForSeconds(_config.PlantInterval, cancellationToken: token);
             }
 
-            return _config.TreesToPlant;
+            return planted;
         }
 
         private async UniTask<string> CollectAsync(Player player, CancellationToken token)

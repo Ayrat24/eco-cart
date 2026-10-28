@@ -1,0 +1,300 @@
+/* Upgrade tree menu (UpgradeTreeMenu, UpgradeTreeView, UpgradeNodeView). Palette from BackgroundColors.uss:
+   dark green rgb(56, 102, 65), mid green rgb(106, 153, 78), light green rgb(167, 201, 87),
+   cream rgb(242, 232, 207), red rgb(188, 71, 73). */
+
+.upgrade-menu {
+    position: absolute;
+    top: 100px;
+    left: 16px;
+    bottom: 108px;
+    width: 40%;
+    opacity: 1;
+    translate: 0 0;
+    transition-property: opacity, translate;
+    transition-duration: 0.18s, 0.18s;
+    transition-timing-function: ease-out-cubic, ease-out-cubic;
+}
+
+.upgrade-menu--closed {
+    opacity: 0;
+    translate: -40px 0;
+}
+
+.upgrade-menu__panel {
+    flex-grow: 1;
+    border-width: 2px;
+    border-color: rgb(56, 102, 65);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.upgrade-menu__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 10px 0 16px;
+    background-color: rgb(56, 102, 65);
+}
+
+.upgrade-menu__title {
+    font-size: 30px;
+    color: rgb(242, 232, 207);
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-menu__tools {
+    flex-direction: row;
+    align-items: center;
+}
+
+.upgrade-menu__tool {
+    height: 44px;
+    min-width: 44px;
+    margin: 0 0 0 8px;
+    padding: 0 10px;
+    font-size: 24px;
+}
+
+.upgrade-menu__body {
+    flex-grow: 1;
+}
+
+.upgrade-menu__tree {
+    flex-grow: 1;
+    background-color: rgb(233, 222, 192);
+}
+
+.upgrade-menu__hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 4px 12px 6px 12px;
+    font-size: 15px;
+    color: rgba(56, 102, 65, 0.8);
+    background-color: rgba(242, 232, 207, 0.85);
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+/* Nodes */
+
+.upgrade-node {
+    align-items: center;
+    justify-content: center;
+}
+
+.upgrade-node__circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border-width: 5px;
+    border-color: rgb(56, 102, 65);
+    background-color: rgb(242, 232, 207);
+    align-items: center;
+    justify-content: center;
+    transition-property: scale, background-color, border-color;
+    transition-duration: 0.15s, 0.15s, 0.15s;
+}
+
+.upgrade-node__icon {
+    width: 64%;
+    height: 64%;
+    background-size: contain;
+}
+
+.upgrade-node__lock {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    right: -4px;
+    bottom: -4px;
+    background-image: url("project://database/Assets/Eco/Data/Images/lock.png");
+    background-size: contain;
+    display: none;
+}
+
+.upgrade-node__level {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    min-width: 44px;
+    height: 30px;
+    padding: 0 6px;
+    border-radius: 15px;
+    border-width: 2px;
+    border-color: rgb(242, 232, 207);
+    background-color: rgb(56, 102, 65);
+    color: rgb(242, 232, 207);
+    font-size: 17px;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-node__caption {
+    position: absolute;
+    top: 100%;
+    width: 200px;
+    left: -45px;
+    margin-top: 6px;
+    align-items: center;
+}
+
+.upgrade-node__name {
+    font-size: 19px;
+    color: rgb(56, 102, 65);
+    white-space: normal;
+    -unity-text-align: upper-center;
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-node__cost {
+    margin-top: 2px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 16px;
+    color: rgb(56, 102, 65);
+    background-color: rgba(242, 232, 207, 0.9);
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+/* Node states */
+
+.upgrade-node--locked .upgrade-node__circle {
+    background-color: rgb(205, 196, 172);
+    border-color: rgba(56, 102, 65, 0.35);
+}
+
+.upgrade-node--locked .upgrade-node__icon {
+    -unity-background-image-tint-color: rgba(60, 60, 60, 0.45);
+}
+
+.upgrade-node--locked .upgrade-node__lock {
+    display: flex;
+}
+
+.upgrade-node--locked .upgrade-node__name {
+    color: rgba(56, 102, 65, 0.5);
+}
+
+.upgrade-node--available .upgrade-node__circle {
+    border-color: rgb(106, 153, 78);
+}
+
+.upgrade-node--owned .upgrade-node__circle {
+    background-color: rgb(167, 201, 87);
+}
+
+.upgrade-node--maxed .upgrade-node__circle {
+    background-color: rgb(106, 153, 78);
+    border-color: rgb(232, 182, 60);
+}
+
+.upgrade-node--maxed .upgrade-node__level {
+    background-color: rgb(232, 182, 60);
+    color: rgb(56, 102, 65);
+}
+
+.upgrade-node--affordable .upgrade-node__cost {
+    background-color: rgb(167, 201, 87);
+}
+
+.upgrade-node--affordable .upgrade-node__circle {
+    border-color: rgb(232, 182, 60);
+}
+
+.upgrade-node--hovered .upgrade-node__circle {
+    scale: 1.06 1.06;
+}
+
+.upgrade-node--selected .upgrade-node__circle {
+    border-color: rgb(188, 71, 73);
+    scale: 1.1 1.1;
+}
+
+.upgrade-node--bought .upgrade-node__circle {
+    scale: 1.3 1.3;
+    transition-duration: 0s, 0s, 0s;
+}
+
+/* Hover tooltip */
+
+.upgrade-tooltip {
+    width: 300px;
+    padding: 12px 14px;
+    border-width: 2px;
+    border-color: rgb(56, 102, 65);
+    border-radius: 10px;
+    background-color: rgba(242, 232, 207, 0.97);
+}
+
+.upgrade-tooltip__name {
+    font-size: 22px;
+    color: rgb(56, 102, 65);
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-tooltip__level {
+    font-size: 15px;
+    color: rgb(106, 153, 78);
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-tooltip__description {
+    margin-top: 6px;
+    font-size: 16px;
+    color: rgb(56, 102, 65);
+    white-space: normal;
+}
+
+.upgrade-tooltip__effects {
+    margin-top: 8px;
+}
+
+.upgrade-tooltip__effect {
+    margin-bottom: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 16px;
+    color: rgb(56, 102, 65);
+    background-color: rgba(167, 201, 87, 0.35);
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-tooltip__requirement {
+    margin-top: 6px;
+    font-size: 15px;
+    color: rgb(188, 71, 73);
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-tooltip__price {
+    margin-top: 6px;
+    font-size: 18px;
+    color: rgb(56, 102, 65);
+    -unity-font-definition: url("project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=cee59b8ccb26c724398baa8310abdb3f&type=3#Roboto-Bold");
+}
+
+.upgrade-tooltip__refund {
+    font-size: 14px;
+    color: rgba(56, 102, 65, 0.75);
+    white-space: normal;
+}
+
+/* − / + beside the selected node */
+
+.upgrade-action {
+    margin: 0;
+    padding: 0 0 3px 0;
+    border-radius: 24px;
+    font-size: 30px;
+    -unity-text-align: middle-center;
+}
+
+.upgrade-action--refund {
+    background-color: rgb(242, 232, 207);
+}

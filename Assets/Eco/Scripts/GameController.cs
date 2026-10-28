@@ -2,7 +2,6 @@ using Cysharp.Threading.Tasks;
 using Eco.Scripts.Helpers;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.ProgressionScreen;
-using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
@@ -14,7 +13,6 @@ namespace Eco.Scripts
     public class GameController : MonoBehaviour
     {
         [SerializeField] GameUI gameUI;
-        [SerializeField] CameraController cameraController;
         [SerializeField] private Map map;
         [SerializeField] WorldPreset worldPreset;
         [SerializeField] private ScoreGainedPopup scoreGainedPopup;
@@ -24,30 +22,25 @@ namespace Eco.Scripts
         private Settings _settings;
         private HelperManager _helperManager;
         private Player _player;
-        private UpgradesCollection _upgradeCollection;
+        private UpgradeManager _upgradeManager;
         private CurrencyManager _currencyManager;
-        private TreeCurrencyEarner _treeCurrencyEarner;
         private ProgressTracker _progressTracker;
-        private ScoreStats _scoreStats;
-        
+
         public bool Initialized { get; private set; }
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
-            HelperManager helperManager, Player player, UpgradesCollection upgradesCollection,
-            CurrencyManager currencyManager, TreeCurrencyEarner treeCurrencyEarner, ProgressTracker progressTracker,
-            ScoreStats scoreStats)
+            HelperManager helperManager, Player player, UpgradeManager upgradeManager,
+            CurrencyManager currencyManager, ProgressTracker progressTracker)
         {
             _saveManager = saveManager;
             _worldController = worldController;
             _settings = settings;
             _helperManager = helperManager;
             _player = player;
-            _upgradeCollection = upgradesCollection;
+            _upgradeManager = upgradeManager;
             _currencyManager = currencyManager;
-            _treeCurrencyEarner = treeCurrencyEarner;
             _progressTracker = progressTracker;
-            _scoreStats = scoreStats;
         }
 
         public void StartGame()
@@ -63,9 +56,8 @@ namespace Eco.Scripts
             PoolManager.Instance.InitializePools(worldPreset.AllowedScrapItems);
 
             _settings.Load();
-            _upgradeCollection.Load(_saveManager);
-            _scoreStats.Init();
-            
+            _upgradeManager.Load(_saveManager);
+
             scoreGainedPopup.Init();
             
             await UniTask.NextFrame();
@@ -77,15 +69,13 @@ namespace Eco.Scripts
            
             
             await UniTask.NextFrame();
-            gameUI.Init(_upgradeCollection, _currencyManager, _player, _progressTracker);
-            cameraController.Init(_player);
+            gameUI.Init(_upgradeManager, _currencyManager, _player, _progressTracker);
             await UniTask.NextFrame();
 
             _player.Spawn(_saveManager);
 
-            _helperManager.LoadHelpers();
+            _helperManager.LoadHelpers(_saveManager);
             _currencyManager.Init(_saveManager);
-            _treeCurrencyEarner.Init();
 
             map.Initialize(_worldController, _saveManager, _player);
             
@@ -103,17 +93,15 @@ namespace Eco.Scripts
         public void EndGame()
         {
             _player.Save(_saveManager);
+            _helperManager.Save(_saveManager);
             _currencyManager.Save(_saveManager);
-
-            _upgradeCollection.Save(_saveManager);
-            _upgradeCollection.Clear();
+            _upgradeManager.Save(_saveManager);
 
             _worldController.SaveWorld();
 
             _saveManager.Save();
             _progressTracker.SaveProgress();
 
-            _treeCurrencyEarner.Clear();
             gameUI.Clear();
 
             UnlockTracker.Clear();

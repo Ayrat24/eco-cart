@@ -47,7 +47,10 @@ namespace Eco.Scripts.UI
                 }
             }
 
-            _subscription = UnlockTracker.OnUnlocked.Subscribe(OnToolUnlocked);
+            var builder = new DisposableBuilder();
+            UnlockTracker.OnUnlocked.Subscribe(OnToolUnlocked).AddTo(ref builder);
+            UnlockTracker.OnLocked.Subscribe(OnToolLocked).AddTo(ref builder);
+            _subscription = builder.Build();
             
             OnClicked(0);
         }
@@ -63,6 +66,21 @@ namespace Eco.Scripts.UI
 
                 _buttons[i].style.display = DisplayStyle.Flex;
                 return;
+            }
+        }
+
+        private void OnToolLocked(UnlockableUpgradeType type)
+        {
+            int index = _toolTypes.IndexOf(type);
+            if (index < 0)
+            {
+                return;
+            }
+
+            _buttons[index].style.display = DisplayStyle.None;
+            if (_currentTool == index)
+            {
+                OnClicked(0);
             }
         }
 

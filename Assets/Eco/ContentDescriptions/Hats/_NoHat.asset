@@ -12,14 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37b0741b3c6b2c340b148ac9ab5c1cf5, type: 3}
   m_Name: _NoHat
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Hats.HatBuyUpgrade
-  baseCost:
-    coefficient: 0
-    magnitude: 0
-  costGrowth: 1.15
-  needsUpgrade: 0
-  showLevelInName: 0
-  upgradeId: no-hat
-  upgradeLocalizedName:
+  id: no-hat
+  localizedName:
     m_TableReference:
       m_TableCollectionName: GUID:31afe75600c416b40bebd8b31ef8ff29
     m_TableEntryReference:
@@ -28,34 +22,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  upgradeLocalizedDescription:
-    m_TableReference:
-      m_TableCollectionName: GUID:31afe75600c416b40bebd8b31ef8ff29
-    m_TableEntryReference:
-      m_KeyId: 1336426715148288
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
   icon: {fileID: 21300000, guid: 9208f0b907763a642ab2a0a4718fa2db, type: 3}
-  selectString:
-    m_TableReference:
-      m_TableCollectionName: GameUI
-    m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: upgrade-selected
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  notSelectedString:
-    m_TableReference:
-      m_TableCollectionName: GameUI
-    m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: upgrade-not-selected
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
   hatData:
     prefab: {fileID: 7746010471836100022, guid: b00f09bbf8bf11d4bb6a59e3d57718ab, type: 3}
     positionOffset: {x: 0, y: 0, z: 0}

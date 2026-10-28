@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Eco.Scripts.Hats;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Tools;
@@ -17,24 +18,25 @@ namespace Eco.Scripts
         [SerializeField] private Stomach stomach;
         [SerializeField] private ToolController toolController;
         [SerializeField] private Transform hatParent;
+        [SerializeField] private List<HatDefinition> hats = new();
 
         private HatController _hatController;
         private CurrencyManager _currencyManager;
-        private ScoreStats _scoreStats;
-        private UpgradesCollection _upgrades;
+        private PlayerStats _stats;
         private IDisposable _subscription;
 
         public Stomach Stomach => stomach;
+        public HatController Hats => _hatController;
+        public IReadOnlyList<HatDefinition> AvailableHats => hats;
 
-        // Fires with the stomach whenever its capacity/speed upgrade changes
+        // Fires with the stomach whenever its capacity changes
         public readonly Subject<Stomach> OnStomachChanged = new();
 
         [Inject]
-        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, ScoreStats scoreStats)
+        private void Init(CurrencyManager currencyManager, PlayerStats stats)
         {
             _currencyManager = currencyManager;
-            _upgrades = upgrades;
-            _scoreStats = scoreStats;
+            _stats = stats;
         }
 
         public void Spawn(SaveManager saveManager)
@@ -42,28 +44,15 @@ namespace Eco.Scripts
             transform.position = saveManager.Progress.playerPosition.ToVector3();
             agent.enabled = true;
 
-            itemCollector.Init(_currencyManager, _scoreStats, stomach);
-
-            // The cart upgrades now size the stomach and set the speed
-            var cartUpgrades = _upgrades.GetUpgradeTypes<CartBuyUpgrade>();
-            var cartUpgrade = cartUpgrades.Find(x => x.upgradeId == saveManager.Progress.selectedCart);
-            if (cartUpgrade == null)
-            {
-                cartUpgrade = cartUpgrades[0];
-            }
-
-            ApplyStomachStats(cartUpgrade.GetCartData());
+            itemCollector.Init(_currencyManager, _stats, stomach);
 
             var builder = new DisposableBuilder();
-            foreach (var cart in cartUpgrades)
-            {
-                cart.OnCartSelected.Subscribe(ApplyStomachStats).AddTo(ref builder);
-            }
-
+            _stats.MaxWeight.Subscribe(SetCapacity).AddTo(ref builder);
+            _stats.MoveSpeed.Subscribe(speed => agent.speed = speed).AddTo(ref builder);
             _subscription = builder.Build();
 
             toolController.Init();
-            _hatController = new HatController(_upgrades, hatParent);
+            _hatController = new HatController(hats, hatParent);
             _hatController.Initialize(saveManager);
 
             PlayerClickMovement.OnLeftClicked += Recycle;
@@ -74,16 +63,14 @@ namespace Eco.Scripts
             stomach.Recycle();
         }
 
-        private void ApplyStomachStats(CartBuyUpgrade.CartData stats)
+        private void SetCapacity(int capacity)
         {
-            stomach.SetStats(stats);
-            agent.speed = stats.moveSpeed;
+            stomach.SetCapacity(capacity);
             OnStomachChanged.OnNext(stomach);
         }
 
         public void Save(SaveManager saveManager)
         {
-            saveManager.Progress.selectedCart = stomach.Id;
             saveManager.Progress.playerPosition = new SaveManager.Vector3Serializable(transform.position);
             _hatController.SaveHat(saveManager);
         }
@@ -94,7 +81,6 @@ namespace Eco.Scripts
 
             _subscription?.Dispose();
             toolController?.Clear();
-            _hatController?.Clear();
         }
     }
 }

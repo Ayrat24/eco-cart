@@ -18,12 +18,12 @@ namespace Eco.Scripts.ItemCollecting
         private GainedScoreText _gainedScoreText;
         private bool _initialized;
 
-        private ScoreStats _scoreStats;
+        private PlayerStats _stats;
 
-        public void Init(CurrencyManager currencyManager, ScoreStats scoreStats)
+        public void Init(CurrencyManager currencyManager, PlayerStats stats)
         {
             _currencyManager = currencyManager;
-            _scoreStats = scoreStats;
+            _stats = stats;
             _gainedScoreText = new GainedScoreText();
             _gainedScoreText.Init(uiDocument);
             _initialized = true;
@@ -34,7 +34,9 @@ namespace Eco.Scripts.ItemCollecting
         {
             _gainedScoreText.StartNewRecycle();
             
-            double scoreMultiplier = _scoreStats.GetComboMultiplier();
+            // Without the combo unlock this is 0 and every item pays its base score
+            double scoreMultiplier = _stats.GetComboMultiplier();
+            bool showCombo = _stats.ComboUnlocked.CurrentValue;
             Dictionary<ScrapType, double> scoreMultipliers = new();
             
             var listItems = cartItems.ToList();
@@ -47,7 +49,7 @@ namespace Eco.Scripts.ItemCollecting
 
                 if (item is ScrapItem scrap)
                 {
-                    var baseScore = _scoreStats.GetScoreForScrap(scrap.ScrapType);
+                    var baseScore = _stats.GetScoreForScrap(scrap.ScrapType);
                     var score = baseScore * scrap.GetWeight();
 
                     if (scoreMultipliers.TryGetValue(scrap.ScrapType, out var currentMultiplier))
@@ -62,8 +64,9 @@ namespace Eco.Scripts.ItemCollecting
                     }
                     
                     _currencyManager.AddMoney(score);
-                    var color = _scoreStats.GetColor(scrap.ScrapType);
-                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b> Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color> Type:<b>{scrap.ScrapType}</b>", color);
+                    var color = _stats.GetColor(scrap.ScrapType);
+                    string combo = showCombo ? $" Combo:X<color=yellow><b>{currentMultiplier:F1}</b></color>" : "";
+                    _gainedScoreText.SpawnGainLabel($"+<b><color=green>{score}</color>$</b>{combo} Type:<b>{scrap.ScrapType}</b>", color);
                     _gainedScoreText.UpdateTotalLabel(score);
                 }
             }

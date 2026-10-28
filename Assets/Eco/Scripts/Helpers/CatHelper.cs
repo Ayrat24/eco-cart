@@ -15,64 +15,28 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private int maxDistanceFromPlayer = 30;
         [SerializeField] private LayerMask groundItemsMask;
         [SerializeField] private int playerStopDistance = 8;
+        [SerializeField] private float moveSpeed = 10f;
+        [Tooltip("Multiplies the money the cat earns from food.")]
+        [SerializeField] private float recycleMultiplier = 1f;
 
         private readonly Collider[] _colliders = new Collider[50];
         private const ScrapType Food = ScrapType.Food;
 
         private bool _goingToTarget;
 
-        // upgrade subscription tracking (managed by this helper only)
-
-
-        // recycle value multiplier (upgrade index 1)
-        private float _recycleMultiplier = 1f;
-
-        public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
-            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
+        public override void Init(CurrencyManager currencyManager, PlayerStats playerStats, Player player,
+            int navmeshPriority)
         {
-            base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
+            base.Init(currencyManager, playerStats, player, navmeshPriority);
+
+            agent.acceleration = moveSpeed * 10;
+            agent.speed = moveSpeed;
 
             var interval = TimeSpan.FromSeconds(1);
             ActionSubscription = Observable.Interval(interval).Subscribe(_ => { GoToNearbyItem(); });
             CancellationTokenSource = new CancellationTokenSource();
-
-            SetupUpgrades(helperClassUpgrades);
         }
 
-
-        protected override void ApplyHelperUpgrade(HelperUpgrade upgrade, int index)
-        {
-            if (upgrade == null) return;
-
-            try
-            {
-                switch (index)
-                {
-                    case 0:
-                        // agent speed multiplier/value
-                        if (agent != null)
-                        {
-                            agent.acceleration = upgrade.Value * 10;
-                            agent.speed = upgrade.Value;
-                            Debug.Log($"CatHelper: applied speed upgrade -> {agent.speed:F2}");
-                        }
-
-                        break;
-                    case 1:
-                        // recycle value multiplier
-                        _recycleMultiplier = upgrade.Value;
-                        Debug.Log($"CatHelper: applied recycle multiplier -> {_recycleMultiplier:F2}");
-                        break;
-                    default:
-                        Debug.Log($"CatHelper: received upgrade at index {index} (value={upgrade.Value})");
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
-        }
 
         private void GoToNearbyItem()
         {
@@ -191,10 +155,9 @@ namespace Eco.Scripts.Helpers
                         if (food.CanBeRecycled)
                         {
                             animationController.TriggerAction();
-                            var money = ScoreStats.GetScoreForScrap(food.ScrapType) * food.GetWeight();
+                            var money = PlayerStats.GetScoreForScrap(food.ScrapType) * food.GetWeight();
                             await food.RecycleAsync();
-                            // apply recycle multiplier from upgrades
-                            var reward = money * _recycleMultiplier;
+                            var reward = money * recycleMultiplier;
                             CurrencyManager.AddMoney(reward);
                             
                             // Show popup at food position

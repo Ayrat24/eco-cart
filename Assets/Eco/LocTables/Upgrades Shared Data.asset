@@ -143,6 +143,202 @@ MonoBehaviour:
     m_Key: upgrade-interval
     m_Metadata:
       m_Items: []
+  - m_Id: 151893818191085568
+    m_Key: effect-max-weight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057088
+    m_Key: effect-limb-count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057089
+    m_Key: effect-limb-range
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057090
+    m_Key: effect-move-speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057091
+    m_Key: effect-scrap-score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057092
+    m_Key: effect-combo-unlock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057093
+    m_Key: effect-combo-multiplier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057094
+    m_Key: effect-unlock-tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057095
+    m_Key: effect-unlock-pet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057096
+    m_Key: effect-unlock-feature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057097
+    m_Key: scrap-food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057098
+    m_Key: scrap-paper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057099
+    m_Key: scrap-plastic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057100
+    m_Key: scrap-glass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057101
+    m_Key: feature-map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057102
+    m_Key: feature-cart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057103
+    m_Key: feature-spade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057104
+    m_Key: feature-smoke
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057105
+    m_Key: feature-flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057106
+    m_Key: feature-butterflies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057107
+    m_Key: feature-pine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057108
+    m_Key: feature-apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057109
+    m_Key: feature-pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057110
+    m_Key: feature-cat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057111
+    m_Key: feature-chicken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057112
+    m_Key: feature-dog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057113
+    m_Key: feature-trees
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057114
+    m_Key: feature-hats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057115
+    m_Key: feature-helpers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057116
+    m_Key: tree-pine-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057117
+    m_Key: tree-apple-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057118
+    m_Key: tree-pear-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057119
+    m_Key: upgrade-bigger-belly-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057120
+    m_Key: upgrade-quick-wobble-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057121
+    m_Key: upgrade-extra-tentacle-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057122
+    m_Key: upgrade-long-reach-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057123
+    m_Key: upgrade-stretchy-stomach-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057124
+    m_Key: upgrade-paper-value-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057125
+    m_Key: upgrade-food-value-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057126
+    m_Key: upgrade-plastic-value-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057127
+    m_Key: upgrade-glass-value-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057128
+    m_Key: upgrade-sorting-instinct-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057129
+    m_Key: upgrade-combo-master-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057130
+    m_Key: upgrade-pine-seeds-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057131
+    m_Key: upgrade-apple-seeds-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057132
+    m_Key: upgrade-pear-seeds-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057133
+    m_Key: upgrade-cat-friend-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057134
+    m_Key: upgrade-chicken-friend-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057135
+    m_Key: upgrade-dog-friend-name
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

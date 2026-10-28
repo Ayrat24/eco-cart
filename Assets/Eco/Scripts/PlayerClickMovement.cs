@@ -1,4 +1,5 @@
 using System;
+using Eco.Scripts.Utils;
 using Eco.Scripts.World;
 using UnityEngine;
 using UnityEngine.AI;
@@ -47,12 +48,27 @@ public class PlayerClickMovement : MonoBehaviour
 
     private void OnLeftClick(InputAction.CallbackContext obj)
     {
+        if (IsPointerOverUI())
+        {
+            return;
+        }
+
         OnLeftClicked?.Invoke();
     }
-    
+
     private void OnRMCStart(InputAction.CallbackContext obj)
     {
+        if (IsPointerOverUI())
+        {
+            return;
+        }
+
         _isHoldingRightClick = true;
+    }
+
+    private static bool IsPointerOverUI()
+    {
+        return Mouse.current != null && FindUIBlockers.IsPointerOverUI(Mouse.current.position.ReadValue());
     }
     
     private void OnRMCEnd(InputAction.CallbackContext obj)

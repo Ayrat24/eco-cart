@@ -12,14 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37b0741b3c6b2c340b148ac9ab5c1cf5, type: 3}
   m_Name: PajamaHat
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Hats.HatBuyUpgrade
-  baseCost:
-    coefficient: 750
-    magnitude: 0
-  costGrowth: 1.15
-  needsUpgrade: 0
-  showLevelInName: 0
-  upgradeId: pajahat
-  upgradeLocalizedName:
+  id: pajahat
+  localizedName:
     m_TableReference:
       m_TableCollectionName: GUID:31afe75600c416b40bebd8b31ef8ff29
     m_TableEntryReference:
@@ -28,34 +22,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  upgradeLocalizedDescription:
-    m_TableReference:
-      m_TableCollectionName: GUID:31afe75600c416b40bebd8b31ef8ff29
-    m_TableEntryReference:
-      m_KeyId: 18694005000000002
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
   icon: {fileID: 21300000, guid: 2f2e373f89b818c429f07c6b57dde1e6, type: 3}
-  selectString:
-    m_TableReference:
-      m_TableCollectionName: GameUI
-    m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: upgrade-selected
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  notSelectedString:
-    m_TableReference:
-      m_TableCollectionName: GameUI
-    m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: upgrade-not-selected
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
   hatData:
     prefab: {fileID: 5571725512020388848, guid: 6ecc18806c2cb2c41a7bef0f882585f4, type: 3}
     positionOffset: {x: 0, y: 0, z: 0}

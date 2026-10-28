@@ -156,6 +156,202 @@ MonoBehaviour:
     m_Localized: 'Interval: {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 151893818191085568
+    m_Localized: 'Stomach capacity: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057088
+    m_Localized: 'Tentacles: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057089
+    m_Localized: 'Reach: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057090
+    m_Localized: 'Speed: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057091
+    m_Localized: '{0} value: {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057092
+    m_Localized: 'Unlocks combo: every same-type item in a load adds {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057093
+    m_Localized: 'Combo bonus per item: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057094
+    m_Localized: 'Unlocks planting: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057095
+    m_Localized: 'Unlocks pet: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057096
+    m_Localized: 'Unlocks: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057097
+    m_Localized: Food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057098
+    m_Localized: Paper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057099
+    m_Localized: Plastic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057100
+    m_Localized: Glass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057101
+    m_Localized: Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057102
+    m_Localized: Collecting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057103
+    m_Localized: Spade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057104
+    m_Localized: Smoke
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057105
+    m_Localized: Flowers on cleared piles
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057106
+    m_Localized: Butterflies on cleared piles
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057107
+    m_Localized: Pine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057108
+    m_Localized: Apple tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057109
+    m_Localized: Pear tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057110
+    m_Localized: Cat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057111
+    m_Localized: Chicken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057112
+    m_Localized: Dog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057113
+    m_Localized: Trees
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057114
+    m_Localized: Hats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057115
+    m_Localized: Pets
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057116
+    m_Localized: Pine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057117
+    m_Localized: Apple tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057118
+    m_Localized: Pear tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057119
+    m_Localized: Bigger Belly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057120
+    m_Localized: Quick Wobble
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057121
+    m_Localized: Extra Tentacle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057122
+    m_Localized: Long Reach
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057123
+    m_Localized: Stretchy Stomach
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057124
+    m_Localized: Paper Value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057125
+    m_Localized: Food Value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057126
+    m_Localized: Plastic Value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057127
+    m_Localized: Glass Value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057128
+    m_Localized: Sorting Instinct
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057129
+    m_Localized: Combo Master
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057130
+    m_Localized: Pine Seeds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057131
+    m_Localized: Apple Seeds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057132
+    m_Localized: Pear Seeds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057133
+    m_Localized: Cat Friend
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057134
+    m_Localized: Chicken Friend
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151893818212057135
+    m_Localized: Dog Friend
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

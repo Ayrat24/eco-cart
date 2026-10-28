@@ -4,8 +4,8 @@ namespace Eco.Scripts.ItemCollecting
 {
     /// <summary>
     /// Tuning for the jelly's belly (see <see cref="Stomach"/>): how big swallowed items stay, how much the body
-    /// grows to hold them and how they float inside. How much the belly holds still comes from the stomach
-    /// upgrades (CartBuyUpgrade); the spring the body grows with is on JellyBody.
+    /// grows to hold them and how they float inside. How much the belly holds comes from the
+    /// MaxWeight stat (BaseStats plus upgrades); the spring the body grows with is on JellyBody.
     /// </summary>
     [CreateAssetMenu(menuName = "Eco/Stomach Settings", fileName = "StomachSettings")]
     public class StomachSettings : ScriptableObject

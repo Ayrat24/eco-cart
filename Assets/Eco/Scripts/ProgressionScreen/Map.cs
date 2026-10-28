@@ -54,6 +54,7 @@ namespace Eco.Scripts.ProgressionScreen
             // Every tile change (recycling, planting, piles, chunk saves) ends in a chunk save
             saveManager.OnChunkUpdated.Subscribe(id => _changedIds.Add(id)).AddTo(ref builder);
             UnlockTracker.OnUnlocked.Subscribe(OnMapUnlocked).AddTo(ref builder);
+            UnlockTracker.OnLocked.Subscribe(OnMapLocked).AddTo(ref builder);
             _subscription = builder.Build();
 
             var mapSize = (_worldController.WorldSideSize * 2 + viewportSize) * WorldToCanvasCoef;
@@ -71,6 +72,14 @@ namespace Eco.Scripts.ProgressionScreen
             if (upgradeType == UnlockableUpgradeType.Map)
             {
                 map.SetActive(true);
+            }
+        }
+
+        private void OnMapLocked(UnlockableUpgradeType upgradeType)
+        {
+            if (upgradeType == UnlockableUpgradeType.Map)
+            {
+                map.SetActive(false);
             }
         }
 

@@ -1,6 +1,5 @@
 using System;
 using Eco.Scripts.ItemCollecting;
-using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
 using UnityEngine.AI;
@@ -24,14 +23,11 @@ namespace Eco.Scripts.Helpers
         private Player _player;
         private string _state = "";
 
-        public void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player,
-            int navmeshPriority)
+        public void Init(CurrencyManager currencyManager, Player player, int navmeshPriority)
         {
             _player = player;
 
             agent.avoidancePriority = navmeshPriority;
-            
-            //itemCollector.Init(currencyManager, upgrades, stomach);
 
             var interval = TimeSpan.FromSeconds(1);
             _subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });

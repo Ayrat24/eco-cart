@@ -1,12 +1,11 @@
 using System;
-using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.UI;
 using Eco.Scripts.Utils;
 using PrimeTween;
+using R3;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using R3;
 
 namespace Eco.Scripts
 {
@@ -17,19 +16,16 @@ namespace Eco.Scripts
 
         // A fast flick (or a trackpad burst) counts as at most this many wheel notches per frame
         private const float MaxNotchesPerFrame = 3f;
-
-        private IDisposable _subscription;
-        private Player _player;
-
-        private Stomach _stomach;
-        private Tween _xTween;
-        private Tween _yTween;
-        private Tween _zTween;
-        private bool _menuOpened;
+        private const float MenuShiftDuration = 0.4f;
 
         private InputSystem_Actions _inputActions;
+        private CinemachineCamera _camera;
+        private IDisposable _subscription;
+        // Fraction of the screen width the upgrade menu covers from the left; the jelly stays centered in the rest
+        private float _screenCover;
+        private Tween _coverTween;
         private Transform _cameraTransform;
-        // Follow offset at the default zoom: the cart's camera offset plus the sideways shift while the menu is open
+        // Follow offset at the default zoom, as authored on the scene's CinemachineFollow
         private Vector3 _baseOffset;
         // The scene camera's rotation, kept as is at the default zoom
         private Vector3 _authoredEuler;
@@ -41,9 +37,18 @@ namespace Eco.Scripts
         private void Awake()
         {
             _cameraTransform = cinemachineFollow.transform;
+            _camera = cinemachineFollow.GetComponent<CinemachineCamera>();
             _baseOffset = cinemachineFollow.FollowOffset;
             _authoredEuler = _cameraTransform.eulerAngles;
             _inputActions = new InputSystem_Actions();
+            _subscription = UpgradeTreeMenu.OnScreenCoverChanged.Subscribe(OnScreenCoverChanged);
+        }
+
+        private void OnScreenCoverChanged(float cover)
+        {
+            _coverTween.Stop();
+            _coverTween = Tween.Custom(_screenCover, cover, MenuShiftDuration, value => _screenCover = value,
+                Ease.OutCubic);
         }
 
         private void OnEnable()
@@ -54,54 +59,6 @@ namespace Eco.Scripts
         private void OnDisable()
         {
             _inputActions.Player.Zoom.Disable();
-        }
-
-        public void Init(Player player)
-        {
-            _player = player;
-
-            var builder = new DisposableBuilder();
-
-            _player.OnStomachChanged.Subscribe(OnStomachChanged).AddTo(ref builder);
-            UpgradeMenu.OnOpen.Subscribe(OnMenuOpened).AddTo(ref builder);
-
-            _subscription = builder.Build();
-        }
-
-        private void OnStomachChanged(Stomach stomach)
-        {
-            _stomach = stomach;
-
-            var zEnd = stomach.Stats.cameraOffset.z;
-            _zTween.Stop();
-            _zTween = Tween.Custom(_baseOffset.z, zEnd, 0.5f, f => _baseOffset.z = f);
-
-            var yEnd = stomach.Stats.cameraOffset.y;
-            _yTween.Stop();
-            _yTween = Tween.Custom(_baseOffset.y, yEnd, 0.5f, f => _baseOffset.y = f);
-
-            if (!_menuOpened)
-            {
-                return;
-            }
-
-            var xEnd = stomach.Stats.menuCameraOffset;
-            _xTween.Stop();
-            _xTween = Tween.Custom(_baseOffset.x, xEnd, 0.5f, f => _baseOffset.x = f);
-        }
-
-        private void OnMenuOpened(bool isOpen)
-        {
-            _menuOpened = isOpen;
-
-            if (_stomach == null)
-            {
-                return;
-            }
-
-            var xEnd = isOpen ? _stomach.Stats.menuCameraOffset : 0f;
-            _xTween.Stop();
-            _xTween = Tween.Custom(_baseOffset.x, xEnd, 0.4f, f => _baseOffset.x = f);
         }
 
         private void Update()
@@ -141,8 +98,7 @@ namespace Eco.Scripts
             float distance = baseDistance * scale;
             float radians = elevation * Mathf.Deg2Rad;
 
-            // The menu shift scales with the distance so the player moves the same amount on screen
-            cinemachineFollow.FollowOffset = new Vector3(_baseOffset.x * scale,
+            cinemachineFollow.FollowOffset = new Vector3(_baseOffset.x * scale + MenuShift(distance),
                 Mathf.Sin(radians) * distance, -Mathf.Cos(radians) * distance);
 
             // The scene's pitch doesn't aim exactly at the player; that look fades out as the camera tilts, until it
@@ -152,11 +108,22 @@ namespace Eco.Scripts
             _cameraTransform.rotation = Quaternion.Euler(pitch, _authoredEuler.y, _authoredEuler.z);
         }
 
+        // Moving the camera left by this puts the jelly in the middle of the screen part the menu leaves free
+        private float MenuShift(float distance)
+        {
+            if (_screenCover <= 0f || _camera == null)
+            {
+                return 0f;
+            }
+
+            float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+            float halfWidth = distance * Mathf.Tan(_camera.Lens.FieldOfView * 0.5f * Mathf.Deg2Rad) * aspect;
+            return -_screenCover * halfWidth;
+        }
+
         private void OnDestroy()
         {
-            _xTween.Stop();
-            _yTween.Stop();
-            _zTween.Stop();
+            _coverTween.Stop();
             _subscription?.Dispose();
             _inputActions.Dispose();
         }

@@ -1,47 +1,31 @@
-using System;
 using System.Collections.Generic;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
-using Eco.Scripts.Trees;
-using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Eco.Scripts.World
 {
+    /// <summary>Plants trees on free ground near the player and greens the ground around them.</summary>
     public class TreePlanter
     {
         public const int TreeGrassRadius = 12;
         public const int PileGrassRadius = 6;
         
         private readonly Transform _player;
-        private readonly UpgradesCollection _upgrades;
         private readonly WorldController _worldController;
-        private IDisposable _subscription;
 
         public readonly Subject<int> OnTreePlanted = new();
         
-        public TreePlanter(UpgradesCollection upgrades, Transform player, WorldController worldController)
+        public TreePlanter(Transform player, WorldController worldController)
         {
-            _upgrades = upgrades;
             _player = player;
             _worldController = worldController;
         }
 
-        public void Init()
-        {
-            DisposableBuilder builder = new DisposableBuilder();
-
-            foreach (var tree in _upgrades.GetUpgradeTypes<TreeBuyUpgrade>())
-            {
-                tree.OnPurchase.Subscribe(PlantTree).AddTo(ref builder);
-            }
-
-            _subscription = builder.Build();
-        }
-
-        private void PlantTree(int id)
+        /// <summary>Plants tree prefab <paramref name="id"/> on the free ground tile closest to the player.</summary>
+        /// <returns>False if no free tile is in range.</returns>
+        public bool PlantTree(int id)
         {
             using var marker = EcoProfilerMarkers.PlantTree.Auto();
 
@@ -88,12 +72,13 @@ namespace Eco.Scripts.World
 
             if (closestTile == null)
             {
-                return;
+                return false;
             }
-            
+
             PlantTree(id, closestTile, closestField, true);
             MarkGroundCircle(closestTile, closestField, TreeGrassRadius);
             OnTreePlanted.OnNext(id);
+            return true;
         }
 
         private void MarkGroundCircle(Tile centerTile, Chunk centerField, int radius)
@@ -180,11 +165,6 @@ namespace Eco.Scripts.World
             {
                 tree.ShowPlantAnimation();
             }
-        }
-        
-        public void Clear()
-        {
-            _subscription?.Dispose();
         }
     }
 }

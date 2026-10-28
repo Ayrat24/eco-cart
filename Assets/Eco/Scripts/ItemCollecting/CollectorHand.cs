@@ -22,6 +22,14 @@ namespace Eco.Scripts.ItemCollecting
         private CancellationTokenSource _cancellationTokenSource;
 
         public bool IsFree => !_animationInProgress;
+        public JellyTentacle Tentacle => tentacle;
+
+        /// <summary>For hands added at runtime: the tentacle it moves and a name for debugging.</summary>
+        public void Setup(JellyTentacle handTentacle, string displayName)
+        {
+            tentacle = handTentacle;
+            handName = displayName;
+        }
 
         public void Init(Stomach stomach)
         {

@@ -17,42 +17,29 @@ namespace Eco.Scripts.Helpers
         [SerializeField] private int playerStopDistance = 8;
         [SerializeField] private ScrapItem eggPrefab;
         [SerializeField] private float eggReplaceDistanceFromPlayer = 20;
+        [SerializeField, Min(1)] private int maxConcurrentEggs = 3;
+        [SerializeField, Min(0.1f)] private float eggIntervalSeconds = 5f;
 
         private bool _initialized;
 
         private ObjectPool<ScrapItem> _eggPool;
         private readonly HashSet<ScrapItem> _activeEggs = new();
 
-        // runtime-configurable values (affected by upgrades)
-        private int _currentMaxConcurrentEggs;
-        private float _eggIntervalSeconds = 5f;
-
-        public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
-            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
+        public override void Init(CurrencyManager currencyManager, PlayerStats playerStats, Player player,
+            int navmeshPriority)
         {
-            base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
+            base.Init(currencyManager, playerStats, player, navmeshPriority);
 
-            var maxConcurrentEggs = (int)Upgrades[0].Value;
             _eggPool = new ObjectPool<ScrapItem>(eggPrefab, maxConcurrentEggs, PoolManager.Instance.transform);
 
-            // initialize runtime values from serialized defaults
-            _currentMaxConcurrentEggs = Mathf.Max(1, maxConcurrentEggs);
-            _eggIntervalSeconds = 5f;
-
-            // start periodic lay timer (will be reconfigured by upgrades via ApplyHelperUpgrade)
             ActionSubscription =
-                Observable.Interval(TimeSpan.FromSeconds(_eggIntervalSeconds)).Subscribe(_ => LayEgg());
+                Observable.Interval(TimeSpan.FromSeconds(eggIntervalSeconds)).Subscribe(_ => LayEgg());
             CancellationTokenSource = new CancellationTokenSource();
 
             agent.destination = player.transform.position;
             animationController.GoingToTarget = true;
 
             _initialized = true;
-
-            if (helperClassUpgrades != null)
-            {
-                SetupUpgrades(helperClassUpgrades);
-            }
         }
 
         protected void FixedUpdate()
@@ -93,7 +80,7 @@ namespace Eco.Scripts.Helpers
             }
 
             // Limit total eggs spawned by this chicken
-            if (_activeEggs.Count >= _currentMaxConcurrentEggs)
+            if (_activeEggs.Count >= maxConcurrentEggs)
             {
                 // try to find an active egg that is far away from the player and reuse it
                 ScrapItem farEgg = null;
@@ -192,43 +179,6 @@ namespace Eco.Scripts.Helpers
             _activeEggs.Clear();
 
             base.Clear();
-        }
-
-        // Handle helper-class upgrades: index 0 = max concurrent eggs, index 1 = egg spawn interval (seconds)
-        protected override void ApplyHelperUpgrade(HelperUpgrade upgrade, int index)
-        {
-            if (upgrade == null) return;
-
-            try
-            {
-                switch (index)
-                {
-                    case 0:
-                        // treat upgrade.Value as desired capacity (round to int)
-                        _currentMaxConcurrentEggs = Mathf.Max(1, Mathf.RoundToInt(upgrade.Value));
-                        break;
-                    case 1:
-                        // treat upgrade.Value as spawn interval seconds (clamp to a sensible minimum)
-                        var newInterval = Mathf.Max(0.1f, upgrade.Value);
-                        if (Math.Abs(newInterval - _eggIntervalSeconds) > 0.001f)
-                        {
-                            _eggIntervalSeconds = newInterval;
-                            // resubscribe periodic timer
-                            ActionSubscription?.Dispose();
-                            ActionSubscription = Observable.Interval(TimeSpan.FromSeconds(_eggIntervalSeconds))
-                                .Subscribe(_ => LayEgg());
-                        }
-
-                        break;
-                    default:
-                        Debug.Log($"ChickenHelper: received upgrade at index {index} (value={upgrade.Value})");
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
         }
     }
 }

@@ -22,10 +22,10 @@ namespace Eco.Scripts.Helpers
         private Stomach _stomach;
         private bool _goingToTarget;
 
-        public override void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
-            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
+        public override void Init(CurrencyManager currencyManager, PlayerStats playerStats, Player player,
+            int navmeshPriority)
         {
-            base.Init(currencyManager, scoreStats, player, navmeshPriority, helperClassUpgrades);
+            base.Init(currencyManager, playerStats, player, navmeshPriority);
 
             _stomach = player.Stomach;
 

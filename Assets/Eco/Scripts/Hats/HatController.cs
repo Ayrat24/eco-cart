@@ -1,89 +1,63 @@
-using System;
-using Eco.Scripts.Upgrades;
-using R3;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Eco.Scripts.Hats
 {
+    /// <summary>Puts the chosen hat on the jelly and remembers it in the save.</summary>
     public class HatController
     {
         private readonly Transform _hatParent;
-        private readonly UpgradesCollection _upgrades;
-        
-        private Hat _currentHat;
-        private IDisposable _subscription;
+        private readonly IReadOnlyList<HatDefinition> _hats;
 
-        public HatController(UpgradesCollection upgrades, Transform hatParent)
+        private Hat _currentHat;
+
+        public HatController(IReadOnlyList<HatDefinition> hats, Transform hatParent)
         {
-            _upgrades = upgrades;
+            _hats = hats;
             _hatParent = hatParent;
         }
 
         public void Initialize(SaveManager saveManager)
         {
-            // Get all hat upgrades
-            var hatUpgrades = _upgrades.GetUpgradeTypes<HatBuyUpgrade>();
-            
-            // Subscribe to hat selection events
-            var builder = new DisposableBuilder();
-            foreach (var hatUpgrade in hatUpgrades)
+            string savedId = saveManager.Progress.selectedHat;
+            if (string.IsNullOrEmpty(savedId) || _hats == null)
             {
-                hatUpgrade.OnSelected.Subscribe(EquipHat).AddTo(ref builder);
+                return;
             }
-            _subscription = builder.Build();
 
-            // Load the saved hat if any
-            if (!string.IsNullOrEmpty(saveManager.Progress.selectedHat))
+            foreach (var hat in _hats)
             {
-                var savedHatUpgrade = hatUpgrades.Find(x => x.upgradeId == saveManager.Progress.selectedHat);
-                if (savedHatUpgrade != null && savedHatUpgrade.CurrentLevel.Value >= 2)
+                if (hat != null && hat.Id == savedId)
                 {
-                    var hatData = savedHatUpgrade.GetHatData();
-                    SpawnHat(hatData, saveManager.Progress.selectedHat);
+                    Equip(hat);
+                    return;
                 }
             }
         }
 
-        private void EquipHat(HatBuyUpgrade.HatData hatData)
+        public void Equip(HatDefinition hat)
         {
-            // Remove current hat if exists
             if (_currentHat != null)
             {
                 Object.Destroy(_currentHat.gameObject);
+                _currentHat = null;
             }
 
-            // Find the hat upgrade ID
-            var hatUpgrades = _upgrades.GetUpgradeTypes<HatBuyUpgrade>();
-            string hatId = null;
-            foreach (var hatUpgrade in hatUpgrades)
+            if (hat == null || hat.Data.prefab == null)
             {
-                if (hatUpgrade.GetHatData().prefab == hatData.prefab)
-                {
-                    hatId = hatUpgrade.upgradeId;
-                    break;
-                }
+                return;
             }
 
-            SpawnHat(hatData, hatId);
-        }
-
-        private void SpawnHat(HatBuyUpgrade.HatData hatData, string hatId)
-        {
-            _currentHat = Object.Instantiate(hatData.prefab, _hatParent);
-            _currentHat.transform.localPosition = hatData.positionOffset;
+            _currentHat = Object.Instantiate(hat.Data.prefab, _hatParent);
+            _currentHat.transform.localPosition = hat.Data.positionOffset;
             _currentHat.transform.localRotation = Quaternion.identity;
-            _currentHat.Setup(hatId);
+            _currentHat.Setup(hat.Id);
         }
 
         public void SaveHat(SaveManager saveManager)
         {
-            saveManager.Progress.selectedHat = _currentHat?.Id ?? string.Empty;
-        }
-
-        public void Clear()
-        {
-            _subscription?.Dispose();
+            saveManager.Progress.selectedHat = _currentHat != null ? _currentHat.Id : string.Empty;
         }
     }
 }

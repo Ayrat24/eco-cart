@@ -133,6 +133,47 @@ MonoBehaviour:
     m_Localized: Not Now
     m_Metadata:
       m_Items: []
+  - m_Id: 151650833952112640
+    m_Localized: Upgrades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667072
+    m_Localized: "Hover an upgrade to see it. Click it, then + to buy or \u2212 to
+      refund. Drag to look around, scroll to zoom."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667073
+    m_Localized: Center
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667074
+    m_Localized: Level {0}/{1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667076
+    m_Localized: Max level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667077
+    m_Localized: 'Requires one of: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667078
+    m_Localized: 'Requires: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151659755022811136
+    m_Localized: 'Price: {0}$'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151659755052171264
+    m_Localized: 'Refund: {0}$'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151659755052171265
+    m_Localized: Refund the upgrades that need this one first
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -7,7 +7,9 @@ namespace Eco.Scripts.Upgrades
     {
         public static readonly Dictionary<UnlockableUpgradeType, bool> UnlockableUpgrades = new();
         public static readonly Subject<UnlockableUpgradeType> OnUnlocked = new();
-        
+        // A refunded upgrade takes its unlock back
+        public static readonly Subject<UnlockableUpgradeType> OnLocked = new();
+
         public static bool IsUpgradeUnlocked(UnlockableUpgradeType upgrade)
         {
             if (upgrade == UnlockableUpgradeType.Cart)
@@ -32,6 +34,17 @@ namespace Eco.Scripts.Upgrades
             
             UnlockableUpgrades[upgrade] = true;
             OnUnlocked.OnNext(upgrade);
+        }
+
+        public static void LockUpgrade(UnlockableUpgradeType upgrade)
+        {
+            if (!UnlockableUpgrades.GetValueOrDefault(upgrade, false))
+            {
+                return;
+            }
+
+            UnlockableUpgrades[upgrade] = false;
+            OnLocked.OnNext(upgrade);
         }
 
         public static void Clear()

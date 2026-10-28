@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Eco.Scripts.Upgrades;
-using R3;
 using UnityEngine;
 using UnityEngine.AI;
 #if UNITY_EDITOR
@@ -21,50 +19,21 @@ namespace Eco.Scripts.Helpers
         protected string DebugState;
         protected Player Player;
         protected CurrencyManager CurrencyManager;
-        protected ScoreStats ScoreStats;
-        protected List<HelperUpgrade> Upgrades; 
+        protected PlayerStats PlayerStats;
         
         protected IDisposable ActionSubscription;
         protected CancellationTokenSource CancellationTokenSource;
-        
-        protected readonly List<IDisposable> UpgradeSubscriptions = new();
 
-        
-        public virtual void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Player player,
-            int navmeshPriority, List<HelperUpgrade> helperClassUpgrades)
+        public virtual void Init(CurrencyManager currencyManager, PlayerStats playerStats, Player player,
+            int navmeshPriority)
         {
             Player = player;
             CurrencyManager = currencyManager;
-            ScoreStats = scoreStats;
-            Upgrades = helperClassUpgrades;
+            PlayerStats = playerStats;
             
             agent.avoidancePriority = navmeshPriority;
             
             animationController.Init(agent);
-        }
-        
-        protected void SetupUpgrades(List<HelperUpgrade> helperClassUpgrades)
-        {
-            for (int i = 0; i < helperClassUpgrades.Count; i++)
-            {
-                var u = helperClassUpgrades[i];
-
-                // capture loop variables into locals to avoid closure capture issues
-                int index = i;
-                var upgrade = u;
-
-                // subscribe to level changes and apply immediately
-                var sub = upgrade.CurrentLevel.Subscribe(_ => { ApplyHelperUpgrade(upgrade, index); });
-                UpgradeSubscriptions.Add(sub);
-
-                // apply current values right away
-                ApplyHelperUpgrade(upgrade, index);
-            }
-        }
-
-        protected virtual void ApplyHelperUpgrade(HelperUpgrade upgrade, int index)
-        {
-            // to be overridden by subclasses
         }
 
         public virtual void Clear()
@@ -73,12 +42,6 @@ namespace Eco.Scripts.Helpers
             CancellationTokenSource?.Cancel();
             CancellationTokenSource?.Dispose();
             ActionSubscription = null;
-            
-            foreach (var s in UpgradeSubscriptions)
-            {
-                try { s.Dispose(); } catch (Exception ex) { Debug.LogException(ex); }
-            }
-            UpgradeSubscriptions.Clear();
         }
 
 #if UNITY_EDITOR

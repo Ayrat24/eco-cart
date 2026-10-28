@@ -9,6 +9,11 @@ using UnityEngine;
 
 namespace Eco.Scripts.ItemCollecting
 {
+    /// <summary>
+    /// Finds scrap in reach and sends free tentacles for it. How many tentacles (LimbCount) and how far they reach
+    /// (LimbRange, around the sphere collider's center) come from <see cref="PlayerStats"/>; tentacles past the
+    /// authored ones are cloned from the first.
+    /// </summary>
     public class ItemCollector : Tool
     {
         [SerializeField] ItemRecycler itemRecycler;
@@ -19,12 +24,16 @@ namespace Eco.Scripts.ItemCollecting
         private readonly Collider[] _colliders = new Collider[20];
         private Stomach _stomach;
         private IDisposable _subscription;
+        private int _limbCount;
+        private float _range;
 
         public LayerMask LayerMask => layerMask;
 
-        public void Init(CurrencyManager currencyManager, ScoreStats scoreStats, Stomach stomach)
+        public void Init(CurrencyManager currencyManager, PlayerStats stats, Stomach stomach)
         {
             _stomach = stomach;
+            _range = sphereCollider.radius;
+            _limbCount = hands.Count;
 
             foreach (var hand in hands)
             {
@@ -33,8 +42,8 @@ namespace Eco.Scripts.ItemCollecting
 
             sphereCollider.includeLayers = layerMask;
 
-            _subscription?.Dispose();
-            _subscription = Observable.IntervalFrame(10).Subscribe(_ =>
+            var builder = new DisposableBuilder();
+            Observable.IntervalFrame(10).Subscribe(_ =>
              {
                  if (!Active || !stomach.CanAddItems || !HasFreeHands())
                  {
@@ -42,10 +51,32 @@ namespace Eco.Scripts.ItemCollecting
                  }
 
                  ScanForItems();
-             });
+             }).AddTo(ref builder);
+            stats.LimbCount.Subscribe(SetLimbCount).AddTo(ref builder);
+            stats.LimbRange.Subscribe(range => _range = range).AddTo(ref builder);
 
-            itemRecycler.Init(currencyManager, scoreStats);
+            _subscription?.Dispose();
+            _subscription = builder.Build();
+
+            itemRecycler.Init(currencyManager, stats);
             stomach.Init(itemRecycler, this);
+        }
+
+        // Only the first count hands go for items; missing ones are grown from the first hand's tentacle
+        private void SetLimbCount(int count)
+        {
+            _limbCount = Mathf.Max(1, count);
+            while (hands.Count < _limbCount)
+            {
+                var template = hands[0].Tentacle;
+                var tentacle = Instantiate(template, template.transform.parent);
+                tentacle.name = $"{template.name} {hands.Count + 1}";
+
+                var hand = gameObject.AddComponent<CollectorHand>();
+                hand.Setup(tentacle, $"Hand {hands.Count + 1}");
+                hand.Init(_stomach);
+                hands.Add(hand);
+            }
         }
 
         private void ScanForItems()
@@ -57,7 +88,7 @@ namespace Eco.Scripts.ItemCollecting
             var localCenter = sphereCollider.center;
             localCenter.z *= growth;
             Vector3 center = sphereCollider.transform.TransformPoint(localCenter);
-            int count = Physics.OverlapSphereNonAlloc(center, sphereCollider.radius * growth, _colliders, layerMask);
+            int count = Physics.OverlapSphereNonAlloc(center, _range * growth, _colliders, layerMask);
 
             if (count == 0)
             {
@@ -148,25 +179,17 @@ namespace Eco.Scripts.ItemCollecting
 
         private bool HasFreeHands()
         {
-            foreach (var hand in hands)
-            {
-                if (hand.IsFree)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return GetFreeHand(out _);
         }
 
         // Hands sprout wherever on the body faces the item, so any free one will do
         private bool GetFreeHand(out CollectorHand freeHand)
         {
-            foreach (var hand in hands)
+            for (int i = 0; i < _limbCount && i < hands.Count; i++)
             {
-                if (hand.IsFree)
+                if (hands[i].IsFree)
                 {
-                    freeHand = hand;
+                    freeHand = hands[i];
                     return true;
                 }
             }
@@ -204,7 +227,7 @@ namespace Eco.Scripts.ItemCollecting
 
             Gizmos.color = Color.magenta;
             Vector3 center = sphereCollider.transform.TransformPoint(sphereCollider.center);
-            Gizmos.DrawWireSphere(center, sphereCollider.radius);
+            Gizmos.DrawWireSphere(center, Application.isPlaying ? _range : sphereCollider.radius);
         }
 
         public override UniTask Enable()

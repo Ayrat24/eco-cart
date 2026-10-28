@@ -37,7 +37,7 @@ cat "$(ls -t Logs/StressTest/*.txt | head -1)"
 |---|---|---|
 | Load | Boot until `GameController.Initialized` | Save load, pools, terrain flatten, NavMesh build, the first 121 chunks, grass painting |
 | Idle | Stand still | Steady-state cost of the full world (render, physics, scripts) |
-| Plant | Buy `treesToPlant` trees through `TreeBuyUpgrade.OnPurchase` | `TreePlanter`, ground marking, grass repaint |
+| Plant | Plant `treesToPlant` trees through `TreePlanter.PlantTree` | `TreePlanter`, ground marking, grass repaint |
 | Collect | Drive a small loop at the player's own speed; recycle the stomach when it is full or pickups stall | `ItemCollector` scan, `Stomach.Reserve`, tentacle animations and meshes, stomach floating, `ItemRecycler`, `ScrapItem.Dissolve` |
 | Traverse | Drive a square loop across the world at `moveSpeed` | Chunk streaming one boundary at a time (11 spawns and 11 despawns per crossing) |
 | Churn | Teleport between two spots `2·renderRadius+1` chunks apart | Worst-case streaming: all 121 chunks despawn and a full new set spawns in one frame |

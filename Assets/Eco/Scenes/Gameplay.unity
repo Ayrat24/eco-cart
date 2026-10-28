@@ -192,7 +192,8 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  upgrades: {fileID: 11400000, guid: 04f60de0863051342983814c10290882, type: 2}
+  upgradeTree: {fileID: 11400000, guid: 9c93e9cc0e4986649a28e976a88bebe1, type: 2}
+  baseStats: {fileID: 11400000, guid: c4b3628a52d20d240a8b92e00eaca277, type: 2}
   settings: {fileID: 11400000, guid: ba88c4ea8e3488c42b945d7cda0fce40, type: 2}
 --- !u!4 &115343912
 Transform:
@@ -2327,8 +2328,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameUI
   uiDocument: {fileID: 1248775055}
-  upgradeItemTemplate: {fileID: 9197481963319205126, guid: 2da1b02a7a9317743b571445d178188a, type: 3}
-  upgradeGroupItemTemplate: {fileID: 9197481963319205126, guid: b21b7d4de2e90ad4bab36aa2566ce717, type: 3}
   cartItemTemplate: {fileID: 9197481963319205126, guid: 7684011abaf84824dbcc82b2562e6e37, type: 3}
   settings: {fileID: 11400000, guid: ba88c4ea8e3488c42b945d7cda0fce40, type: 2}
 --- !u!1 &1255418758
@@ -2468,6 +2467,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnRadius: 7
+  pets:
+  - {fileID: 11400000, guid: a2e26bd82d3b52f458502896929f5bab, type: 2}
+  - {fileID: 11400000, guid: 8d944b28b3980944eb24a9a805e6becc, type: 2}
+  - {fileID: 11400000, guid: 7be8c3f3efc96334c99100c3fc77e42a, type: 2}
 --- !u!4 &1274122424
 Transform:
   m_ObjectHideFlags: 0
@@ -3867,6 +3870,16 @@ MonoBehaviour:
   stomach: {fileID: 1149245314}
   toolController: {fileID: 611660689}
   hatParent: {fileID: 786342176}
+  hats:
+  - {fileID: 11400000, guid: 0819086f7cfb9ed4b92db297047606f4, type: 2}
+  - {fileID: 11400000, guid: c6b9ab5e08a67154f94814aa362ef9bc, type: 2}
+  - {fileID: 11400000, guid: b5c7a87b3fa2c79469142b648f207e22, type: 2}
+  - {fileID: 11400000, guid: 83a4c27d485d30546a178da9c4a9eb0f, type: 2}
+  - {fileID: 11400000, guid: bdaea2d7e50c3e2429e17ff7af706915, type: 2}
+  - {fileID: 11400000, guid: 9b86d879c7667e14dae4edcaea26b586, type: 2}
+  - {fileID: 11400000, guid: 6dac2a072d9c84f43bd45c6e8932fc38, type: 2}
+  - {fileID: 11400000, guid: 785c77909ef18ae48892f7b536021316, type: 2}
+  - {fileID: 11400000, guid: b956de68f2c0d9549b5beda5bbe6562e, type: 2}
 --- !u!1 &1978698482
 GameObject:
   m_ObjectHideFlags: 0
@@ -4083,7 +4096,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameUI: {fileID: 1248775057}
-  cameraController: {fileID: 2066580273}
   map: {fileID: 320530507}
   worldPreset: {fileID: 11400000, guid: c2bacaf8ea0c741458c090b0bb21995b, type: 2}
   scoreGainedPopup: {fileID: 2055223971}

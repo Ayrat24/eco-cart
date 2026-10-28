@@ -14,24 +14,18 @@ namespace Eco.Scripts.World
         [SerializeField] private GameObject butterflies;
         private Tile _tileWithPile;
         private IDisposable _unlockSubscription;
-        private IDisposable _digPowerSubscription;
-        private CurrencyManager _currencyManager;
-        private PileScoreUpgrade _pileScoreUpgrade;
-        private DigPowerUpgrade _digPowerUpgrade;
+        private IDisposable _lockSubscription;
+private CurrencyManager _currencyManager;
+        private PlayerStats _stats;
 
         public const int DifficultyMultiplier = 5;
 
-        public void Init(CurrencyManager currencyManager, PileScoreUpgrade pileScoreUpgrade,
-            DigPowerUpgrade digPowerUpgrade, int worldPresetDifficulty)
+        public void Init(CurrencyManager currencyManager, PlayerStats stats, int worldPresetDifficulty)
         {
             using var marker = EcoProfilerMarkers.PileChunkInit.Auto();
 
             _currencyManager = currencyManager;
-            _pileScoreUpgrade = pileScoreUpgrade;
-            _digPowerUpgrade = digPowerUpgrade;
-
-            // Subscribe to dig power level changes to update pile dynamically
-            _digPowerSubscription = _digPowerUpgrade.CurrentLevel.Subscribe(_ => UpdatePileDigPower());
+            _stats = stats;
 
             bool hasSave = SaveManager.FieldTiles.ContainsKey(Position);
             int pileSize = DifficultyMultiplier * worldPresetDifficulty; // default size
@@ -80,6 +74,7 @@ namespace Eco.Scripts.World
             // subscribe to unlock events so that if Flowers/Butterflies are unlocked later
             // and there's no pile, we enable those visuals
             _unlockSubscription = UnlockTracker.OnUnlocked.Subscribe(OnUpgradeUnlocked);
+            _lockSubscription = UnlockTracker.OnLocked.Subscribe(OnUpgradeLocked);
 
             // A loaded chunk already matches its save
             if (!hasSave)
@@ -90,20 +85,11 @@ namespace Eco.Scripts.World
 
         private void SpawnScrapPileAtTile(Tile tile, int size, int difficulty)
         {
-            int digPower = _digPowerUpgrade != null ? _digPowerUpgrade.DigPower : 1;
-            pile.Initialize(size, difficulty, digPower);
+            pile.Initialize(size, difficulty, _stats.DigPower);
             tile.item = pile;
             tile.objectType = TileObjectType.ScrapPile;
 
             pile.OnPileCleaned += OnPileCleaned;
-        }
-
-        private void UpdatePileDigPower()
-        {
-            if (_digPowerUpgrade != null && pile != null && pile.gameObject.activeSelf)
-            {
-                pile.SetDigPower(_digPowerUpgrade.DigPower);
-            }
         }
 
         private void OnPileCleaned()
@@ -127,7 +113,7 @@ namespace Eco.Scripts.World
             }
 
             // Award money and show popup
-            var reward = _pileScoreUpgrade.ScoreForCurrentUpgrade;
+            var reward = _stats.PileScore;
             _currencyManager.AddMoney(reward);
 
             ScoreGainedPopup.Show(pile.transform.position, reward);
@@ -165,6 +151,18 @@ namespace Eco.Scripts.World
             }
         }
 
+        private void OnUpgradeLocked(UnlockableUpgradeType upgrade)
+        {
+            if (upgrade == UnlockableUpgradeType.Flowers)
+            {
+                flowers.SetActive(false);
+            }
+            else if (upgrade == UnlockableUpgradeType.Butterflies)
+            {
+                butterflies.SetActive(false);
+            }
+        }
+
         private void ShowFlowers()
         {
             if (!UnlockTracker.IsUpgradeUnlocked(UnlockableUpgradeType.Flowers))
@@ -193,7 +191,7 @@ namespace Eco.Scripts.World
             }
 
             _unlockSubscription?.Dispose();
-            _digPowerSubscription?.Dispose();
+            _lockSubscription?.Dispose();
 
             base.OnDespawn();
         }

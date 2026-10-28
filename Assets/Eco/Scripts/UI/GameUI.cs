@@ -8,12 +8,10 @@ namespace Eco.Scripts.UI
     public class GameUI : MonoBehaviour
     {
         [SerializeField] private UIDocument uiDocument;
-        [SerializeField] private VisualTreeAsset upgradeItemTemplate;
-        [SerializeField] private VisualTreeAsset upgradeGroupItemTemplate;
         [SerializeField] private VisualTreeAsset cartItemTemplate;
         [SerializeField] private Settings settings;
 
-        private UpgradeMenu _upgradeMenu;
+        private UpgradeTreeMenu _upgradeMenu;
         private CartStorageDisplay _cartStorageDisplay;
         private TutorialMenu _tutorialMenu;
         private ToolSelector _toolSelector;
@@ -22,13 +20,12 @@ namespace Eco.Scripts.UI
         private SettingsMenu _settingsMenu;
         private ProgressTracker _progressTracker;
 
-        public void Init(UpgradesCollection upgradesCollection, CurrencyManager currencyManager, Player player,
+        public void Init(UpgradeManager upgradeManager, CurrencyManager currencyManager, Player player,
             ProgressTracker progressTracker)
         {
             _progressTracker = progressTracker;
 
-            _upgradeMenu = new UpgradeMenu(uiDocument, upgradeItemTemplate, upgradeGroupItemTemplate,
-                upgradesCollection, currencyManager);
+            _upgradeMenu = new UpgradeTreeMenu(uiDocument, upgradeManager, currencyManager);
             _upgradeMenu.Init();
 
             _cartStorageDisplay = new CartStorageDisplay(uiDocument, player, cartItemTemplate);

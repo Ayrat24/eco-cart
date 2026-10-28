@@ -24,10 +24,8 @@ namespace Eco.Scripts.World
 
         private bool _initialized;
         private TreePlanter _treePlanter;
-        private UpgradesCollection _upgrades;
+        private PlayerStats _stats;
         private CurrencyManager _currencyManager;
-        private PileScoreUpgrade _pileScoreUpgrade;
-        private DigPowerUpgrade _digPowerUpgrade;
 
         public const int ChunkSize = 10;
         public int RenderRadius => renderRadius;
@@ -49,10 +47,10 @@ namespace Eco.Scripts.World
         private const float FlattenFalloff = 50;
         
         [Inject]
-        public void Initialize(SaveManager saveManager, UpgradesCollection upgrades, CurrencyManager currencyManager)
+        public void Initialize(SaveManager saveManager, PlayerStats stats, CurrencyManager currencyManager)
         {
             _saveManager = saveManager;
-            _upgrades = upgrades;
+            _stats = stats;
             _currencyManager = currencyManager;
         }
 
@@ -87,12 +85,7 @@ namespace Eco.Scripts.World
             }
             
 
-            _treePlanter = new TreePlanter(_upgrades, player, this);
-            _treePlanter.Init();
-            
-            // Get the PileScoreUpgrade from upgrades collection
-            _pileScoreUpgrade = _upgrades.GetUpgradeType<PileScoreUpgrade>();
-            _digPowerUpgrade = _upgrades.GetUpgradeType<DigPowerUpgrade>();
+            _treePlanter = new TreePlanter(player, this);
 
             Flatten();
             RebuildNavMesh();
@@ -245,7 +238,7 @@ namespace Eco.Scripts.World
                              PileChunk pileChunk = chunk as PileChunk;
                              if (pileChunk != null)
                              {
-                                 pileChunk.Init(_currencyManager, _pileScoreUpgrade, _digPowerUpgrade, _worldPreset.Difficulty);
+                                 pileChunk.Init(_currencyManager, _stats, _worldPreset.Difficulty);
                              }
                              else
                              {
@@ -401,12 +394,7 @@ namespace Eco.Scripts.World
              }
          }
 
-         private void OnDestroy()
-         {
-             _treePlanter?.Clear();
-         }
-         
-         [System.Serializable]
+[System.Serializable]
          private class ChunkPrefab
          {
              public ChunkType type;

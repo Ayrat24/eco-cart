@@ -4,7 +4,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Jelly;
 using Eco.Scripts.Profiling;
-using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -15,7 +14,7 @@ namespace Eco.Scripts.ItemCollecting
     /// The jelly's belly, which took over from the cart. A tentacle reserves room for an item as it reaches for it
     /// and then pushes it in through the mouth; inside, items float in the goo and the body grows by their size.
     /// Recycling dissolves them one by one and the body shrinks back. Tuning is in <see cref="StomachSettings"/>.
-    /// The stomach's capacity is weight from the upgrades and doesn't depend on size.
+    /// The stomach's capacity is weight (the MaxWeight upgrade stat) and doesn't depend on size.
     /// Lives on a child of the creature root with an identity local pose; swallowed items are parented to it.
     /// </summary>
     [DefaultExecutionOrder(105)]
@@ -38,18 +37,16 @@ namespace Eco.Scripts.ItemCollecting
         private CancellationTokenSource _cancellationTokenSource;
         private ItemRecycler _itemRecycler;
         private ItemCollector _itemCollector;
-        private CartBuyUpgrade.CartData _stats;
+        private int _capacity;
 
         public readonly Subject<ICartItem> OnItemAdded = new();
         public readonly Subject<ICartItem> OnItemRemoved = new();
         public readonly Subject<StomachState> OnStatusChanged = new();
 
-        public bool IsFull => CurrentWeight >= _stats.carryingCapacity;
+        public bool IsFull => CurrentWeight >= _capacity;
         public bool CanAddItems => !IsFull && !_isEmptying;
         public bool IsEmptying => _isEmptying;
-        public int StorageSize => _stats.carryingCapacity;
-        public string Id => _stats.id;
-        public CartBuyUpgrade.CartData Stats => _stats;
+        public int StorageSize => _capacity;
         public JellyBody Body => body;
 
         private int CurrentWeight
@@ -90,15 +87,15 @@ namespace Eco.Scripts.ItemCollecting
             }
         }
 
-        public void SetStats(CartBuyUpgrade.CartData stats)
+        public void SetCapacity(int capacity)
         {
-            _stats = stats;
+            _capacity = capacity;
             OnStatusChanged.OnNext(CurrentState());
         }
 
         public bool CanFitItem(ICartItem item)
         {
-            return CurrentWeight + item.GetWeight() <= _stats.carryingCapacity;
+            return CurrentWeight + item.GetWeight() <= _capacity;
         }
 
         /// <summary>Counts an item in as soon as a tentacle goes for it, so nothing else claims the room.</summary>

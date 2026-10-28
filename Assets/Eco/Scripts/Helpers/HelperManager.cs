@@ -7,78 +7,60 @@ using VContainer;
 
 namespace Eco.Scripts.Helpers
 {
+    /// <summary>
+    /// Spawns the active pet. Pets are unlocked in the upgrade tree; until the pet menu exists, a newly unlocked
+    /// pet becomes the active one, and a refunded one leaves. One pet at a time.
+    /// </summary>
     public class HelperManager : MonoBehaviour
     {
         [SerializeField] private int spawnRadius;
+        [SerializeField] private List<PetDefinition> pets = new();
+
         private CurrencyManager _currencyManager;
-        private UpgradesCollection _upgrades;
         private Player _player;
-        private ScoreStats _scoreStats;
+        private PlayerStats _playerStats;
         private IDisposable _subscription;
 
         private readonly List<Vector3> _spawnDirections = new(){Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
         private int _lastSpawnDirection;
         private int _navmeshPriority = 51;
-        // single active helper at a time
         private Helper _activeHelper;
+        private PetDefinition _activePet;
 
-        // map HelperClass -> prefab provided by each HelperBuyUpgrade (assumption: HelperBuyUpgrade exposes GetPrefab())
-        private readonly Dictionary<HelperBuyUpgrade, Helper> _prefabMap = new();
+        public IReadOnlyList<PetDefinition> Pets => pets;
+        public PetDefinition ActivePet => _activePet;
 
         [Inject]
-        private void Init(CurrencyManager currencyManager, UpgradesCollection upgrades, Player player, ScoreStats scoreStats)
+        private void Init(CurrencyManager currencyManager, Player player, PlayerStats playerStats)
         {
             _currencyManager = currencyManager;
-            _upgrades = upgrades;
             _player = player;
-            _scoreStats = scoreStats;
+            _playerStats = playerStats;
         }
 
-        public void LoadHelpers()
-        {
-            SetUpUpgrades();
-        }
-
-        private Helper Spawn(Helper prefab, Vector3 spawnPosition, List<HelperUpgrade> helperClassUpgrades)
-        {
-            var helper = Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
-            helper.Init(_currencyManager, _scoreStats, _player, _navmeshPriority, helperClassUpgrades);
-            _navmeshPriority++;
-            return helper;
-        }
-        
-        private void SetUpUpgrades()
+        public void LoadHelpers(SaveManager saveManager)
         {
             var builder = new DisposableBuilder();
-            foreach (var helperBuyUpgrade in _upgrades.GetUpgradeTypes<HelperBuyUpgrade>())
-            {
-                // populate prefab map from the upgrade (assumes GetHelperClass() and GetPrefab() exist)
-                var prefab = helperBuyUpgrade.GetPrefab();
-                _prefabMap[helperBuyUpgrade] = prefab;
-
-                // when a helper upgrade is purchased, replace the active helper
-                helperBuyUpgrade.OnPurchase.Subscribe(SpawnHelper).AddTo(ref builder);
-
-                if(helperBuyUpgrade.CurrentLevel.Value >= 2)
-                {
-                    SpawnHelper(helperBuyUpgrade);
-                }
-            }
-
+            UnlockTracker.OnUnlocked.Subscribe(OnUnlocked).AddTo(ref builder);
+            UnlockTracker.OnLocked.Subscribe(OnLocked).AddTo(ref builder);
+            _subscription?.Dispose();
             _subscription = builder.Build();
+
+            var saved = FindPet(saveManager.Progress.selectedPet);
+            if (saved != null && saved.Unlocked)
+            {
+                SelectPet(saved);
+            }
         }
 
-        private void SpawnHelper(HelperBuyUpgrade helperClass)
+        public void Save(SaveManager saveManager)
         {
-            if (_lastSpawnDirection >= _spawnDirections.Count)
-            {
-                _lastSpawnDirection = 0;
-            }
-            
-            Vector3 spawnPosition = _player.transform.position + _spawnDirections[_lastSpawnDirection] * spawnRadius;
-            _lastSpawnDirection++;
+            saveManager.Progress.selectedPet = _activePet != null ? _activePet.Id : string.Empty;
+        }
 
-            // dispose existing helper (only one allowed at a time)
+        /// <summary>Makes <paramref name="pet"/> the active pet, replacing the current one. Null sends it away.</summary>
+        public void SelectPet(PetDefinition pet)
+        {
             if (_activeHelper != null)
             {
                 _activeHelper.Clear();
@@ -86,11 +68,61 @@ namespace Eco.Scripts.Helpers
                 _activeHelper = null;
             }
 
-            // lookup prefab for this helper class
-            if (!_prefabMap.TryGetValue(helperClass, out var prefab) || prefab == null)
-                return; // no prefab configured for this helper class
+            _activePet = pet;
+            if (pet == null || pet.Prefab == null)
+            {
+                return;
+            }
 
-            _activeHelper = Spawn(prefab, spawnPosition, helperClass.Upgrades);
+            if (_lastSpawnDirection >= _spawnDirections.Count)
+            {
+                _lastSpawnDirection = 0;
+            }
+
+            Vector3 spawnPosition = _player.transform.position + _spawnDirections[_lastSpawnDirection] * spawnRadius;
+            _lastSpawnDirection++;
+
+            _activeHelper = Instantiate(pet.Prefab, spawnPosition, Quaternion.identity, transform);
+            _activeHelper.Init(_currencyManager, _playerStats, _player, _navmeshPriority);
+            _navmeshPriority++;
+        }
+
+        private void OnUnlocked(UnlockableUpgradeType type)
+        {
+            foreach (var pet in pets)
+            {
+                if (pet != null && pet.UnlockType == type)
+                {
+                    SelectPet(pet);
+                    return;
+                }
+            }
+        }
+
+        private void OnLocked(UnlockableUpgradeType type)
+        {
+            if (_activePet != null && _activePet.UnlockType == type)
+            {
+                SelectPet(null);
+            }
+        }
+
+        private PetDefinition FindPet(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            foreach (var pet in pets)
+            {
+                if (pet != null && pet.Id == id)
+                {
+                    return pet;
+                }
+            }
+
+            return null;
         }
 
         private void OnDestroy()
@@ -100,7 +132,6 @@ namespace Eco.Scripts.Helpers
             if (_activeHelper != null)
             {
                 _activeHelper.Clear();
-                // don't need to Destroy here since OnDestroy is running, but keep symmetry
                 Destroy(_activeHelper.gameObject);
                 _activeHelper = null;
             }

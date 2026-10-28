@@ -127,6 +127,46 @@ MonoBehaviour:
     m_Key: world-complete-no
     m_Metadata:
       m_Items: []
+  - m_Id: 151650833952112640
+    m_Key: upgrade-tree-title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667072
+    m_Key: upgrade-tree-hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667073
+    m_Key: upgrade-tree-center
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667074
+    m_Key: upgrade-level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667076
+    m_Key: upgrade-maxed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667077
+    m_Key: upgrade-requires-any
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151650833985667078
+    m_Key: upgrade-requires-all
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151659755022811136
+    m_Key: upgrade-price
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151659755052171264
+    m_Key: upgrade-refund
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151659755052171265
+    m_Key: upgrade-refund-blocked
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
