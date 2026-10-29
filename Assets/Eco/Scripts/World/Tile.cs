@@ -1,6 +1,4 @@
 using Eco.Scripts.Pooling;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Eco.Scripts.World
 {
@@ -8,15 +6,17 @@ namespace Eco.Scripts.World
     public class Tile
     {
         public ITileItem item;
-        public Vector2Int position;
+
+        /// <summary>Index in the chunk's <see cref="HexTileLayout"/> and saved tile array.</summary>
+        public int index;
         public TileObjectType objectType = TileObjectType.Empty;
         public TileGroundType groundType = TileGroundType.Ground;
         public bool containedScrap;
         public Chunk parentChunk;
-        
-        public Tile(Vector2Int position)
+
+        public Tile(int index)
         {
-            this.position = position;
+            this.index = index;
         }
 
         public TileData GetSaveData()
@@ -24,15 +24,14 @@ namespace Eco.Scripts.World
             var data = new TileData
             {
                 objectType = (int)objectType,
-                containedScrap = containedScrap,
-                clean = (objectType is TileObjectType.Empty or TileObjectType.Tree) && containedScrap
+                containedScrap = containedScrap
             };
 
             if (item != null)
             {
                 data.objectId = item.GetPrefabId();
             }
-            
+
             data.ground = (int)groundType;
 
             return data;

@@ -2,7 +2,7 @@
 
 A game made for GameDeve Goethe 2025. Theme is ecology.
 
-Roam an overgrown, littered island as a jelly creature, swallow and recycle scrap, dig out scrap piles, plant trees and hire animal helpers until the world is clean and green — then move on to the next world.
+Roam an overgrown, littered island as a jelly creature, swallow and recycle scrap, dig out scrap piles, plant trees and hire animal helpers until the island is clean and green.
 
 My code is in `Assets/Eco/Scripts/`.
 
@@ -15,7 +15,7 @@ My code is in `Assets/Eco/Scripts/`.
 
 1. Open the project folder in Unity Hub with 6000.5.2f1.
 2. Wait for package resolution and the first import (the `Library/` folder is not committed).
-3. Open `Assets/_Recovery/0 (1).unity` — it is the only scene in Build Settings and the game entry point.
+3. Open `Assets/Eco/Scenes/Gameplay.unity` — it is the only scene in Build Settings and the game entry point.
 4. Press Play. Save data goes to `Application.persistentDataPath`; use the **Delete Progress** context menu on `GameController` to reset.
 
 ## Project layout
@@ -23,13 +23,13 @@ My code is in `Assets/Eco/Scripts/`.
 | Path | Contents |
 |---|---|
 | `Assets/Eco/Scripts/` | Game code (`Eco.Scripts.*`) |
-| `Assets/Eco/ContentDescriptions/` | Data assets: worlds, upgrades, carts, hats, helpers, trees |
+| `Assets/Eco/ContentDescriptions/` | Data assets: the painted world and its chunk palette, upgrades, hats, helpers, trees |
 | `Assets/Eco/UI/` | UI Toolkit `.uxml` / `.uss` |
 | `Assets/Eco/LocTables/`, `Assets/Locales/` | Localization (en, ru) |
 | `Assets/Eco/Data/` | Game models, prefabs, materials, shaders, animations |
 | `Assets/Scripts/LargeNumbers/` | Large number formatting library (`AlphabeticNotation`) |
 | `Assets/Packages/` | NuGet packages (NuGetForUnity): R3 core, Newtonsoft.Json, … |
-| `Assets/_Recovery/` | Scenes, including the main build scene |
+| `Assets/Eco/Scenes/` | `Gameplay` (the build scene) and the `Playground` test scene |
 | Everything else in `Assets/` | Third-party art/tools (HighlightPlus, Bitgem water, Polytope, FinalIK `Plugins/RootMotion`, PicoChan, …) |
 | `Docs/` | Project documentation |
 

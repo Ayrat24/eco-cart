@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7244ed6a1d47c944bbaa77cc6f0c05e9, type: 3}
   m_Name: StressTestConfig
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Profiling.StressTestConfig
-  basePreset: {fileID: 11400000, guid: 2514daa1ba3f2a74e9b1a8f11c1cf8fb, type: 2}
-  worldSideSize: 14
+  world: {fileID: 11400000, guid: 5e9ed3fc18041b14fa77abd110f3e2c4, type: 2}
   seed: 1
   scrapPerChunk: 10
   treeSpacing: 6
@@ -31,7 +30,7 @@ MonoBehaviour:
   churnJumps: 6
   churnInterval: 1
   moveSpeed: 15
-  routeRadiusChunks: 10
+  routeRadiusChunks: 6
   laps: 1
   maxTraverseSeconds: 180
   profilerCaptureSeconds: 0

@@ -15,7 +15,7 @@ namespace Eco.Scripts.EditorTools
         private const string GraphPath = "Assets/Bitgem/StylisedWater/URP/Shaders/WaterVolume-URP.shadergraph";
         private const string ShaderPath = "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWater.shader";
         private const string MaterialPath = "Assets/Eco/Data/Materials/CurvedWorld/WaterCurved.mat";
-        private const string PrefabPath = "Assets/Eco/Data/Prefabs/Chunks/WaterChunk.prefab";
+        private const string PrefabPath = "Assets/Eco/Data/Prefabs/Chunks/Base/WaterChunkBase.prefab";
         private const string ShaderName = "Eco/Curved World/Water";
 
         [MenuItem("Eco/Rendering/Apply Curved Water")]

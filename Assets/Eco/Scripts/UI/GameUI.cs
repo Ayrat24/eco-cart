@@ -1,5 +1,5 @@
+using System;
 using Eco.Scripts.Upgrades;
-using Eco.Scripts.World;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,16 +15,11 @@ namespace Eco.Scripts.UI
         private CartStorageDisplay _cartStorageDisplay;
         private TutorialMenu _tutorialMenu;
         private ToolSelector _toolSelector;
-        private ProgressDisplay _progress;
-        private NewWorldPopup _newWorldPopup;
         private SettingsMenu _settingsMenu;
-        private ProgressTracker _progressTracker;
 
         public void Init(UpgradeManager upgradeManager, CurrencyManager currencyManager, Player player,
-            ProgressTracker progressTracker)
+            Action resetProgress)
         {
-            _progressTracker = progressTracker;
-
             _upgradeMenu = new UpgradeTreeMenu(uiDocument, upgradeManager, currencyManager);
             _upgradeMenu.Init();
 
@@ -37,22 +32,8 @@ namespace Eco.Scripts.UI
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
 
-            _settingsMenu = new SettingsMenu(uiDocument, settings);
+            _settingsMenu = new SettingsMenu(uiDocument, settings, resetProgress);
             _settingsMenu.Init();
-
-            _newWorldPopup = new NewWorldPopup(uiDocument);
-            _newWorldPopup.Init();
-            _newWorldPopup.OnAccept += OnNewWorldAccepted;
-
-            _progress = new ProgressDisplay(uiDocument, progressTracker, _newWorldPopup);
-            _progress.Init();
-        }
-
-        private void OnNewWorldAccepted()
-        {
-            // Open the world selector to let player choose a new world; it reads progress from disk
-            _progressTracker.SaveProgress();
-            WorldSelector.Instance.Open();
         }
 
         public void Clear()
@@ -61,12 +42,7 @@ namespace Eco.Scripts.UI
             _cartStorageDisplay.Clear();
             _tutorialMenu.Clear();
             _toolSelector.Clear();
-            _progress.Clear();
-            _newWorldPopup?.Clear();
             _settingsMenu?.Clear();
-            
-            if (_newWorldPopup != null)
-                _newWorldPopup.OnAccept -= OnNewWorldAccepted;
         }
     }
 }

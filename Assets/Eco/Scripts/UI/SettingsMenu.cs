@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,6 +8,7 @@ namespace Eco.Scripts.UI
     {
         private readonly UIDocument _uiDocument;
         private readonly Settings _settings;
+        private readonly Action _resetProgress;
 
         private VisualElement _container;
         private Button _openButton;
@@ -20,10 +22,11 @@ namespace Eco.Scripts.UI
         private Button _cancelResetButton;
         private Button _confirmResetButton;
 
-        public SettingsMenu(UIDocument uiDocument, Settings settings)
+        public SettingsMenu(UIDocument uiDocument, Settings settings, Action resetProgress)
         {
             _uiDocument = uiDocument;
             _settings = settings;
+            _resetProgress = resetProgress;
         }
 
         public void Init()
@@ -141,8 +144,7 @@ namespace Eco.Scripts.UI
         {
             Debug.Log("Resetting all progress...");
 
-            SaveManager.DeleteProgress();
-            WorldSelector.Instance.LoadWorld(0, false);
+            _resetProgress?.Invoke();
         }
 
         public void Clear()

@@ -6,7 +6,7 @@ Guide for AI agents and contributors working in this repo. See [README.md](READM
 
 - Unity **6000.5.2f1** (Unity 6.5), URP 17.5, RenderGraph only (no compatibility mode).
 - Game code: `Assets/Eco/Scripts/` → `Assembly-CSharp`. Everything else under `Assets/` is third-party unless noted.
-- Main/only build scene: `Assets/_Recovery/0 (1).unity`. `Assets/Eco/Scenes/Playground.unity` is a test scene.
+- Main/only build scene: `Assets/Eco/Scenes/Gameplay.unity`. `Assets/Eco/Scenes/Playground.unity` is a test scene (its `GameController.startOnLoad` is off).
 - Branch `version-2` is active development; `main` is the base.
 
 ## Unity CLI (driving the open editor)
@@ -35,7 +35,9 @@ Gotchas:
 - `Assets/Eco/Scripts/Editor/PipelineDescriptorFix.cs` works around a Pipeline 0.9.1 bug on Unity 6.5: without it the CLI can't discover the editor (`Failed to start publishing the descriptor` in the log). Delete it once the package fixes the bug.
 - The editor idles while unfocused. Run `unity command editor set_auto_tick --enable true` once per session so commands and play mode keep running in the background.
 - `unity command script eval` runs arbitrary code in the editor. Use it for reads and one-off asset authoring.
-- When saving from eval, call `AssetDatabase.SaveAssetIfDirty(asset)` and **never `AssetDatabase.SaveAssets()`**. The editor holds pending Unity 6.5 reserialization of URP/ProjectSettings assets, plus `New Terrain 1.asset` painted by older play sessions (play mode now paints a runtime copy), and `SaveAssets()` writes all of it to disk.
+- When saving from eval, call `AssetDatabase.SaveAssetIfDirty(asset)` and **never `AssetDatabase.SaveAssets()`**. The editor holds pending Unity 6.5 reserialization of URP/ProjectSettings assets, and `SaveAssets()` writes all of it to disk. (`New Terrain 1.asset` is baked by the World Editor; play mode paints a runtime copy.)
+- `script eval`/`eval_file` code is a method body: no `using` lines, so write fully qualified names (`UnityEngine.Object.DestroyImmediate`, `UnityEditor.AssetDatabase`).
+- `capture game_view --save_path` resolves the path under `Assets/` (e.g. `Temp/x.png` → `Assets/Temp/x.png`), creating an asset. Delete it afterwards with `AssetDatabase.DeleteAsset`.
 
 Fallbacks without the CLI: compile errors are in `Logs/Editor.log` (`grep -E "error CS" Logs/Editor.log | sort -u`). With the editor closed, run a batch compile:
 
@@ -56,6 +58,7 @@ Run the worst-case stress test (**Eco → Profiling → Run Stress Test**, or th
 - Observable state with R3 (`ReactiveProperty`, `Subject`); dispose subscriptions in `Clear()`/`OnDestroy()`.
 - Money/score uses `LargeNumbers.AlphabeticNotation`, never `float`/`int`.
 - Gameplay tuning lives in ScriptableObjects under `Assets/Eco/ContentDescriptions/`, not in code.
+- The world is painted in **Eco → World Editor** (`World/WorldData.asset` + the `ChunkDefinition` palette in `World/Chunks/`). Its Save button bakes the scene terrain from that data, so don't sculpt or paint `New Terrain 1` by hand, and re-save after changing the palette or cells. Hex math lives in `World/Hex`.
 - Player-facing text goes through Unity Localization tables in `Assets/Eco/LocTables/` (en + ru).
 - Pooled objects implement `IPooledObject` and go through `PoolManager` / `ObjectPool<T>`.
 - Editor-only code goes in `Assets/Eco/Scripts/Editor/` with namespace `Eco.Scripts.EditorTools`. A namespace ending in `.Editor` would hide `UnityEditor.Editor` from every `Eco.Scripts.*` editor class.

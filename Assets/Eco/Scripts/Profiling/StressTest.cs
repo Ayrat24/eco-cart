@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Eco.Scripts.World;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -8,20 +7,18 @@ namespace Eco.Scripts.Profiling
 {
     /// <summary>
     /// Worst-case profiling run. When requested (editor menu Eco/Profiling/Run Stress Test, or the
-    /// <see cref="CommandLineFlag"/> on a development build) it seeds a sandboxed save full of scrap, trees and
-    /// grass, makes WorldSelector load that world and spawns a <see cref="StressTestDriver"/> that runs the
+    /// <see cref="CommandLineFlag"/> on a development build) it seeds a sandboxed save of the scene's world full of
+    /// scrap, trees and grass, which the game then loads, and spawns a <see cref="StressTestDriver"/> that runs the
     /// scripted phases and writes a report. Saves go to <see cref="SaveDirectory"/>, never the player's own.
     /// </summary>
     public static class StressTest
     {
         public const string CommandLineFlag = "-ecoStressTest";
         public const string EditorSessionKey = "Eco.StressTest.Requested";
-        public const string WorldId = "stress";
         private const string ConfigResourcePath = "StressTestConfig";
 
         public static bool IsActive { get; private set; }
         public static StressTestConfig Config { get; private set; }
-        public static WorldPreset Preset { get; private set; }
         public static string SaveDirectory { get; private set; }
         public static string ReportDirectory { get; private set; }
 
@@ -56,11 +53,16 @@ namespace Eco.Scripts.Profiling
             Directory.CreateDirectory(SaveDirectory);
             Directory.CreateDirectory(ReportDirectory);
 
-            Preset = Config.CreatePreset(WorldId);
+            if (Config.World == null)
+            {
+                Debug.LogError("[StressTest] StressTestConfig has no World Data.");
+                return;
+            }
+
             IsActive = true;
 
-            var seedStats = StressTestSeeder.Seed(Config, Preset);
-            Debug.Log($"[StressTest] Seeded '{WorldId}' world in {SaveDirectory}: {seedStats}");
+            var seedStats = StressTestSeeder.Seed(Config);
+            Debug.Log($"[StressTest] Seeded '{Config.World.name}' in {SaveDirectory}: {seedStats}");
 
             var driver = new GameObject(nameof(StressTestDriver)).AddComponent<StressTestDriver>();
             Object.DontDestroyOnLoad(driver.gameObject);

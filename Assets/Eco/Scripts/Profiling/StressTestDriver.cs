@@ -105,7 +105,7 @@ EndPhase(world);
         {
             while (true)
             {
-                // WorldSelector reloads the scene before starting, so the first scope found may be replaced.
+                // The scope only exists once the scene has loaded; the game starts itself from there.
                 var scope = LifetimeScope.Find<GameScope>();
                 if (scope != null && scope.Container != null && scope.Container.Resolve<GameController>().Initialized)
                 {
@@ -212,12 +212,11 @@ EndPhase(world);
 
         private async UniTask<string> ChurnAsync(Player player, WorldController world, CancellationToken token)
         {
-            // Two spots 2 * renderRadius + 1 chunks apart: each jump replaces every loaded chunk.
+            // Two spots 2 * renderRadius + 1 hexes apart: each jump replaces every loaded chunk.
             var agent = player.GetComponent<NavMeshAgent>();
-            const int size = WorldController.ChunkSize;
-            float y = player.transform.position.y;
-            var a = new Vector3(-(world.RenderRadius + 1) * size + size / 2f, y, size / 2f);
-            var b = new Vector3(world.RenderRadius * size + size / 2f, y, size / 2f);
+            var center = world.GetPlayerChunkCoord();
+            var a = OnNavMesh(Hex.ToWorld(center + new Vector2Int(-(world.RenderRadius + 1), 0), world.HexRadius));
+            var b = OnNavMesh(Hex.ToWorld(center + new Vector2Int(world.RenderRadius, 0), world.HexRadius));
 
             for (int i = 0; i < _config.ChurnJumps; i++)
             {
@@ -225,8 +224,15 @@ EndPhase(world);
                 await UniTask.WaitForSeconds(_config.ChurnInterval, cancellationToken: token);
             }
 
-            return $"{_config.ChurnJumps} jumps between x={a.x} and x={b.x}, each replacing all " +
-                   $"{(world.RenderRadius * 2 + 1) * (world.RenderRadius * 2 + 1)} loaded chunks";
+            return $"{_config.ChurnJumps} jumps between x={a.x:F0} and x={b.x:F0}, each replacing all " +
+                   $"{Hex.CountInRange(world.RenderRadius)} loaded chunks";
+        }
+
+        // The closest NavMesh point, so warps and destinations near water still land on the island
+        private static Vector3 OnNavMesh(Vector3 position)
+        {
+            position = WorldTerrain.OnGround(position);
+            return NavMesh.SamplePosition(position, out var hit, 50f, NavMesh.AllAreas) ? hit.position : position;
         }
 
         private async UniTask<string> TraverseAsync(Player player, WorldController world, CancellationToken token)
@@ -238,10 +244,13 @@ EndPhase(world);
             agent.acceleration = _config.MoveSpeed * 4f;
             agent.autoBraking = false;
 
-            int radiusChunks = Mathf.Min(_config.RouteRadiusChunks, world.WorldSideSize - 2);
-            float r = radiusChunks * WorldController.ChunkSize;
-            float y = player.transform.position.y;
-            var corners = new[] { new Vector3(r, y, r), new Vector3(r, y, -r), new Vector3(-r, y, -r), new Vector3(-r, y, r) };
+            // A hexagonal loop through the corner hexes of a ring around the centre
+            int radiusChunks = Mathf.Max(1, Mathf.Min(_config.RouteRadiusChunks, world.WorldData.MapRadius - 2));
+            var corners = new Vector3[Hex.Directions.Length];
+            for (int i = 0; i < corners.Length; i++)
+            {
+                corners[i] = OnNavMesh(Hex.ToWorld(Hex.Directions[i] * radiusChunks, world.HexRadius));
+            }
 
             float deadline = Time.realtimeSinceStartup + _config.MaxTraverseSeconds;
             int legs = 0, warps = 0;

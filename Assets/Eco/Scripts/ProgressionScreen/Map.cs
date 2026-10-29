@@ -29,6 +29,7 @@ namespace Eco.Scripts.ProgressionScreen
         private readonly HashSet<Vector2Int> _visibleIds = new();
         private readonly List<Vector2Int> _idsToHide = new();
         private readonly HashSet<Vector2Int> _changedIds = new();
+        private readonly List<Vector2Int> _inRange = new();
         private Vector2Int _centerPoint;
         private ObjectPool<MapField> _pool;
         private WorldController _worldController;
@@ -38,8 +39,9 @@ namespace Eco.Scripts.ProgressionScreen
         private IDisposable _subscription;
         private Vector3 _lastPlayerPosition = new(float.NaN, 0, 0);
         private float _lastPlayerYaw = float.NaN;
+        private HexTileLayout _layout;
 
-        private const int WorldToCanvasCoef = 100;
+        private const int CanvasUnitsPerMeter = 10;
 
         public bool PlayerFollowingEnabled { get; set; }
         
@@ -48,7 +50,8 @@ namespace Eco.Scripts.ProgressionScreen
             _worldController = worldController;
             _saveManager = saveManager;
             _player = player;
-            _pool = new ObjectPool<MapField>(field, viewportSize * viewportSize, tileParent);
+            _layout = HexTileLayout.Get(worldController.HexRadius);
+            _pool = new ObjectPool<MapField>(field, Hex.CountInRange(viewportSize), tileParent);
 
             var builder = new DisposableBuilder();
             // Every tile change (recycling, planting, piles, chunk saves) ends in a chunk save
@@ -57,7 +60,8 @@ namespace Eco.Scripts.ProgressionScreen
             UnlockTracker.OnLocked.Subscribe(OnMapLocked).AddTo(ref builder);
             _subscription = builder.Build();
 
-            var mapSize = (_worldController.WorldSideSize * 2 + viewportSize) * WorldToCanvasCoef;
+            var mapSize = (_worldController.WorldData.MapRadius + viewportSize) * 2 *
+                          Hex.Spacing(_worldController.HexRadius) * CanvasUnitsPerMeter;
             content.sizeDelta = new Vector2(mapSize, mapSize);
             
             EnableMap(UnlockTracker.IsUpgradeUnlocked(UnlockableUpgradeType.Map));
@@ -106,7 +110,7 @@ namespace Eco.Scripts.ProgressionScreen
             var playerTransform = _player.transform;
             var position = playerTransform.position;
             var yaw = playerTransform.eulerAngles.y;
-            Vector2 playerPos = new Vector2(-position.x, -position.z) * 10;
+            Vector2 playerPos = new Vector2(-position.x, -position.z) * CanvasUnitsPerMeter;
 
             if (position != _lastPlayerPosition || yaw != _lastPlayerYaw)
             {
@@ -140,15 +144,11 @@ namespace Eco.Scripts.ProgressionScreen
             _centerPoint = center;
 
             _visibleIds.Clear();
-            //find all visible tiles
-            for (int x = -viewportSize; x < viewportSize; x++)
+            //find all visible chunks
+            Hex.Range(center, viewportSize, _inRange);
+            foreach (var id in _inRange)
             {
-                for (int y = -viewportSize; y < viewportSize; y++)
-                {
-                    var id = new Vector2Int(x, y) - center;
-
-                    _visibleIds.Add(id);
-                }
+                _visibleIds.Add(id);
             }
 
             // Only fields that scrolled in or out change; the rest keep their texture
@@ -178,23 +178,23 @@ namespace Eco.Scripts.ProgressionScreen
 
         private void ShowField(Vector2Int id)
         {
-            if (!_saveManager.FieldTiles.TryGetValue(id, out var data))
+            if (!_saveManager.Chunks.TryGetValue(id, out var data) || data.tiles?.Length != _layout.Count)
             {
                 return;
             }
 
             var t = _pool.Get();
-            t.Rect.anchoredPosition = id * WorldToCanvasCoef;
-            t.Initialize(WorldController.ChunkSize, iconParent);
+            t.Rect.anchoredPosition = Hex.ToPlane(id, _worldController.HexRadius) * CanvasUnitsPerMeter;
+            t.Initialize(_layout, CanvasUnitsPerMeter, iconParent);
 
-            t.SetTileData(id, data);
+            t.SetTileData(id, data.tiles);
             _tiles[id] = t;
         }
 
+        // The hex at the middle of the view; the content moves opposite to the world point it shows
         private Vector2Int GetMapPosition()
         {
-            return new Vector2Int((int)(content.anchoredPosition.x / WorldToCanvasCoef), (int)(
-                content.anchoredPosition.y / WorldToCanvasCoef));
+            return Hex.FromPlane(-content.anchoredPosition / CanvasUnitsPerMeter, _worldController.HexRadius);
         }
 
         // Redraws only the chunks saved since the last frame, at most once each
@@ -209,7 +209,11 @@ namespace Eco.Scripts.ProgressionScreen
             {
                 if (_tiles.TryGetValue(id, out var t))
                 {
-                    t.SetTileData(id, _saveManager.FieldTiles[id]);
+                    var tiles = _saveManager.Chunks[id].tiles;
+                    if (tiles.Length == _layout.Count)
+                    {
+                        t.SetTileData(id, tiles);
+                    }
                 }
                 else if (_visibleIds.Contains(id))
                 {

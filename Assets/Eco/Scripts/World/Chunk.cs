@@ -4,43 +4,53 @@ using UnityEngine;
 
 namespace Eco.Scripts.World
 {
+    /// <summary>
+    /// One spawned hex of the world. Pooled per <see cref="ChunkDefinition"/>: <see cref="WorldController"/> places
+    /// it on its hex, calls <see cref="Setup"/> then <see cref="Init"/>, and saves its tiles before returning it.
+    /// </summary>
     public class Chunk : MonoBehaviour, IPooledObject
     {
-        [SerializeField] private ChunkType type;
-        protected Tile[] tiles = new Tile[WorldController.ChunkSize * WorldController.ChunkSize];
-        protected int ChunkSize;
-    
+        protected Tile[] tiles;
+
         protected SaveManager SaveManager;
         protected Vector2Int Position;
+
         public Tile[] Tiles => tiles;
-        public ChunkType Type => type;
-        protected bool HasSave => SaveManager.FieldTiles.ContainsKey(Position);
-        protected int ScrapPerChunk;
+        public ChunkDefinition Definition { get; private set; }
+        public HexTileLayout Layout { get; private set; }
 
+        /// <summary>This hex's saved tiles, when they were saved for the same definition and layout.</summary>
+        protected TileData[] SavedTiles { get; private set; }
+        protected bool HasSave => SavedTiles != null;
 
-        public void Setup(Vector2Int position, SaveManager saveManager, int scrapPerChunk)
+        public void Setup(Vector2Int coord, ChunkDefinition definition, SaveManager saveManager, HexTileLayout layout)
         {
-            Position = position;
+            Position = coord;
+            Definition = definition;
             SaveManager = saveManager;
-            ChunkSize = WorldController.ChunkSize;
-            ScrapPerChunk = scrapPerChunk;
-            
-            for (int x = 0; x < ChunkSize; x++)
+            Layout = layout;
+
+            // Fresh tiles every spawn: scrap still in the stomach keeps its old tile and must not touch these
+            tiles = new Tile[layout.Count];
+            for (int i = 0; i < tiles.Length; i++)
             {
-                for (int y = 0; y < ChunkSize; y++)
-                {
-                    Tile t = new Tile(new Vector2Int(x, y));
-                    t.parentChunk = this;
-                    tiles[y * ChunkSize + x] = t;
-                }
+                tiles[i] = new Tile(i) { parentChunk = this };
             }
+
+            SavedTiles = saveManager.Chunks.TryGetValue(coord, out var save) && save.chunk == definition.Id &&
+                         save.tiles != null && save.tiles.Length == tiles.Length
+                ? save.tiles
+                : null;
         }
-    
+
+        public virtual void Init(ChunkContext context)
+        {
+        }
+
         public Vector3 GetTileWorldPosition(Tile tile)
         {
-            var pos = new Vector2Int(Mathf.FloorToInt(transform.position.x),
-                Mathf.FloorToInt(transform.position.z)) - new Vector2Int(ChunkSize / 2, ChunkSize / 2) + tile.position;
-            return new Vector3(pos.x, 0, pos.y);
+            var local = Layout.LocalPosition(tile.index);
+            return WorldTerrain.OnGround(transform.position + new Vector3(local.x, 0, local.y));
         }
 
         public void SaveTiles()
@@ -48,38 +58,31 @@ namespace Eco.Scripts.World
             using var marker = EcoProfilerMarkers.SaveTiles.Auto();
 
             // Overwrite the chunk's existing save array; readers copy what they need straight away
-            if (!SaveManager.FieldTiles.TryGetValue(Position, out var saveData) || saveData.Length != tiles.Length)
+            if (!SaveManager.Chunks.TryGetValue(Position, out var save) || save.chunk != Definition.Id ||
+                save.tiles == null || save.tiles.Length != tiles.Length)
             {
-                saveData = new TileData[tiles.Length];
+                save = new ChunkSaveData { chunk = Definition.Id, tiles = new TileData[tiles.Length] };
             }
 
             for (var i = 0; i < tiles.Length; i++)
             {
-                saveData[i] = tiles[i].GetSaveData();
+                save.tiles[i] = tiles[i].GetSaveData();
             }
 
-            SaveManager.SaveFieldTiles(Position, saveData);
+            SaveManager.SaveChunk(Position, save);
         }
 
-        public Tile GetTile(Vector2Int position)
-        {
-            var index = position.x * ChunkSize + position.y;
-
-            if (index >= tiles.Length || index < 0)
-            {
-                return null;
-            }
-
-            return tiles[index];
-        }
-
-    
         public void OnSpawn()
         {
         }
 
         public virtual void OnDespawn()
         {
+            if (tiles == null)
+            {
+                return;
+            }
+
             foreach (var t in tiles)
             {
                 t.Clear();

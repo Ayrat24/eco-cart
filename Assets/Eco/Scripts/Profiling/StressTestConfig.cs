@@ -13,19 +13,17 @@ namespace Eco.Scripts.Profiling
     public class StressTestConfig : ScriptableObject
     {
         [Header("World")]
-        [Tooltip("Preset the stress world is cloned from (chunk types, scrap prefabs, difficulty).")]
-        [SerializeField] private WorldPreset basePreset;
-        [Tooltip("Half-size of the world in chunks. The biggest shipped world uses 14; the terrain is sized for it.")]
-        [SerializeField] private int worldSideSize = 14;
+        [Tooltip("The scene's world. Its land chunks are seeded; the game loads the seeded save.")]
+        [SerializeField] private WorldData world;
         [SerializeField] private int seed = 1;
 
-        [Header("Field content")]
-        [Tooltip("Scrap items seeded into every field chunk (shipped worlds use 2-5, max 100).")]
+        [Header("Land content")]
+        [Tooltip("Scrap items seeded into every land chunk without a pile (the game spawns 2-5, max 100).")]
         [SerializeField, Range(0, 100)] private int scrapPerChunk = 10;
         [Tooltip("Distance in tiles between seeded trees. In the real game a tree greens a 12-tile circle and the " +
                  "next tree can only go on non-green ground, so a fully green world has trees ~12 tiles apart.")]
         [SerializeField, Min(1)] private int treeSpacing = 6;
-        [Tooltip("Chunks around the spawn point left without trees, so the Plant phase has ground to plant on.")]
+        [Tooltip("Hexes around the spawn hex left without trees, so the Plant phase has ground to plant on.")]
         [SerializeField, Min(0)] private int clearingRadiusChunks = 1;
         [Tooltip("Must match the tree prefabs registered on PoolManager in the game scene.")]
         [SerializeField] private List<Tree> treePrefabs;
@@ -44,7 +42,7 @@ namespace Eco.Scripts.Profiling
         [SerializeField, Min(0)] private int churnJumps = 6;
         [SerializeField, Min(0)] private float churnInterval = 1f;
         [SerializeField, Min(1)] private float moveSpeed = 15f;
-        [Tooltip("The player drives a square loop this many chunks from the world centre.")]
+        [Tooltip("The player drives a hexagonal loop this many hexes from the world centre.")]
         [SerializeField, Min(1)] private int routeRadiusChunks = 10;
         [SerializeField, Min(1)] private int laps = 1;
         [SerializeField, Min(1)] private float maxTraverseSeconds = 180f;
@@ -53,7 +51,7 @@ namespace Eco.Scripts.Profiling
         [SerializeField, Min(0)] private float profilerCaptureSeconds;
         [SerializeField] private bool quitWhenDone = true;
 
-        public int WorldSideSize => worldSideSize;
+        public WorldData World => world;
         public int Seed => seed;
         public int ScrapPerChunk => scrapPerChunk;
         public int TreeSpacing => treeSpacing;
@@ -73,10 +71,5 @@ namespace Eco.Scripts.Profiling
         public float MaxTraverseSeconds => maxTraverseSeconds;
         public float ProfilerCaptureSeconds => profilerCaptureSeconds;
         public bool QuitWhenDone => quitWhenDone;
-
-        public WorldPreset CreatePreset(string worldId)
-        {
-            return basePreset.CreateVariant(worldId, worldSideSize, scrapPerChunk);
-        }
     }
 }

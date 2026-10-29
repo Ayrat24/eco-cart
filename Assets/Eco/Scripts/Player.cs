@@ -39,9 +39,9 @@ namespace Eco.Scripts
             _stats = stats;
         }
 
-        public void Spawn(SaveManager saveManager)
+        public void Spawn(SaveManager saveManager, Vector3 position)
         {
-            transform.position = saveManager.Progress.playerPosition.ToVector3();
+            transform.position = position;
             agent.enabled = true;
 
             itemCollector.Init(_currencyManager, _stats, stomach);

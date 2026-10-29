@@ -8,9 +8,8 @@ namespace Eco.Scripts.World
         public int objectType;
         public int objectId;
         public int ground;
-        public bool clean;
 
-        // Keeps the pre-rename JSON key so existing field_tiles saves still load
+        // Keeps the pre-rename JSON key so existing saves still load
         [JsonProperty("containedTrash")]
         public bool containedScrap;
     }

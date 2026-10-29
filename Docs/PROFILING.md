@@ -26,36 +26,35 @@ cat "$(ls -t Logs/StressTest/*.txt | head -1)"
 `StressTest` (`Assets/Eco/Scripts/Profiling/`) runs before the first scene loads when a run is requested:
 
 1. Loads `Assets/Eco/ContentDescriptions/Profiling/Resources/StressTestConfig.asset`.
-2. Points `SaveManager.SaveDirectory` at a fresh sandbox, `<persistentDataPath>/StressTest/`. `last_world_id` is not written, so the real game still opens the world you last played.
-3. Clones the base `WorldPreset` (World 5 by default) into a `stress` world and writes its save through `SaveManager`. Every field chunk gets scrap, trees on a grid and green ground; pile, beach and water chunks generate as usual. The game then loads that save through the normal `FieldChunk.LoadSave` path, so chunk spawning, scrap pooling, tree pooling and terrain/grass painting all run the real code.
+2. Points `SaveManager.SaveDirectory` at a fresh sandbox, `<persistentDataPath>/StressTest/`, so the player's own save is never touched.
+3. Writes a save of the config's `world` (the scene's `WorldData`) through `SaveManager`. Every land chunk without a pile gets scrap, trees on a grid and green ground; pile and water chunks generate as usual. The game then loads that save through the normal `LandChunk` load path, so chunk spawning, scrap pooling, tree pooling and terrain/grass painting all run the real code.
 4. Forces the detail quality from the config (High by default, the densest grass).
-5. `WorldSelector` loads the stress world instead of showing the world list, and a `StressTestDriver` runs the phases.
+5. The scene starts the game as usual, and a `StressTestDriver` runs the phases.
 
 ### Phases
 
 | Phase | What happens | Exercises |
 |---|---|---|
-| Load | Boot until `GameController.Initialized` | Save load, pools, terrain flatten, NavMesh build, the first 121 chunks, grass painting |
+| Load | Boot until `GameController.Initialized` | Save load, pools, terrain copy, NavMesh build, the first 169 chunks, grass painting |
 | Idle | Stand still | Steady-state cost of the full world (render, physics, scripts) |
 | Plant | Plant `treesToPlant` trees through `TreePlanter.PlantTree` | `TreePlanter`, ground marking, grass repaint |
 | Collect | Drive a small loop at the player's own speed; recycle the stomach when it is full or pickups stall | `ItemCollector` scan, `Stomach.Reserve`, tentacle animations and meshes, stomach floating, `ItemRecycler`, `ScrapItem.Dissolve` |
-| Traverse | Drive a square loop across the world at `moveSpeed` | Chunk streaming one boundary at a time (11 spawns and 11 despawns per crossing) |
-| Churn | Teleport between two spots `2·renderRadius+1` chunks apart | Worst-case streaming: all 121 chunks despawn and a full new set spawns in one frame |
+| Traverse | Drive a hexagonal loop across the world at `moveSpeed` | Chunk streaming one hex at a time (15 spawns and 15 despawns per crossing at render radius 7) |
+| Churn | Teleport between two spots `2·renderRadius+1` hexes apart | Worst-case streaming: all 169 chunks despawn and a full new set spawns in one frame |
 
 ### Config (`StressTestConfig`)
 
 | Field | Default | Notes |
 |---|---|---|
-| `basePreset` | World 5 | Chunk types, scrap prefabs, difficulty |
-| `worldSideSize` | 14 | World is `(2·n+1)²` chunks. The terrain is sized for 14, the biggest shipped world |
-| `scrapPerChunk` | 10 | Shipped worlds use 2–5 |
+| `world` | `World/WorldData` | The painted world; must be the one the scene's `WorldController` streams and the terrain was baked from |
+| `scrapPerChunk` | 10 | The game's chunks spawn 2–3 |
 | `treeSpacing` | 6 tiles | A real fully green world has trees about 12 tiles apart, because each tree greens a 12-tile circle and the next can only be planted on non-green ground. 6 is about 4× real density |
-| `clearingRadiusChunks` | 1 | Tree-free chunks around spawn so the Plant phase has ground to plant on |
+| `clearingRadiusChunks` | 1 | Tree-free hexes around the spawn hex so the Plant phase has ground to plant on |
 | `treePrefabs` | Pine, Apple, Pear | Must match `PoolManager.treePrefabs` in the scene |
 | `detailQuality` | High | Overrides the saved setting for the run |
 | `idleSeconds`, `treesToPlant`, `plantInterval` | 5, 10, 0.5 | |
 | `collectSeconds`, `collectLoopSize` | 20, 8 m | |
-| `moveSpeed`, `routeRadiusChunks`, `laps`, `maxTraverseSeconds` | 15 m/s, 10, 1, 180 | |
+| `moveSpeed`, `routeRadiusChunks`, `laps`, `maxTraverseSeconds` | 15 m/s, 6, 1, 180 | The loop is clamped to two hexes inside the map radius |
 | `churnJumps`, `churnInterval` | 6, 1 s | |
 | `profilerCaptureSeconds` | 0 (off) | Records the start of Traverse to `Logs/StressTest/stress_<timestamp>.raw`. Editor captures grow by about 30 MB per second |
 | `quitWhenDone` | on | Exit play mode (editor) or quit (player) after the report |
@@ -70,7 +69,7 @@ For each phase the report lists:
 - scene counts at the end of the phase: chunks, scrap, trees, rigidbodies awake
 - every marker that ran, with its total ms, worst frame, frames it ran in, and call count
 
-The markers live in `EcoProfilerMarkers` and wrap the known heavy paths: save load/save, pools, terrain clear/flatten/paint, NavMesh build, world update, chunk spawn/despawn, chunk init, `SaveTiles`, progress tracking and progress file write, tree planting, collector scan, stomach reserve and floating, jelly body and tentacle updates, and scrap recycle. They also appear in the Profiler window. To instrument something new, add a marker there; the report picks it up automatically.
+The markers live in `EcoProfilerMarkers` and wrap the known heavy paths: save load/save, pools, terrain reset/paint, NavMesh build, world update, chunk spawn/despawn, land chunk init, `SaveTiles`, tree planting, collector scan, stomach reserve and floating, jelly body and tentacle updates, and scrap recycle. They also appear in the Profiler window. To instrument something new, add a marker there; the report picks it up automatically.
 
 Editor numbers include editor overhead such as Game view `OnGUI`. For absolute numbers, run a development build with `-ecoStressTest`. Compare runs on the same machine; run-to-run variation is small (the first two baseline runs were within a few percent).
 
@@ -96,6 +95,8 @@ Editor, Intel Ultra 7 265K, RTX 3060 Ti, 1920×1080, default config (629 field c
 | Churn | 7.75 → 3.05 | 132 → 4.4 | 447 → 136 | 12 → 6 | A full swap costs about 125 ms instead of 450 ms; 13 rigidbodies awake afterwards instead of 442; physics peak 25 → 3 ms |
 
 Run-to-run variation is a few percent on averages; single-frame maxima vary more (Idle's max is one 14 ms frame).
+
+These numbers predate the hex world. The first hex run (`Logs/StressTest/stress_20261029_132712.txt`: the default 275-hex island, 248 seeded land chunks, 169 chunks loaded, 3840×2160 Game view) measured avg 7.7 / 7.5 / 8.6 / 7.4 / 6.1 ms for Idle / Plant / Collect / Traverse / Churn, with Churn's worst frame at 52 ms. It is not directly comparable: a different world, chunk count and resolution. Use it as the new baseline.
 
 ## Fixed bottlenecks
 

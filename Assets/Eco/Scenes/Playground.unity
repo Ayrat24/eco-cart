@@ -183,7 +183,8 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  upgrades: {fileID: 11400000, guid: 04f60de0863051342983814c10290882, type: 2}
+  upgradeTree: {fileID: 0}
+  baseStats: {fileID: 0}
   settings: {fileID: 11400000, guid: ba88c4ea8e3488c42b945d7cda0fce40, type: 2}
 --- !u!4 &115343912
 Transform:
@@ -229,14 +230,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0a6fff2c8f839e4ba7f4feefcec3ae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldData: {fileID: 11400000, guid: 5e9ed3fc18041b14fa77abd110f3e2c4, type: 2}
   player: {fileID: 1863505816}
-  chunkPrefab: {fileID: 1258492207534636278, guid: d3acc342df4ee7849871fb8e0bffc8ef, type: 3}
-  waterPrefab: {fileID: 3577063534379541029, guid: c6b5dc365d34ec944bb0ab8f20fbc917, type: 3}
-  chunkSizeX: 10
-  chunkSizeY: 10
-  renderRadiusX: 5
-  renderRadiusY: 5
-  worldSize: 52
+  renderRadius: 7
+  navMeshPlane: {fileID: 0}
 --- !u!4 &144762168
 Transform:
   m_ObjectHideFlags: 0
@@ -801,12 +798,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handName: Left Hand
-  ikTarget: {fileID: 1579738837}
-  ik: {fileID: 6997586782891946842}
-  animationMiddlePoint: {x: -3, y: 8, z: 0}
-  pickAnimationDuration: 0.2
-  placeAnimationDuration: 0.5
-  swingBackAnimationDuration: 0.1
+  tentacle: {fileID: 0}
 --- !u!114 &719770984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,12 +812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handName: Right Hand
-  ikTarget: {fileID: 27759885}
-  ik: {fileID: 8005013057645120684}
-  animationMiddlePoint: {x: 3, y: 8, z: 0}
-  pickAnimationDuration: 0.3
-  placeAnimationDuration: 0.4
-  swingBackAnimationDuration: 0.3
+  tentacle: {fileID: 0}
 --- !u!1001 &778718531
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1001,15 +988,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1495e8b39b3ad4bb63aab745e54800, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trashPrefabs:
-  - {fileID: 2813956914866972884, guid: 6cb8a054711e4fa479318acd5882c189, type: 3}
-  - {fileID: 5436418194312970475, guid: 20372a9484874e848ac4b48345b047e3, type: 3}
-  - {fileID: 5985191460338198598, guid: af376ac220b093243b0cc787b2a6810a, type: 3}
-  - {fileID: 6689108122355745422, guid: 0779a3b634ccc4049bc2aaae47298370, type: 3}
-  - {fileID: 2440660473772889524, guid: 67e602aea1becac4488ba6f9ab6d3fd0, type: 3}
-  - {fileID: 3225129494818308931, guid: 00849f3dd48ad084d8236c6e7c35571b, type: 3}
-  - {fileID: 7278579615988079468, guid: 3978fd362eaf4ca4691854aef9ac0123, type: 3}
-  - {fileID: 1816334190488259090, guid: bdec04a2de665e44a9b750a948d4dda5, type: 3}
   treePrefabs:
   - {fileID: 1063086795615745562, guid: af759b432389ddd4496a6659d74969e8, type: 3}
   - {fileID: 1063086795615745562, guid: 62f1637d7cc5b2943b30f0994ddddd5a, type: 3}
@@ -1260,8 +1238,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameUI
   uiDocument: {fileID: 1248775055}
-  upgradeItemTemplate: {fileID: 9197481963319205126, guid: 2da1b02a7a9317743b571445d178188a, type: 3}
   cartItemTemplate: {fileID: 9197481963319205126, guid: 7684011abaf84824dbcc82b2562e6e37, type: 3}
+  settings: {fileID: 0}
 --- !u!1 &1274122422
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,8 +1269,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf688483e15b9e74bacaa80438bc8bba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectorHelperPrefab: {fileID: 2835440299440503143, guid: e62846940d7740a4c8ee4cdc7492717b, type: 3}
   spawnRadius: 7
+  pets: []
 --- !u!4 &1274122424
 Transform:
   m_ObjectHideFlags: 0
@@ -1506,6 +1484,7 @@ Terrain:
   m_AllowAutoConnect: 1
   m_EnableHeightmapRayTracing: 1
   m_EnableTreesAndDetailsRayTracing: 0
+  m_EnableHeightmapLODFrustumCulling: 1
   m_TreeMotionVectorModeOverride: 3
 --- !u!4 &1509035207
 Transform:
@@ -1580,14 +1559,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1562044548}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -1632,7 +1611,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -1801,7 +1780,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1863505815}
   itemCollector: {fileID: 719770982}
-  characterModel: {fileID: 796652406281205052}
+  stomach: {fileID: 0}
+  toolController: {fileID: 0}
+  hatParent: {fileID: 0}
+  hats: []
 --- !u!1001 &1924365549
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1976,7 +1958,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameUI: {fileID: 1248775057}
-  cameraController: {fileID: 2066580273}
+  map: {fileID: 0}
+  scoreGainedPopup: {fileID: 0}
+  startOnLoad: 0
 --- !u!4 &2032983157
 Transform:
   m_ObjectHideFlags: 0
@@ -2248,6 +2232,7 @@ SkinnedMeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0

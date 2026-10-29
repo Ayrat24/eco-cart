@@ -60,7 +60,7 @@ namespace Eco.Scripts.Scrap
         }
 
         // Puts the item back where it last came to rest instead of dropping it; Sleep() follows once physics has
-        // the new transform (see FieldChunk.SleepRestingScrap)
+        // the new transform (see LandChunk.SleepRestingScrap)
         public void PlaceAtRest(Pose localPose)
         {
             transform.SetLocalPositionAndRotation(localPose.position, localPose.rotation);
@@ -240,7 +240,7 @@ namespace Eco.Scripts.Scrap
 
         public int GetWeight()
         {
-            return weight + (WorldSelector.Instance.SelectedPreset.Difficulty / 2);
+            return weight;
         }
 
         public int GetPrefabId()

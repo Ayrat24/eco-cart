@@ -17,7 +17,6 @@ namespace Eco.Scripts
         {
             builder.Register<SaveManager>(Lifetime.Scoped);
             builder.Register<CurrencyManager>(Lifetime.Scoped);
-            builder.Register<ProgressTracker>(Lifetime.Scoped);
             builder.Register<PlayerStats>(Lifetime.Scoped);
             builder.Register<UpgradeManager>(Lifetime.Scoped);
 

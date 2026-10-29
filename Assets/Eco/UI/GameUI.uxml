@@ -10,21 +10,6 @@
             <ui:Button text="⚙" name="SettingsButton" enable-rich-text="false" class="light-green Button" style="width: 50px; height: 50px; font-size: 28px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; background-image: url(&quot;project://database/Assets/Eco/Data/Images/settings.png?fileID=2800000&amp;guid=0c047ce0db57a4f479988b5d27bcdd36&amp;type=3#settings&quot;); -unity-background-image-tint-color: rgb(56, 102, 65); background-size: 80% 80%;" />
             <ui:Button text="?" name="TutorialButton" class="light-green Button" style="width: 50px; height: 50px; font-size: 32px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
         </ui:VisualElement>
-        <ui:VisualElement name="Middle" picking-mode="Ignore" style="flex-grow: 1; position: absolute; top: 0; flex-direction: row-reverse; justify-content: center; width: 100%; height: 90%; align-self: center; align-content: center; align-items: flex-start;">
-            <ui:VisualElement style="flex-grow: 0; width: 250px; flex-shrink: 1; justify-content: center; align-content: stretch; align-self: center; align-items: flex-start; height: auto; min-height: initial; flex-wrap: nowrap; top: -8px;">
-                <ui:ProgressBar value="26.9" title="cleaness" name="ClearProgress" style="width: 250px; height: 25px; flex-direction: row-reverse; top: -2px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="title" table="GUID:5dc37383c77562145808713f560ea55c" entry="Id(23016534177738752)" />
-                    </Bindings>
-                </ui:ProgressBar>
-                <ui:ProgressBar value="53.5" title="greenification" name="GreenProgress" style="width: 250px; height: 25px; flex-direction: row-reverse; display: flex; position: relative; top: auto; left: auto; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="title" table="GUID:5dc37383c77562145808713f560ea55c" entry="Id(23016589433499648)" />
-                    </Bindings>
-                </ui:ProgressBar>
-            </ui:VisualElement>
-            <ui:Button text="&#10;" name="SelectWorldButton" class="Button light-green" style="width: 60px; height: 60px; margin-top: 0; margin-right: -4px; margin-bottom: 0; margin-left: 0; min-height: initial; min-width: initial; top: 2px; background-image: url(&quot;project://database/Assets/Eco/Data/Images/Worlds.png?fileID=2800000&amp;guid=399840689597a71458617f0b0feb1b20&amp;type=3#Worlds&quot;); background-size: 90% 90%; border-top-right-radius: 12px; border-bottom-right-radius: 12px; -unity-background-image-tint-color: rgb(255, 255, 255); border-top-left-radius: 12px; border-bottom-left-radius: 12px;" />
-        </ui:VisualElement>
         <ui:VisualElement name="RightSide" style="flex-grow: 1; flex-direction: row-reverse; align-self: center; justify-content: flex-start; align-items: center; right: 16px; position: absolute;">
             <ui:Label text="$" class="white" style="width: 36px; height: 60px; align-self: center; background-color: rgba(242, 232, 207, 0.6); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); -unity-font-style: bold; -unity-text-align: middle-left; color: rgb(56, 102, 65); font-size: 42s; border-top-left-radius: 0; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 0; top: 1px; left: auto; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-start; align-items: flex-start; align-content: stretch;" />
             <ui:Label text="13212313215646851321658423134" name="MoneyCounter" class="white" style="flex-direction: row-reverse; justify-content: flex-end; align-content: flex-end; align-items: flex-end; align-self: center; right: 0; position: relative; left: 0%; border-top-width: 8px; border-right-width: 8px; border-bottom-width: 8px; border-left-width: 8px; font-size: 30px; -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;); color: rgb(56, 102, 65); background-color: rgba(242, 232, 207, 0.6); border-top-left-radius: 12px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 12px; margin-right: 0;" />
@@ -87,27 +72,6 @@
             <ui:VisualElement name="UpgradeMenuBody" class="upgrade-menu__body">
                 <Eco.Scripts.UI.UpgradeTreeView name="UpgradeTreeView" class="upgrade-menu__tree" />
                 <ui:Label name="UpgradeTreeHint" text="Click an upgrade, then + to buy or - to refund." picking-mode="Ignore" class="upgrade-menu__hint" />
-            </ui:VisualElement>
-        </ui:VisualElement>
-    </ui:VisualElement>
-    <ui:VisualElement name="NewWorldPopup" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; justify-content: center; align-items: center; display: none; transition-duration: 0.2s;">
-        <ui:VisualElement name="Dialog" class="white" style="flex-grow: 0; padding-left: 30px; padding-right: 30px; padding-top: 20px; padding-bottom: 20px; border-top-left-radius: 12px; border-bottom-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; min-width: auto; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-left-color: rgb(56, 102, 65); border-right-color: rgb(56, 102, 65); border-top-color: rgb(56, 102, 65); border-bottom-color: rgb(56, 102, 65);">
-            <ui:Label text="Congratulations! You&apos;ve made great progress cleaning this world!&#10;&#10;Would you like to start a new world?" name="PopupMessage" language-direction="Inherit" style="font-size: 24px; margin-bottom: 20px; white-space: normal; -unity-text-align: middle-center; color: rgb(56, 102, 65); -unity-font-definition: url(&quot;project://database/Assets/OmniSARTechnologies/LiteFPSCounter/Fonts/Roboto-Bold.ttf?fileID=12800000&amp;guid=cee59b8ccb26c724398baa8310abdb3f&amp;type=3#Roboto-Bold&quot;);">
-                <Bindings>
-                    <UnityEngine.Localization.LocalizedString property="text" table="GUID:5dc37383c77562145808713f560ea55c" entry="Id(23023662250586112)" />
-                </Bindings>
-            </ui:Label>
-            <ui:VisualElement name="ButtonContainer" style="flex-grow: 0; flex-direction: row; justify-content: center;">
-                <ui:Button text="Yes" name="YesButton" class="light-green Button" style="margin-right: 10px; min-width: 100px; min-height: 40px; -unity-font-style: normal;">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="text" table="GUID:5dc37383c77562145808713f560ea55c" entry="Id(23023680260927488)" />
-                    </Bindings>
-                </ui:Button>
-                <ui:Button text="Not Now" name="NoButton" class="light-green Button" style="min-width: 100px; min-height: 40px; -unity-font-style: normal;">
-                    <Bindings>
-                        <UnityEngine.Localization.LocalizedString property="text" table="GUID:5dc37383c77562145808713f560ea55c" entry="Id(23023712519319552)" />
-                    </Bindings>
-                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

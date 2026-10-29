@@ -17,6 +17,9 @@ namespace Eco.Scripts.Scrap
         [SerializeField] private ParticleSystem digParticleEffect;
         [SerializeField] private Transform pileParent;
 
+        // Pile size per unit of pile height
+        private const int SizePerHeight = 5;
+
         private float _heightPerSize;
         private int _size;
         private bool _isDigging;
@@ -27,15 +30,17 @@ namespace Eco.Scripts.Scrap
 
         public event Action OnPileCleaned;
         
-        public void Initialize(int size, int difficulty, int digPower)
+        /// <param name="size">Dig steps left at dig power 1.</param>
+        /// <param name="maxSize">Size of the untouched pile; bigger piles are taller.</param>
+        public void Initialize(int size, int maxSize, int digPower)
         {
+            maxSize = Mathf.Max(1, maxSize);
             _size = size;
             _digPower = digPower;
             _isCleared = false;
             _isDigging = false;
             highlightEffect.highlighted = false;
 
-            var maxSize = PileChunk.DifficultyMultiplier * difficulty;
             _heightPerSize = 1f / maxSize * digPower;
 
             var pos = Vector3.zero;
@@ -43,18 +48,18 @@ namespace Eco.Scripts.Scrap
             pos.y -= 0.1f;
             transform.localPosition = pos;
             
-            AdjustVisualSizeWithDifficulty(difficulty);
+            AdjustVisualHeight(maxSize / (float)SizePerHeight);
             
             gameObject.SetActive(true);
         }
 
-        private void AdjustVisualSizeWithDifficulty(int difficulty)
+        private void AdjustVisualHeight(float height)
         {
             Vector3 s = pileParent.localScale;
-            s.y = difficulty;
+            s.y = height;
             pileParent.localScale = s;
             Vector3 p = pileParent.localPosition;
-            p.y = difficulty * 0.5f;
+            p.y = height * 0.5f;
             pileParent.localPosition = p;
         }
 

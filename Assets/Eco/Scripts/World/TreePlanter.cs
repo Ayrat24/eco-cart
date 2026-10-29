@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using R3;
@@ -11,12 +10,12 @@ namespace Eco.Scripts.World
     {
         public const int TreeGrassRadius = 12;
         public const int PileGrassRadius = 6;
-        
+
         private readonly Transform _player;
         private readonly WorldController _worldController;
 
         public readonly Subject<int> OnTreePlanted = new();
-        
+
         public TreePlanter(Transform player, WorldController worldController)
         {
             _player = player;
@@ -29,43 +28,35 @@ namespace Eco.Scripts.World
         {
             using var marker = EcoProfilerMarkers.PlantTree.Auto();
 
-            Vector3 playerPos = _player.position; // Player world position
-            Vector2Int playerChunkCoord = _worldController.GetPlayerChunkCoord();
-            int chunkSize = 10;
-
-            Chunk closestField = null;
+            Vector3 playerPos = _player.position;
+            LandChunk closestChunk = null;
             Tile closestTile = null;
             float closestDistSqr = float.MaxValue;
 
-            // Search in surrounding chunks (adjust search range if needed)
-            for (int cx = -_worldController.RenderRadius; cx <= _worldController.RenderRadius; cx++)
+            foreach (var chunk in _worldController.ActiveChunks.Values)
             {
-                for (int cy = -_worldController.RenderRadius; cy <= _worldController.RenderRadius; cy++)
+                if (chunk is not LandChunk land)
                 {
-                    Vector2Int chunkCoord = new Vector2Int(playerChunkCoord.x + cx, playerChunkCoord.y + cy);
+                    continue;
+                }
 
-                    if (_worldController.ActiveChunks.TryGetValue(chunkCoord, out Chunk field) && field is FieldChunk)
+                foreach (var tile in land.Tiles)
+                {
+                    if (tile.objectType != TileObjectType.Empty || tile.groundType != TileGroundType.Ground)
                     {
-                        foreach (var tile in field.Tiles)
-                        {
-                            if (tile.objectType == TileObjectType.Empty && tile.groundType == TileGroundType.Ground)
-                            {
-                                // Convert local tile pos to world pos (centered on tile)
-                                Vector3 worldPos = new Vector3(
-                                    chunkCoord.x * chunkSize + tile.position.x + 0.5f,
-                                    0f,
-                                    chunkCoord.y * chunkSize + tile.position.y + 0.5f
-                                );
+                        continue;
+                    }
 
-                                float distSqr = (worldPos - playerPos).sqrMagnitude;
-                                if (distSqr < closestDistSqr)
-                                {
-                                    closestDistSqr = distSqr;
-                                    closestTile = tile;
-                                    closestField = field;
-                                }
-                            }
-                        }
+                    var local = land.Layout.LocalPosition(tile.index);
+                    var center = land.transform.position;
+                    float dx = center.x + local.x - playerPos.x;
+                    float dz = center.z + local.y - playerPos.z;
+                    float distSqr = dx * dx + dz * dz;
+                    if (distSqr < closestDistSqr)
+                    {
+                        closestDistSqr = distSqr;
+                        closestTile = tile;
+                        closestChunk = land;
                     }
                 }
             }
@@ -75,82 +66,50 @@ namespace Eco.Scripts.World
                 return false;
             }
 
-            PlantTree(id, closestTile, closestField, true);
-            MarkGroundCircle(closestTile, closestField, TreeGrassRadius);
+            PlantTree(id, closestTile, closestChunk, true);
+            MarkGroundCircle(closestChunk.GetTileWorldPosition(closestTile), TreeGrassRadius);
             OnTreePlanted.OnNext(id);
             return true;
         }
 
-        private void MarkGroundCircle(Tile centerTile, Chunk centerField, int radius)
+        // Every bare land tile within the radius turns to grass, across chunk borders
+        private void MarkGroundCircle(Vector3 center, int radius)
         {
-            int chunkSize = WorldController.ChunkSize;
-
-            // Center tile's chunk coordinate in chunk grid
-            Vector2Int centerChunkCoord = GetChunkCoordFromTile(centerField);
-            HashSet<Chunk> updatedFields = new();
-
-            for (int x = -radius; x <= radius; x++)
+            float reach = radius + _worldController.HexRadius;
+            foreach (var chunk in _worldController.ActiveChunks.Values)
             {
-                for (int y = -radius; y <= radius; y++)
+                if (chunk is not LandChunk land)
                 {
-                    if (x * x + y * y <= radius * radius)
+                    continue;
+                }
+
+                var chunkCenter = land.transform.position;
+                float cx = chunkCenter.x - center.x;
+                float cz = chunkCenter.z - center.z;
+                if (cx * cx + cz * cz > reach * reach)
+                {
+                    continue;
+                }
+
+                bool changed = false;
+                foreach (var tile in land.Tiles)
+                {
+                    var local = land.Layout.LocalPosition(tile.index);
+                    float dx = cx + local.x;
+                    float dz = cz + local.y;
+                    if (dx * dx + dz * dz <= radius * radius && tile.groundType == TileGroundType.Ground)
                     {
-                        // Convert local tile pos to global coordinates
-                        Vector2Int globalPos = new Vector2Int(
-                            centerChunkCoord.x * chunkSize + centerTile.position.x + x,
-                            centerChunkCoord.y * chunkSize + centerTile.position.y + y
-                        );
-
-                        // Figure out which chunk this tile belongs to
-                        Vector2Int targetChunkCoord = new Vector2Int(
-                            Mathf.FloorToInt((float)globalPos.x / chunkSize),
-                            Mathf.FloorToInt((float)globalPos.y / chunkSize)
-                        );
-
-                        if (_worldController.ActiveChunks.TryGetValue(targetChunkCoord, out Chunk targetField))
-                        {
-                            if (targetField is not FieldChunk)
-                            {
-                                continue;
-                            }
-                            
-                            // Local position inside the target chunk
-                            Vector2Int localPos = new Vector2Int(
-                                Mod(globalPos.y, chunkSize),
-                                Mod(globalPos.x, chunkSize)
-                            );
-
-                            var adjTile = targetField.GetTile(localPos);
-                            if (adjTile != null)
-                            {
-                                adjTile.groundType = TileGroundType.Grass;
-                                updatedFields.Add(targetField);
-                            }
-                        }
+                        tile.groundType = TileGroundType.Grass;
+                        changed = true;
                     }
                 }
-            }
 
-            foreach (var f in updatedFields)
-            {
-                var field = (FieldChunk)f;
-                field.MakeGrass();
+                if (changed)
+                {
+                    land.MakeGrass();
+                }
             }
         }
-
-        private Vector2Int GetChunkCoordFromTile(Chunk field)
-        {
-            // Reverse lookup: find field's chunk coord in spawnedChunks
-            foreach (var kvp in _worldController.ActiveChunks)
-            {
-                if (kvp.Value == field)
-                    return kvp.Key;
-            }
-
-            throw new System.Exception("Field not found in spawnedChunks!");
-        }
-        
-        private int Mod(int a, int m) => (a % m + m) % m;
 
         public void PlantTree(int prefabId, Tile tile, Chunk parent, bool isNewlyPlanted = false)
         {
@@ -160,7 +119,7 @@ namespace Eco.Scripts.World
 
             tile.item = tree;
             tile.objectType = TileObjectType.Tree;
-            
+
             if (isNewlyPlanted)
             {
                 tree.ShowPlantAnimation();

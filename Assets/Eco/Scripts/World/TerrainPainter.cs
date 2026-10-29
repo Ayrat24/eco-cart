@@ -7,11 +7,13 @@ namespace Eco.Scripts.World
 {
     public abstract class TerrainPainter
     {
-        // Paint stays in the TerrainData until ClearTerrain, so a circle painted once never needs painting again
+        // Paint stays in the TerrainData until ResetTerrain, so a circle painted once never needs painting again
         // when its chunk respawns. Keyed by everything that affects the result.
         private static readonly HashSet<(int layer, int x, int z, int radius, int density)> PaintedCircles = new();
         private static readonly List<PaintCircle> PendingCircles = new();
         private static bool _flushScheduled;
+        private static int _grassLayer = -1;
+        private static TerrainData _terrainCopy;
 
         private struct PaintCircle
         {
@@ -21,72 +23,73 @@ namespace Eco.Scripts.World
             public int GrassDensity;
         }
 
-        public static void ClearTerrain()
+        /// <summary>
+        /// Starts a game on a fresh copy of the scene terrain as the World Editor baked it, so grass painted while
+        /// playing never reaches the TerrainData asset (and a restarted game starts from the baked look again).
+        /// </summary>
+        public static void ResetTerrain(TerrainLayer grassLayer)
         {
-            using var marker = EcoProfilerMarkers.ClearTerrain.Auto();
+            using var marker = EcoProfilerMarkers.ResetTerrain.Auto();
 
             PaintedCircles.Clear();
             PendingCircles.Clear();
             _flushScheduled = false;
 
             var terrain = Terrain.activeTerrain;
-#if UNITY_EDITOR
             UseTerrainDataCopy(terrain);
-#endif
-            var data = terrain.terrainData;
 
-            // Every pixel becomes fully layer 0, so there is nothing to read back first
-            float[,,] splatmap = new float[data.alphamapHeight, data.alphamapWidth, data.alphamapLayers];
-            for (int z = 0; z < data.alphamapHeight; z++)
+            _grassLayer = System.Array.IndexOf(terrain.terrainData.terrainLayers, grassLayer);
+            if (_grassLayer < 0)
             {
-                for (int x = 0; x < data.alphamapWidth; x++)
-                {
-                    splatmap[z, x, 0] = 1;
-                }
+                Debug.LogWarning($"Grass layer '{(grassLayer != null ? grassLayer.name : "none")}' is not on the " +
+                                 "terrain; save the world in the World Editor. Grass won't be painted.");
             }
-
-            data.SetAlphamaps(0, 0, splatmap);
-            data.SetDetailLayer(0, 0, 0, new int[data.detailHeight, data.detailWidth]);
         }
 
-#if UNITY_EDITOR
-        // Painting and flattening edit the TerrainData in place. In the editor that is the New Terrain 1 asset,
-        // and a later Save Project would write the painted grass into it, so play mode works on a copy.
         private static void UseTerrainDataCopy(Terrain terrain)
         {
+            // Scene loads hand the terrain its asset again; the previous game's copy is no longer used
+            if (_terrainCopy != null && terrain.terrainData != _terrainCopy)
+            {
+                Object.Destroy(_terrainCopy);
+            }
+
             var data = terrain.terrainData;
-            if (!UnityEditor.AssetDatabase.Contains(data))
+            if (data == _terrainCopy)
             {
                 return;
             }
 
-            var copy = Object.Instantiate(data);
-            copy.name = data.name + " (Play Mode)";
-            terrain.terrainData = copy;
+            _terrainCopy = Object.Instantiate(data);
+            _terrainCopy.name = data.name + " (Runtime)";
+            terrain.terrainData = _terrainCopy;
 
             if (terrain.TryGetComponent<TerrainCollider>(out var terrainCollider))
             {
-                terrainCollider.terrainData = copy;
+                terrainCollider.terrainData = _terrainCopy;
             }
         }
-#endif
 
         /// <summary>
-        /// Queues a texture circle (plus grass for <see cref="TerrainTexture.Grass"/>). Everything queued in a frame
-        /// is painted together on the next frame with one read and one write of the terrain maps.
+        /// Queues a circle of the grass layer plus grass details (by detail quality), <paramref name="radius"/> in
+        /// terrain map pixels (about a metre each). Everything queued in a frame is painted together on the next
+        /// frame with one read and one write of the terrain maps.
         /// </summary>
-        public static void PaintTerrainTexture(TerrainTexture texture, Vector3 worldPosition, int radius)
+        public static void PaintGrass(Vector3 worldPosition, int radius)
         {
-            int density = texture != TerrainTexture.Grass
-                ? 0
-                : Settings.DetailQuality switch
-                {
-                    Settings.DetailQualities.Medium => 128,
-                    Settings.DetailQualities.High => 256,
-                    _ => 0
-                };
+            if (_grassLayer < 0)
+            {
+                return;
+            }
 
-            var key = ((int)texture, Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.z), radius,
+            int density = Settings.DetailQuality switch
+            {
+                Settings.DetailQualities.Medium => 128,
+                Settings.DetailQualities.High => 256,
+                _ => 0
+            };
+
+            var key = (_grassLayer, Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.z), radius,
                 density);
             if (!PaintedCircles.Add(key))
             {
@@ -95,7 +98,7 @@ namespace Eco.Scripts.World
 
             PendingCircles.Add(new PaintCircle
             {
-                Layer = (int)texture,
+                Layer = _grassLayer,
                 WorldPosition = worldPosition,
                 Radius = radius,
                 GrassDensity = density
@@ -112,7 +115,7 @@ namespace Eco.Scripts.World
         {
             await UniTask.NextFrame();
 
-            // ClearTerrain resets the flag and the queue (new game, or play mode restarted with this still pending)
+            // ResetTerrain resets the flag and the queue (new game, or play mode restarted with this still pending)
             if (!_flushScheduled)
             {
                 return;
@@ -278,12 +281,6 @@ namespace Eco.Scripts.World
             int yMax = Mathf.Min(bounds.yMax, mapHeight);
             bounds = new RectInt(xMin, yMin, xMax - xMin, yMax - yMin);
             return bounds.width > 0 && bounds.height > 0;
-        }
-
-        public enum TerrainTexture
-        {
-            Sand,
-            Grass
         }
     }
 }

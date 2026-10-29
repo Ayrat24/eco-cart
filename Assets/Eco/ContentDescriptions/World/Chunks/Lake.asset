@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97600d00c32619e45953a9654c90ee16, type: 3}
+  m_Name: Lake
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.ChunkDefinition
+  id: 57194e1533484afc8c9be5db2430b51a
+  color: {r: 0.3, g: 0.6, b: 0.85, a: 1}
+  isWater: 1
+  elevation: -3
+  roughness: 0
+  terrainLayer: {fileID: 8574412962073106934, guid: 52ac57c2c14c60b4d88913beb57dce00, type: 2}
+  scrap:
+    count: {x: 0, y: 0}
+    items: []
+    pileSize: 0
+  prefab: {fileID: 3226561043315075932, guid: e02c334fb0fb6b340a142d1a1d681096, type: 3}
