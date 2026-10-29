@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Food_AppleCore",
+    "category": "Food",
+    "triangles": 588,
+    "vertices": 308,
+    "extent": 0.86,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Food/Food_AppleCore.fbx"
+  },
+  {
+    "name": "Food_BananaPeel",
+    "category": "Food",
+    "triangles": 558,
+    "vertices": 295,
+    "extent": 1.1,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Food/Food_BananaPeel.fbx"
+  },
+  {
+    "name": "Food_FishBones",
+    "category": "Food",
+    "triangles": 656,
+    "vertices": 358,
+    "extent": 1.2,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Food/Food_FishBones.fbx"
+  },
+  {
+    "name": "Paper_MilkCarton",
+    "category": "Paper",
+    "triangles": 420,
+    "vertices": 234,
+    "extent": 1.05,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Paper/Paper_MilkCarton.fbx"
+  },
+  {
+    "name": "Paper_FoldedNewspaper",
+    "category": "Paper",
+    "triangles": 328,
+    "vertices": 196,
+    "extent": 0.9,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Paper/Paper_FoldedNewspaper.fbx"
+  },
+  {
+    "name": "Paper_CrumpledSheet",
+    "category": "Paper",
+    "triangles": 92,
+    "vertices": 50,
+    "extent": 0.68,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Paper/Paper_CrumpledSheet.fbx"
+  },
+  {
+    "name": "Plastic_CrushedBottle",
+    "category": "Plastic",
+    "triangles": 696,
+    "vertices": 384,
+    "extent": 1.05,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Plastic/Plastic_CrushedBottle.fbx"
+  },
+  {
+    "name": "Plastic_YogurtCup",
+    "category": "Plastic",
+    "triangles": 472,
+    "vertices": 276,
+    "extent": 0.72,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Plastic/Plastic_YogurtCup.fbx"
+  },
+  {
+    "name": "Plastic_DetergentJug",
+    "category": "Plastic",
+    "triangles": 324,
+    "vertices": 174,
+    "extent": 0.98,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Plastic/Plastic_DetergentJug.fbx"
+  },
+  {
+    "name": "Glass_GreenBottle",
+    "category": "Glass",
+    "triangles": 532,
+    "vertices": 304,
+    "extent": 1.15,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Glass/Glass_GreenBottle.fbx"
+  },
+  {
+    "name": "Glass_AmberJar",
+    "category": "Glass",
+    "triangles": 544,
+    "vertices": 328,
+    "extent": 0.78,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Glass/Glass_AmberJar.fbx"
+  },
+  {
+    "name": "Glass_BrokenBottle",
+    "category": "Glass",
+    "triangles": 248,
+    "vertices": 144,
+    "extent": 0.7,
+    "fbx": "Assets/Eco/Data/Models/OriginalScrap/Glass/Glass_BrokenBottle.fbx"
+  }
+]
