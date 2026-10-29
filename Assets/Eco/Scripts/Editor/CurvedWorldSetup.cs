@@ -171,7 +171,9 @@ namespace Eco.Scripts.EditorTools
                 for (int i = 1; i < blocks.Length; i++)
                     if (!blocks[i].Contains("#pragma vertex TerrainVertexMeta"))
                         blocks[i] = blocks[i].Replace(Urp + "Shaders/Terrain/TerrainLitInput.hlsl", Folder + "CurvedTerrainInput.hlsl");
-                Write(file, string.Join("HLSLPROGRAM", blocks));
+                terrain = string.Join("HLSLPROGRAM", blocks);
+                if (file != "TerrainLitAdd.shader") terrain = AtmosphereSurfacePass.AddToShader(terrain);
+                Write(file, terrain);
             }
 
             foreach (var type in new[] { "Opaque", "Foliage", "Plants" })

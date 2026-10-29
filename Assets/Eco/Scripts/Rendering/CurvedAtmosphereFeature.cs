@@ -30,7 +30,7 @@ namespace Eco.Scripts.Rendering
                 || (camera.cameraType != CameraType.Game && camera.cameraType != CameraType.SceneView))
                 return;
 
-            _pass.Setup(material, controller.BendParameters, controller.Settings);
+            _pass.Setup(material, controller.Settings);
             renderer.EnqueuePass(_pass);
         }
     }

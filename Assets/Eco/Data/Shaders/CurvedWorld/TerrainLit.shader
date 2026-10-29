@@ -230,6 +230,29 @@ Shader "Eco/Curved World/Terrain Lit"
             ENDHLSL
         }
 
+        // Terrain/water silhouette for the atmosphere; never used by the camera depth copy.
+        Pass
+        {
+            Name "EcoAtmosphereSurface"
+            Tags{"LightMode" = "EcoAtmosphereSurface"}
+
+            ZWrite On
+            ColorMask R
+
+            HLSLPROGRAM
+            #pragma target 2.0
+
+            #pragma vertex DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
+
+            #pragma multi_compile_instancing
+            #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap
+
+            #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedTerrainInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitPasses.hlsl"
+            ENDHLSL
+        }
+
         // This pass is used when drawing to a _CameraNormalsTexture texture
         Pass
         {

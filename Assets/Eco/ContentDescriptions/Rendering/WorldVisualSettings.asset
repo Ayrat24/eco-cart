@@ -17,11 +17,8 @@ MonoBehaviour:
   distortionStrength: 1
   flatRadius: 6
   atmosphereEnabled: 1
-  atmosphereHorizonColor: {r: 0.48, g: 0.76, b: 1, a: 1}
+  atmosphereHorizonColor: {r: 0.023985408, g: 0.26413813, b: 0.46226418, a: 1}
   atmosphereSpaceColor: {r: 0.06, g: 0.22, b: 0.55, a: 1}
-  atmosphereStrength: 0.931
+  atmosphereStrength: 0.921
   atmosphereThickness: 5.69
   atmosphereSoftness: 1.3
-  atmosphereStartDistance: 20.7
-  atmosphereFullDistance: 39.8
-  atmosphereSurfaceHeight: 3.88

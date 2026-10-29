@@ -17,6 +17,8 @@ namespace Eco.Scripts.EditorTools
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("Apply atmosphere in Edit mode.");
 
+            AtmosphereSurfacePass.UpdateGeneratedShaders();
+
             var shader = Shader.Find("Eco/Curved World/Atmosphere");
             if (shader == null) throw new InvalidOperationException("Atmosphere shader is missing.");
             var material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);

@@ -295,6 +295,12 @@
     -unity-text-align: middle-center;
 }
 
+/* .Button transitions every property; the tree view moves these with left/top as it pans, so only colours ease */
+.Button.upgrade-action {
+    transition-property: background-color, border-color, color;
+    transition-duration: 0.1s, 0.1s, 0.1s;
+}
+
 .upgrade-action--refund {
     background-color: rgb(242, 232, 207);
 }

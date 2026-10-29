@@ -3108,6 +3108,410 @@ SurfaceDescriptionInputs BuildSurfaceDescriptionInputs(Varyings input)
 
 ENDHLSL
 }
+
+        // Terrain/water silhouette for the atmosphere; never used by the camera depth copy.
+        Pass
+{
+    Name "EcoAtmosphereSurface"
+    Tags
+    {
+        "LightMode" = "EcoAtmosphereSurface"
+    }
+
+// Render State
+Cull Back
+ZTest LEqual
+ZWrite On
+ColorMask R
+
+// Debug
+// <None>
+
+// --------------------------------------------------
+// Pass
+
+HLSLPROGRAM
+
+// Pragmas
+#pragma target 2.0
+#pragma multi_compile_instancing
+#pragma vertex vert
+#pragma fragment frag
+
+// Keywords
+// PassKeywords: <None>
+// GraphKeywords: <None>
+
+// Defines
+
+#define _NORMALMAP 1
+#define _NORMAL_DROPOFF_TS 1
+#define ATTRIBUTES_NEED_NORMAL
+#define ATTRIBUTES_NEED_TANGENT
+#define GRAPH_VERTEX_USES_TIME_PARAMETERS_INPUT
+#define FEATURES_GRAPH_VERTEX_NORMAL_OUTPUT
+#define FEATURES_GRAPH_VERTEX_TANGENT_OUTPUT
+#define FEATURES_GRAPH_VERTEX
+/* WARNING: $splice Could not find named fragment 'PassInstancing' */
+#define SHADERPASS SHADERPASS_DEPTHONLY
+
+
+// custom interpolator pre-include
+/* WARNING: $splice Could not find named fragment 'sgci_CustomInterpolatorPreInclude' */
+
+// Includes
+#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/DebugMipmapStreamingMacros.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
+
+// --------------------------------------------------
+// Structs and Packing
+
+// custom interpolators pre packing
+/* WARNING: $splice Could not find named fragment 'CustomInterpolatorPrePacking' */
+
+struct Attributes
+{
+ float3 positionOS : POSITION;
+ float3 normalOS : NORMAL;
+ float4 tangentOS : TANGENT;
+#if UNITY_ANY_INSTANCING_ENABLED || defined(ATTRIBUTES_NEED_INSTANCEID)
+ uint instanceID : INSTANCEID_SEMANTIC;
+#endif
+};
+struct Varyings
+{
+ float4 positionCS : SV_POSITION;
+#if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
+ uint instanceID : CUSTOM_INSTANCE_ID;
+#endif
+#if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+ uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
+#endif
+#if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+ uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
+#endif
+#if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+ FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+#endif
+};
+struct SurfaceDescriptionInputs
+{
+};
+struct VertexDescriptionInputs
+{
+ float3 ObjectSpaceNormal;
+ float3 ObjectSpaceTangent;
+ float3 ObjectSpacePosition;
+ float3 WorldSpacePosition;
+ float3 TimeParameters;
+};
+struct PackedVaryings
+{
+ float4 positionCS : SV_POSITION;
+#if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
+ uint instanceID : CUSTOM_INSTANCE_ID;
+#endif
+#if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+ uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
+#endif
+#if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+ uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
+#endif
+#if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+ FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+#endif
+};
+
+PackedVaryings PackVaryings (Varyings input)
+{
+PackedVaryings output;
+ZERO_INITIALIZE(PackedVaryings, output);
+output.positionCS = input.positionCS;
+#if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
+output.instanceID = input.instanceID;
+#endif
+#if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
+#endif
+#if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
+#endif
+#if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+output.cullFace = input.cullFace;
+#endif
+return output;
+}
+
+Varyings UnpackVaryings (PackedVaryings input)
+{
+Varyings output;
+output.positionCS = input.positionCS;
+#if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
+output.instanceID = input.instanceID;
+#endif
+#if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
+#endif
+#if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
+#endif
+#if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+output.cullFace = input.cullFace;
+#endif
+return output;
+}
+
+
+// --------------------------------------------------
+// Graph
+
+// Graph Properties
+CBUFFER_START(UnityPerMaterial)
+float4 Color_F01C36BF;
+float4 Color_7D9A58EC;
+float Vector1_47683D42;
+float Vector1_3D886DA1;
+float4 Texture2D_6490A223_TexelSize;
+float2 Vector2_37B21477;
+float Vector1_F38B44AA;
+float Vector1_46E42935;
+float Vector1_244B0600;
+float _WaveFrequency;
+float _WaveScale;
+float _WaveSpeed;
+float Vector1_B9F56378;
+float Vector1_A6A0BC26;
+float Vector1_36E8227;
+float Vector1_C360A163;
+float Vector1_17E53C12;
+float Vector1_A0EAD698;
+float Vector1_E5C51606;
+UNITY_TEXTURE_STREAMING_DEBUG_VARS;
+CBUFFER_END
+
+
+// Object and Global properties
+SAMPLER(SamplerState_Linear_Repeat);
+TEXTURE2D(Texture2D_6490A223);
+SAMPLER(samplerTexture2D_6490A223);
+
+// Graph Includes
+// GraphIncludes: <None>
+
+// -- Property used by ScenePickingPass
+#ifdef SCENEPICKINGPASS
+float4 _SelectionID;
+#endif
+
+// -- Properties used by SceneSelectionPass
+#ifdef SCENESELECTIONPASS
+int _ObjectId;
+int _PassValue;
+#endif
+
+// Graph Functions
+
+void Unity_Step_float(float Edge, float In, out float Out)
+{
+    Out = step(Edge, In);
+}
+
+void Unity_Multiply_float_float(float A, float B, out float Out)
+{
+Out = A * B;
+}
+
+void Unity_Add_float(float A, float B, out float Out)
+{
+    Out = A + B;
+}
+
+void Unity_Sine_float(float In, out float Out)
+{
+    Out = sin(In);
+}
+
+void Unity_Cosine_float(float In, out float Out)
+{
+    Out = cos(In);
+}
+
+void Unity_Preview_float3(float3 In, out float3 Out)
+{
+    Out = In;
+}
+
+// Custom interpolators pre vertex
+/* WARNING: $splice Could not find named fragment 'CustomInterpolatorPreVertex' */
+
+// Graph Vertex
+struct VertexDescription
+{
+float3 Position;
+float3 Normal;
+float3 Tangent;
+};
+
+#include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+VertexDescription VertexDescriptionFunction(VertexDescriptionInputs IN)
+{
+VertexDescription description = (VertexDescription)0;
+float _Split_43b1c0bc10ced4888d815e0fc19eeda8_R_1_Float = IN.ObjectSpacePosition[0];
+float _Split_43b1c0bc10ced4888d815e0fc19eeda8_G_2_Float = IN.ObjectSpacePosition[1];
+float _Split_43b1c0bc10ced4888d815e0fc19eeda8_B_3_Float = IN.ObjectSpacePosition[2];
+float _Split_43b1c0bc10ced4888d815e0fc19eeda8_A_4_Float = 0;
+float _Step_ca72c9e627abf28484ef6c3e1eaa7b3a_Out_2_Float;
+Unity_Step_float(float(0.5), _Split_43b1c0bc10ced4888d815e0fc19eeda8_G_2_Float, _Step_ca72c9e627abf28484ef6c3e1eaa7b3a_Out_2_Float);
+float _Property_257d0b6101a2a989ba2ae2634ee637fc_Out_0_Float = _WaveSpeed;
+float _Multiply_f7fb969b738a198099f668892c080f66_Out_2_Float;
+Unity_Multiply_float_float(_Property_257d0b6101a2a989ba2ae2634ee637fc_Out_0_Float, IN.TimeParameters.x, _Multiply_f7fb969b738a198099f668892c080f66_Out_2_Float);
+float _Property_790dccf35778e58a99af8c306d10da8c_Out_0_Float = _WaveFrequency;
+float _Split_5422d82f034ecb8c8b860aab2a5e4ec7_R_1_Float = IN.WorldSpacePosition[0];
+float _Split_5422d82f034ecb8c8b860aab2a5e4ec7_G_2_Float = IN.WorldSpacePosition[1];
+float _Split_5422d82f034ecb8c8b860aab2a5e4ec7_B_3_Float = IN.WorldSpacePosition[2];
+float _Split_5422d82f034ecb8c8b860aab2a5e4ec7_A_4_Float = 0;
+float _Multiply_3e609e89b8476b829989b51afa7a5369_Out_2_Float;
+Unity_Multiply_float_float(_Property_790dccf35778e58a99af8c306d10da8c_Out_0_Float, _Split_5422d82f034ecb8c8b860aab2a5e4ec7_R_1_Float, _Multiply_3e609e89b8476b829989b51afa7a5369_Out_2_Float);
+float _Add_43dff4af387ada8e91bd38017a7ea280_Out_2_Float;
+Unity_Add_float(_Multiply_f7fb969b738a198099f668892c080f66_Out_2_Float, _Multiply_3e609e89b8476b829989b51afa7a5369_Out_2_Float, _Add_43dff4af387ada8e91bd38017a7ea280_Out_2_Float);
+float _Sine_ee9035d916e0c587a7dc9bc52b07f103_Out_1_Float;
+Unity_Sine_float(_Add_43dff4af387ada8e91bd38017a7ea280_Out_2_Float, _Sine_ee9035d916e0c587a7dc9bc52b07f103_Out_1_Float);
+float _Property_8a0277777cfaae858696acc5205705de_Out_0_Float = _WaveFrequency;
+float _Multiply_13249a46bb15a087aba01d3f51a25b4f_Out_2_Float;
+Unity_Multiply_float_float(_Split_5422d82f034ecb8c8b860aab2a5e4ec7_B_3_Float, _Property_8a0277777cfaae858696acc5205705de_Out_0_Float, _Multiply_13249a46bb15a087aba01d3f51a25b4f_Out_2_Float);
+float _Add_067d7a1c0c937b849d4bdb80ce2f4574_Out_2_Float;
+Unity_Add_float(_Multiply_f7fb969b738a198099f668892c080f66_Out_2_Float, _Multiply_13249a46bb15a087aba01d3f51a25b4f_Out_2_Float, _Add_067d7a1c0c937b849d4bdb80ce2f4574_Out_2_Float);
+float _Cosine_6aa0b00e559ab48dbc3480ade1e8422b_Out_1_Float;
+Unity_Cosine_float(_Add_067d7a1c0c937b849d4bdb80ce2f4574_Out_2_Float, _Cosine_6aa0b00e559ab48dbc3480ade1e8422b_Out_1_Float);
+float _Add_8860353d6edef887ada5f257d78a9da3_Out_2_Float;
+Unity_Add_float(_Sine_ee9035d916e0c587a7dc9bc52b07f103_Out_1_Float, _Cosine_6aa0b00e559ab48dbc3480ade1e8422b_Out_1_Float, _Add_8860353d6edef887ada5f257d78a9da3_Out_2_Float);
+float _Property_c676b0b999f1078d980b778220f22b9f_Out_0_Float = _WaveScale;
+float _Multiply_5ee0d2891d7f3e8c9d5fe1205387286d_Out_2_Float;
+Unity_Multiply_float_float(_Add_8860353d6edef887ada5f257d78a9da3_Out_2_Float, _Property_c676b0b999f1078d980b778220f22b9f_Out_0_Float, _Multiply_5ee0d2891d7f3e8c9d5fe1205387286d_Out_2_Float);
+float _Multiply_329e7824d7bdc88f8f6d2f428a0cf310_Out_2_Float;
+Unity_Multiply_float_float(_Step_ca72c9e627abf28484ef6c3e1eaa7b3a_Out_2_Float, _Multiply_5ee0d2891d7f3e8c9d5fe1205387286d_Out_2_Float, _Multiply_329e7824d7bdc88f8f6d2f428a0cf310_Out_2_Float);
+float _Add_22bcf2caf8dd2e8b9f97fb73c156db09_Out_2_Float;
+Unity_Add_float(_Split_43b1c0bc10ced4888d815e0fc19eeda8_G_2_Float, _Multiply_329e7824d7bdc88f8f6d2f428a0cf310_Out_2_Float, _Add_22bcf2caf8dd2e8b9f97fb73c156db09_Out_2_Float);
+float3 _Vector3_6b3583d72a02268c84ea2c699d24cbc9_Out_0_Vector3 = float3(_Split_43b1c0bc10ced4888d815e0fc19eeda8_R_1_Float, _Add_22bcf2caf8dd2e8b9f97fb73c156db09_Out_2_Float, _Split_43b1c0bc10ced4888d815e0fc19eeda8_B_3_Float);
+float3 _Preview_def36a597691b18e86332d21712c79f3_Out_1_Vector3;
+Unity_Preview_float3(_Vector3_6b3583d72a02268c84ea2c699d24cbc9_Out_0_Vector3, _Preview_def36a597691b18e86332d21712c79f3_Out_1_Vector3);
+description.Position = _Preview_def36a597691b18e86332d21712c79f3_Out_1_Vector3;
+description.Normal = IN.ObjectSpaceNormal;
+description.Tangent = IN.ObjectSpaceTangent;
+#if SHADERPASS != SHADERPASS_META
+float4 ecoTangent = float4(description.Tangent, 1);
+EcoBendVertex(description.Position, description.Normal, ecoTangent);
+description.Tangent = ecoTangent.xyz;
+#endif
+return description;
+}
+
+// Custom interpolators, pre surface
+#ifdef FEATURES_GRAPH_VERTEX
+Varyings CustomInterpolatorPassThroughFunc(inout Varyings output, VertexDescription input)
+{
+return output;
+}
+#define CUSTOMINTERPOLATOR_VARYPASSTHROUGH_FUNC
+#endif
+
+// Graph Pixel
+struct SurfaceDescription
+{
+};
+
+SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
+{
+SurfaceDescription surface = (SurfaceDescription)0;
+return surface;
+}
+
+// --------------------------------------------------
+// Build Graph Inputs
+#ifdef HAVE_VFX_MODIFICATION
+#define VFX_SRP_ATTRIBUTES Attributes
+#define VFX_SRP_VARYINGS Varyings
+#define VFX_SRP_SURFACE_INPUTS SurfaceDescriptionInputs
+#endif
+VertexDescriptionInputs BuildVertexDescriptionInputs(Attributes input)
+{
+    VertexDescriptionInputs output;
+    ZERO_INITIALIZE(VertexDescriptionInputs, output);
+
+    output.ObjectSpaceNormal =                          input.normalOS;
+    output.ObjectSpaceTangent =                         input.tangentOS.xyz;
+    output.ObjectSpacePosition =                        input.positionOS;
+    output.WorldSpacePosition =                         TransformObjectToWorld(input.positionOS);
+    output.TimeParameters =                             _TimeParameters.xyz;
+#if UNITY_ANY_INSTANCING_ENABLED
+#else // TODO: XR support for procedural instancing because in this case UNITY_ANY_INSTANCING_ENABLED is not defined and instanceID is incorrect.
+#endif
+
+    return output;
+}
+SurfaceDescriptionInputs BuildSurfaceDescriptionInputs(Varyings input)
+{
+    SurfaceDescriptionInputs output;
+    ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
+
+#ifdef HAVE_VFX_MODIFICATION
+#if VFX_USE_GRAPH_VALUES
+    uint instanceActiveIndex = asuint(UNITY_ACCESS_INSTANCED_PROP(PerInstance, _InstanceActiveIndex));
+    /* WARNING: $splice Could not find named fragment 'VFXLoadGraphValues' */
+#endif
+    /* WARNING: $splice Could not find named fragment 'VFXSetFragInputs' */
+
+#endif
+
+
+
+
+
+
+
+
+    #if UNITY_UV_STARTS_AT_TOP
+    #else
+    #endif
+
+
+#if UNITY_ANY_INSTANCING_ENABLED
+#else // TODO: XR support for procedural instancing because in this case UNITY_ANY_INSTANCING_ENABLED is not defined and instanceID is incorrect.
+#endif
+#if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+#define BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN output.FaceSign =                    IS_FRONT_VFACE(input.cullFace, true, false);
+#else
+#define BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN
+#endif
+#undef BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN
+
+        return output;
+}
+
+// --------------------------------------------------
+// Main
+
+#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/Varyings.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/DepthOnlyPass.hlsl"
+
+// --------------------------------------------------
+// Visual Effect Vertex Invocations
+#ifdef HAVE_VFX_MODIFICATION
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/VisualEffectVertex.hlsl"
+#endif
+
+ENDHLSL
+}
 Pass
 {
     Name "DepthNormals"

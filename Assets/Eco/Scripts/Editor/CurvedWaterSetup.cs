@@ -102,6 +102,7 @@ namespace Eco.Scripts.EditorTools
                     return match.Value.Replace("return description;", "#if SHADERPASS != SHADERPASS_META\n" + bend + "#endif\nreturn description;");
                 }, RegexOptions.Singleline);
             if (hooks == 0) throw new InvalidOperationException("No water vertex passes found.");
+            shader = AtmosphereSurfacePass.AddToShader(shader);
             Directory.CreateDirectory(Path.GetDirectoryName(ShaderPath));
             File.WriteAllText(ShaderPath, "// Generated from the installed Bitgem water graph by CurvedWaterSetup.\n" + shader);
             AssetDatabase.ImportAsset(ShaderPath, ImportAssetOptions.ForceSynchronousImport);
