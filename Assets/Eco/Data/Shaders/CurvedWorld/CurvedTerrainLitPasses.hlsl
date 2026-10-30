@@ -6,6 +6,7 @@
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/GBufferOutput.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
+#include "Assets/Eco/Data/Shaders/CurvedWorld/TerrainVariation.hlsl"
 #include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 
@@ -151,10 +152,10 @@ void NormalMapMix(float4 uvSplat01, float4 uvSplat23, inout half4 splatControl, 
 {
     #if defined(_NORMALMAP)
         half3 nrm = half(0.0);
-        nrm += splatControl.r * UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal0, sampler_Normal0, uvSplat01.xy), _NormalScale0);
-        nrm += splatControl.g * UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal1, sampler_Normal0, uvSplat01.zw), _NormalScale1);
-        nrm += splatControl.b * UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal2, sampler_Normal0, uvSplat23.xy), _NormalScale2);
-        nrm += splatControl.a * UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal3, sampler_Normal0, uvSplat23.zw), _NormalScale3);
+        nrm += splatControl.r * UnpackNormalScale(EcoSampleTerrain(TEXTURE2D_ARGS(_Normal0, sampler_Normal0), uvSplat01.xy), _NormalScale0);
+        nrm += splatControl.g * UnpackNormalScale(EcoSampleTerrain(TEXTURE2D_ARGS(_Normal1, sampler_Normal0), uvSplat01.zw), _NormalScale1);
+        nrm += splatControl.b * UnpackNormalScale(EcoSampleTerrain(TEXTURE2D_ARGS(_Normal2, sampler_Normal0), uvSplat23.xy), _NormalScale2);
+        nrm += splatControl.a * UnpackNormalScale(EcoSampleTerrain(TEXTURE2D_ARGS(_Normal3, sampler_Normal0), uvSplat23.zw), _NormalScale3);
 
         // avoid risk of NaN when normalizing.
         #if !HALF_IS_FLOAT
@@ -171,10 +172,10 @@ void SplatmapMix(float4 uvMainAndLM, float4 uvSplat01, float4 uvSplat23, inout h
 {
     half4 diffAlbedo[4];
 
-    diffAlbedo[0] = SAMPLE_TEXTURE2D(_Splat0, sampler_Splat0, uvSplat01.xy);
-    diffAlbedo[1] = SAMPLE_TEXTURE2D(_Splat1, sampler_Splat0, uvSplat01.zw);
-    diffAlbedo[2] = SAMPLE_TEXTURE2D(_Splat2, sampler_Splat0, uvSplat23.xy);
-    diffAlbedo[3] = SAMPLE_TEXTURE2D(_Splat3, sampler_Splat0, uvSplat23.zw);
+    diffAlbedo[0] = EcoSampleTerrain(TEXTURE2D_ARGS(_Splat0, sampler_Splat0), uvSplat01.xy);
+    diffAlbedo[1] = EcoSampleTerrain(TEXTURE2D_ARGS(_Splat1, sampler_Splat0), uvSplat01.zw);
+    diffAlbedo[2] = EcoSampleTerrain(TEXTURE2D_ARGS(_Splat2, sampler_Splat0), uvSplat23.xy);
+    diffAlbedo[3] = EcoSampleTerrain(TEXTURE2D_ARGS(_Splat3, sampler_Splat0), uvSplat23.zw);
 
     half4 diffuseAlpha = half4(diffAlbedo[0].a, diffAlbedo[1].a, diffAlbedo[2].a, diffAlbedo[3].a);
     half4 smoothnessConstants = half4(_Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3);
@@ -381,10 +382,10 @@ void ComputeMasks(out half4 masks[4], half4 hasMask, Varyings IN)
     masks[3] = 0.5h;
 
 #ifdef _MASKMAP
-    masks[0] = lerp(masks[0], SAMPLE_TEXTURE2D(_Mask0, sampler_Mask0, IN.uvSplat01.xy), hasMask.x);
-    masks[1] = lerp(masks[1], SAMPLE_TEXTURE2D(_Mask1, sampler_Mask0, IN.uvSplat01.zw), hasMask.y);
-    masks[2] = lerp(masks[2], SAMPLE_TEXTURE2D(_Mask2, sampler_Mask0, IN.uvSplat23.xy), hasMask.z);
-    masks[3] = lerp(masks[3], SAMPLE_TEXTURE2D(_Mask3, sampler_Mask0, IN.uvSplat23.zw), hasMask.w);
+    masks[0] = lerp(masks[0], EcoSampleTerrain(TEXTURE2D_ARGS(_Mask0, sampler_Mask0), IN.uvSplat01.xy), hasMask.x);
+    masks[1] = lerp(masks[1], EcoSampleTerrain(TEXTURE2D_ARGS(_Mask1, sampler_Mask0), IN.uvSplat01.zw), hasMask.y);
+    masks[2] = lerp(masks[2], EcoSampleTerrain(TEXTURE2D_ARGS(_Mask2, sampler_Mask0), IN.uvSplat23.xy), hasMask.z);
+    masks[3] = lerp(masks[3], EcoSampleTerrain(TEXTURE2D_ARGS(_Mask3, sampler_Mask0), IN.uvSplat23.zw), hasMask.w);
 #endif
 
     masks[0] *= _MaskMapRemapScale0.rgba;
@@ -465,6 +466,7 @@ void SplatmapFragment(
 #endif
 
     InputData inputData;
+    albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);
     InitializeInputData(IN, normalTS, inputData);
     SetupTerrainDebugTextureData(inputData, IN.uvMainAndLM.xy);
 

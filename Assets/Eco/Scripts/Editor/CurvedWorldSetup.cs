@@ -173,13 +173,29 @@ namespace Eco.Scripts.EditorTools
             passes = passes.Replace(lastInclude, lastInclude + "\n" + GrassGrowth)
                 .Replace(controlSample, controlSample + "\n#ifndef TERRAIN_SPLAT_ADDPASS\n" +
                     "    EcoGrassGroundGrowth(splatControl, splatUV, _Control_TexelSize.zw);\n#endif");
+            passes = passes.Replace(lastInclude, lastInclude + "\n#include \"" + Folder + "TerrainVariation.hlsl\"");
+            passes = AddTerrainSampling(passes);
+            const string initializeInput = "    InitializeInputData(IN, normalTS, inputData);";
+            if (!passes.Contains(initializeInput))
+                throw new InvalidOperationException("URP terrain fragment changed: macro colour hook missing.");
+            passes = passes.Replace(initializeInput,
+                "    albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);\n" + initializeInput);
             Write("CurvedTerrainLitPasses.hlsl", passes);
+
+            // Generate the distant colour/metallic cache using the same random samples as
+            // the near passes. Macro colour remains world-space and is applied at draw time.
+            string basemap = File.ReadAllText(Urp + "Shaders/Terrain/TerrainLitBasemapGen.shader")
+                .Replace("Hidden/Universal Render Pipeline/Terrain/Lit (Basemap Gen)", "Hidden/Eco/Curved World/Terrain Basemap Gen")
+                .Replace("\"TerrainLitInput.hlsl\"", "\"" + Urp + "Shaders/Terrain/TerrainLitInput.hlsl\"")
+                .Replace("\"TerrainLitPasses.hlsl\"", "\"" + Folder + "CurvedTerrainLitPasses.hlsl\"");
+            Write("TerrainLitBasemapGen.shader", AddTerrainSampling(basemap));
 
             foreach (var file in new[] { "TerrainLit.shader", "TerrainLitAdd.shader", "TerrainLitBase.shader" })
             {
                 string terrain = File.ReadAllText(Urp + "Shaders/Terrain/" + file);
                 terrain = terrain.Replace("Hidden/Universal Render Pipeline/Terrain/Lit (Add Pass)", "Hidden/Eco/Curved World/Terrain Add")
                     .Replace("Hidden/Universal Render Pipeline/Terrain/Lit (Base Pass)", "Hidden/Eco/Curved World/Terrain Base")
+                    .Replace("Hidden/Universal Render Pipeline/Terrain/Lit (Basemap Gen)", "Hidden/Eco/Curved World/Terrain Basemap Gen")
                     .Replace("Shader \"Universal Render Pipeline/Terrain/Lit\"", "Shader \"Eco/Curved World/Terrain Lit\"");
                 // Leave meta/lightmap baking flat. All real-time passes use the same deformation.
                 var blocks = terrain.Split("HLSLPROGRAM");
@@ -234,6 +250,24 @@ namespace Eco.Scripts.EditorTools
             return shader.Replace(line, Core + "#define " + entry + " EcoOriginal" + entry + "\n" + line +
                 "\n#undef " + entry + "\nVaryings " + entry + "(Attributes input)\n{\n" +
                 "UNITY_SETUP_INSTANCE_ID(input);\n" + bend + "\nreturn EcoOriginal" + entry + "(input);\n}\n");
+        }
+
+        private static string AddTerrainSampling(string source)
+        {
+            // Replace only layer samples: control, holes, growth and cached base maps keep
+            // their original UVs. All channels share offsets so normal/mask detail matches.
+            int replacements = 0;
+            string result = Regex.Replace(source,
+                @"SAMPLE_TEXTURE2D\((_Splat[0-3]|_Normal[0-3]|_Mask[0-3]),\s*(sampler_\w+),\s*([^\)]+)\)",
+                match =>
+                {
+                    replacements++;
+                    return "EcoSampleTerrain(TEXTURE2D_ARGS(" + match.Groups[1].Value + ", " +
+                           match.Groups[2].Value + "), " + match.Groups[3].Value + ")";
+                });
+            if (replacements == 0)
+                throw new InvalidOperationException("URP terrain layer sampling changed: anti-tiling hook missing.");
+            return result;
         }
 
         private static void Write(string file, string content)

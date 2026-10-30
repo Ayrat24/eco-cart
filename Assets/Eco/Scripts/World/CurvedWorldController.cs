@@ -17,6 +17,7 @@ namespace Eco.Scripts.World
 
         private static readonly int BendId = Shader.PropertyToID("_EcoWorldBend");
         private static readonly int PreviousBendId = Shader.PropertyToID("_EcoWorldBendPrevious");
+        private static readonly int TerrainVariationId = Shader.PropertyToID("_EcoTerrainVariation");
         private Vector4 _current;
         private Vector4 _previous;
         private int _lastFrame = -1;
@@ -108,6 +109,19 @@ namespace Eco.Scripts.World
             _current = ReadSettings();
             Shader.SetGlobalVector(BendId, _current);
             Shader.SetGlobalVector(PreviousBendId, Application.isPlaying ? _previous : _current);
+            PublishTerrainVariation(settings != null ? settings.TerrainVariation : Vector4.zero);
+        }
+
+        private static void PublishTerrainVariation(Vector4 variation)
+        {
+            var previous = Shader.GetGlobalVector(TerrainVariationId);
+            if (previous == variation) return;
+            Shader.SetGlobalVector(TerrainVariationId, variation);
+            // Distant terrain caches the layer samples. Rebuild only when anti-tiling changes;
+            // macro colour is evaluated in world space in both near and distant passes.
+            if (previous.x == variation.x) return;
+            foreach (var terrain in Terrain.activeTerrains)
+                if (terrain.terrainData != null) terrain.terrainData.SetBaseMapDirty();
         }
 
         private void OnValidate()
@@ -137,6 +151,7 @@ namespace Eco.Scripts.World
             Active = null;
             Shader.SetGlobalVector(BendId, Vector4.zero);
             Shader.SetGlobalVector(PreviousBendId, Vector4.zero);
+            PublishTerrainVariation(Vector4.zero);
         }
     }
 }

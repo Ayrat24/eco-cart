@@ -24,6 +24,14 @@ namespace Eco.Scripts.World
         [Tooltip("Falloff shape within the rim. The effect is always zero outside its thickness.")]
         [SerializeField, Range(0.5f, 3)] private float atmosphereSoftness = 1.3f;
 
+        [Header("Terrain")]
+        [Tooltip("Blends randomly offset texture samples to hide repetition. Zero restores regular tiling; one gives the full effect.")]
+        [SerializeField, Range(0, 1)] private float terrainAntiTiling = 1;
+        [Tooltip("Subtle brightness and warm/cool variation across broad patches of ground. Zero disables it.")]
+        [SerializeField, Range(0, 0.5f)] private float terrainColourVariation = 0.16f;
+        [Tooltip("Size of the broad ground colour patches in metres. Does not change the detail texture's scale.")]
+        [SerializeField, Min(1)] private float terrainColourPatchSize = 22;
+
         public event Action Changed;
         public float WorldRadius => worldRadius;
         public float DistortionStrength => distortionStrength;
@@ -35,6 +43,8 @@ namespace Eco.Scripts.World
         public float AtmosphereStrength => atmosphereStrength;
         public float AtmosphereThickness => atmosphereThickness;
         public float AtmosphereSoftness => atmosphereSoftness;
+        public Vector4 TerrainVariation => new Vector4(terrainAntiTiling, terrainColourVariation,
+            1 / Mathf.Max(1, terrainColourPatchSize), 0);
 
         public void InitializeFromCurvature(float curvature, float interactionRadius)
         {
@@ -52,6 +62,9 @@ namespace Eco.Scripts.World
             atmosphereStrength = Mathf.Clamp01(atmosphereStrength);
             atmosphereThickness = Mathf.Clamp(atmosphereThickness, 0.1f, 20);
             atmosphereSoftness = Mathf.Clamp(atmosphereSoftness, 0.5f, 3);
+            terrainAntiTiling = Mathf.Clamp01(terrainAntiTiling);
+            terrainColourVariation = Mathf.Clamp(terrainColourVariation, 0, 0.5f);
+            terrainColourPatchSize = Mathf.Max(1, terrainColourPatchSize);
             Changed?.Invoke();
         }
     }

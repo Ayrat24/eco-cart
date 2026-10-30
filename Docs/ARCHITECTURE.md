@@ -37,6 +37,21 @@ All game code lives in `Assets/Eco/Scripts/` under the `Eco.Scripts.*` namespace
 | Settings | `Settings` (SO) | Detail quality, language, free-upgrades cheat; stored in `PlayerPrefs`. |
 | Profiling | `StressTest`, `StressTestSeeder`, `StressTestDriver`, `StressTestConfig`, `EcoProfilerMarkers` | Worst-case stress test and profiler markers on the heavy paths; see [PROFILING.md](PROFILING.md). Editor menus live in `Scripts/Editor/` (`Eco.Scripts.EditorTools`). |
 
+## Terrain appearance
+
+**Eco → Rendering → World Visual Settings** controls terrain anti-tiling and broad colour variation.
+`Terrain Anti Tiling` blends three randomly offset samples per layer (zero restores regular tiling;
+one is the default). `Terrain Colour Variation` defaults to 0.16, with 22 m `Terrain Colour Patch Size`.
+The patches stay fixed in world XZ and do not change the texture's detail scale, terrain painting,
+or slime-to-grass growth. The same sampling offsets are used for diffuse, normal and mask maps.
+
+`TerrainVariation.hlsl` contains the sampling and colour functions. `CurvedWorldSetup.GenerateShaders`
+injects them into the terrain passes and generates a matching `TerrainLitBasemapGen.shader` for
+distant terrain. Macro colour is applied at draw time to both near and distant terrain; changing
+anti-tiling invalidates the distant colour cache. `CurvedWorldController` publishes the settings as
+shader globals in edit mode and play mode. Regenerate adapters after URP updates instead of editing
+the generated passes directly.
+
 ## Reactive state
 
 R3 is used for observable state: `CurrencyManager.CurrentMoney` (`ReactiveProperty<AlphabeticNotation>`), the `PlayerStats` stats, `UpgradeManager.OnUpgradeBought`,`SaveManager.OnChunkUpdated`, `UnlockTracker.OnUnlocked`. Subscribe in `Init` and dispose in `Clear`/`OnDestroy`.

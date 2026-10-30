@@ -114,6 +114,28 @@ Same machine and settings as the hex baseline, render radius 7. Baseline `stress
 
 Since the trail only paints bare ground, it lays almost nothing in the stress world, which is green apart from the clearing and pile hexes. A run with the trail (`stress_20261030_131111`) and one with its object disabled (`_131527`) match on frame time (Collect 9.23 / 8.99 ms, Traverse 8.40 / 8.40 ms) and GC allocation per phase. `TerrainPainter.ResetTerrain` costs about 27 ms at load against 13 ms before the trail. The extra goes on zeroing the two 1024² growth maps (copied from a cleared native buffer, about 1.4 ms each; a per-texel loop took 7 ms each), the per-cell claim grid, and scanning the baked splat map for existing grass (about 2 ms).
 
+### Terrain anti-tiling (2026-10-30)
+
+Baseline `stress_20261030_161827`; enabled `stress_20261030_162336` and `_162559`.
+Same editor, RTX 3060 Ti, 3840×2160, High detail, 279 seeded land chunks / 2,790 scrap / 631 trees.
+Anti-tiling strength 1, macro colour strength 0.16, patch size 22 m.
+
+| Phase | baseline avg ms | enabled avg ms (two runs) |
+|---|---|---|
+| Idle | 8.27 | 8.39 / 8.16 |
+| Plant | 7.80 | 7.94 / 7.85 |
+| Collect | 9.28 | 9.34 / 9.59 |
+| Traverse | 9.07 | 8.68 / 8.81 |
+| Churn | 6.60 | 7.71 / 7.75 |
+
+The visual improvement costs about 1.1 ms in this worst-case Churn comparison; other phases
+remain close to baseline. These are full-frame editor measurements, not isolated GPU timings.
+Each terrain layer uses three samples at full strength instead of one. Intermediate strengths
+also sample the original texture (four samples); zero uses the original single sample.
+Macro variation adds two procedural noise evaluations per terrain pixel. There are no new
+terrain passes or textures. C#, all four terrain shaders and their normal/mask/height-blend
+variants compiled without errors; near and forced distant terrain were visually checked.
+
 ## Fixed bottlenecks
 
 These were found by the first baseline and fixed on 2026-10-25.

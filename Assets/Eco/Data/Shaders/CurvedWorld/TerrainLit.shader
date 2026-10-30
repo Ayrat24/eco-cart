@@ -325,7 +325,7 @@ Shader "Eco/Curved World/Terrain Lit"
     }
     Dependency "AddPassShader" = "Hidden/Eco/Curved World/Terrain Add"
     Dependency "BaseMapShader" = "Hidden/Eco/Curved World/Terrain Base"
-    Dependency "BaseMapGenShader" = "Hidden/Universal Render Pipeline/Terrain/Lit (Basemap Gen)"
+    Dependency "BaseMapGenShader" = "Hidden/Eco/Curved World/Terrain Basemap Gen"
 
     CustomEditor "UnityEditor.Rendering.Universal.TerrainLitShaderGUI"
 

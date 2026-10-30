@@ -13,7 +13,7 @@ namespace Eco.Scripts.EditorTools
 
         public override void OnInspectorGUI()
         {
-            EditorGUILayout.HelpBox("Shared world curvature and atmosphere settings. Larger World Radius means a flatter-looking world. Atmosphere blends the curved horizon into the sky; Thickness and Softness control its spread. Map dimensions stay the same.", MessageType.Info);
+            EditorGUILayout.HelpBox("Shared world curvature, atmosphere and terrain settings. Larger World Radius means a flatter-looking world. Terrain Anti Tiling breaks up repeated textures; Colour Variation and Patch Size add broad ground variation without changing texture detail scale.", MessageType.Info);
             if (DrawDefaultInspector())
             {
                 EditorApplication.QueuePlayerLoopUpdate();
