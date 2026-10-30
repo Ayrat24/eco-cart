@@ -174,12 +174,15 @@ namespace Eco.Scripts.EditorTools
                 .Replace(controlSample, controlSample + "\n#ifndef TERRAIN_SPLAT_ADDPASS\n" +
                     "    EcoGrassGroundGrowth(splatControl, splatUV, _Control_TexelSize.zw);\n#endif");
             passes = passes.Replace(lastInclude, lastInclude + "\n#include \"" + Folder + "TerrainVariation.hlsl\"");
+            passes = passes.Replace(lastInclude, lastInclude + "\n#include \"" + Folder + "TerrainSoilDetail.hlsl\"");
             passes = AddTerrainSampling(passes);
             const string initializeInput = "    InitializeInputData(IN, normalTS, inputData);";
             if (!passes.Contains(initializeInput))
                 throw new InvalidOperationException("URP terrain fragment changed: macro colour hook missing.");
             passes = passes.Replace(initializeInput,
-                "    albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);\n" + initializeInput);
+                "    albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);\n" + initializeInput +
+                "\n#if !defined(TERRAIN_SPLAT_BASEPASS) && !defined(TERRAIN_SPLAT_ADDPASS)\n" +
+                "    EcoApplySoilDetail(IN.positionWS, saturate(dot(splatControl, _EcoSoilLayerMask)), inputData.normalWS, albedo);\n#endif");
             Write("CurvedTerrainLitPasses.hlsl", passes);
 
             // Generate the distant colour/metallic cache using the same random samples as

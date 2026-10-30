@@ -18,6 +18,9 @@ namespace Eco.Scripts.World
         private static readonly int BendId = Shader.PropertyToID("_EcoWorldBend");
         private static readonly int PreviousBendId = Shader.PropertyToID("_EcoWorldBendPrevious");
         private static readonly int TerrainVariationId = Shader.PropertyToID("_EcoTerrainVariation");
+        private static readonly int SoilDetailId = Shader.PropertyToID("_EcoSoilDetail");
+        private static readonly int SoilDetailMapId = Shader.PropertyToID("_EcoSoilDetailMap");
+        private static readonly int SoilLayerMaskId = Shader.PropertyToID("_EcoSoilLayerMask");
         private Vector4 _current;
         private Vector4 _previous;
         private int _lastFrame = -1;
@@ -110,6 +113,9 @@ namespace Eco.Scripts.World
             Shader.SetGlobalVector(BendId, _current);
             Shader.SetGlobalVector(PreviousBendId, Application.isPlaying ? _previous : _current);
             PublishTerrainVariation(settings != null ? settings.TerrainVariation : Vector4.zero);
+            Shader.SetGlobalVector(SoilDetailId, settings != null ? settings.SoilDetail : new Vector4(0, 0, 1, 1));
+            Shader.SetGlobalTexture(SoilDetailMapId, settings != null ? settings.SoilDetailTexture : null);
+            Shader.SetGlobalVector(SoilLayerMaskId, settings != null ? settings.SoilLayerMask : Vector4.zero);
         }
 
         private static void PublishTerrainVariation(Vector4 variation)
@@ -152,6 +158,9 @@ namespace Eco.Scripts.World
             Shader.SetGlobalVector(BendId, Vector4.zero);
             Shader.SetGlobalVector(PreviousBendId, Vector4.zero);
             PublishTerrainVariation(Vector4.zero);
+            Shader.SetGlobalVector(SoilDetailId, new Vector4(0, 0, 1, 1));
+            Shader.SetGlobalTexture(SoilDetailMapId, null);
+            Shader.SetGlobalVector(SoilLayerMaskId, Vector4.zero);
         }
     }
 }

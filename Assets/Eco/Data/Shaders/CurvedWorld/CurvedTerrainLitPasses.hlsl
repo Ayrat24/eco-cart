@@ -6,6 +6,7 @@
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/GBufferOutput.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
+#include "Assets/Eco/Data/Shaders/CurvedWorld/TerrainSoilDetail.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/TerrainVariation.hlsl"
 #include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
@@ -468,6 +469,9 @@ void SplatmapFragment(
     InputData inputData;
     albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);
     InitializeInputData(IN, normalTS, inputData);
+#if !defined(TERRAIN_SPLAT_BASEPASS) && !defined(TERRAIN_SPLAT_ADDPASS)
+    EcoApplySoilDetail(IN.positionWS, saturate(dot(splatControl, _EcoSoilLayerMask)), inputData.normalWS, albedo);
+#endif
     SetupTerrainDebugTextureData(inputData, IN.uvMainAndLM.xy);
 
 #if defined(_DBUFFER)

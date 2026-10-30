@@ -136,6 +136,27 @@ Macro variation adds two procedural noise evaluations per terrain pixel. There a
 terrain passes or textures. C#, all four terrain shaders and their normal/mask/height-blend
 variants compiled without errors; near and forced distant terrain were visually checked.
 
+### Soil pores and grain (2026-10-30)
+
+Baseline with anti-tiling already enabled: `stress_20261030_163608`; with soil surface detail:
+`stress_20261030_164112`. Same 3840×2160 / High detail / RTX 3060 Ti setup as above.
+
+| Phase | baseline avg ms | soil detail avg ms |
+|---|---|---|
+| Idle | 7.91 | 8.16 |
+| Plant | 7.63 | 7.74 |
+| Collect | 9.49 | 9.46 |
+| Traverse | 8.73 | 8.75 |
+| Churn | 7.80 | 7.83 |
+
+Non-load averages are within 0.25 ms of baseline in this comparison. This is a full-frame
+editor measurement; it does not isolate GPU cost. Soil detail adds two filtered texture
+samples to visible dirt, using one 512² linear RGB24 texture with mipmaps (about 1 MiB on
+this platform). A uniform strength check and spatial fade skip sampling on grass and far
+terrain. The texture is generated offline; there is no runtime texture generation or new
+render pass. Normal/mask/height-blend terrain variants compiled without shader messages,
+and on/off captures at gameplay distance checked pores and the grass boundary.
+
 ## Fixed bottlenecks
 
 These were found by the first baseline and fixed on 2026-10-25.

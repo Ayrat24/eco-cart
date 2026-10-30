@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldVisualSettings
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldVisualSettings
   distortionEnabled: 1
-  worldRadius: 138.6
+  worldRadius: 250
   distortionStrength: 1
   flatRadius: 6
   atmosphereEnabled: 1
@@ -25,3 +25,9 @@ MonoBehaviour:
   terrainAntiTiling: 1
   terrainColourVariation: 0.16
   terrainColourPatchSize: 22
+  soilDetailTexture: {fileID: 2800000, guid: 4aa62d78d8061a94eb1a9043724d9bd4, type: 3}
+  soilLayerIndex: 0
+  soilReliefStrength: 0.85
+  soilCavityStrength: 0.22
+  soilDetailSize: 2.4
+  soilDetailFadeDistance: 35

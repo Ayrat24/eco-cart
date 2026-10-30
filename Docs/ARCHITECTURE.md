@@ -52,6 +52,20 @@ anti-tiling invalidates the distant colour cache. `CurvedWorldController` publis
 shader globals in edit mode and play mode. Regenerate adapters after URP updates instead of editing
 the generated passes directly.
 
+The **Soil Surface Detail** settings add shallow pore/clump normal relief and cavity shading
+to the selected dirt channel in the first terrain pass (layer 0 in this world). Defaults are
+relief 0.85, cavity 0.22, a 2.4 m detail tile and a 35 m fade distance. `TerrainSoilDetail.hlsl`
+samples one seamless gradient/cavity texture at two rotated scales. Screen-space footprint
+and camera distance fade out unresolved grain; the final splat weights fade the effect away
+as grass grows. No terrain geometry, collision or navigation changes are involved. Detail is
+omitted from the distant base pass, normally used beyond 1,000 m (keep its transition beyond
+the detail fade distance).
+
+**Eco → Rendering → Rebuild Soil Detail Texture** deterministically rebuilds
+`Assets/Eco/Data/Textures/Terrain/SoilDetail.png`. This is linear, uncompressed, mipmapped data
+(RG signed height gradient, B cavity), not a Unity normal-map import. The shared settings
+reference the texture so it is included in player builds; runtime code only binds it.
+
 ## Reactive state
 
 R3 is used for observable state: `CurrencyManager.CurrentMoney` (`ReactiveProperty<AlphabeticNotation>`), the `PlayerStats` stats, `UpgradeManager.OnUpgradeBought`,`SaveManager.OnChunkUpdated`, `UnlockTracker.OnUnlocked`. Subscribe in `Init` and dispose in `Clear`/`OnDestroy`.

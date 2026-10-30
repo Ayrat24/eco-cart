@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5e444e41b2709f41a2fb21a3f7d9db1, type: 3}
   m_Name: SlimeTrailSettings
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.SlimeTrailSettings
-  lifetime: 5
-  width: 1.3
+  lifetime: 2
+  width: 1
   widthWobble: 0.15
   pointSpacing: 0.35
   maxGap: 3
@@ -33,8 +33,7 @@ MonoBehaviour:
   dryGloss: 0.7
   lumpFrequency: 7
   lumpStrength: 0.12
-  growDelay: 3
-  growDuration: 10
-  grassDetailWidth: 1.4
-  grassTextureWidth: 2.6
-  grassPaintInterval: 1
+  growDelay: 0.3
+  growDuration: 1
+  grassDetailWidth: 1
+  grassTextureWidth: 2
