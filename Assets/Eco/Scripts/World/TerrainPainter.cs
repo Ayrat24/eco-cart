@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Profiling;
@@ -12,14 +11,28 @@ namespace Eco.Scripts.World
         // when its chunk respawns. Keyed by everything that affects the result.
         private static readonly HashSet<(int layer, int x, int z, int radius, int density)> PaintedCircles = new();
         private static readonly List<PaintCircle> PendingCircles = new();
+        // Growing grass is painted in batches this long before the earliest grow start among them
+        private const float GrowthPaintLead = 0.1f;
+        // _groundClaims value for ground that is grass already (baked, or painted by PaintGrass)
+        private const int OtherGrass = -1;
+
         private static readonly List<GrowCircle> PendingGrowth = new();
+        // Ground cells claimed by GrowGrass, stamped in GrassGrowthMap with the next batch
+        private static readonly List<(int x, int z, float grownAt, float growDuration)> PendingGroundStamps = new();
         // Detail cells whose ground is growing the grass layer on the GPU, in stamp order. Once grown they go into
         // the alphamap in batches, so the green stays when the terrain shader stops reading the growth map.
         private static readonly Queue<(int x, int z, float grownAt)> GrowingGround = new();
         private static readonly List<Vector2Int> PendingGround = new();
-        private static BitArray _groundStamped;
-        private static int _groundCommitGeneration;
+        // Whose each detail cell's ground is: 0 bare, OtherGrass, or the claim GrowGrass was given for it
+        private static int[] _groundClaims;
+        private static int _detailWidth;
+        private static int _detailHeight;
+        private static Vector3 _terrainPosition;
+        private static Vector2 _cellsPerMetre;
+        private static int _generation;
         private static bool _groundCommitScheduled;
+        private static bool _growthPaintScheduled;
+        private static float _growthPaintAt = float.MaxValue;
         private static bool _flushScheduled;
         private static int _grassLayer = -1;
         private static TerrainData _terrainCopy;
@@ -36,7 +49,6 @@ namespace Eco.Scripts.World
         {
             public Vector3 WorldPosition;
             public float BladesRadius;
-            public float GroundRadius;
             public int GrassDensity;
             public float GrownAt;
             public float GrowDuration;
@@ -53,10 +65,13 @@ namespace Eco.Scripts.World
             PaintedCircles.Clear();
             PendingCircles.Clear();
             PendingGrowth.Clear();
+            PendingGroundStamps.Clear();
             GrowingGround.Clear();
             PendingGround.Clear();
-            _groundCommitGeneration++;
+            _generation++;
             _groundCommitScheduled = false;
+            _growthPaintScheduled = false;
+            _growthPaintAt = float.MaxValue;
             _flushScheduled = false;
 
             var terrain = Terrain.activeTerrain;
@@ -70,8 +85,65 @@ namespace Eco.Scripts.World
                                  "terrain; save the world in the World Editor. Grass won't be painted.");
             }
 
-            _groundStamped = new BitArray(data.detailWidth * data.detailHeight);
-            GrassGrowthMap.Reset(data, terrain.transform.position, _grassLayer);
+            _detailWidth = data.detailWidth;
+            _detailHeight = data.detailHeight;
+            _terrainPosition = terrain.transform.position;
+            _cellsPerMetre = new Vector2(_detailWidth / data.size.x, _detailHeight / data.size.z);
+            _groundClaims = new int[_detailWidth * _detailHeight];
+            ClaimBakedGrass(data);
+
+            GrassGrowthMap.Reset(data, _terrainPosition, _grassLayer);
+        }
+
+        // Ground the World Editor baked as the grass layer is grass already
+        private static void ClaimBakedGrass(TerrainData data)
+        {
+            if (_grassLayer < 0)
+            {
+                return;
+            }
+
+            var texture = data.GetAlphamapTexture(_grassLayer / 4);
+            if (texture == null || !texture.isReadable || texture.format != TextureFormat.RGBA32)
+            {
+                return;
+            }
+
+            int channel = _grassLayer % 4;
+            int width = texture.width;
+            var pixels = texture.GetPixelData<Color32>(0);
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                var pixel = pixels[i];
+                byte weight = channel switch { 0 => pixel.r, 1 => pixel.g, 2 => pixel.b, _ => pixel.a };
+                if (weight >= 128)
+                {
+                    ClaimTexelAsGrass(data, i % width, i / width);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Whether the ground at <paramref name="worldPosition"/> is grass, or is growing it. Ground that
+        /// <see cref="GrowGrass"/> claimed with <paramref name="ignoreClaimsFrom"/> or a later claim counts as bare,
+        /// so a caller can tell grass it is laying down right now from grass that was there before.
+        /// </summary>
+        public static bool IsGrass(Vector3 worldPosition, int ignoreClaimsFrom = int.MaxValue)
+        {
+            if (_groundClaims == null)
+            {
+                return false;
+            }
+
+            int x = Mathf.FloorToInt((worldPosition.x - _terrainPosition.x) * _cellsPerMetre.x);
+            int z = Mathf.FloorToInt((worldPosition.z - _terrainPosition.z) * _cellsPerMetre.y);
+            if (x < 0 || z < 0 || x >= _detailWidth || z >= _detailHeight)
+            {
+                return false;
+            }
+
+            int claim = _groundClaims[z * _detailWidth + x];
+            return claim == OtherGrass || (claim > 0 && claim < ignoreClaimsFrom);
         }
 
         /// <summary>True for the play-mode copy made by <see cref="ResetTerrain"/>, which is safe to change.</summary>
@@ -133,33 +205,103 @@ namespace Eco.Scripts.World
         }
 
         /// <summary>
-        /// Queues grass that grows in: detail cells whose centre is within <paramref name="bladesRadius"/> metres
-        /// get grass details (by detail quality), and those within <paramref name="groundRadius"/> the grass layer
-        /// in their ground. Both stay hidden until <paramref name="growStart"/> (<see cref="Time.time"/>), then grow
-        /// in over <paramref name="growDuration"/> seconds on the GPU (<see cref="GrassGrowthMap"/>); the grown
-        /// ground is written into the alphamap in batches afterwards. The cell under the centre always gets both
-        /// unless its radius is 0. Cells that already have grass details keep them as they are. Painted with the
-        /// next frame's batch; queue it at least a frame before <paramref name="growStart"/>.
+        /// Grass that grows in. The bare ground of detail cells whose centre is within
+        /// <paramref name="groundRadius"/> metres is claimed at once with <paramref name="claim"/> (positive; see
+        /// <see cref="IsGrass"/>) and grows the grass layer. Cells within <paramref name="bladesRadius"/> whose
+        /// ground was claimed this way and that have no grass details yet get details (by detail quality). Both
+        /// stay hidden until <paramref name="growStart"/> (<see cref="Time.time"/>), then grow in over
+        /// <paramref name="growDuration"/> seconds on the GPU (<see cref="GrassGrowthMap"/>); the grown ground is
+        /// written into the alphamap in batches afterwards. Ground that is grass already is left alone. The cell
+        /// under the centre is always included unless its radius is 0. Painted in a batch shortly before the
+        /// earliest grow start.
         /// </summary>
         public static void GrowGrass(Vector3 worldPosition, float bladesRadius, float groundRadius, float growStart,
-            float growDuration)
+            float growDuration, int claim)
         {
             if (_grassLayer < 0)
             {
                 return;
             }
 
-            int density = GrassDensity();
-            PendingGrowth.Add(new GrowCircle
-            {
-                WorldPosition = worldPosition,
-                BladesRadius = density > 0 ? bladesRadius : 0f,
-                GroundRadius = groundRadius,
-                GrassDensity = density,
-                GrownAt = growStart + growDuration,
-                GrowDuration = growDuration
-            });
+            float grownAt = growStart + growDuration;
+            ClaimGround(worldPosition, groundRadius, Mathf.Max(claim, 1), grownAt, growDuration);
 
+            int density = GrassDensity();
+            if (density > 0 && bladesRadius > 0f)
+            {
+                PendingGrowth.Add(new GrowCircle
+                {
+                    WorldPosition = worldPosition,
+                    BladesRadius = bladesRadius,
+                    GrassDensity = density,
+                    GrownAt = grownAt,
+                    GrowDuration = growDuration
+                });
+            }
+
+            ScheduleGrowthPaint(growStart);
+        }
+
+        private static void ClaimGround(Vector3 worldPosition, float radius, int claim, float grownAt,
+            float growDuration)
+        {
+            if (radius <= 0f)
+            {
+                return;
+            }
+
+            float cx = (worldPosition.x - _terrainPosition.x) * _cellsPerMetre.x;
+            float cz = (worldPosition.z - _terrainPosition.z) * _cellsPerMetre.y;
+            int centerX = Mathf.FloorToInt(cx);
+            int centerZ = Mathf.FloorToInt(cz);
+            int zMin = Mathf.Max(0, Mathf.FloorToInt(cz - radius * _cellsPerMetre.y));
+            int zMax = Mathf.Min(_detailHeight - 1, Mathf.FloorToInt(cz + radius * _cellsPerMetre.y));
+            int xMin = Mathf.Max(0, Mathf.FloorToInt(cx - radius * _cellsPerMetre.x));
+            int xMax = Mathf.Min(_detailWidth - 1, Mathf.FloorToInt(cx + radius * _cellsPerMetre.x));
+            for (int z = zMin; z <= zMax; z++)
+            {
+                // Metres from the centre
+                float dz = (z + 0.5f - cz) / _cellsPerMetre.y;
+                for (int x = xMin; x <= xMax; x++)
+                {
+                    float dx = (x + 0.5f - cx) / _cellsPerMetre.x;
+                    int cell = z * _detailWidth + x;
+                    bool inside = dx * dx + dz * dz <= radius * radius || (x == centerX && z == centerZ);
+                    if (!inside || _groundClaims[cell] != 0) continue;
+
+                    _groundClaims[cell] = claim;
+                    PendingGroundStamps.Add((x, z, grownAt, growDuration));
+                }
+            }
+        }
+
+        // Growing grass is invisible until it starts growing, so it waits and goes in one batch just before the
+        // earliest grow start: fewer, larger terrain writes
+        private static void ScheduleGrowthPaint(float growStart)
+        {
+            _growthPaintAt = Mathf.Min(_growthPaintAt, growStart - GrowthPaintLead);
+            if (_growthPaintScheduled)
+            {
+                return;
+            }
+
+            _growthPaintScheduled = true;
+            PaintGrowthWhenDue(_generation).Forget();
+        }
+
+        private static async UniTaskVoid PaintGrowthWhenDue(int generation)
+        {
+            // Reads the field every frame, so an earlier grow start queued meanwhile brings it forward
+            await UniTask.WaitUntil(() => Time.time >= _growthPaintAt);
+
+            // ResetTerrain started another game meanwhile
+            if (generation != _generation)
+            {
+                return;
+            }
+
+            _growthPaintScheduled = false;
+            _growthPaintAt = float.MaxValue;
             ScheduleFlush();
         }
 
@@ -204,7 +346,7 @@ namespace Eco.Scripts.World
 
             _groundCommitScheduled = true;
             float commitAt = GrowingGround.Peek().grownAt + GrassGrowthMap.GroundCommitInterval;
-            CommitGroundAt(commitAt, _groundCommitGeneration).Forget();
+            CommitGroundAt(commitAt, _generation).Forget();
         }
 
         private static async UniTaskVoid CommitGroundAt(float commitAt, int generation)
@@ -212,7 +354,7 @@ namespace Eco.Scripts.World
             await UniTask.WaitUntil(() => Time.time >= commitAt);
 
             // ResetTerrain started another game meanwhile
-            if (generation != _groundCommitGeneration)
+            if (generation != _generation)
             {
                 return;
             }
@@ -236,10 +378,12 @@ namespace Eco.Scripts.World
             // Never the TerrainData asset: a scene reload hands the terrain its asset back until ResetTerrain
             var terrain = Terrain.activeTerrain;
             if (terrain == null || !IsRuntimeCopy(terrain.terrainData) ||
-                (PendingCircles.Count == 0 && PendingGrowth.Count == 0 && PendingGround.Count == 0))
+                (PendingCircles.Count == 0 && PendingGrowth.Count == 0 && PendingGroundStamps.Count == 0 &&
+                 PendingGround.Count == 0))
             {
                 PendingCircles.Clear();
                 PendingGrowth.Clear();
+                PendingGroundStamps.Clear();
                 PendingGround.Clear();
                 return;
             }
@@ -256,8 +400,17 @@ namespace Eco.Scripts.World
                 PaintGrass(data, terrainPosition);
             }
 
+            foreach (var stamp in PendingGroundStamps)
+            {
+                GrassGrowthMap.StampGround(stamp.x, stamp.z, stamp.grownAt, stamp.growDuration);
+                GrowingGround.Enqueue((stamp.x, stamp.z, stamp.grownAt));
+            }
+            GrassGrowthMap.Upload();
+            ScheduleGroundCommit();
+
             PendingCircles.Clear();
             PendingGrowth.Clear();
+            PendingGroundStamps.Clear();
             PendingGround.Clear();
         }
 
@@ -326,11 +479,20 @@ namespace Eco.Scripts.World
                         {
                             splatmap[z, x, l] = l == circle.Layer ? 1f : 0f;
                         }
+                        ClaimTexelAsGrass(data, bounds.x + x, bounds.y + z);
                     }
                 }
             }
 
             data.SetAlphamaps(bounds.x, bounds.y, splatmap);
+        }
+
+        // The detail cell an alphamap texel belongs to (see GroundTexels) is grass already
+        private static void ClaimTexelAsGrass(TerrainData data, int texelX, int texelZ)
+        {
+            int x = Mathf.Min(texelX * _detailWidth / (data.alphamapWidth - 1), _detailWidth - 1);
+            int z = Mathf.Min(texelZ * _detailHeight / (data.alphamapHeight - 1), _detailHeight - 1);
+            _groundClaims[z * _detailWidth + x] = OtherGrass;
         }
 
         private static void PaintGrass(TerrainData data, Vector3 terrainPosition)
@@ -355,8 +517,8 @@ namespace Eco.Scripts.World
             foreach (var circle in PendingGrowth)
             {
                 var center = WorldToMap(circle.WorldPosition, terrainPosition, data.size, width, height);
-                float radius = Mathf.Max(circle.BladesRadius, circle.GroundRadius);
-                Encapsulate(ref bounds, ref any, center, Mathf.CeilToInt(radius * Mathf.Max(cellsX, cellsZ)));
+                Encapsulate(ref bounds, ref any, center,
+                    Mathf.CeilToInt(circle.BladesRadius * Mathf.Max(cellsX, cellsZ)));
             }
 
             if (!any || !ClampToMap(ref bounds, width, height))
@@ -393,9 +555,7 @@ namespace Eco.Scripts.World
             }
 
             bool changed = PendingCircles.Count > 0;
-            changed |= PaintGrowingGrass(detailLayer, bounds, width, terrainPosition, cellsX, cellsZ);
-            GrassGrowthMap.Upload();
-            ScheduleGroundCommit();
+            changed |= PaintGrowingBlades(detailLayer, bounds, terrainPosition, cellsX, cellsZ);
 
             if (changed)
             {
@@ -403,11 +563,11 @@ namespace Eco.Scripts.World
             }
         }
 
-        // Fills the bare cells under each growing circle's blades and ground, stamps when they finish growing and
-        // queues the ground for the alphamap. Runs after the plain circles, so grass they paint in the same batch is
-        // there at once rather than growing. Returns whether any grass details changed.
-        private static bool PaintGrowingGrass(int[,] detailLayer, RectInt bounds, int mapWidth,
-            Vector3 terrainPosition, float cellsX, float cellsZ)
+        // Fills the cells under each growing circle's blades that have none yet and whose ground GrowGrass claimed,
+        // and stamps when they finish growing. Runs after the plain circles, so grass they paint in the same batch
+        // is there at once rather than growing. Returns whether any grass details changed.
+        private static bool PaintGrowingBlades(int[,] detailLayer, RectInt bounds, Vector3 terrainPosition,
+            float cellsX, float cellsZ)
         {
             bool changed = false;
             foreach (var circle in PendingGrowth)
@@ -417,12 +577,12 @@ namespace Eco.Scripts.World
                 float cz = (circle.WorldPosition.z - terrainPosition.z) * cellsZ - bounds.y;
                 int centerX = Mathf.FloorToInt(cx);
                 int centerZ = Mathf.FloorToInt(cz);
-                float reach = Mathf.Max(circle.BladesRadius, circle.GroundRadius);
+                float radius = circle.BladesRadius;
 
-                int zMin = Mathf.Max(0, Mathf.FloorToInt(cz - reach * cellsZ));
-                int zMax = Mathf.Min(bounds.height - 1, Mathf.FloorToInt(cz + reach * cellsZ));
-                int xMin = Mathf.Max(0, Mathf.FloorToInt(cx - reach * cellsX));
-                int xMax = Mathf.Min(bounds.width - 1, Mathf.FloorToInt(cx + reach * cellsX));
+                int zMin = Mathf.Max(0, Mathf.FloorToInt(cz - radius * cellsZ));
+                int zMax = Mathf.Min(bounds.height - 1, Mathf.FloorToInt(cz + radius * cellsZ));
+                int xMin = Mathf.Max(0, Mathf.FloorToInt(cx - radius * cellsX));
+                int xMax = Mathf.Min(bounds.width - 1, Mathf.FloorToInt(cx + radius * cellsX));
                 for (int z = zMin; z <= zMax; z++)
                 {
                     // Distance from the centre in metres
@@ -430,28 +590,15 @@ namespace Eco.Scripts.World
                     for (int x = xMin; x <= xMax; x++)
                     {
                         float dx = (x + 0.5f - cx) / cellsX;
-                        float distanceSqr = dx * dx + dz * dz;
-                        bool center = x == centerX && z == centerZ;
+                        bool inside = dx * dx + dz * dz <= radius * radius || (x == centerX && z == centerZ);
+                        // Grass details already there would shrink and grow again; ground that was grass before
+                        // (or bare and not claimed) gets no blades
+                        int cell = (bounds.y + z) * _detailWidth + bounds.x + x;
+                        if (!inside || detailLayer[z, x] != 0 || _groundClaims[cell] <= 0) continue;
 
-                        // Grass details already there would shrink and grow again
-                        bool blades = circle.BladesRadius > 0f && detailLayer[z, x] == 0 &&
-                                      (center || distanceSqr <= circle.BladesRadius * circle.BladesRadius);
-                        if (blades)
-                        {
-                            detailLayer[z, x] = circle.GrassDensity;
-                            GrassGrowthMap.StampBlades(bounds.x + x, bounds.y + z, circle.GrownAt, circle.GrowDuration);
-                            changed = true;
-                        }
-
-                        int cell = (bounds.y + z) * mapWidth + bounds.x + x;
-                        bool ground = circle.GroundRadius > 0f && !_groundStamped[cell] &&
-                                      (center || distanceSqr <= circle.GroundRadius * circle.GroundRadius);
-                        if (ground)
-                        {
-                            _groundStamped[cell] = true;
-                            GrassGrowthMap.StampGround(bounds.x + x, bounds.y + z, circle.GrownAt, circle.GrowDuration);
-                            GrowingGround.Enqueue((bounds.x + x, bounds.y + z, circle.GrownAt));
-                        }
+                        detailLayer[z, x] = circle.GrassDensity;
+                        GrassGrowthMap.StampBlades(bounds.x + x, bounds.y + z, circle.GrownAt, circle.GrowDuration);
+                        changed = true;
                     }
                 }
             }

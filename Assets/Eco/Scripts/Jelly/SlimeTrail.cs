@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.World;
+using R3;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,13 +9,16 @@ using UnityEngine.Rendering;
 namespace Eco.Scripts.Jelly
 {
     /// <summary>
-    /// The slime the jelly leaves on the ground as it moves, and the grass that grows where it went. The trail is
-    /// one strip mesh in world space, a point every <see cref="SlimeTrailSettings.PointSpacing"/> metres. Each
-    /// vertex carries when its point was laid and when it dries up, so the <c>Eco/SlimeTrail</c> shader fades it
-    /// and the mesh only changes when a point is added or dropped. Grass goes to
-    /// <see cref="TerrainPainter.GrowGrass"/> in batches; it is painted straight away but stays invisible until
-    /// the grow delay is up, then grows in on the GPU. A jump longer than <see cref="SlimeTrailSettings.MaxGap"/>
-    /// (a spawn or teleport) starts a new strip. Lives on its own object at the world origin, not under the player.
+    /// The slime the jelly leaves on bare ground as it moves, and the grass that grows where it went. Every
+    /// <see cref="SlimeTrailSettings.PointSpacing"/> metres it checks the ground under the jelly: over grass (or
+    /// with <see cref="CanPaint"/> off) it lays nothing and the strip ends; over bare ground it adds a point,
+    /// reports the metres in <see cref="OnPainted"/>, and gives the point to <see cref="TerrainPainter.GrowGrass"/>,
+    /// which claims the ground around it at once and paints the grass in a batch before it starts growing. Ground
+    /// claimed by the last few points still counts as bare, since the claimed ring reaches ahead of the jelly.
+    /// The trail is one strip mesh in world space; each vertex carries when its point was laid and when it dries
+    /// up, so the <c>Eco/SlimeTrail</c> shader fades it and the mesh only changes when a point is added or
+    /// dropped. A jump longer than <see cref="SlimeTrailSettings.MaxGap"/> (a spawn or teleport) starts a new
+    /// strip. Lives on its own object at the world origin, not under the player.
     /// </summary>
     public class SlimeTrail : MonoBehaviour
     {
@@ -23,6 +26,15 @@ namespace Eco.Scripts.Jelly
         [SerializeField] private JellyBody body;
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshRenderer meshRenderer;
+
+        /// <summary>Off, the jelly lays no slime and grows no grass, e.g. while it has no paint left.</summary>
+        public bool CanPaint { get; set; } = true;
+
+        /// <summary>Whether the jelly's last step laid slime. Stays as it was while it stands still.</summary>
+        public bool IsPainting { get; private set; }
+
+        /// <summary>Metres of slime laid, once per step that laid some.</summary>
+        public readonly Subject<float> OnPainted = new();
 
         private struct TrailPoint
         {
@@ -52,9 +64,8 @@ namespace Eco.Scripts.Jelly
         private bool _stripPending;
         private float _along;
         private bool _dirty;
-
-        private readonly List<TrailPoint> _pendingGrass = new();
-        private float _nextGrassPaint;
+        // Claim of the last point given to TerrainPainter.GrowGrass; every point gets the next one
+        private int _claim;
 
         private Mesh _mesh;
         private Material _material;
@@ -101,12 +112,6 @@ namespace Eco.Scripts.Jelly
                 _dirty = false;
                 RebuildMesh();
             }
-
-            if (_pendingGrass.Count > 0 && now >= _nextGrassPaint)
-            {
-                PaintGrass();
-                _nextGrassPaint = now + settings.GrassPaintInterval;
-            }
         }
 
         private void Follow(Vector3 position, float now)
@@ -121,6 +126,7 @@ namespace Eco.Scripts.Jelly
                 _head = position;
                 _hasHead = true;
                 _stripPending = true;
+                IsPainting = false;
                 return;
             }
 
@@ -130,15 +136,35 @@ namespace Eco.Scripts.Jelly
             }
 
             var direction = new Vector3(dx / distance, 0f, dz / distance);
-            if (_stripPending)
+            _along += distance;
+            IsPainting = CanPaint && !TerrainPainter.IsGrass(position, _claim - RecentClaims() + 1);
+            if (IsPainting)
             {
-                _stripPending = false;
-                AddPoint(_head, direction, now, true);
+                if (_stripPending)
+                {
+                    _stripPending = false;
+                    AddPoint(_head, direction, now, true);
+                }
+
+                AddPoint(position, direction, now, false);
+                OnPainted.OnNext(distance);
+            }
+            else
+            {
+                // The strip ends here and starts again where the bare ground does
+                _stripPending = true;
             }
 
-            _along += distance;
-            AddPoint(position, direction, now, false);
             _head = position;
+        }
+
+        // How many of the latest points can have claimed the ground under the jelly on its way: those within the
+        // widest claimed radius (plus a step) behind it
+        private int RecentClaims()
+        {
+            float widest = 0.5f * settings.Width * body.WorldScale * (1f + settings.WidthWobble) *
+                           Mathf.Max(settings.GrassTextureWidth, settings.GrassDetailWidth);
+            return Mathf.CeilToInt(widest / settings.PointSpacing) + 2;
         }
 
         private void AddPoint(Vector3 center, Vector3 direction, float now, bool startsStrip)
@@ -171,8 +197,11 @@ namespace Eco.Scripts.Jelly
 
             _points[(_first + _count) % _points.Length] = point;
             _count++;
-            _pendingGrass.Add(point);
             _dirty = true;
+
+            _claim++;
+            TerrainPainter.GrowGrass(center, point.HalfWidth * settings.GrassDetailWidth,
+                point.HalfWidth * settings.GrassTextureWidth, now + settings.GrowDelay, settings.GrowDuration, _claim);
         }
 
         private void PlaceEdges(ref TrailPoint point, Vector3 direction)
@@ -251,23 +280,9 @@ namespace Eco.Scripts.Jelly
             _mesh.bounds = bounds;
         }
 
-        private void PaintGrass()
-        {
-            float growDelay = settings.GrowDelay;
-            float growDuration = settings.GrowDuration;
-            float detailWidth = settings.GrassDetailWidth;
-            float textureWidth = settings.GrassTextureWidth;
-            foreach (var point in _pendingGrass)
-            {
-                TerrainPainter.GrowGrass(point.Center, point.HalfWidth * detailWidth, point.HalfWidth * textureWidth,
-                    point.Birth + growDelay, growDuration);
-            }
-
-            _pendingGrass.Clear();
-        }
-
         private void OnDestroy()
         {
+            OnPainted.Dispose();
             if (_vertices.IsCreated) _vertices.Dispose();
             if (_indices.IsCreated) _indices.Dispose();
             if (_mesh != null) Destroy(_mesh);

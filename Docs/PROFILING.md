@@ -112,6 +112,8 @@ Same machine and settings as the hex baseline, render radius 7. Baseline `stress
 
 `Eco.SlimeTrail.Update` costs about 0.02 ms per frame while moving and nothing standing still; trail grass paints in `Eco.TerrainPainter.PaintPending` average about 0.02 ms each (one per second while moving, plus a ground commit every 2 s). The shader hooks don't measure above run-to-run noise: compiling them out didn't make any phase faster. The differences to the baseline are within the editor's ±0.5 ms spread between runs. Every run has one 2.7–3.2 ms `SlimeTrail.Update` frame in Collect, the first phase where the jelly moves, and none after that (Traverse peaks at 0.12 ms): the first use of the trail's code paths.
 
+Since the trail only paints bare ground, it lays almost nothing in the stress world, which is green apart from the clearing and pile hexes. A run with the trail (`stress_20261030_131111`) and one with its object disabled (`_131527`) match on frame time (Collect 9.23 / 8.99 ms, Traverse 8.40 / 8.40 ms) and GC allocation per phase. `TerrainPainter.ResetTerrain` costs about 27 ms at load against 13 ms before the trail. The extra goes on zeroing the two 1024² growth maps (copied from a cleared native buffer, about 1.4 ms each; a per-texel loop took 7 ms each), the per-cell claim grid, and scanning the baked splat map for existing grass (about 2 ms).
+
 ## Fixed bottlenecks
 
 These were found by the first baseline and fixed on 2026-10-25.

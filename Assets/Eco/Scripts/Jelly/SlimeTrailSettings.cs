@@ -59,7 +59,8 @@ namespace Eco.Scripts.Jelly
         [SerializeField, Range(0f, 1f)] private float lumpStrength = 0.12f;
 
         [Header("Grass")]
-        [Tooltip("Seconds after the trail appears that grass starts growing on it.")]
+        [Tooltip("Seconds after the trail appears that grass starts growing on it. The terrain is written in one " +
+                 "batch just before, so a longer delay means fewer, larger writes.")]
         [SerializeField, Min(0f)] private float growDelay = 3f;
         [Tooltip("Seconds the grass takes to grow to full size.")]
         [SerializeField, Min(0.1f)] private float growDuration = 10f;
@@ -71,9 +72,6 @@ namespace Eco.Scripts.Jelly
                  "within this share of the trail's half width. Keep it wider than the blades: their clumps are 2-3 m " +
                  "across and look bad on bare ground. 0: the ground stays as it is.")]
         [SerializeField, Range(0f, 4f)] private float grassTextureWidth = 2.6f;
-        [Tooltip("Seconds between grass paints. Each paint is one terrain detail read and write, so fewer is " +
-                 "cheaper. Kept under the grow delay so the grass is in place before it starts growing.")]
-        [SerializeField, Min(0.1f)] private float grassPaintInterval = 1f;
 
         public float Lifetime => lifetime;
         public float Width => width;
@@ -86,7 +84,6 @@ namespace Eco.Scripts.Jelly
         public float GrowDuration => growDuration;
         public float GrassDetailWidth => grassDetailWidth;
         public float GrassTextureWidth => grassTextureWidth;
-        public float GrassPaintInterval => Mathf.Min(grassPaintInterval, growDelay * 0.5f);
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
