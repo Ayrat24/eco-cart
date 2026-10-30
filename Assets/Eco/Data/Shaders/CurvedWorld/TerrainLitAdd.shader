@@ -103,7 +103,7 @@ Shader "Hidden/Eco/Curved World/Terrain Add"
             #endif
 
             #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedTerrainInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitPasses.hlsl"
+            #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedTerrainLitPasses.hlsl"
             ENDHLSL
         }
 
@@ -170,7 +170,7 @@ Shader "Hidden/Eco/Curved World/Terrain Add"
             #define TERRAIN_GBUFFER 1
 
             #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedTerrainInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitPasses.hlsl"
+            #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedTerrainLitPasses.hlsl"
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/GBufferOutputFormat.hlsl"
             ENDHLSL
         }

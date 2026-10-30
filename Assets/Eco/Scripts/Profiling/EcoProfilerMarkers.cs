@@ -29,6 +29,7 @@ namespace Eco.Scripts.Profiling
         public static readonly ProfilerMarker StomachFloat = Create("Eco.Stomach.Float");
         public static readonly ProfilerMarker JellyBody = Create("Eco.JellyBody.Update");
         public static readonly ProfilerMarker JellyTentacle = Create("Eco.JellyTentacle.Build");
+        public static readonly ProfilerMarker SlimeTrail = Create("Eco.SlimeTrail.Update");
         public static readonly ProfilerMarker CurvedBounds = Create("Eco.CurvedWorld.UpdateBounds");
         public static readonly ProfilerMarker CurvedTerrainBounds = Create("Eco.CurvedWorld.UpdateTerrainBounds");
         public static readonly ProfilerMarker Atmosphere = Create("Eco.CurvedWorld.RecordAtmosphere");

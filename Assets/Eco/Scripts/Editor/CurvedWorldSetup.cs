@@ -17,6 +17,7 @@ namespace Eco.Scripts.EditorTools
         private const string Materials = "Assets/Eco/Data/Materials/CurvedWorld/";
         private const string Urp = "Packages/com.unity.render-pipelines.universal/";
         private const string Core = "#include \"Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl\"\n";
+        private const string GrassGrowth = "#include \"Assets/Eco/Data/Shaders/GrassGrowth.hlsl\"\n";
         private const string Polytope = "Assets/Polytope Studio/Lowpoly_Environments/Sources/Shaders/";
 
         [MenuItem("Eco/Rendering/Apply Curved World")]
@@ -163,6 +164,17 @@ namespace Eco.Scripts.EditorTools
                     "float4(EcoBendWorldPosition(mul(UNITY_PREV_MATRIX_M, prevPos).xyz, _EcoWorldBendPrevious), 1)");
             Write("CurvedMotionVectors.hlsl", motion);
 
+            // The grass layer grows into the ground where the slime trail's grass grows (GrassGrowth.hlsl)
+            string passes = File.ReadAllText(Urp + "Shaders/Terrain/TerrainLitPasses.hlsl");
+            const string controlSample = "half4 splatControl = SAMPLE_TEXTURE2D(_Control, sampler_Control, splatUV);";
+            const string lastInclude = "#include \"" + Urp + "ShaderLibrary/DBuffer.hlsl\"";
+            if (!passes.Contains(controlSample) || !passes.Contains(lastInclude))
+                throw new InvalidOperationException("URP shader changed: TerrainLitPasses.hlsl");
+            passes = passes.Replace(lastInclude, lastInclude + "\n" + GrassGrowth)
+                .Replace(controlSample, controlSample + "\n#ifndef TERRAIN_SPLAT_ADDPASS\n" +
+                    "    EcoGrassGroundGrowth(splatControl, splatUV, _Control_TexelSize.zw);\n#endif");
+            Write("CurvedTerrainLitPasses.hlsl", passes);
+
             foreach (var file in new[] { "TerrainLit.shader", "TerrainLitAdd.shader", "TerrainLitBase.shader" })
             {
                 string terrain = File.ReadAllText(Urp + "Shaders/Terrain/" + file);
@@ -173,7 +185,8 @@ namespace Eco.Scripts.EditorTools
                 var blocks = terrain.Split("HLSLPROGRAM");
                 for (int i = 1; i < blocks.Length; i++)
                     if (!blocks[i].Contains("#pragma vertex TerrainVertexMeta"))
-                        blocks[i] = blocks[i].Replace(Urp + "Shaders/Terrain/TerrainLitInput.hlsl", Folder + "CurvedTerrainInput.hlsl");
+                        blocks[i] = blocks[i].Replace(Urp + "Shaders/Terrain/TerrainLitInput.hlsl", Folder + "CurvedTerrainInput.hlsl")
+                            .Replace(Urp + "Shaders/Terrain/TerrainLitPasses.hlsl", Folder + "CurvedTerrainLitPasses.hlsl");
                 terrain = string.Join("HLSLPROGRAM", blocks);
                 if (file != "TerrainLitAdd.shader") terrain = AtmosphereSurfacePass.AddToShader(terrain);
                 Write(file, terrain);
@@ -184,19 +197,22 @@ namespace Eco.Scripts.EditorTools
                 string shader = File.ReadAllText(Polytope + "PT_Vegetation_" + type + "_Shader.shader");
                 shader = shader.Replace("Shader \"Polytope Studio/PT_Vegetation_" + type + "_Shader\"",
                     "Shader \"Eco/Curved World/Vegetation " + type + "\"");
+                // Only the terrain grass uses Plants: its blades grow in where the slime trail plants them
+                bool grows = type == "Plants";
+                string grow = grows ? "EcoGrassGrowth(input.positionOS.xyz);\n" : "";
                 shader = shader.Replace("#include \"" + Urp + "ShaderLibrary/Core.hlsl\"",
-                    "#include \"" + Urp + "ShaderLibrary/Core.hlsl\"\n" + Core);
+                    "#include \"" + Urp + "ShaderLibrary/Core.hlsl\"\n" + Core + (grows ? GrassGrowth : ""));
                 shader = Regex.Replace(shader, @"input\.normalOS = input\.normalOS;\s*input\.tangentOS = input\.tangentOS;",
-                    "#if SHADERPASS != SHADERPASS_META\nEcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);\n#endif");
+                    "#if SHADERPASS != SHADERPASS_META\n" + grow + "EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);\n#endif");
                 shader = shader.Replace("input.normalOS = input.normalOS;",
-                    "#if SHADERPASS != SHADERPASS_META\nEcoBendVertex(input.positionOS.xyz, input.normalOS);\n#endif");
+                    "#if SHADERPASS != SHADERPASS_META\n" + grow + "EcoBendVertex(input.positionOS.xyz, input.normalOS);\n#endif");
                 // Amplify's motion pass has no normal assignment to hook; bend both frame positions.
                 int motionStart = shader.IndexOf("Name \"MotionVectors\"", StringComparison.Ordinal);
                 if (motionStart >= 0)
                 {
                     string motionPass = shader.Substring(motionStart);
                     motionPass = motionPass.Replace("VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );",
-                        "float3 ecoPositionWS = EcoBendWorldPosition(TransformObjectToWorld(input.positionOS.xyz), _EcoWorldBend);");
+                        grow + "float3 ecoPositionWS = EcoBendWorldPosition(TransformObjectToWorld(input.positionOS.xyz), _EcoWorldBend);");
                     motionPass = motionPass.Replace("vertexInput.positionCS", "TransformWorldToHClip(ecoPositionWS)");
                     motionPass = Regex.Replace(motionPass, @"mul\(\s*UNITY_MATRIX_M,\s*input.positionOS\s*\)", "float4(ecoPositionWS, 1)");
                     motionPass = Regex.Replace(motionPass, @"mul\(\s*UNITY_PREV_MATRIX_M,\s*prevPos\s*\)",

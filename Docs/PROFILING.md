@@ -69,7 +69,7 @@ For each phase the report lists:
 - scene counts at the end of the phase: chunks, scrap, trees, rigidbodies awake
 - every marker that ran, with its total ms, worst frame, frames it ran in, and call count
 
-The markers live in `EcoProfilerMarkers` and wrap the known heavy paths: save load/save, pools, terrain reset/paint, NavMesh build, world update, chunk spawn/despawn, land chunk init, `SaveTiles`, tree planting, collector scan, stomach reserve and floating, jelly body and tentacle updates, and scrap recycle. They also appear in the Profiler window. To instrument something new, add a marker there; the report picks it up automatically.
+The markers live in `EcoProfilerMarkers` and wrap the known heavy paths: save load/save, pools, terrain reset/paint, NavMesh build, world update, chunk spawn/despawn, land chunk init, `SaveTiles`, tree planting, collector scan, stomach reserve and floating, jelly body and tentacle updates, the slime trail, and scrap recycle. They also appear in the Profiler window. To instrument something new, add a marker there; the report picks it up automatically.
 
 Editor numbers include editor overhead such as Game view `OnGUI`. For absolute numbers, run a development build with `-ecoStressTest`. Compare runs on the same machine; run-to-run variation is small (the first two baseline runs were within a few percent).
 
@@ -97,6 +97,20 @@ Editor, Intel Ultra 7 265K, RTX 3060 Ti, 1920×1080, default config (629 field c
 Run-to-run variation is a few percent on averages; single-frame maxima vary more (Idle's max is one 14 ms frame).
 
 These numbers predate the hex world. The first hex run (`Logs/StressTest/stress_20261029_132712.txt`: the default 275-hex island, 248 seeded land chunks, 169 chunks loaded, 3840×2160 Game view) measured avg 7.7 / 7.5 / 8.6 / 7.4 / 6.1 ms for Idle / Plant / Collect / Traverse / Churn, with Churn's worst frame at 52 ms. It is not directly comparable: a different world, chunk count and resolution. Use it as the new baseline.
+
+### Slime trail (2026-10-30)
+
+Same machine and settings as the hex baseline, render radius 7. Baseline `stress_20261030_112637`; with the trail `stress_20261030_115824` and `_120033`; with the trail but the grass/ground shader hooks compiled out `_120221`.
+
+| Phase | avg ms baseline | with trail (2 runs) | hooks compiled out |
+|---|---|---|---|
+| Idle | 7.62 | 8.20 / 7.75 | 8.36 |
+| Plant | 7.33 | 7.64 / 7.51 | 8.23 |
+| Collect | 8.72 | 9.01 / 8.89 | 9.15 |
+| Traverse | 7.92 | 8.22 / 8.14 | 8.10 |
+| Churn | 6.48 | 6.86 / 6.82 | 6.69 |
+
+`Eco.SlimeTrail.Update` costs about 0.02 ms per frame while moving and nothing standing still; trail grass paints in `Eco.TerrainPainter.PaintPending` average about 0.02 ms each (one per second while moving, plus a ground commit every 2 s). The shader hooks don't measure above run-to-run noise: compiling them out didn't make any phase faster. The differences to the baseline are within the editor's ±0.5 ms spread between runs. Every run has one 2.7–3.2 ms `SlimeTrail.Update` frame in Collect, the first phase where the jelly moves, and none after that (Traverse peaks at 0.12 ms): the first use of the trail's code paths.
 
 ## Fixed bottlenecks
 

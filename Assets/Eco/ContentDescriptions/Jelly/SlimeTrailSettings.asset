@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e444e41b2709f41a2fb21a3f7d9db1, type: 3}
+  m_Name: SlimeTrailSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.SlimeTrailSettings
+  lifetime: 5
+  width: 1.3
+  widthWobble: 0.15
+  pointSpacing: 0.35
+  maxGap: 3
+  groundOffset: 0.04
+  maxTrailSpeed: 30
+  color: {r: 0.1, g: 0.62, b: 0.56, a: 0.35}
+  rimColor: {r: 0.06, g: 0.48, b: 0.44, a: 0.65}
+  rimWidth: 0.3
+  edgeSoftness: 0.25
+  edgeWobble: 0.2
+  edgeWobbleScale: 1.3
+  dryShrink: 0.45
+  fadeTime: 1.5
+  gloss: 60
+  specular: 1.2
+  fresnel: 0.5
+  dryGloss: 0.7
+  lumpFrequency: 7
+  lumpStrength: 0.12
+  growDelay: 3
+  growDuration: 10
+  grassWidth: 1.4
+  grassPaintInterval: 1

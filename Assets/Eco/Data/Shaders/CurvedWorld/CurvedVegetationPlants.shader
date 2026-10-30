@@ -250,6 +250,7 @@ Shader "Eco/Curved World/Vegetation Plants"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -437,6 +438,7 @@ Shader "Eco/Curved World/Vegetation Plants"
 					input.positionOS.xyz += vertexValue;
 				#endif
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);
 #endif
 
@@ -951,6 +953,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -1115,6 +1118,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS);
 #endif
 
@@ -1322,6 +1326,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -1483,6 +1488,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS);
 #endif
 
@@ -1665,6 +1671,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -1832,6 +1839,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS);
 #endif
 
@@ -2059,6 +2067,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -2218,6 +2227,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS);
 #endif
 
@@ -2422,6 +2432,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -2586,6 +2597,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);
 #endif
 
@@ -2812,6 +2824,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -2966,6 +2979,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS, input.tangentOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS);
 #endif
 
@@ -3129,6 +3143,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -3283,6 +3298,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 				#endif
 
 				#if SHADERPASS != SHADERPASS_META
+EcoGrassGrowth(input.positionOS.xyz);
 EcoBendVertex(input.positionOS.xyz, input.normalOS);
 #endif
 
@@ -3446,6 +3462,7 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 		    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
 		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Assets/Eco/Data/Shaders/CurvedWorld/CurvedWorld.hlsl"
+#include "Assets/Eco/Data/Shaders/GrassGrowth.hlsl"
 
 		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
@@ -3601,7 +3618,8 @@ EcoBendVertex(input.positionOS.xyz, input.normalOS);
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				float3 ecoPositionWS = EcoBendWorldPosition(TransformObjectToWorld(input.positionOS.xyz), _EcoWorldBend);
+				EcoGrassGrowth(input.positionOS.xyz);
+float3 ecoPositionWS = EcoBendWorldPosition(TransformObjectToWorld(input.positionOS.xyz), _EcoWorldBend);
 
 				#if defined(APLICATION_SPACE_WARP_MOTION)
 					// We do not need jittered position in ASW
