@@ -24,33 +24,31 @@ namespace Eco.Scripts.World
         private Vector3[] _vertices;
         private Vector2[] _uvs;
         private float _meshRadius;
-        private float _waterLevel;
-        private float _tideHeight;
-        private float _tidePeriod;
+        private WorldData _world;
 
         public void Show(WorldData world)
         {
             gameObject.SetActive(true);
             BuildMesh(world.HexRadius);
 
-            _waterLevel = world.WaterLevel;
-            _tideHeight = world.TideHeight;
-            _tidePeriod = world.TidePeriod;
+            _world = world;
             FollowTide();
             UpdateUVs();
         }
 
         private void Update()
         {
-            FollowTide();
+            if (_world != null)
+            {
+                FollowTide();
+            }
         }
 
         // Every surface reads the same clock, so all the water rises and falls together
         private void FollowTide()
         {
-            float tide = _tidePeriod > 0f ? _tideHeight * Mathf.Sin(Time.time * 2f * Mathf.PI / _tidePeriod) : 0f;
             var position = transform.position;
-            transform.position = new Vector3(position.x, _waterLevel + tide - WaveHeight, position.z);
+            transform.position = new Vector3(position.x, _world.WaterHeight - WaveHeight, position.z);
         }
 
         public void Hide()

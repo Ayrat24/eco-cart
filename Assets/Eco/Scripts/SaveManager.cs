@@ -140,6 +140,7 @@ namespace Eco.Scripts
 
             // Null in a new game: the player starts at the world's spawn hex
             public Vector3Serializable? playerPosition;
+            public float wetness;
             public Dictionary<string, int> UpgradeLevels = new();
         }
 

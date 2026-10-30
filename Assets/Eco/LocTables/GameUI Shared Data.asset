@@ -167,6 +167,10 @@ MonoBehaviour:
     m_Key: upgrade-refund-blocked
     m_Metadata:
       m_Items: []
+  - m_Id: 152337746644140032
+    m_Key: wetness-bar
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

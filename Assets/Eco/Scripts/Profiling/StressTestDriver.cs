@@ -36,6 +36,7 @@ namespace Eco.Scripts.Profiling
         private string _seedStats;
         private string _runId;
         private int _firstFrame;
+        private Player _player;
 
         public void SetSeedStats(string seedStats)
         {
@@ -60,6 +61,9 @@ namespace Eco.Scripts.Profiling
             }
 
             _current?.SampleFrame(Time.unscaledDeltaTime);
+
+            // The slime trail is part of the worst case, so the jelly never dries up
+            _player?.Wetness.Refill();
         }
 
         private async UniTask RunAsync(CancellationToken token)
@@ -67,6 +71,7 @@ namespace Eco.Scripts.Profiling
             var resolver = await WaitForGameAsync(token);
             var player = resolver.Resolve<Player>();
             var world = resolver.Resolve<WorldController>();
+            _player = player;
 EndPhase(world);
 
             BeginPhase("Idle");

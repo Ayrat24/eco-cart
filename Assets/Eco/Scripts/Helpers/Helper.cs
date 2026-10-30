@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Eco.Scripts.Upgrades;
+using Eco.Scripts.World;
 using UnityEngine;
 using UnityEngine.AI;
 #if UNITY_EDITOR
@@ -32,7 +33,8 @@ namespace Eco.Scripts.Helpers
             PlayerStats = playerStats;
             
             agent.avoidancePriority = navmeshPriority;
-            
+            agent.areaMask = WorldController.LandAreas;
+
             animationController.Init(agent);
         }
 

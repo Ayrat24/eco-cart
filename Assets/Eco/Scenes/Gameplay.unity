@@ -1388,6 +1388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.SlimeTrail
   settings: {fileID: 11400000, guid: 3fef7b70d4bf54a4ca4849184d3193dc, type: 2}
+  world: {fileID: 11400000, guid: 5e9ed3fc18041b14fa77abd110f3e2c4, type: 2}
   body: {fileID: 1359656892}
   meshFilter: {fileID: 595515451}
   meshRenderer: {fileID: 595515450}
@@ -3913,6 +3914,7 @@ GameObject:
   - component: {fileID: 1863505814}
   - component: {fileID: 1863505818}
   - component: {fileID: 1863505819}
+  - component: {fileID: 1863505820}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -3993,6 +3995,7 @@ MonoBehaviour:
   agent: {fileID: 1863505815}
   itemCollector: {fileID: 719770982}
   stomach: {fileID: 1149245314}
+  wetness: {fileID: 1863505820}
   toolController: {fileID: 611660689}
   hatParent: {fileID: 786342176}
   hats:
@@ -4025,6 +4028,21 @@ MonoBehaviour:
   m_IgnoreFromBuild: 1
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!114 &1863505820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863505813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d458440e6a95fb48a6dc3242525386f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.Wetness
+  settings: {fileID: 11400000, guid: ad316f879cacaed498b4074f1a4ad95d, type: 2}
+  trail: {fileID: 595515449}
+  world: {fileID: 11400000, guid: 5e9ed3fc18041b14fa77abd110f3e2c4, type: 2}
 --- !u!1 &1978698482
 GameObject:
   m_ObjectHideFlags: 0

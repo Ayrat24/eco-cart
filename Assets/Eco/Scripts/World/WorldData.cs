@@ -26,6 +26,9 @@ namespace Eco.Scripts.World
         [SerializeField, Range(0f, 0.15f)] private float tideHeight = 0.12f;
         [Tooltip("Seconds for the tide to rise and fall once.")]
         [SerializeField, Min(1f)] private float tidePeriod = 16f;
+        [Tooltip("How deep the water the player can wade into may be, in metres. How far out that reaches follows " +
+                 "from the slope of the shelf. Read when the NavMesh is built, at the start of the game.")]
+        [SerializeField, Min(0f)] private float wadeDepth = 0.6f;
         [Tooltip("Radius in metres of the round blur that smooths heights, so painted hexes melt into natural " +
                  "shapes. Bigger is softer, but flattens small hills.")]
         [SerializeField, Min(0.5f)] private float heightBlend = 4.5f;
@@ -61,6 +64,7 @@ namespace Eco.Scripts.World
         public float WaterLevel => waterLevel;
         public float TideHeight => tideHeight;
         public float TidePeriod => tidePeriod;
+        public float WadeDepth => wadeDepth;
         public float HeightBlend => heightBlend;
         public float TextureBlend => textureBlend;
         public float ShoreBlend => shoreBlend;
@@ -72,6 +76,9 @@ namespace Eco.Scripts.World
         public List<ChunkDefinition> Palette => palette;
         public ChunkDefinition Ocean => ocean;
         public IReadOnlyList<WorldCell> Cells => cells;
+
+        /// <summary>World height of the water surface right now, tide included.</summary>
+        public float WaterHeight => waterLevel + tideHeight * Mathf.Sin(Time.time * 2f * Mathf.PI / tidePeriod);
 
         /// <summary>The painted chunk at the hex, or <see cref="Ocean"/>.</summary>
         public ChunkDefinition GetChunk(Vector2Int coord)

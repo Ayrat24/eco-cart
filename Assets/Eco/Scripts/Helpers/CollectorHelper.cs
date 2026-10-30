@@ -1,5 +1,6 @@
 using System;
 using Eco.Scripts.ItemCollecting;
+using Eco.Scripts.World;
 using R3;
 using UnityEngine;
 using UnityEngine.AI;
@@ -28,6 +29,7 @@ namespace Eco.Scripts.Helpers
             _player = player;
 
             agent.avoidancePriority = navmeshPriority;
+            agent.areaMask = WorldController.LandAreas;
 
             var interval = TimeSpan.FromSeconds(1);
             _subscription = Observable.Interval(interval).Subscribe(x => { GoToNearbyItem(); });

@@ -10,8 +10,8 @@ namespace Eco.Scripts.Jelly
 {
     /// <summary>
     /// The slime the jelly leaves on bare ground as it moves, and the grass that grows where it went. Every
-    /// <see cref="SlimeTrailSettings.PointSpacing"/> metres it checks the ground under the jelly: over grass (or
-    /// with <see cref="CanPaint"/> off) it lays nothing and the strip ends; over bare ground it adds a point,
+    /// <see cref="SlimeTrailSettings.PointSpacing"/> metres it checks the ground under the jelly: over grass, near
+    /// water (or with <see cref="CanPaint"/> off) it lays nothing and the strip ends; over bare ground it adds a point,
     /// reports the metres in <see cref="OnPainted"/>, and gives the point to <see cref="TerrainPainter.GrowGrass"/>,
     /// which claims the ground around it at once and paints the grass in a batch before it starts growing. Ground
     /// claimed by the last few points still counts as bare, since the claimed ring reaches ahead of the jelly.
@@ -23,6 +23,7 @@ namespace Eco.Scripts.Jelly
     public class SlimeTrail : MonoBehaviour
     {
         [SerializeField] private SlimeTrailSettings settings;
+        [SerializeField] private WorldData world;
         [SerializeField] private JellyBody body;
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshRenderer meshRenderer;
@@ -137,7 +138,8 @@ namespace Eco.Scripts.Jelly
 
             var direction = new Vector3(dx / distance, 0f, dz / distance);
             _along += distance;
-            IsPainting = CanPaint && !TerrainPainter.IsGrass(position, _claim - RecentClaims() + 1);
+            IsPainting = CanPaint && !TerrainPainter.IsGrass(position, _claim - RecentClaims() + 1) &&
+                         !IsNearWater(position);
             if (IsPainting)
             {
                 if (_stripPending)
@@ -162,9 +164,21 @@ namespace Eco.Scripts.Jelly
         // widest claimed radius (plus a step) behind it
         private int RecentClaims()
         {
-            float widest = 0.5f * settings.Width * body.WorldScale * (1f + settings.WidthWobble) *
-                           Mathf.Max(settings.GrassTextureWidth, settings.GrassDetailWidth);
-            return Mathf.CeilToInt(widest / settings.PointSpacing) + 2;
+            return Mathf.CeilToInt(WidestClaim() / settings.PointSpacing) + 2;
+        }
+
+        // Metres from a point's centre that its slime and grass can reach
+        private float WidestClaim()
+        {
+            return 0.5f * settings.Width * body.WorldScale * (1f + settings.WidthWobble) *
+                   Mathf.Max(1f, settings.GrassTextureWidth, settings.GrassDetailWidth);
+        }
+
+        // Measured from the highest tide, so the water never comes up over the slime or the grass it grows
+        private bool IsNearWater(Vector3 position)
+        {
+            return WorldTerrain.DipsBelow(position, world.WaterLevel + world.TideHeight,
+                WidestClaim() + settings.WaterClearance);
         }
 
         private void AddPoint(Vector3 center, Vector3 direction, float now, bool startsStrip)

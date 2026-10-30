@@ -27,6 +27,8 @@ namespace Eco.Scripts.Jelly
         [Tooltip("Fastest speed (m/s) the trail keeps its full length at; faster, the oldest slime goes early. " +
                  "Sets how many points the trail holds, so read when the trail starts.")]
         [SerializeField, Min(1f)] private float maxTrailSpeed = 30f;
+        [Tooltip("Metres of dry ground kept between the water at high tide and the slime and the grass it grows.")]
+        [SerializeField, Min(0f)] private float waterClearance = 1f;
 
         [Header("Look")]
         [Tooltip("Colour of the slime; alpha is how thick it looks.")]
@@ -80,6 +82,7 @@ namespace Eco.Scripts.Jelly
         public float MaxGap => maxGap;
         public float GroundOffset => groundOffset;
         public float MaxTrailSpeed => maxTrailSpeed;
+        public float WaterClearance => waterClearance;
         public float GrowDelay => growDelay;
         public float GrowDuration => growDuration;
         public float GrassDetailWidth => grassDetailWidth;

@@ -13,6 +13,7 @@ namespace Eco.Scripts.UI
 
         private UpgradeTreeMenu _upgradeMenu;
         private CartStorageDisplay _cartStorageDisplay;
+        private WetnessDisplay _wetnessDisplay;
         private TutorialMenu _tutorialMenu;
         private ToolSelector _toolSelector;
         private SettingsMenu _settingsMenu;
@@ -25,6 +26,9 @@ namespace Eco.Scripts.UI
 
             _cartStorageDisplay = new CartStorageDisplay(uiDocument, player, cartItemTemplate);
             _cartStorageDisplay.Init();
+
+            _wetnessDisplay = new WetnessDisplay(uiDocument, player);
+            _wetnessDisplay.Init();
 
             _toolSelector = new ToolSelector(uiDocument);
             _toolSelector.Init();
@@ -40,6 +44,7 @@ namespace Eco.Scripts.UI
         {
             _upgradeMenu.Clear();
             _cartStorageDisplay.Clear();
+            _wetnessDisplay.Clear();
             _tutorialMenu.Clear();
             _toolSelector.Clear();
             _settingsMenu?.Clear();

@@ -41,8 +41,11 @@ namespace Eco.Scripts.World
         private ChunkContext _context;
         private HexTileLayout _layout;
 
-        // The NavMesh stops this far above the water so the player stays out of it
+        // Walkable ground this far above the water or lower belongs to the shallows
         private const float NavMeshWaterMargin = 0.15f;
+
+        // NavMesh area of the shallows, which only the player walks on
+        private const string ShallowsArea = "Shallows";
 
         // How far a saved player position may be from the NavMesh and still be used
         private const float SpawnSearchDistance = 5f;
@@ -52,6 +55,9 @@ namespace Eco.Scripts.World
         public float HexRadius => worldData.HexRadius;
         public TreePlanter TreePlanter => _treePlanter;
         public Dictionary<Vector2Int, Chunk> ActiveChunks => _spawnedChunks;
+
+        /// <summary>NavMesh area mask for everyone but the player: all of it except the shallows.</summary>
+        public static int LandAreas => NavMesh.AllAreas & ~(1 << NavMesh.GetAreaFromName(ShallowsArea));
 
         [Inject]
         public void Initialize(SaveManager saveManager, PlayerStats stats, CurrencyManager currencyManager)
@@ -187,16 +193,28 @@ namespace Eco.Scripts.World
                 return;
             }
 
-            // Bake only the land, from just above the water up: lakes and sea are cut out by height, so the
-            // walkable area ends at the shoreline the World Editor baked into the terrain.
+            // Bake the land and the shallows around it, as far out as the shelf can reach, from the deepest water
+            // the player can wade in up: deeper lakes and sea are cut out by height, so the walkable area ends where
+            // the shelf the World Editor baked into the terrain gets too deep.
             var terrain = Terrain.activeTerrain;
-            float bottom = worldData.WaterLevel + NavMeshWaterMargin;
+            float bottom = worldData.WaterLevel - worldData.WadeDepth;
             float top = terrain.GetPosition().y + terrain.terrainData.size.y;
             var worldCenter = new Vector3(land.center.x, (bottom + top) / 2f, land.center.y);
+            float width = land.width + worldData.ShelfWidth * 2f;
+            float length = land.height + worldData.ShelfWidth * 2f;
 
             navMeshPlane.collectObjects = CollectObjects.Volume;
             navMeshPlane.center = navMeshPlane.transform.InverseTransformPoint(worldCenter);
-            navMeshPlane.size = new Vector3(land.width, top - bottom, land.height);
+            navMeshPlane.size = new Vector3(width, top - bottom, length);
+
+            // The same ground as before the water was walkable stays in the default area, for the pets
+            float shore = worldData.WaterLevel + NavMeshWaterMargin;
+            var shallows = navMeshPlane.gameObject.AddComponent<NavMeshModifierVolume>();
+            shallows.area = NavMesh.GetAreaFromName(ShallowsArea);
+            shallows.center = navMeshPlane.transform.InverseTransformPoint(
+                new Vector3(land.center.x, (bottom + shore) / 2f, land.center.y));
+            shallows.size = new Vector3(width, shore - bottom, length);
+
             navMeshPlane.BuildNavMesh();
         }
 

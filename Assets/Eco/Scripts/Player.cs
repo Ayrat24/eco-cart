@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Eco.Scripts.Hats;
 using Eco.Scripts.ItemCollecting;
+using Eco.Scripts.Jelly;
 using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Eco.Scripts
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private ItemCollector itemCollector;
         [SerializeField] private Stomach stomach;
+        [SerializeField] private Wetness wetness;
         [SerializeField] private ToolController toolController;
         [SerializeField] private Transform hatParent;
         [SerializeField] private List<HatDefinition> hats = new();
@@ -26,6 +28,7 @@ namespace Eco.Scripts
         private IDisposable _subscription;
 
         public Stomach Stomach => stomach;
+        public Wetness Wetness => wetness;
         public HatController Hats => _hatController;
         public IReadOnlyList<HatDefinition> AvailableHats => hats;
 
@@ -45,6 +48,7 @@ namespace Eco.Scripts
             agent.enabled = true;
 
             itemCollector.Init(_currencyManager, _stats, stomach);
+            wetness.Init(saveManager.Progress.wetness);
 
             var builder = new DisposableBuilder();
             _stats.MaxWeight.Subscribe(SetCapacity).AddTo(ref builder);
@@ -72,6 +76,7 @@ namespace Eco.Scripts
         public void Save(SaveManager saveManager)
         {
             saveManager.Progress.playerPosition = new SaveManager.Vector3Serializable(transform.position);
+            saveManager.Progress.wetness = wetness.Amount.CurrentValue;
             _hatController.SaveHat(saveManager);
         }
 
