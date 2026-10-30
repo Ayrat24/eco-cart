@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldVisualSettings
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.WorldVisualSettings
   distortionEnabled: 1
-  worldRadius: 250
+  worldRadius: 300
   distortionStrength: 1
   flatRadius: 6
   atmosphereEnabled: 1
