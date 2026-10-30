@@ -339,6 +339,38 @@ MonoBehaviour:
     m_Key: upgrade-dog-friend-name
     m_Metadata:
       m_Items: []
+  - m_Id: 152591475058376704
+    m_Key: upgrade-slime-trail-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736832
+    m_Key: upgrade-water-bank-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736833
+    m_Key: upgrade-quick-soak-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736834
+    m_Key: upgrade-wide-trail-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736835
+    m_Key: feature-trail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736836
+    m_Key: effect-wetness-capacity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736837
+    m_Key: effect-wetness-fill-speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736838
+    m_Key: effect-trail-width
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

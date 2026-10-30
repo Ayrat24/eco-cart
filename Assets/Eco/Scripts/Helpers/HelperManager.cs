@@ -4,7 +4,6 @@ using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using R3;
 using UnityEngine;
-using UnityEngine.AI;
 using VContainer;
 
 namespace Eco.Scripts.Helpers
@@ -17,9 +16,6 @@ namespace Eco.Scripts.Helpers
     {
         [SerializeField] private int spawnRadius;
         [SerializeField] private List<PetDefinition> pets = new();
-
-        // How far from a wading player a pet's spawn may be pulled to reach the land
-        private const float LandSearchDistance = 20f;
 
         private CurrencyManager _currencyManager;
         private Player _player;
@@ -87,12 +83,8 @@ namespace Eco.Scripts.Helpers
             Vector3 spawnPosition = _player.transform.position + _spawnDirections[_lastSpawnDirection] * spawnRadius;
             _lastSpawnDirection++;
 
-            if (NavMesh.SamplePosition(spawnPosition, out var land, LandSearchDistance, WorldController.LandAreas))
-            {
-                spawnPosition = land.position;
-            }
-
-            _activeHelper = Instantiate(pet.Prefab, spawnPosition, Quaternion.identity, transform);
+            _activeHelper = Instantiate(pet.Prefab, WorldController.ClosestLand(spawnPosition), Quaternion.identity,
+                transform);
             _activeHelper.Init(_currencyManager, _playerStats, _player, _navmeshPriority);
             _navmeshPriority++;
         }

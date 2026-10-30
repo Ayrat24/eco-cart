@@ -47,6 +47,9 @@ namespace Eco.Scripts.World
         // NavMesh area of the shallows, which only the player walks on
         private const string ShallowsArea = "Shallows";
 
+        // How far from the land anything in the shallows can be, at the deepest and widest
+        private const float LandSearchDistance = 20f;
+
         // How far a saved player position may be from the NavMesh and still be used
         private const float SpawnSearchDistance = 5f;
 
@@ -58,6 +61,14 @@ namespace Eco.Scripts.World
 
         /// <summary>NavMesh area mask for everyone but the player: all of it except the shallows.</summary>
         public static int LandAreas => NavMesh.AllAreas & ~(1 << NavMesh.GetAreaFromName(ShallowsArea));
+
+        /// <summary>The nearest point on the land part of the NavMesh, or <paramref name="position"/> if none.</summary>
+        public static Vector3 ClosestLand(Vector3 position)
+        {
+            return NavMesh.SamplePosition(position, out var hit, LandSearchDistance, LandAreas)
+                ? hit.position
+                : position;
+        }
 
         [Inject]
         public void Initialize(SaveManager saveManager, PlayerStats stats, CurrencyManager currencyManager)

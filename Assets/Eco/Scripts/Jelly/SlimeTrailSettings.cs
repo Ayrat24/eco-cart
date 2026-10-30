@@ -14,7 +14,7 @@ namespace Eco.Scripts.Jelly
         [Header("Trail")]
         [Tooltip("Seconds a piece of trail stays on the ground. It dries up and fades out by the end.")]
         [SerializeField, Min(0.1f)] private float lifetime = 5f;
-        [Tooltip("Trail width at unit body scale; it grows with the body.")]
+        [Tooltip("Trail width at unit body scale; it grows with the body and the trail width upgrade.")]
         [SerializeField, Min(0.05f)] private float width = 1.3f;
         [Tooltip("How much the width wanders along the trail, as a share of it.")]
         [SerializeField, Range(0f, 0.5f)] private float widthWobble = 0.15f;

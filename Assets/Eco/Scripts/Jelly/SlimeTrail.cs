@@ -31,6 +31,9 @@ namespace Eco.Scripts.Jelly
         /// <summary>Off, the jelly lays no slime and grows no grass, e.g. while it has no paint left.</summary>
         public bool CanPaint { get; set; } = true;
 
+        /// <summary>Multiplies <see cref="SlimeTrailSettings.Width"/>; the trail width upgrade raises it.</summary>
+        public float WidthScale { get; set; } = 1f;
+
         /// <summary>Whether the jelly's last step laid slime. Stays as it was while it stands still.</summary>
         public bool IsPainting { get; private set; }
 
@@ -167,10 +170,16 @@ namespace Eco.Scripts.Jelly
             return Mathf.CeilToInt(WidestClaim() / settings.PointSpacing) + 2;
         }
 
+        // Half the trail's width right now, before it wobbles
+        private float BaseHalfWidth()
+        {
+            return 0.5f * settings.Width * WidthScale * body.WorldScale;
+        }
+
         // Metres from a point's centre that its slime and grass can reach
         private float WidestClaim()
         {
-            return 0.5f * settings.Width * body.WorldScale * (1f + settings.WidthWobble) *
+            return BaseHalfWidth() * (1f + settings.WidthWobble) *
                    Mathf.Max(1f, settings.GrassTextureWidth, settings.GrassDetailWidth);
         }
 
@@ -188,7 +197,7 @@ namespace Eco.Scripts.Jelly
             {
                 Center = center,
                 Direction = direction,
-                HalfWidth = 0.5f * settings.Width * body.WorldScale * (1f + wobble),
+                HalfWidth = BaseHalfWidth() * (1f + wobble),
                 Along = _along,
                 Birth = now,
                 StartsStrip = startsStrip

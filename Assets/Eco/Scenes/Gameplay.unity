@@ -4040,7 +4040,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d458440e6a95fb48a6dc3242525386f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.Jelly.Wetness
-  settings: {fileID: 11400000, guid: ad316f879cacaed498b4074f1a4ad95d, type: 2}
   trail: {fileID: 595515449}
   world: {fileID: 11400000, guid: 5e9ed3fc18041b14fa77abd110f3e2c4, type: 2}
 --- !u!1 &1978698482

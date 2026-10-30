@@ -19,8 +19,15 @@ namespace Eco.Scripts.UI
 
         public void Init()
         {
-            var fill = _uiDocument.rootVisualElement.Q<VisualElement>("WetnessFill");
-            _subscription = _player.Wetness.Amount.Subscribe(amount => fill.style.width = Length.Percent(amount * 100));
+            var bar = _uiDocument.rootVisualElement.Q<VisualElement>("WetnessBar");
+            var fill = bar.Q<VisualElement>("WetnessFill");
+
+            var builder = new DisposableBuilder();
+            _player.Wetness.Unlocked
+                .Subscribe(unlocked => bar.style.display = unlocked ? DisplayStyle.Flex : DisplayStyle.None)
+                .AddTo(ref builder);
+            _player.Wetness.Fill.Subscribe(amount => fill.style.width = Length.Percent(amount * 100)).AddTo(ref builder);
+            _subscription = builder.Build();
         }
 
         public void Clear()

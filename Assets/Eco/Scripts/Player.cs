@@ -5,6 +5,7 @@ using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Jelly;
 using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
+using Eco.Scripts.World;
 using UnityEngine;
 using VContainer;
 using R3;
@@ -48,11 +49,12 @@ namespace Eco.Scripts
             agent.enabled = true;
 
             itemCollector.Init(_currencyManager, _stats, stomach);
-            wetness.Init(saveManager.Progress.wetness);
+            wetness.Init(_stats, saveManager.Progress.wetness);
 
             var builder = new DisposableBuilder();
             _stats.MaxWeight.Subscribe(SetCapacity).AddTo(ref builder);
             _stats.MoveSpeed.Subscribe(speed => agent.speed = speed).AddTo(ref builder);
+            wetness.Unlocked.Subscribe(SetWading).AddTo(ref builder);
             _subscription = builder.Build();
 
             toolController.Init();
@@ -67,6 +69,17 @@ namespace Eco.Scripts
             stomach.Recycle();
         }
 
+        // Wading comes with the trail. An agent can't walk off an area it may not use, so losing it means leaving
+        // the water at once
+        private void SetWading(bool allowed)
+        {
+            agent.areaMask = allowed ? NavMesh.AllAreas : WorldController.LandAreas;
+            if (!allowed)
+            {
+                agent.Warp(WorldController.ClosestLand(transform.position));
+            }
+        }
+
         private void SetCapacity(int capacity)
         {
             stomach.SetCapacity(capacity);
@@ -76,7 +89,7 @@ namespace Eco.Scripts
         public void Save(SaveManager saveManager)
         {
             saveManager.Progress.playerPosition = new SaveManager.Vector3Serializable(transform.position);
-            saveManager.Progress.wetness = wetness.Amount.CurrentValue;
+            saveManager.Progress.wetness = wetness.Metres;
             _hatController.SaveHat(saveManager);
         }
 

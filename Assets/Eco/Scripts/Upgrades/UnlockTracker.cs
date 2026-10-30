@@ -70,6 +70,7 @@ namespace Eco.Scripts.Upgrades
         Dog,
         Trees,
         Hats,
-        Helpers
+        Helpers,
+        Trail
     }
 }

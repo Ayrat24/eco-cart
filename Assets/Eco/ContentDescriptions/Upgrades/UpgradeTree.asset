@@ -541,6 +541,130 @@ MonoBehaviour:
     - sorting-instinct
     effects:
     - rid: 3845993366043230378
+  - id: slime-trail
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 152591475058376704
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: ef6d8caf5e0a1ed4ab10f86597fb2850, type: 3}
+    position: {x: -1200, y: 220}
+    maxLevel: 1
+    baseCost:
+      coefficient: 100
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - quick-wobble
+    effects:
+    - rid: 3845993405026927137
+  - id: water-bank
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 152591475087736832
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 5a8b3dc7553e94541ac460db0590a805, type: 3}
+    position: {x: -1440, y: 440}
+    maxLevel: 5
+    baseCost:
+      coefficient: 60
+      magnitude: 0
+    costGrowth: 1.6
+    requirement: 0
+    requires:
+    - slime-trail
+    effects:
+    - rid: 3845993405026927138
+  - id: quick-soak
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 152591475087736833
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 5a8b3dc7553e94541ac460db0590a805, type: 3}
+    position: {x: -1200, y: 440}
+    maxLevel: 5
+    baseCost:
+      coefficient: 40
+      magnitude: 0
+    costGrowth: 1.6
+    requirement: 0
+    requires:
+    - slime-trail
+    effects:
+    - rid: 3845993405026927139
+  - id: wide-trail
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 152591475087736834
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 13bf9a911835916489ac3b756e11997d, type: 3}
+    position: {x: -960, y: 440}
+    maxLevel: 4
+    baseCost:
+      coefficient: 120
+      magnitude: 0
+    costGrowth: 2
+    requirement: 0
+    requires:
+    - slime-trail
+    effects:
+    - rid: 3845993405026927140
   references:
     version: 2
     RefIds:
@@ -615,3 +739,19 @@ MonoBehaviour:
       type: {class: ComboMultiplierEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
       data:
         multiplierPerLevel: 0.25
+    - rid: 3845993405026927137
+      type: {class: UnlockFeatureEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        feature: 16
+    - rid: 3845993405026927138
+      type: {class: WetnessCapacityEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        metresPerLevel: 50
+    - rid: 3845993405026927139
+      type: {class: WetnessFillSpeedEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        speedPerLevel: 15
+    - rid: 3845993405026927140
+      type: {class: TrailWidthEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        widthPerLevel: 0.25

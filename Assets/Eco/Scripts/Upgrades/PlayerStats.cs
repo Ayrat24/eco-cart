@@ -18,6 +18,9 @@ namespace Eco.Scripts.Upgrades
         private readonly ReactiveProperty<int> _limbCount = new();
         private readonly ReactiveProperty<float> _limbRange = new();
         private readonly ReactiveProperty<float> _moveSpeed = new();
+        private readonly ReactiveProperty<float> _wetnessCapacity = new();
+        private readonly ReactiveProperty<float> _wetnessFillSpeed = new();
+        private readonly ReactiveProperty<float> _trailWidthScale = new();
         private readonly ReactiveProperty<bool> _comboUnlocked = new();
         private readonly ReactiveProperty<float> _comboMultiplier = new();
         private readonly Dictionary<ScrapType, AlphabeticNotation> _scrapScores = new();
@@ -29,6 +32,9 @@ namespace Eco.Scripts.Upgrades
         public ReadOnlyReactiveProperty<int> LimbCount => _limbCount;
         public ReadOnlyReactiveProperty<float> LimbRange => _limbRange;
         public ReadOnlyReactiveProperty<float> MoveSpeed => _moveSpeed;
+        public ReadOnlyReactiveProperty<float> WetnessCapacity => _wetnessCapacity;
+        public ReadOnlyReactiveProperty<float> WetnessFillSpeed => _wetnessFillSpeed;
+        public ReadOnlyReactiveProperty<float> TrailWidthScale => _trailWidthScale;
         public ReadOnlyReactiveProperty<bool> ComboUnlocked => _comboUnlocked;
         public ReadOnlyReactiveProperty<float> ComboMultiplier => _comboMultiplier;
 
@@ -83,6 +89,9 @@ namespace Eco.Scripts.Upgrades
             _limbCount.Value = sheet.LimbCount;
             _limbRange.Value = sheet.LimbRange;
             _moveSpeed.Value = sheet.MoveSpeed;
+            _wetnessCapacity.Value = sheet.WetnessCapacity;
+            _wetnessFillSpeed.Value = sheet.WetnessFillSpeed;
+            _trailWidthScale.Value = sheet.TrailWidthScale;
             _comboUnlocked.Value = sheet.ComboUnlocked;
             _comboMultiplier.Value = sheet.ComboMultiplier;
 

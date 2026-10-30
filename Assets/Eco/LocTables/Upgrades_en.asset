@@ -352,6 +352,38 @@ MonoBehaviour:
     m_Localized: Dog Friend
     m_Metadata:
       m_Items: []
+  - m_Id: 152591475058376704
+    m_Localized: Slime Trail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736832
+    m_Localized: Water Bank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736833
+    m_Localized: Quick Soak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736834
+    m_Localized: Wide Trail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736835
+    m_Localized: Slime trail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736836
+    m_Localized: 'Water bank: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736837
+    m_Localized: 'Soak speed: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152591475087736838
+    m_Localized: 'Trail width: {0}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

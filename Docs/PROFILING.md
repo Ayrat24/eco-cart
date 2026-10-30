@@ -2,6 +2,10 @@
 
 A worst-case stress test plus profiler markers make performance work repeatable. The stress test runs in the editor or in a development build, writes a text report, and never touches the player's real saves.
 
+## When to run it
+
+Run the stress test only when a change could affect performance, or when the user asks for it. Changes to per-frame code, rendering or shaders, chunk streaming, pooling, physics, or save and load qualify. Text, localization, balance values and docs don't.
+
 ## Running the stress test
 
 | How | Command |

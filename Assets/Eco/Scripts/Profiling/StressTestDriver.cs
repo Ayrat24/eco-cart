@@ -62,7 +62,7 @@ namespace Eco.Scripts.Profiling
 
             _current?.SampleFrame(Time.unscaledDeltaTime);
 
-            // The slime trail is part of the worst case, so the jelly never dries up
+            // The slime trail is part of the worst case, so it runs without being bought and never dries up
             _player?.Wetness.Refill();
         }
 
@@ -237,7 +237,7 @@ EndPhase(world);
         private static Vector3 OnNavMesh(Vector3 position)
         {
             position = WorldTerrain.OnGround(position);
-            return NavMesh.SamplePosition(position, out var hit, 50f, NavMesh.AllAreas) ? hit.position : position;
+            return NavMesh.SamplePosition(position, out var hit, 50f, WorldController.LandAreas) ? hit.position : position;
         }
 
         private async UniTask<string> TraverseAsync(Player player, WorldController world, CancellationToken token)

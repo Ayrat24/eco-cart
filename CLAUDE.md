@@ -47,7 +47,7 @@ Fallbacks without the CLI: compile errors are in `Logs/Editor.log` (`grep -E "er
 
 ## Profiling
 
-Run the worst-case stress test (**Eco → Profiling → Run Stress Test**, or the `invoke_menu` command above) before and after any performance change, and compare the reports in `Logs/StressTest/`. Wrap new heavy code in a marker from `EcoProfilerMarkers` so it shows up in the report. See [Docs/PROFILING.md](Docs/PROFILING.md) for phases, config, baseline numbers and known bottlenecks.
+Run the worst-case stress test (**Eco → Profiling → Run Stress Test**, or the `invoke_menu` command above) only when a change could affect performance or the user asks for it. When you do, run it before and after the change and compare the reports in `Logs/StressTest/`. Wrap new heavy code in a marker from `EcoProfilerMarkers` so it shows up in the report. See [Docs/PROFILING.md](Docs/PROFILING.md) for phases, config, baseline numbers and known bottlenecks.
 
 ## Code conventions (match existing code)
 

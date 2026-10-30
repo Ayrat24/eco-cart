@@ -13,6 +13,10 @@ namespace Eco.Scripts.Upgrades
         public int LimbCount;
         public float LimbRange;
         public float MoveSpeed;
+        public float WetnessCapacity;
+        public float WetnessFillSpeed;
+        // Share of SlimeTrailSettings.Width, the trail's width before upgrades
+        public float TrailWidthScale = 1f;
         public bool ComboUnlocked;
         public float ComboMultiplier;
         public readonly Dictionary<ScrapType, double> ScrapScores = new();
@@ -24,6 +28,8 @@ namespace Eco.Scripts.Upgrades
             LimbCount = baseStats.LimbCount;
             LimbRange = baseStats.LimbRange;
             MoveSpeed = baseStats.MoveSpeed;
+            WetnessCapacity = baseStats.WetnessCapacity;
+            WetnessFillSpeed = baseStats.WetnessFillSpeed;
             ComboMultiplier = baseStats.ComboMultiplier;
 
             foreach (var scrap in baseStats.ScrapScores)

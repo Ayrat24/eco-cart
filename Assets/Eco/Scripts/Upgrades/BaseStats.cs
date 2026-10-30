@@ -18,6 +18,12 @@ namespace Eco.Scripts.Upgrades
         [SerializeField, Min(0.1f)] private float limbRange = 2.4f;
         [SerializeField, Min(0.1f)] private float moveSpeed = 8f;
 
+        [Header("Slime trail")]
+        [Tooltip("Metres of trail the water bank holds.")]
+        [SerializeField, Min(1f)] private float wetnessCapacity = 100f;
+        [Tooltip("Metres of trail the bank soaks up per second in the water.")]
+        [SerializeField, Min(0.1f)] private float wetnessFillSpeed = 35f;
+
         [Header("Recycling")]
         [Tooltip("Combo bonus per earlier item of the same type in a load, once the combo is unlocked.")]
         [SerializeField, Min(0f)] private float comboMultiplier = 0.5f;
@@ -35,6 +41,8 @@ namespace Eco.Scripts.Upgrades
         public int LimbCount => limbCount;
         public float LimbRange => limbRange;
         public float MoveSpeed => moveSpeed;
+        public float WetnessCapacity => wetnessCapacity;
+        public float WetnessFillSpeed => wetnessFillSpeed;
         public float ComboMultiplier => comboMultiplier;
         public IReadOnlyList<ScrapScore> ScrapScores => scrapScores;
         public int DigPower => digPower;
