@@ -31,6 +31,9 @@ namespace Eco.Scripts.ProgressionScreen
         private bool _hasId;
         private HexTileLayout _layout;
         private float _unitsPerTile;
+        private int _size;
+        private int[] _pixelTiles;
+        private Vector2 _center;
 
         public Vector2Int Id => _id;
         public RectTransform Rect => rectTransform;
@@ -40,13 +43,14 @@ namespace Eco.Scripts.ProgressionScreen
         {
             _layout = layout;
             _unitsPerTile = unitsPerTile;
-            rectTransform.sizeDelta = Vector2.one * layout.Size * unitsPerTile;
 
             if (_initialized)
             {
                 return;
             }
 
+            // The player isn't meant to know the world is made of chunks
+            text.gameObject.SetActive(false);
             _imagePool = new ObjectPool<Image>(treeIconPrefab, 0, iconParent);
 
             foreach (var tc in tileColors)
@@ -54,25 +58,22 @@ namespace Eco.Scripts.ProgressionScreen
                 _tileColors[(int)tc.groundType] = tc.color;
             }
 
-            int size = layout.Size;
-            _texture = new Texture2D(size, size);
+            // A world-aligned square of 1 m pixels around the hex
+            _size = Mathf.CeilToInt(layout.Radius * 2f) + 1;
+            _texture = new Texture2D(_size, _size);
             _texture.filterMode = FilterMode.Point;
             _texture.wrapMode = TextureWrapMode.Clamp;
-
-            // Cells outside the hex stay transparent
-            _colors = new Color[size * size];
-            _texture.SetPixels(_colors);
-            _texture.Apply();
+            _colors = new Color[_size * _size];
+            _pixelTiles = new int[_size * _size];
             tileMap.texture = _texture;
             _initialized = true;
         }
 
         public void SetTileData(Vector2Int id, TileData[] data)
         {
-            // Redraws of the same chunk keep the label instead of allocating a new string
             if (!_hasId || _id != id)
             {
-                text.text = id.ToString();
+                MapPixels(id);
             }
 
             _id = id;
@@ -80,40 +81,89 @@ namespace Eco.Scripts.ProgressionScreen
             ReturnTreeIcons();
 
             var colors = _colors;
-            int size = _layout.Size;
-            var origin = rectTransform.anchoredPosition - rectTransform.sizeDelta / 2f;
-            for (int index = 0; index < data.Length; index++)
+            for (int pixel = 0; pixel < colors.Length; pixel++)
             {
-                var cell = _layout.Cell(index);
-                int pixel = cell.x + cell.y * size;
-                var tileData = data[index];
-                if (tileData.objectType == (int)TileObjectType.Scrap)
+                int tile = _pixelTiles[pixel];
+                if (tile < 0)
                 {
-                    colors[pixel] = scrapColor;
+                    colors[pixel] = Color.clear;
                     continue;
                 }
 
-                if (tileData.objectType == (int)TileObjectType.Tree)
+                var tileData = data[tile];
+                colors[pixel] = tileData.objectType == (int)TileObjectType.Scrap
+                    ? scrapColor
+                    : _tileColors.GetValueOrDefault(tileData.ground, Color.magenta);
+            }
+
+            for (int index = 0; index < data.Length; index++)
+            {
+                var tileData = data[index];
+                if (tileData.objectType != (int)TileObjectType.Tree)
                 {
-                    var treeIconId = tileData.objectId - 100;
-                    if (treeIconId < 0 || treeSprites.Length <= treeIconId)
-                    {
-                        treeIconId = 0;
-                    }
-
-                    var icon = _imagePool.Get();
-                    icon.rectTransform.anchoredPosition = origin + ((Vector2)cell + Vector2.one * 0.5f) * _unitsPerTile;
-                    icon.sprite = treeSprites[treeIconId];
-
-                    _spawnedImages.Add(icon);
+                    continue;
                 }
 
-                colors[pixel] = _tileColors.GetValueOrDefault(tileData.ground, Color.magenta);
+                var treeIconId = tileData.objectId - 100;
+                if (treeIconId < 0 || treeSprites.Length <= treeIconId)
+                {
+                    treeIconId = 0;
+                }
+
+                var icon = _imagePool.Get();
+                icon.rectTransform.anchoredPosition = (_center + _layout.LocalPosition(index)) * _unitsPerTile;
+                icon.sprite = treeSprites[treeIconId];
+
+                _spawnedImages.Add(icon);
             }
 
             _texture.SetPixels(colors);
             _texture.Apply();
+        }
 
+        // Pixels are world-aligned 1 m cells, each drawn by the one hex its centre is in, so neighbouring fields
+        // fit together without seams and the map shows no hex outlines. Each pixel shows its nearest tile.
+        private void MapPixels(Vector2Int id)
+        {
+            _center = Hex.ToPlane(id, _layout.Radius);
+            int half = _size / 2;
+            var origin = new Vector2(Mathf.FloorToInt(_center.x) - half, Mathf.FloorToInt(_center.y) - half);
+            rectTransform.anchoredPosition = (origin + Vector2.one * (_size / 2f)) * _unitsPerTile;
+            rectTransform.sizeDelta = Vector2.one * _size * _unitsPerTile;
+
+            for (int z = 0; z < _size; z++)
+            {
+                for (int x = 0; x < _size; x++)
+                {
+                    var cellCenter = origin + new Vector2(x + 0.5f, z + 0.5f);
+                    _pixelTiles[z * _size + x] = Hex.FromPlane(cellCenter, _layout.Radius) == id
+                        ? NearestTile(cellCenter - _center)
+                        : -1;
+                }
+            }
+        }
+
+        private int NearestTile(Vector2 local)
+        {
+            int index = _layout.IndexAt(local);
+            if (index >= 0)
+            {
+                return index;
+            }
+
+            // Cells along the hex edge have no tile of their own
+            float best = float.MaxValue;
+            for (int i = 0; i < _layout.Count; i++)
+            {
+                float distance = (_layout.LocalPosition(i) - local).sqrMagnitude;
+                if (distance < best)
+                {
+                    best = distance;
+                    index = i;
+                }
+            }
+
+            return index;
         }
 
         public void SetAsUndiscovered()

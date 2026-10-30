@@ -10,10 +10,22 @@ namespace Eco.Scripts.World
     /// </summary>
     public class Chunk : MonoBehaviour, IPooledObject
     {
+        // Tiles less than this above the water count as under it: the NavMesh stops just above the water, so
+        // nothing placed there could be reached
+        private const float DryHeight = 0.2f;
+
+        // The water surface shows when the terrain comes this close to the water anywhere in the chunk
+        private const float WaterSurfaceMargin = 0.3f;
+
+        // Metres between the samples taken along the hex outline
+        private const float OutlineSampleSpacing = 1f;
+
         protected Tile[] tiles;
 
         protected SaveManager SaveManager;
         protected Vector2Int Position;
+
+        private WaterSurface _waterSurface;
 
         public Tile[] Tiles => tiles;
         public ChunkDefinition Definition { get; private set; }
@@ -45,6 +57,67 @@ namespace Eco.Scripts.World
 
         public virtual void Init(ChunkContext context)
         {
+        }
+
+        protected virtual void Awake()
+        {
+            _waterSurface = GetComponentInChildren<WaterSurface>(true);
+        }
+
+        /// <summary>
+        /// Marks tiles under (or right at) the water as water ground and the rest as dry, and shows the water
+        /// surface when the baked terrain dips under the water anywhere in the hex. Shorelines don't follow the
+        /// hexes, so this decides per chunk instead of per definition.
+        /// </summary>
+        protected void UpdateWater(WorldData world, bool alwaysShowWater)
+        {
+            float waterLevel = world.WaterLevel;
+            var center = transform.position;
+            bool wet = alwaysShowWater;
+
+            foreach (var tile in tiles)
+            {
+                var local = Layout.LocalPosition(tile.index);
+                float height = WorldTerrain.GroundHeight(center + new Vector3(local.x, 0, local.y));
+                if (height < waterLevel + DryHeight)
+                {
+                    tile.groundType = TileGroundType.Water;
+                }
+                else if (tile.groundType == TileGroundType.Water)
+                {
+                    tile.groundType = TileGroundType.Ground;
+                }
+
+                wet |= height < waterLevel + WaterSurfaceMargin;
+            }
+
+            // The tiles stop short of the hex edge, so check the outline as well
+            int steps = Mathf.Max(1, Mathf.CeilToInt(Layout.Radius / OutlineSampleSpacing));
+            for (int corner = 0; corner < 6 && !wet; corner++)
+            {
+                var a = Hex.Corner(corner, Layout.Radius);
+                var b = Hex.Corner((corner + 1) % 6, Layout.Radius);
+                for (int step = 0; step < steps && !wet; step++)
+                {
+                    var p = Vector2.Lerp(a, b, step / (float)steps);
+                    float height = WorldTerrain.GroundHeight(center + new Vector3(p.x, 0, p.y));
+                    wet = height < waterLevel + WaterSurfaceMargin;
+                }
+            }
+
+            if (_waterSurface == null)
+            {
+                return;
+            }
+
+            if (wet)
+            {
+                _waterSurface.Show(world);
+            }
+            else
+            {
+                _waterSurface.Hide();
+            }
         }
 
         public Vector3 GetTileWorldPosition(Tile tile)

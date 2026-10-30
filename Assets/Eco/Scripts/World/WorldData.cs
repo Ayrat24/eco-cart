@@ -21,10 +21,25 @@ namespace Eco.Scripts.World
         [Header("Terrain")]
         [Tooltip("World height of the water surface. Ground level is 0.")]
         [SerializeField] private float waterLevel = -1f;
-        [Tooltip("Metres on each side of a hex edge over which heights blend into the neighbour.")]
-        [SerializeField, Min(0.1f)] private float heightBlend = 2.5f;
-        [Tooltip("Metres on each side of a hex edge over which textures blend into the neighbour.")]
-        [SerializeField, Min(0.1f)] private float textureBlend = 1.5f;
+        [Tooltip("How far the water rises and falls around the water level with the tide, in metres. At most " +
+                 "0.15: paths and scrap stop that far above the still water, so a bigger tide would flood them.")]
+        [SerializeField, Range(0f, 0.15f)] private float tideHeight = 0.12f;
+        [Tooltip("Seconds for the tide to rise and fall once.")]
+        [SerializeField, Min(1f)] private float tidePeriod = 16f;
+        [Tooltip("Radius in metres of the round blur that smooths heights, so painted hexes melt into natural " +
+                 "shapes. Bigger is softer, but flattens small hills.")]
+        [SerializeField, Min(0.5f)] private float heightBlend = 4.5f;
+        [Tooltip("Radius in metres of the round blur between terrain textures.")]
+        [SerializeField, Min(0.5f)] private float textureBlend = 3f;
+        [Tooltip("Radius in metres of the round blur that shapes lakes and coasts. Bigger is rounder, but " +
+                 "very small lakes shrink (a one-hex lake disappears above about 6).")]
+        [SerializeField, Min(0.5f)] private float shoreBlend = 4.5f;
+        [Tooltip("Metres from the waterline out to the full depth of a lake or the sea. Bigger gives " +
+                 "gentler, shallower shores; lakes narrower than twice this never reach their full depth.")]
+        [SerializeField, Min(1)] private float shelfWidth = 25f;
+        [Tooltip("How far in metres the edges between chunks wander off the hex grid, so lakes, coasts and hills " +
+                 "get natural outlines.")]
+        [SerializeField, Min(0)] private float edgeWobble = 3f;
         [Tooltip("Size of the roughness bumps in metres.")]
         [SerializeField, Min(0.5f)] private float roughnessSize = 8f;
         [Tooltip("Layer painted around planted trees and cleared piles in the game.")]
@@ -44,8 +59,13 @@ namespace Eco.Scripts.World
         public float HexRadius => hexRadius;
         public int MapRadius => mapRadius;
         public float WaterLevel => waterLevel;
+        public float TideHeight => tideHeight;
+        public float TidePeriod => tidePeriod;
         public float HeightBlend => heightBlend;
         public float TextureBlend => textureBlend;
+        public float ShoreBlend => shoreBlend;
+        public float ShelfWidth => shelfWidth;
+        public float EdgeWobble => edgeWobble;
         public float RoughnessSize => roughnessSize;
         public TerrainLayer GrassLayer => grassLayer;
         public List<ScrapItem> ScrapItems => scrapItems;

@@ -89,6 +89,18 @@ namespace Eco.Scripts.World
             return new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
         }
 
+        /// <summary>A fixed pseudo-random value in [0, 1) for a hex; different salts give unrelated values.</summary>
+        public static float Random01(Vector2Int coord, int salt)
+        {
+            unchecked
+            {
+                uint h = (uint)(coord.x * 374761393 + coord.y * 668265263 + salt * 1274126177);
+                h = (h ^ (h >> 13)) * 1103515245;
+                h ^= h >> 16;
+                return (h & 0xFFFFFF) / 16777216f;
+            }
+        }
+
         private static Vector2Int Round(float q, float r)
         {
             float s = -q - r;

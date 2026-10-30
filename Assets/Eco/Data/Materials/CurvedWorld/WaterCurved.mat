@@ -82,7 +82,7 @@ Material:
     - Vector1_C360A163: 2.5
     - Vector1_DF445019: 1.5
     - Vector1_E03AB928: 0.05
-    - Vector1_E5C51606: 0.71
+    - Vector1_E5C51606: 0.3
     - Vector1_F38B44AA: 0.4
     - _AlphaClip: 0
     - _Blend: 0
@@ -105,7 +105,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _WaveFrequency: 1.75
-    - _WaveScale: 0.05
+    - _WaveScale: 0
     - _WaveSpeed: 1.5
     - _WorkflowMode: 1
     - _ZWrite: 1

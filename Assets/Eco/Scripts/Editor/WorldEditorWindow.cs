@@ -24,8 +24,8 @@ namespace Eco.Scripts.EditorTools
 
         private static readonly string[] WorldSettings =
         {
-            "hexRadius", "mapRadius", "waterLevel", "heightBlend", "textureBlend", "roughnessSize", "grassLayer",
-            "ocean", "scrapItems"
+            "hexRadius", "mapRadius", "waterLevel", "tideHeight", "tidePeriod", "heightBlend", "textureBlend",
+            "shoreBlend", "shelfWidth", "edgeWobble", "roughnessSize", "grassLayer", "ocean", "scrapItems"
         };
 
         [SerializeField] private WorldData world;
@@ -165,7 +165,8 @@ namespace Eco.Scripts.EditorTools
 
             left.Add(Header("Palette"));
             var hint = new Label("Left-drag paints, right-drag erases to ocean, Ctrl+click picks. " +
-                                 "Middle-drag pans, wheel zooms, F frames.");
+                                 "Middle-drag pans, wheel zooms, F frames. Where chunks meet, the lower one in " +
+                                 "the list paints over the higher one.");
             hint.style.whiteSpace = WhiteSpace.Normal;
             hint.style.opacity = 0.6f;
             hint.style.marginBottom = 4;
@@ -400,7 +401,7 @@ namespace Eco.Scripts.EditorTools
             }
             else if (!chunk.IsWater && chunk.Elevation < world.WaterLevel)
             {
-                container.Add(new HelpBox("Land below the water level is raised just above it when baked.",
+                container.Add(new HelpBox("This land is below the water level, so it ends up flooded.",
                     HelpBoxMessageType.Info));
             }
 

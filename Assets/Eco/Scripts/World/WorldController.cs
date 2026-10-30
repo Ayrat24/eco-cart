@@ -285,11 +285,13 @@ namespace Eco.Scripts.World
             EcoProfilerMarkers.SpawnChunk.Begin();
             Chunk chunk = pool.Get();
 
-            // Place the chunk before Init so scrap and trees spawn at their final position
-            float height = definition.IsWater ? worldData.WaterLevel : definition.Elevation;
+            // Place the chunk before Init so scrap and trees spawn at their final position. Land chunks stand on the
+            // baked ground at their centre (smoothing moves it off the definition's elevation), so objects in their
+            // prefab sit on it.
+            var position = Hex.ToWorld(coord, worldData.HexRadius);
+            position.y = definition.IsWater ? worldData.WaterLevel : WorldTerrain.GroundHeight(position);
             chunk.transform.parent = transform;
-            chunk.transform.SetPositionAndRotation(Hex.ToWorld(coord, worldData.HexRadius, height),
-                Quaternion.identity);
+            chunk.transform.SetPositionAndRotation(position, Quaternion.identity);
             chunk.Setup(coord, definition, _saveManager, _layout);
             chunk.Init(_context);
 

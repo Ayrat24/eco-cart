@@ -19,6 +19,9 @@ namespace Eco.Scripts.World
         // Random candidates tried per scrap item; the one furthest from the others wins
         private const int ScrapPlacementCandidates = 8;
 
+        // Piles sit up to this share of the hex radius off its centre, so they don't line up on the grid
+        private const float PileJitter = 0.3f;
+
         private ChunkContext _context;
         private PileSite _pileSite;
         private Tile _pileTile;
@@ -28,8 +31,9 @@ namespace Eco.Scripts.World
 
         private bool HasPileSite => _pileSite != null && Definition.Scrap.HasPile;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _pileSite = GetComponentInChildren<PileSite>(true);
         }
 
@@ -44,6 +48,12 @@ namespace Eco.Scripts.World
             if (hasSave)
             {
                 LoadSave();
+            }
+
+            UpdateWater(context.World, false);
+            if (hasSave)
+            {
+                DropDrownedScrap();
             }
 
             InitPile(hasSave);
@@ -81,6 +91,8 @@ namespace Eco.Scripts.World
                 return;
             }
 
+            PlacePileSite();
+
             int maxSize = Definition.Scrap.PileSize;
             int size = maxSize;
             if (hasSave)
@@ -107,6 +119,25 @@ namespace Eco.Scripts.World
             {
                 SetGroundAroundPile(TileGroundType.Pile, PileRadius);
             }
+        }
+
+        // A fixed spot and turn per hex (saves find the pile on the same tile), on the ground, off the centre
+        private void PlacePileSite()
+        {
+            float angle = Hex.Random01(Position, 1) * Mathf.PI * 2f;
+            float distance = Hex.Random01(Position, 2) * Layout.Radius * PileJitter;
+            var offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
+            int index = Layout.IndexAt(offset);
+            if (index < 0 || tiles[index].groundType == TileGroundType.Water)
+            {
+                offset = Vector2.zero;
+                index = Layout.CenterIndex;
+            }
+
+            _pileTile = tiles[index];
+            var position = WorldTerrain.OnGround(transform.position + new Vector3(offset.x, 0, offset.y));
+            _pileSite.transform.SetPositionAndRotation(position,
+                Quaternion.Euler(0f, Hex.Random01(Position, 3) * 360f, 0f));
         }
 
         private void OnPileCleaned()
@@ -164,6 +195,7 @@ namespace Eco.Scripts.World
                     int candidate = Random.Range(0, tiles.Length);
                     var position = Layout.LocalPosition(candidate);
                     if (tiles[candidate].objectType != TileObjectType.Empty ||
+                        tiles[candidate].groundType == TileGroundType.Water ||
                         (avoidPile && (position - pileCenter).sqrMagnitude <= PileRadius * PileRadius))
                     {
                         continue;
@@ -189,6 +221,23 @@ namespace Eco.Scripts.World
 
                 _scrapTiles.Add(best);
                 SpawnScrapAtTile(tiles[best], PickScrapPrefab(), false);
+            }
+        }
+
+        // Saved scrap the terrain now puts under water (the world was baked again since) couldn't be reached
+        private void DropDrownedScrap()
+        {
+            foreach (var tile in tiles)
+            {
+                if (tile.groundType != TileGroundType.Water || tile.item is not ScrapItem scrap)
+                {
+                    continue;
+                }
+
+                _restingScrap.Remove(scrap);
+                PoolManager.Instance.ReturnItem(scrap);
+                tile.item = null;
+                tile.objectType = TileObjectType.Empty;
             }
         }
 

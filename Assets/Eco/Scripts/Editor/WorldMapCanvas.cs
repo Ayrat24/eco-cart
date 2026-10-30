@@ -55,13 +55,14 @@ namespace Eco.Scripts.EditorTools
         private Vector2 _pointerStart;
         private int _undoGroup;
         private Vector2Int _hover;
+        private Vector2 _hoverPoint;
         private bool _hasHover;
         private Vector2Int _lastPainted;
 
         /// <summary>Chunk painted with the left mouse button.</summary>
         public ChunkDefinition Brush { get; set; }
 
-        /// <summary>Paint every hex within this many hexes of the cursor.</summary>
+        /// <summary>Radius of the round brush in hexes; 0 paints the hex under the cursor.</summary>
         public int BrushSize { get; set; }
 
         /// <summary>Hexes were painted or erased.</summary>
@@ -244,14 +245,16 @@ namespace Eco.Scripts.EditorTools
 
             painter.strokeColor = BrushOutline;
             painter.lineWidth = Mathf.Max(0.15f, 1.5f / _zoom);
-            Hex.Range(_hover, BrushSize, _brushHexes);
+            if (BrushSize > 0)
+            {
+                painter.BeginPath();
+                painter.Arc(PlaneToContent(_hoverPoint), BrushRadius(), 0f, 360f);
+                painter.Stroke();
+            }
+
+            CollectBrush(_hoverPoint);
             foreach (var coord in _brushHexes)
             {
-                if (!_world.InMap(coord))
-                {
-                    continue;
-                }
-
                 var center = PlaneToContent(Hex.ToPlane(coord, radius));
                 painter.BeginPath();
                 painter.MoveTo(center + PlaneToContent(Hex.Corner(0, radius)));
@@ -316,8 +319,15 @@ namespace Eco.Scripts.EditorTools
             }
 
             var local = (Vector2)evt.localPosition;
-            var coord = Hex.FromPlane(LocalToPlane(local), _world.HexRadius);
+            _hoverPoint = LocalToPlane(local);
+            var coord = Hex.FromPlane(_hoverPoint, _world.HexRadius);
             SetHover(_world.InMap(coord) ? coord : null);
+
+            // The round brush moves smoothly, not hex by hex
+            if (BrushSize > 0)
+            {
+                _overlay.MarkDirtyRepaint();
+            }
 
             if (evt.pointerId != _pointerId)
             {
@@ -375,10 +385,10 @@ namespace Eco.Scripts.EditorTools
             }
 
             bool recorded = false;
-            Hex.Range(center, BrushSize, _brushHexes);
+            CollectBrush(LocalToPlane(local));
             foreach (var coord in _brushHexes)
             {
-                if (!_world.InMap(coord) || _world.GetPainted(coord) == chunk)
+                if (_world.GetPainted(coord) == chunk)
                 {
                     continue;
                 }
@@ -398,6 +408,19 @@ namespace Eco.Scripts.EditorTools
                 Refresh();
                 Painted?.Invoke();
             }
+        }
+
+        private float BrushRadius() => (BrushSize + 0.5f) * Hex.Spacing(_world.HexRadius);
+
+        // The hexes in the map whose centres are inside the round brush at a point, or the hex under it at size 0
+        private void CollectBrush(Vector2 point)
+        {
+            var center = Hex.FromPlane(point, _world.HexRadius);
+            Hex.Range(center, BrushSize + 1, _brushHexes);
+            float radius = BrushRadius();
+            _brushHexes.RemoveAll(coord => !_world.InMap(coord) || (BrushSize > 0 &&
+                (Hex.ToPlane(coord, _world.HexRadius) - point).sqrMagnitude > radius * radius) ||
+                (BrushSize == 0 && coord != center));
         }
 
         private void SetHover(Vector2Int? coord)

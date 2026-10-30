@@ -184,7 +184,6 @@ namespace Eco.Scripts.ProgressionScreen
             }
 
             var t = _pool.Get();
-            t.Rect.anchoredPosition = Hex.ToPlane(id, _worldController.HexRadius) * CanvasUnitsPerMeter;
             t.Initialize(_layout, CanvasUnitsPerMeter, iconParent);
 
             t.SetTileData(id, data.tiles);

@@ -15,8 +15,13 @@ MonoBehaviour:
   hexRadius: 6
   mapRadius: 20
   waterLevel: -1
-  heightBlend: 2.5
-  textureBlend: 1.5
+  tideHeight: 0.12
+  tidePeriod: 16
+  heightBlend: 4.5
+  textureBlend: 3
+  shoreBlend: 4.5
+  shelfWidth: 25
+  edgeWobble: 3.5
   roughnessSize: 8
   grassLayer: {fileID: 8574412962073106934, guid: f7ce30ec9b280b34cacb1a1005349890, type: 2}
   scrapItems:
@@ -41,45 +46,55 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 30ad9569ed6853a499be8ef6caa75f3e, type: 2}
   ocean: {fileID: 11400000, guid: 30ad9569ed6853a499be8ef6caa75f3e, type: 2}
   cells:
+  - coord: {x: -12, y: 6}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -12, y: 7}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -12, y: 8}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -12, y: 9}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -11, y: 4}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -11, y: 5}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -11, y: 6}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -11, y: 7}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -11, y: 8}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -11, y: 9}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -10, y: 3}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -10, y: 4}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -10, y: 5}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -10, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -10, y: 7}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -10, y: 8}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -10, y: 9}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: -10, y: 10}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -9, y: 2}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -9, y: 3}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -9, y: 4}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -9, y: 5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -9, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -9, y: 7}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -9, y: 8}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -9, y: 9}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: -8, y: 0}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -8, y: 1}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
@@ -94,7 +109,7 @@ MonoBehaviour:
   - coord: {x: -8, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -8, y: 7}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -8, y: 8}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -8, y: 9}
@@ -102,7 +117,7 @@ MonoBehaviour:
   - coord: {x: -7, y: -1}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -7, y: 0}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -7, y: 1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -7, y: 2}
@@ -110,14 +125,18 @@ MonoBehaviour:
   - coord: {x: -7, y: 3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -7, y: 4}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
-  - coord: {x: -7, y: 5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: -7, y: 5}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -7, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -7, y: 7}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -7, y: 8}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: -7, y: 9}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -6, y: -3}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -6, y: -2}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
@@ -126,7 +145,7 @@ MonoBehaviour:
   - coord: {x: -6, y: 0}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -6, y: 1}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -6, y: 2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -6, y: 3}
@@ -134,15 +153,19 @@ MonoBehaviour:
   - coord: {x: -6, y: 4}
     chunk: {fileID: 11400000, guid: fbd1a915abf7f1d4e8daf9a706e273ce, type: 2}
   - coord: {x: -6, y: 5}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -6, y: 6}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -6, y: 7}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -6, y: 8}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: -5, y: -3}
+  - coord: {x: -5, y: -5}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -5, y: -4}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -5, y: -3}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -5, y: -2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -5, y: -1}
@@ -158,15 +181,19 @@ MonoBehaviour:
   - coord: {x: -5, y: 4}
     chunk: {fileID: 11400000, guid: fbd1a915abf7f1d4e8daf9a706e273ce, type: 2}
   - coord: {x: -5, y: 5}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -5, y: 6}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -5, y: 7}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+  - coord: {x: -5, y: 8}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -4, y: -6}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -4, y: -5}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -4, y: -4}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -4, y: -3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -4, y: -2}
@@ -186,13 +213,17 @@ MonoBehaviour:
   - coord: {x: -4, y: 5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -4, y: 6}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -4, y: 7}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -4, y: 8}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: -3, y: -6}
+  - coord: {x: -4, y: 9}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -3, y: -7}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: -3, y: -6}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: -5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: -4}
@@ -204,13 +235,13 @@ MonoBehaviour:
   - coord: {x: -3, y: -1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: 0}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -3, y: 1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: 2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: 3}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -3, y: 4}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: 5}
@@ -218,8 +249,10 @@ MonoBehaviour:
   - coord: {x: -3, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -3, y: 7}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -3, y: 8}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: -3, y: 9}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -2, y: -7}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
@@ -232,13 +265,13 @@ MonoBehaviour:
   - coord: {x: -2, y: -3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: -2}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
-  - coord: {x: -2, y: -1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: -2, y: -1}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: -2, y: 0}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 1}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 3}
@@ -246,13 +279,13 @@ MonoBehaviour:
   - coord: {x: -2, y: 4}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 5}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 7}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 8}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -2, y: 9}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: -1, y: -8}
@@ -266,7 +299,7 @@ MonoBehaviour:
   - coord: {x: -1, y: -4}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -1, y: -3}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -1, y: -2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: -1, y: -1}
@@ -302,7 +335,7 @@ MonoBehaviour:
   - coord: {x: 0, y: -5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 0, y: -4}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 0, y: -3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 0, y: -2}
@@ -314,7 +347,7 @@ MonoBehaviour:
   - coord: {x: 0, y: 1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 0, y: 2}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 0, y: 3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 0, y: 4}
@@ -334,13 +367,13 @@ MonoBehaviour:
   - coord: {x: 1, y: -8}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: -7}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 1, y: -6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: -5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: -4}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: -3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: -2}
@@ -350,7 +383,7 @@ MonoBehaviour:
   - coord: {x: 1, y: 0}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: 1}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: 2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: 3}
@@ -365,12 +398,14 @@ MonoBehaviour:
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 1, y: 8}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: 2, y: -9}
+  - coord: {x: 2, y: -10}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 2, y: -9}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 2, y: -8}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 2, y: -7}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 2, y: -6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 2, y: -5}
@@ -398,9 +433,13 @@ MonoBehaviour:
   - coord: {x: 2, y: 6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 2, y: 7}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+  - coord: {x: 2, y: 8}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 3, y: -11}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 3, y: -10}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 3, y: -9}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 3, y: -8}
@@ -416,9 +455,9 @@ MonoBehaviour:
   - coord: {x: 3, y: -3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 3, y: -2}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 3, y: -1}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 3, y: 0}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 3, y: 1}
@@ -432,9 +471,13 @@ MonoBehaviour:
   - coord: {x: 3, y: 5}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 3, y: 6}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 3, y: 7}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 4, y: -11}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 4, y: -10}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 4, y: -9}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 4, y: -8}
@@ -460,13 +503,17 @@ MonoBehaviour:
   - coord: {x: 4, y: 2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 4, y: 3}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 4, y: 4}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 4, y: 5}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 4, y: 6}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 5, y: -11}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 5, y: -10}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 5, y: -9}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 5, y: -8}
@@ -492,13 +539,17 @@ MonoBehaviour:
   - coord: {x: 5, y: 2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 5, y: 3}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 5, y: 4}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 5, y: 5}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 6, y: -12}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 6, y: -11}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 6, y: -10}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 6, y: -9}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 6, y: -8}
@@ -508,7 +559,7 @@ MonoBehaviour:
   - coord: {x: 6, y: -6}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 6, y: -5}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 6, y: -4}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 6, y: -3}
@@ -526,34 +577,46 @@ MonoBehaviour:
   - coord: {x: 6, y: 3}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 6, y: 4}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: 7, y: -10}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: 7, y: -9}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 6, y: 5}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 7, y: -12}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 7, y: -11}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 7, y: -10}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 7, y: -9}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 7, y: -8}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -7}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -6}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -5}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -4}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -3}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: -1}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 7, y: 0}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: 1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 7, y: 2}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 7, y: 3}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 7, y: 4}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 8, y: -12}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 8, y: -11}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 8, y: -10}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
@@ -563,31 +626,47 @@ MonoBehaviour:
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 8, y: -7}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
-  - coord: {x: 8, y: -3}
+  - coord: {x: 8, y: -6}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 8, y: -5}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 8, y: -4}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 8, y: -3}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 8, y: -2}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 8, y: -1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 8, y: 0}
-    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 8, y: 1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 8, y: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 8, y: 3}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 9, y: -4}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 9, y: -3}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 9, y: -2}
-    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 9, y: -1}
     chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
   - coord: {x: 9, y: 0}
-    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+    chunk: {fileID: 11400000, guid: a6225af0bc105ca4a8cb14424fd8fba0, type: 2}
   - coord: {x: 9, y: 1}
+    chunk: {fileID: 11400000, guid: 5a5e14172cbaabd4d88e12511046ba7c, type: 2}
+  - coord: {x: 9, y: 2}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 10, y: -3}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 10, y: -2}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 10, y: -1}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
   - coord: {x: 10, y: 0}
+    chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
+  - coord: {x: 10, y: 1}
     chunk: {fileID: 11400000, guid: 76a27ff091eec5846a8a782084958f37, type: 2}
