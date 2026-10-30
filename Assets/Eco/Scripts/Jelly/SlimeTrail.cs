@@ -255,11 +255,12 @@ namespace Eco.Scripts.Jelly
         {
             float growDelay = settings.GrowDelay;
             float growDuration = settings.GrowDuration;
-            float grassWidth = settings.GrassWidth;
+            float detailWidth = settings.GrassDetailWidth;
+            float textureWidth = settings.GrassTextureWidth;
             foreach (var point in _pendingGrass)
             {
-                TerrainPainter.GrowGrass(point.Center, point.HalfWidth * grassWidth, point.Birth + growDelay,
-                    growDuration);
+                TerrainPainter.GrowGrass(point.Center, point.HalfWidth * detailWidth, point.HalfWidth * textureWidth,
+                    point.Birth + growDelay, growDuration);
             }
 
             _pendingGrass.Clear();

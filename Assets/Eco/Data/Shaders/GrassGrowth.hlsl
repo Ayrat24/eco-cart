@@ -1,12 +1,14 @@
 #ifndef ECO_GRASS_GROWTH_INCLUDED
 #define ECO_GRASS_GROWTH_INCLUDED
 
-// Grass the slime trail plants grows in instead of popping up, blades and ground alike. GrassGrowthMap holds one
-// texel per terrain detail cell: the time (URP _TimeParameters.x, which is Time.time while playing) the cell's
-// grass is fully grown. Cells that were never stamped hold 0. Included by the generated curved Plants shader, which
-// runs EcoGrassGrowth after wind and before the world bend, and by the generated terrain passes, which run
-// EcoGrassGroundGrowth on the splat control weights (CurvedWorldSetup).
+// Grass the slime trail plants grows in instead of popping up, blades and ground alike. GrassGrowthMap keeps two
+// maps with one texel per terrain detail cell, blades and ground, so they can cover different cells: the time
+// (URP _TimeParameters.x, which is Time.time while playing) the cell's blades or ground are fully grown. Cells that
+// were never stamped hold 0. Included by the generated curved Plants shader, which runs EcoGrassGrowth after wind
+// and before the world bend, and by the generated terrain passes, which run EcoGrassGroundGrowth on the splat
+// control weights (CurvedWorldSetup).
 TEXTURE2D_FLOAT(_EcoGrassGrowthMap);
+TEXTURE2D_FLOAT(_EcoGroundGrowthMap);
 // xy = terrain origin XZ, zw = detail cells per metre
 float4 _EcoGrassGrowthMapTransform;
 // x = 1 / grow duration, y = time until which the map matters (the last cell is grown and its ground written into
@@ -15,10 +17,8 @@ float4 _EcoGrassGrowth;
 // One-hot mask of the terrain splat channel holding the grass layer; zero leaves the ground alone
 float4 _EcoGrassGroundMask;
 
-float EcoGrassGrowthOf(int2 cell, float now)
+float EcoGrowthCurve(float grownAt, float now)
 {
-    cell = clamp(cell, 0, (int2)_EcoGrassGrowth.zw - 1);
-    float grownAt = LOAD_TEXTURE2D_LOD(_EcoGrassGrowthMap, cell, 0).r;
     float growth = saturate(1.0 - (grownAt - now) * _EcoGrassGrowth.x);
     return growth * growth * (3.0 - 2.0 * growth);
 }
@@ -33,7 +33,8 @@ void EcoGrassGrowth(inout float3 positionOS)
 
     float2 pivotXZ = float2(UNITY_MATRIX_M._m03, UNITY_MATRIX_M._m23);
     int2 cell = (int2)floor((pivotXZ - _EcoGrassGrowthMapTransform.xy) * _EcoGrassGrowthMapTransform.zw);
-    positionOS *= EcoGrassGrowthOf(cell, now);
+    cell = clamp(cell, 0, (int2)_EcoGrassGrowth.zw - 1);
+    positionOS *= EcoGrowthCurve(LOAD_TEXTURE2D_LOD(_EcoGrassGrowthMap, cell, 0).r, now);
 }
 
 // Growth of the ground at control texel `texel`: the detail cell under the texel, never-stamped cells excluded
@@ -41,8 +42,8 @@ float EcoGroundGrowthAt(int2 texel, float2 cellsPerTexel, float now)
 {
     int2 cell = (int2)floor(texel * cellsPerTexel);
     cell = clamp(cell, 0, (int2)_EcoGrassGrowth.zw - 1);
-    bool stamped = LOAD_TEXTURE2D_LOD(_EcoGrassGrowthMap, cell, 0).r > 0.0;
-    return stamped ? EcoGrassGrowthOf(cell, now) : 0.0;
+    float grownAt = LOAD_TEXTURE2D_LOD(_EcoGroundGrowthMap, cell, 0).r;
+    return grownAt > 0.0 ? EcoGrowthCurve(grownAt, now) : 0.0;
 }
 
 // Grows the grass layer into the terrain's splat weights where grass is growing, filtered like the control map

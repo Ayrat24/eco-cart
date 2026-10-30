@@ -35,7 +35,8 @@ namespace Eco.Scripts.World
         private struct GrowCircle
         {
             public Vector3 WorldPosition;
-            public float Radius;
+            public float BladesRadius;
+            public float GroundRadius;
             public int GrassDensity;
             public float GrownAt;
             public float GrowDuration;
@@ -132,14 +133,16 @@ namespace Eco.Scripts.World
         }
 
         /// <summary>
-        /// Queues grass that grows in: every bare detail cell whose centre is within <paramref name="radius"/>
-        /// metres gets grass details (by detail quality) and grass-layer ground that stay hidden until
-        /// <paramref name="growStart"/> (<see cref="Time.time"/>), then grow in together over
-        /// <paramref name="growDuration"/> seconds on the GPU (<see cref="GrassGrowthMap"/>). The grown ground is
-        /// written into the alphamap in batches afterwards. Cells that already have grass keep it as it is. Painted
-        /// with the next frame's batch; queue it at least a frame before <paramref name="growStart"/>.
+        /// Queues grass that grows in: detail cells whose centre is within <paramref name="bladesRadius"/> metres
+        /// get grass details (by detail quality), and those within <paramref name="groundRadius"/> the grass layer
+        /// in their ground. Both stay hidden until <paramref name="growStart"/> (<see cref="Time.time"/>), then grow
+        /// in over <paramref name="growDuration"/> seconds on the GPU (<see cref="GrassGrowthMap"/>); the grown
+        /// ground is written into the alphamap in batches afterwards. The cell under the centre always gets both
+        /// unless its radius is 0. Cells that already have grass details keep them as they are. Painted with the
+        /// next frame's batch; queue it at least a frame before <paramref name="growStart"/>.
         /// </summary>
-        public static void GrowGrass(Vector3 worldPosition, float radius, float growStart, float growDuration)
+        public static void GrowGrass(Vector3 worldPosition, float bladesRadius, float groundRadius, float growStart,
+            float growDuration)
         {
             if (_grassLayer < 0)
             {
@@ -150,7 +153,8 @@ namespace Eco.Scripts.World
             PendingGrowth.Add(new GrowCircle
             {
                 WorldPosition = worldPosition,
-                Radius = radius,
+                BladesRadius = density > 0 ? bladesRadius : 0f,
+                GroundRadius = groundRadius,
                 GrassDensity = density,
                 GrownAt = growStart + growDuration,
                 GrowDuration = growDuration
@@ -351,7 +355,8 @@ namespace Eco.Scripts.World
             foreach (var circle in PendingGrowth)
             {
                 var center = WorldToMap(circle.WorldPosition, terrainPosition, data.size, width, height);
-                Encapsulate(ref bounds, ref any, center, Mathf.CeilToInt(circle.Radius * Mathf.Max(cellsX, cellsZ)));
+                float radius = Mathf.Max(circle.BladesRadius, circle.GroundRadius);
+                Encapsulate(ref bounds, ref any, center, Mathf.CeilToInt(radius * Mathf.Max(cellsX, cellsZ)));
             }
 
             if (!any || !ClampToMap(ref bounds, width, height))
@@ -398,9 +403,9 @@ namespace Eco.Scripts.World
             }
         }
 
-        // Fills the bare cells under each growing circle, stamps when they finish growing and queues their ground.
-        // Runs after the plain circles, so grass they paint in the same batch is there at once rather than growing.
-        // Returns whether any grass details changed.
+        // Fills the bare cells under each growing circle's blades and ground, stamps when they finish growing and
+        // queues the ground for the alphamap. Runs after the plain circles, so grass they paint in the same batch is
+        // there at once rather than growing. Returns whether any grass details changed.
         private static bool PaintGrowingGrass(int[,] detailLayer, RectInt bounds, int mapWidth,
             Vector3 terrainPosition, float cellsX, float cellsZ)
         {
@@ -410,44 +415,42 @@ namespace Eco.Scripts.World
                 // In cells, relative to the batch's corner
                 float cx = (circle.WorldPosition.x - terrainPosition.x) * cellsX - bounds.x;
                 float cz = (circle.WorldPosition.z - terrainPosition.z) * cellsZ - bounds.y;
-                float rx = Mathf.Max(circle.Radius * cellsX, 0.01f);
-                float rz = Mathf.Max(circle.Radius * cellsZ, 0.01f);
                 int centerX = Mathf.FloorToInt(cx);
                 int centerZ = Mathf.FloorToInt(cz);
+                float reach = Mathf.Max(circle.BladesRadius, circle.GroundRadius);
 
-                int zMin = Mathf.Max(0, Mathf.FloorToInt(cz - rz));
-                int zMax = Mathf.Min(bounds.height - 1, Mathf.FloorToInt(cz + rz));
-                int xMin = Mathf.Max(0, Mathf.FloorToInt(cx - rx));
-                int xMax = Mathf.Min(bounds.width - 1, Mathf.FloorToInt(cx + rx));
+                int zMin = Mathf.Max(0, Mathf.FloorToInt(cz - reach * cellsZ));
+                int zMax = Mathf.Min(bounds.height - 1, Mathf.FloorToInt(cz + reach * cellsZ));
+                int xMin = Mathf.Max(0, Mathf.FloorToInt(cx - reach * cellsX));
+                int xMax = Mathf.Min(bounds.width - 1, Mathf.FloorToInt(cx + reach * cellsX));
                 for (int z = zMin; z <= zMax; z++)
                 {
-                    float dz = (z + 0.5f - cz) / rz;
+                    // Distance from the centre in metres
+                    float dz = (z + 0.5f - cz) / cellsZ;
                     for (int x = xMin; x <= xMax; x++)
                     {
-                        float dx = (x + 0.5f - cx) / rx;
-                        // The cell under the centre always grows, however narrow the circle
-                        bool inside = dx * dx + dz * dz <= 1f || (x == centerX && z == centerZ);
-                        if (!inside) continue;
+                        float dx = (x + 0.5f - cx) / cellsX;
+                        float distanceSqr = dx * dx + dz * dz;
+                        bool center = x == centerX && z == centerZ;
 
-                        // Grass details already there would shrink and grow again. Without details (low detail
-                        // quality) a cell grows once.
-                        int cellX = bounds.x + x;
-                        int cellZ = bounds.y + z;
-                        int cell = cellZ * mapWidth + cellX;
-                        bool bare = circle.GrassDensity > 0 ? detailLayer[z, x] == 0 : !_groundStamped[cell];
-                        if (!bare) continue;
-
-                        if (circle.GrassDensity > 0)
+                        // Grass details already there would shrink and grow again
+                        bool blades = circle.BladesRadius > 0f && detailLayer[z, x] == 0 &&
+                                      (center || distanceSqr <= circle.BladesRadius * circle.BladesRadius);
+                        if (blades)
                         {
                             detailLayer[z, x] = circle.GrassDensity;
+                            GrassGrowthMap.StampBlades(bounds.x + x, bounds.y + z, circle.GrownAt, circle.GrowDuration);
                             changed = true;
                         }
 
-                        GrassGrowthMap.Stamp(cellX, cellZ, circle.GrownAt, circle.GrowDuration);
-                        if (!_groundStamped[cell])
+                        int cell = (bounds.y + z) * mapWidth + bounds.x + x;
+                        bool ground = circle.GroundRadius > 0f && !_groundStamped[cell] &&
+                                      (center || distanceSqr <= circle.GroundRadius * circle.GroundRadius);
+                        if (ground)
                         {
                             _groundStamped[cell] = true;
-                            GrowingGround.Enqueue((cellX, cellZ, circle.GrownAt));
+                            GrassGrowthMap.StampGround(bounds.x + x, bounds.y + z, circle.GrownAt, circle.GrowDuration);
+                            GrowingGround.Enqueue((bounds.x + x, bounds.y + z, circle.GrownAt));
                         }
                     }
                 }

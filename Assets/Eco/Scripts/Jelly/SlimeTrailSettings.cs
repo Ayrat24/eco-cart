@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Eco.Scripts.Jelly
 {
@@ -62,9 +63,14 @@ namespace Eco.Scripts.Jelly
         [SerializeField, Min(0f)] private float growDelay = 3f;
         [Tooltip("Seconds the grass takes to grow to full size.")]
         [SerializeField, Min(0.1f)] private float growDuration = 10f;
-        [Tooltip("Grass grows on the terrain detail cells (about 1 m) whose centre is within this share of the " +
-                 "trail's half width.")]
-        [SerializeField, Range(0.1f, 2f)] private float grassWidth = 1.4f;
+        [Tooltip("Grass blades grow on the terrain detail cells (about 1 m) whose centre is within this share of " +
+                 "the trail's half width. 0: no blades.")]
+        [FormerlySerializedAs("grassWidth")]
+        [SerializeField, Range(0f, 3f)] private float grassDetailWidth = 1.4f;
+        [Tooltip("The terrain's grass texture layer grows into the ground of the cells (about 1 m) whose centre is " +
+                 "within this share of the trail's half width. Keep it wider than the blades: their clumps are 2-3 m " +
+                 "across and look bad on bare ground. 0: the ground stays as it is.")]
+        [SerializeField, Range(0f, 4f)] private float grassTextureWidth = 2.6f;
         [Tooltip("Seconds between grass paints. Each paint is one terrain detail read and write, so fewer is " +
                  "cheaper. Kept under the grow delay so the grass is in place before it starts growing.")]
         [SerializeField, Min(0.1f)] private float grassPaintInterval = 1f;
@@ -78,7 +84,8 @@ namespace Eco.Scripts.Jelly
         public float MaxTrailSpeed => maxTrailSpeed;
         public float GrowDelay => growDelay;
         public float GrowDuration => growDuration;
-        public float GrassWidth => grassWidth;
+        public float GrassDetailWidth => grassDetailWidth;
+        public float GrassTextureWidth => grassTextureWidth;
         public float GrassPaintInterval => Mathf.Min(grassPaintInterval, growDelay * 0.5f);
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");

@@ -35,5 +35,6 @@ MonoBehaviour:
   lumpStrength: 0.12
   growDelay: 3
   growDuration: 10
-  grassWidth: 1.4
+  grassDetailWidth: 1.4
+  grassTextureWidth: 2.6
   grassPaintInterval: 1

@@ -1,7 +1,8 @@
 // Slime the jelly leaves on the ground (SlimeTrail): a strip mesh laid on the terrain. Every vertex carries when its
 // point was laid and when it dries up, so drying and fading run here and the mesh only changes when a point is
-// added or dropped. Wet sheen from the main light over a little noise. Queued with the opaques, before the grass
-// and the jelly's contact shadow, so it lands in the camera opaque texture and shows through the refracting body.
+// added or dropped. Wet sheen from the main light over a little noise. Queued just before the jelly (Transparent),
+// after the camera opaque texture is taken: the refracting body covers it fully (alpha 1) and only shows the
+// ground behind it, so no slime shows through the character. Glass scrap (also Transparent) still draws over it.
 // SlimeTrail sets the properties from SlimeTrailSettings; the defaults here only show in the material inspector.
 Shader "Eco/SlimeTrail"
 {
@@ -28,7 +29,7 @@ Shader "Eco/SlimeTrail"
         Tags
         {
             "RenderType" = "Transparent"
-            "Queue" = "AlphaTest-10"
+            "Queue" = "Transparent-1"
             "RenderPipeline" = "UniversalPipeline"
             "IgnoreProjector" = "True"
         }
