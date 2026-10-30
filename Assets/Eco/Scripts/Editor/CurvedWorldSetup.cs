@@ -106,7 +106,10 @@ namespace Eco.Scripts.EditorTools
                 terrain.materialTemplate = material;
                 // Keep enough vertices for curvature even on the original perfectly flat plateau.
                 terrain.heightmapPixelError = 1;
-                terrain.patchBoundsMultiplier = new Vector3(1, 4, 1);
+                // Flat patches have no height for patchBoundsMultiplier to scale; bend the patch bounds instead
+                terrain.patchBoundsMultiplier = Vector3.one;
+                if (terrain.GetComponent<CurvedTerrainBounds>() == null)
+                    Undo.AddComponent<CurvedTerrainBounds>(terrain.gameObject);
                 foreach (var detail in terrain.terrainData.detailPrototypes)
                 {
                     if (detail.prototype == null) continue;

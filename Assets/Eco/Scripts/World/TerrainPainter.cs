@@ -46,6 +46,9 @@ namespace Eco.Scripts.World
             }
         }
 
+        /// <summary>True for the play-mode copy made by <see cref="ResetTerrain"/>, which is safe to change.</summary>
+        public static bool IsRuntimeCopy(TerrainData data) => data != null && data == _terrainCopy;
+
         private static void UseTerrainDataCopy(Terrain terrain)
         {
             // Scene loads hand the terrain its asset again; the previous game's copy is no longer used
