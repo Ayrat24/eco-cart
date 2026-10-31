@@ -28,6 +28,7 @@ MonoBehaviour:
   price:
     coefficient: 1450
     magnitude: 0
+  placementRadius: 1.5
   references:
     version: 2
     RefIds: []

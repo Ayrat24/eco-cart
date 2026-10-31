@@ -1,5 +1,6 @@
 using System;
 using Eco.Scripts.Upgrades;
+using Eco.Scripts.World;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,16 +11,17 @@ namespace Eco.Scripts.UI
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset cartItemTemplate;
         [SerializeField] private Settings settings;
+        [SerializeField] private Material plantingPreviewMaterial;
 
         private UpgradeTreeMenu _upgradeMenu;
         private CartStorageDisplay _cartStorageDisplay;
         private WetnessDisplay _wetnessDisplay;
         private TutorialMenu _tutorialMenu;
-        private ToolSelector _toolSelector;
+        private TreePlantingMenu _treeMenu;
         private SettingsMenu _settingsMenu;
 
         public void Init(UpgradeManager upgradeManager, CurrencyManager currencyManager, Player player,
-            Action resetProgress)
+            Action resetProgress, WorldController world)
         {
             _upgradeMenu = new UpgradeTreeMenu(uiDocument, upgradeManager, currencyManager);
             _upgradeMenu.Init();
@@ -30,8 +32,8 @@ namespace Eco.Scripts.UI
             _wetnessDisplay = new WetnessDisplay(uiDocument, player);
             _wetnessDisplay.Init();
 
-            _toolSelector = new ToolSelector(uiDocument);
-            _toolSelector.Init();
+            _treeMenu = new TreePlantingMenu(uiDocument, world, currencyManager, plantingPreviewMaterial);
+            _treeMenu.Init();
 
             _tutorialMenu = new TutorialMenu();
             _tutorialMenu.Init(uiDocument);
@@ -46,7 +48,7 @@ namespace Eco.Scripts.UI
             _cartStorageDisplay.Clear();
             _wetnessDisplay.Clear();
             _tutorialMenu.Clear();
-            _toolSelector.Clear();
+            _treeMenu.Clear();
             _settingsMenu?.Clear();
         }
     }

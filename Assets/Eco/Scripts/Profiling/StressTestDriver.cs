@@ -72,7 +72,12 @@ namespace Eco.Scripts.Profiling
             var player = resolver.Resolve<Player>();
             var world = resolver.Resolve<WorldController>();
             _player = player;
-EndPhase(world);
+            // Planting now requires actual grass; saved tree tiles no longer paint it on load.
+            TerrainPainter.PaintGrass(player.transform.position,
+                Mathf.CeilToInt(world.HexRadius * (_config.ClearingRadiusChunks + 1)));
+            await UniTask.NextFrame(token);
+            await UniTask.NextFrame(token);
+            EndPhase(world);
 
             BeginPhase("Idle");
             await UniTask.WaitForSeconds(_config.IdleSeconds, cancellationToken: token);

@@ -282,14 +282,6 @@ namespace Eco.Scripts.World
         // TerrainPainter paints on the next frame and skips circles that are already painted
         private void PaintGrass()
         {
-            foreach (var tile in tiles)
-            {
-                if (tile.objectType == TileObjectType.Tree)
-                {
-                    TerrainPainter.PaintGrass(GetTileWorldPosition(tile), TreePlanter.TreeGrassRadius);
-                }
-            }
-
             if (HasPileSite && _pileCleared)
             {
                 TerrainPainter.PaintGrass(GetTileWorldPosition(_pileTile), TreePlanter.PileGrassRadius);

@@ -45,7 +45,7 @@ namespace Eco.Scripts.World
         [SerializeField, Min(0)] private float edgeWobble = 3f;
         [Tooltip("Size of the roughness bumps in metres.")]
         [SerializeField, Min(0.5f)] private float roughnessSize = 8f;
-        [Tooltip("Layer painted around planted trees and cleared piles in the game.")]
+        [Tooltip("Grass layer used by the slime trail and cleared piles.")]
         [SerializeField] private TerrainLayer grassLayer;
 
         [Header("Content")]

@@ -75,6 +75,8 @@ namespace Eco.Scripts.Pooling
             return _scrapPools[id].Get();
         }
 
+        public Tree GetTreePrefab(int id) => treePrefabs.Find(tree => tree.GetPrefabId() == id);
+
         public Tree GetTree(int id)
         {
             return _treePools[id].Get();

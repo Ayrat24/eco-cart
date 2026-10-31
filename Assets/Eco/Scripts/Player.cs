@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Eco.Scripts.Hats;
 using Eco.Scripts.ItemCollecting;
 using Eco.Scripts.Jelly;
-using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -19,7 +18,6 @@ namespace Eco.Scripts
         [SerializeField] private ItemCollector itemCollector;
         [SerializeField] private Stomach stomach;
         [SerializeField] private Wetness wetness;
-        [SerializeField] private ToolController toolController;
         [SerializeField] private Transform hatParent;
         [SerializeField] private List<HatDefinition> hats = new();
 
@@ -57,7 +55,6 @@ namespace Eco.Scripts
             wetness.Unlocked.Subscribe(SetWading).AddTo(ref builder);
             _subscription = builder.Build();
 
-            toolController.Init();
             _hatController = new HatController(hats, hatParent);
             _hatController.Initialize(saveManager);
 
@@ -98,7 +95,6 @@ namespace Eco.Scripts
             PlayerClickMovement.OnLeftClicked -= Recycle;
 
             _subscription?.Dispose();
-            toolController?.Clear();
         }
     }
 }

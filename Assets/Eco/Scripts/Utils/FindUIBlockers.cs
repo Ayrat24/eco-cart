@@ -9,7 +9,7 @@ namespace Eco.Scripts.Utils
     // Runtime helper to check whether a screen position is over blocking UI.
     public static class FindUIBlockers
     {
-        public static bool IsPointerOverUI(Vector2 pointerPosition, GameObject[] uiRootsToIgnore = null)
+        public static bool IsPointerOverUI(Vector2 pointerPosition, GameObject[] uiRootsToIgnore = null, bool ignoreToolkit = false)
         {
             if (EventSystem.current == null)
                 return false;
@@ -61,7 +61,7 @@ namespace Eco.Scripts.Utils
 
                 // If result came from a panel raycaster (UI Toolkit), treat as blocking
                 if (moduleName.Contains("PanelRaycaster") || moduleName.Contains("UIR") || moduleName.Contains("UIElements"))
-                    return true;
+                    return !ignoreToolkit;
 
                 return false;
             }).ToList();

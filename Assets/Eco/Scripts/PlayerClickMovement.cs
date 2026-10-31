@@ -48,7 +48,7 @@ public class PlayerClickMovement : MonoBehaviour
 
     private void OnLeftClick(InputAction.CallbackContext obj)
     {
-        if (IsPointerOverUI())
+        if (Eco.Scripts.UI.TreePlantingMenu.IsDragging || IsPointerOverUI())
         {
             return;
         }
@@ -58,7 +58,7 @@ public class PlayerClickMovement : MonoBehaviour
 
     private void OnRMCStart(InputAction.CallbackContext obj)
     {
-        if (IsPointerOverUI())
+        if (Eco.Scripts.UI.TreePlantingMenu.IsDragging || IsPointerOverUI())
         {
             return;
         }
@@ -78,7 +78,7 @@ public class PlayerClickMovement : MonoBehaviour
     
     private void Update()
     {
-        if (_isHoldingRightClick)
+        if (_isHoldingRightClick && !Eco.Scripts.UI.TreePlantingMenu.IsDragging && !IsPointerOverUI())
         {
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 

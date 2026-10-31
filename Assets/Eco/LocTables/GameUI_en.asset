@@ -178,6 +178,34 @@ MonoBehaviour:
     m_Localized: Wetness
     m_Metadata:
       m_Items: []
+  - m_Id: 152435947300683776
+    m_Localized: Plant trees
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435948349259776
+    m_Localized: Click to plant nearby, or drag onto grass.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435949351698432
+    m_Localized: Unlock trees in the upgrades menu.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435950291222528
+    m_Localized: Release to plant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435951201386496
+    m_Localized: Needs free grass and space between trees.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435952153493504
+    m_Localized: Not enough money.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435953130766336
+    m_Localized: Tree planted!
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

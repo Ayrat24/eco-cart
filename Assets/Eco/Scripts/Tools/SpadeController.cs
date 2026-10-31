@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Eco.Scripts.Jelly;
 using Eco.Scripts.Scrap;
+using Eco.Scripts.Upgrades;
 using PrimeTween;
 using R3;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Eco.Scripts.Tools
     /// scrap pile in reach once a second.
     /// </summary>
     [DefaultExecutionOrder(105)]
-    public class SpadeController : Tool
+    public class SpadeController : MonoBehaviour
     {
         [SerializeField] private JellyBody body;
         [SerializeField] private JellyTentacle leftTentacle;
@@ -37,6 +38,7 @@ namespace Eco.Scripts.Tools
 
         private readonly Collider[] _colliders = new Collider[3];
         private IDisposable _subscription;
+        private bool Active => isActiveAndEnabled && UnlockTracker.IsUpgradeUnlocked(UnlockableUpgradeType.Spade);
         private bool _isDigging;
         private bool _holding;
         private float _grip;
@@ -58,12 +60,21 @@ namespace Eco.Scripts.Tools
                 ScanForItems();
             });
 
+            spade.SetActive(false);
             _spadeRestPosition = spade.transform.localPosition;
             _spadeRestRotation = spade.transform.localRotation;
         }
 
         private void LateUpdate()
         {
+            if (!Active && !_isDigging)
+            {
+                SwitchGrip(false);
+                HideTentacles();
+                spade.SetActive(false);
+                _grip = 0f;
+            }
+
             if (!spade.activeSelf)
             {
                 return;
@@ -97,6 +108,13 @@ namespace Eco.Scripts.Tools
 
             if (count == 0)
             {
+                if (!_isDigging)
+                {
+                    SwitchGrip(false);
+                    HideTentacles();
+                    spade.SetActive(false);
+                    _grip = 0f;
+                }
                 return;
             }
 
@@ -134,6 +152,9 @@ namespace Eco.Scripts.Tools
                 return;
             }
 
+            if (_isDigging) return;
+            spade.SetActive(true);
+            SwitchGrip(true);
             scrapPile.Dig();
             PlayDigAnimationAsync().Forget();
         }
@@ -156,7 +177,7 @@ namespace Eco.Scripts.Tools
                 spadeTransform.localRotation = Quaternion.Euler(digTilt * stab, 0f, 0f) * _spadeRestRotation;
             });
 
-            await UniTask.WaitForSeconds(digDuration);
+            await UniTask.WaitForSeconds(digDuration, cancellationToken: destroyCancellationToken);
             spadeTransform.SetLocalPositionAndRotation(_spadeRestPosition, _spadeRestRotation);
             _isDigging = false;
         }
@@ -210,28 +231,5 @@ namespace Eco.Scripts.Tools
             _subscription?.Dispose();
         }
 
-        public override async UniTask Enable()
-        {
-            Active = true;
-            spade.SetActive(true);
-            SwitchGrip(true);
-            await UniTask.WaitForSeconds(gripDuration);
-        }
-
-        public override async UniTask Disable()
-        {
-            if (!Active)
-            {
-                spade.SetActive(false);
-                return;
-            }
-
-            Active = false;
-            await UniTask.WaitWhile(() => _isDigging);
-            SwitchGrip(false);
-            await UniTask.WaitUntil(() => _grip <= 0f);
-            HideTentacles();
-            spade.SetActive(false);
-        }
     }
 }

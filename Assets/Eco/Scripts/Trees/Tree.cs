@@ -18,6 +18,8 @@ namespace Eco.Scripts.Trees
 
         private CancellationTokenSource _cancellationTokenSource;
         
+        public Transform Model => model;
+
         public int GetPrefabId()
         {
             return prefabId;

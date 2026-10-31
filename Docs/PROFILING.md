@@ -32,6 +32,7 @@ cat "$(ls -t Logs/StressTest/*.txt | head -1)"
 1. Loads `Assets/Eco/ContentDescriptions/Profiling/Resources/StressTestConfig.asset`.
 2. Points `SaveManager.SaveDirectory` at a fresh sandbox, `<persistentDataPath>/StressTest/`, so the player's own save is never touched.
 3. Writes a save of the config's `world` (the scene's `WorldData`) through `SaveManager`. Every land chunk without a pile gets scrap, trees on a grid and green ground; pile and water chunks generate as usual. The game then loads that save through the normal `LandChunk` load path, so chunk spawning, scrap pooling, tree pooling and terrain/grass painting all run the real code.
+   Trees no longer paint grass when restored. The driver explicitly paints a grass clearing around the player during Load so the Plant phase still exercises successful placements.
 4. Forces the detail quality from the config (High by default, the densest grass).
 5. The scene starts the game as usual, and a `StressTestDriver` runs the phases.
 
@@ -41,7 +42,7 @@ cat "$(ls -t Logs/StressTest/*.txt | head -1)"
 |---|---|---|
 | Load | Boot until `GameController.Initialized` | Save load, pools, terrain copy, NavMesh build, the first 169 chunks, grass painting |
 | Idle | Stand still | Steady-state cost of the full world (render, physics, scripts) |
-| Plant | Plant `treesToPlant` trees through `TreePlanter.PlantTree` | `TreePlanter`, ground marking, grass repaint |
+| Plant | Plant `treesToPlant` trees through `TreePlanter.PlantTree` on a grass clearing prepared during Load | Nearest valid grass search, placement spacing, pooling and tile saves |
 | Collect | Drive a small loop at the player's own speed; recycle the stomach when it is full or pickups stall | `ItemCollector` scan, `Stomach.Reserve`, tentacle animations and meshes, stomach floating, `ItemRecycler`, `ScrapItem.Dissolve` |
 | Traverse | Drive a hexagonal loop across the world at `moveSpeed` | Chunk streaming one hex at a time (15 spawns and 15 despawns per crossing at render radius 7) |
 | Churn | Teleport between two spots `2·renderRadius+1` hexes apart | Worst-case streaming: all 169 chunks despawn and a full new set spawns in one frame |
@@ -52,7 +53,7 @@ cat "$(ls -t Logs/StressTest/*.txt | head -1)"
 |---|---|---|
 | `world` | `World/WorldData` | The painted world; must be the one the scene's `WorldController` streams and the terrain was baked from |
 | `scrapPerChunk` | 10 | The game's chunks spawn 2–3 |
-| `treeSpacing` | 6 tiles | A real fully green world has trees about 12 tiles apart, because each tree greens a 12-tile circle and the next can only be planted on non-green ground. 6 is about 4× real density |
+| `treeSpacing` | 6 tiles | Seeded tree grid spacing. Gameplay spacing now comes from the sum of each tree definition's placement radius |
 | `clearingRadiusChunks` | 1 | Tree-free hexes around the spawn hex so the Plant phase has ground to plant on |
 | `treePrefabs` | Pine, Apple, Pear | Must match `PoolManager.treePrefabs` in the scene |
 | `detailQuality` | High | Overrides the saved setting for the run |
@@ -183,3 +184,26 @@ The stress test's Collect phase now empties the cart before it starts. Scrap tha
 3. **Chunk crossing: up to about 20 ms.** This is `GameObject` activation (about 3 ms of `ActivateAwakeRecursively`) and the drop of scrap seen for the first time. Occasionally an `Instantiate` adds to it when a scrap pool runs dry, since scrap pools still start at one item per prefab. `Chunk.Setup` still allocates 100 `Tile`s per spawn. Reusing them isn't safe as long as scrap in the cart keeps a reference to its old tile.
 4. **GC.Collect of about 19 ms every 12–25 s while moving.** In the editor, about 80% of the idle 11 KB per frame is Game view `OnGUI`, not game code (Traverse capture, 2026-10-25). Measure a development build before chasing the rest.
 5. **`NavMeshObstacle` on every tree:** about 0.15 ms per frame in `NavMeshObstacle.Transform`.
+
+
+### Tree planting menu (2026-10-31)
+
+Baseline `stress_20261031_003342`; final `stress_20261031_004500`, same 3840×2160 / High setup.
+Both planted 10 trees. Average frame times (ms): Idle 7.74 → 7.77, Plant 7.55 → 7.50,
+Collect 8.98 → 8.91, Traverse 8.28 → 8.07, Churn 7.60 → 6.63. Final traversal completed
+44 chunk crossings with no recovery warps. This compares the changed gameplay workloads:
+trees no longer paint grass, and the test explicitly provides a grass clearing during Load.
+The final planting marker took 21.5 ms total over 10 calls, worst call 4.37 ms.
+
+Sandbox checks also covered pointer click and drag planting with one charge, blocked UI drops,
+Escape cancellation, insufficient funds, live unlock/refund changes, bare ground and water
+rejection, growing versus mature trail grass, summed-radius spacing across spatial cells,
+reservation release, and saved trees in unloaded chunks. English and Russian HUD layouts were
+visually inspected. Unity compilation and runtime console reported zero errors.
+
+
+### Horizontal tree menu and ghost preview (2026-10-31)
+
+Baseline `stress_20261031_004727`, final `stress_20261031_110006`. Average frame times (ms): Load 46.12 -> 49.09, Idle 7.44 -> 7.09, Plant 7.58 -> 6.72, Collect 8.80 -> 8.20, Traverse 7.89 -> 7.36, Churn 6.77 -> 6.46. Both planted 10 trees; final traversal crossed 44 chunks with no warps. The automated run covers the menu at rest; active preview rendering was checked separately in the sandbox.
+
+Validated icon-and-price-only entries, hidden scrollbars, horizontal wheel scrolling, valid and blocked ghost colors for all three trees, alpha-clipped foliage, one LOD per tree, no gameplay components on previews, cancellation cleanup, and successful pointer drag/release with one charge. Shader and C# compilation succeeded; final runtime console had zero errors.

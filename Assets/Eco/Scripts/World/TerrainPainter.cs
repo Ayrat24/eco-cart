@@ -25,6 +25,7 @@ namespace Eco.Scripts.World
         private static readonly List<Vector2Int> PendingGround = new();
         // Whose each detail cell's ground is: 0 bare, OtherGrass, or the claim GrowGrass was given for it
         private static int[] _groundClaims;
+        private static float[] _grassReadyAt;
         private static int _detailWidth;
         private static int _detailHeight;
         private static Vector3 _terrainPosition;
@@ -90,6 +91,7 @@ namespace Eco.Scripts.World
             _terrainPosition = terrain.transform.position;
             _cellsPerMetre = new Vector2(_detailWidth / data.size.x, _detailHeight / data.size.z);
             _groundClaims = new int[_detailWidth * _detailHeight];
+            _grassReadyAt = new float[_groundClaims.Length];
             ClaimBakedGrass(data);
 
             GrassGrowthMap.Reset(data, _terrainPosition, _grassLayer);
@@ -144,6 +146,16 @@ namespace Eco.Scripts.World
 
             int claim = _groundClaims[z * _detailWidth + x];
             return claim == OtherGrass || (claim > 0 && claim < ignoreClaimsFrom);
+        }
+
+        /// <summary>Existing grass or trail grass whose growth has finished; safe for planting.</summary>
+        public static bool IsGrownGrass(Vector3 position)
+        {
+            if (!IsGrass(position)) return false;
+            int x = Mathf.FloorToInt((position.x - _terrainPosition.x) * _cellsPerMetre.x);
+            int z = Mathf.FloorToInt((position.z - _terrainPosition.z) * _cellsPerMetre.y);
+            int cell = z * _detailWidth + x;
+            return _groundClaims[cell] == OtherGrass || Time.time >= _grassReadyAt[cell];
         }
 
         /// <summary>True for the play-mode copy made by <see cref="ResetTerrain"/>, which is safe to change.</summary>
@@ -270,6 +282,7 @@ namespace Eco.Scripts.World
                     if (!inside || _groundClaims[cell] != 0) continue;
 
                     _groundClaims[cell] = claim;
+                    _grassReadyAt[cell] = grownAt;
                     PendingGroundStamps.Add((x, z, grownAt, growDuration));
                 }
             }

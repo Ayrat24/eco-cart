@@ -171,6 +171,34 @@ MonoBehaviour:
     m_Key: wetness-bar
     m_Metadata:
       m_Items: []
+  - m_Id: 152435947300683776
+    m_Key: tree-plant-title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435948349259776
+    m_Key: tree-plant-hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435949351698432
+    m_Key: tree-plant-locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435950291222528
+    m_Key: tree-plant-drop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435951201386496
+    m_Key: tree-plant-invalid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435952153493504
+    m_Key: tree-plant-money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152435953130766336
+    m_Key: tree-plant-success
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

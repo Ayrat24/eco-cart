@@ -74,7 +74,7 @@ namespace Eco.Scripts
             var spawnPosition = _worldController.SpawnWorld(_saveManager.Progress.playerPosition?.ToVector3());
 
             await UniTask.NextFrame();
-            gameUI.Init(_upgradeManager, _currencyManager, _player, ResetProgress);
+            gameUI.Init(_upgradeManager, _currencyManager, _player, ResetProgress, _worldController);
             await UniTask.NextFrame();
 
             _player.Spawn(_saveManager, spawnPosition);

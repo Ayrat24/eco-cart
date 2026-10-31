@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using Eco.Scripts.Profiling;
-using Eco.Scripts.Tools;
 using Eco.Scripts.Upgrades;
 using R3;
 using UnityEngine;
@@ -14,7 +12,7 @@ namespace Eco.Scripts.ItemCollecting
     /// (LimbRange, around the sphere collider's center) come from <see cref="PlayerStats"/>; tentacles past the
     /// authored ones are cloned from the first.
     /// </summary>
-    public class ItemCollector : Tool
+    public class ItemCollector : MonoBehaviour
     {
         [SerializeField] ItemRecycler itemRecycler;
         [SerializeField] SphereCollider sphereCollider;
@@ -45,7 +43,7 @@ namespace Eco.Scripts.ItemCollecting
             var builder = new DisposableBuilder();
             Observable.IntervalFrame(10).Subscribe(_ =>
              {
-                 if (!Active || !stomach.CanAddItems || !HasFreeHands())
+                 if (!isActiveAndEnabled || !stomach.CanAddItems || !HasFreeHands())
                  {
                      return;
                  }
@@ -230,16 +228,5 @@ namespace Eco.Scripts.ItemCollecting
             Gizmos.DrawWireSphere(center, Application.isPlaying ? _range : sphereCollider.radius);
         }
 
-        public override UniTask Enable()
-        {
-            Active = true;
-            return UniTask.CompletedTask;
-        }
-
-        public override async UniTask Disable()
-        {
-            Active = false;
-            await UniTask.WaitUntil(AllHandsAreFree);
-        }
     }
 }

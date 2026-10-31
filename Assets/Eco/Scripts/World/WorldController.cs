@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Eco.Scripts.Profiling;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.Upgrades;
+using Eco.Scripts.Trees;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,6 +18,9 @@ namespace Eco.Scripts.World
     public class WorldController : MonoBehaviour
     {
         [SerializeField] private WorldData worldData;
+        [SerializeField] private List<TreeDefinition> trees = new();
+        public IReadOnlyList<TreeDefinition> Trees => trees;
+        public PlacementSpace Placement => _treePlanter.Placement;
         [SerializeField] private Transform player;
         [Tooltip("How many hexes around the player's hex are spawned.")]
         [SerializeField] private int renderRadius = 7;
@@ -85,7 +89,7 @@ namespace Eco.Scripts.World
             using var marker = EcoProfilerMarkers.SpawnWorld.Auto();
 
             _layout = HexTileLayout.Get(worldData.HexRadius);
-            _treePlanter = new TreePlanter(player, this);
+            _treePlanter = new TreePlanter(player, this, _saveManager);
             _context = new ChunkContext(worldData, _treePlanter, _scrapRestingPoses, _currencyManager, _stats);
 
             CreatePools();

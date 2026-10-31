@@ -25,6 +25,9 @@ namespace Eco.Scripts.Trees
         [Tooltip("Price of planting one, for the planting menu.")]
         [SerializeField] private AlphabeticNotation price;
 
+        [SerializeField, Min(0.1f)] private float placementRadius = 1.5f;
+
+        public float PlacementRadius => Mathf.Max(0.1f, placementRadius);
         public string Id => id;
         public Sprite Icon => icon;
         public UnlockableUpgradeType UnlockType => unlockType;
