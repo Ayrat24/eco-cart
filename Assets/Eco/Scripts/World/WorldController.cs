@@ -40,6 +40,7 @@ namespace Eco.Scripts.World
         private SaveManager _saveManager;
         private PlayerStats _stats;
         private CurrencyManager _currencyManager;
+        private FruitGrowth _fruitGrowth;
         private bool _initialized;
         private TreePlanter _treePlanter;
         private ChunkContext _context;
@@ -75,11 +76,13 @@ namespace Eco.Scripts.World
         }
 
         [Inject]
-        public void Initialize(SaveManager saveManager, PlayerStats stats, CurrencyManager currencyManager)
+        public void Initialize(SaveManager saveManager, PlayerStats stats, CurrencyManager currencyManager,
+            FruitGrowth fruitGrowth)
         {
             _saveManager = saveManager;
             _stats = stats;
             _currencyManager = currencyManager;
+            _fruitGrowth = fruitGrowth;
         }
 
         /// <summary>Builds the NavMesh and pools, then spawns the chunks around where the player will start.</summary>
@@ -89,7 +92,7 @@ namespace Eco.Scripts.World
             using var marker = EcoProfilerMarkers.SpawnWorld.Auto();
 
             _layout = HexTileLayout.Get(worldData.HexRadius);
-            _treePlanter = new TreePlanter(player, this, _saveManager);
+            _treePlanter = new TreePlanter(player, this, _saveManager, _fruitGrowth);
             _context = new ChunkContext(worldData, _treePlanter, _scrapRestingPoses, _currencyManager, _stats);
 
             CreatePools();

@@ -16,6 +16,9 @@ namespace Eco.Scripts.Trees
         private CancellationTokenSource _growthCancellation;
 
         public Transform Model => model;
+
+        /// <summary>Only on trees that can bear fruit.</summary>
+        public FruitBearer Bearer { get; private set; }
         public bool CanBeRecycled => true;
         public int GetPrefabId() => prefabId;
 
@@ -23,6 +26,7 @@ namespace Eco.Scripts.Trees
         {
             _restScale = model.localScale;
             _restRotation = model.localRotation;
+            Bearer = GetComponent<FruitBearer>();
         }
 
         public void ShowPlantAnimation(TreeGrowthSettings settings)
@@ -59,7 +63,12 @@ namespace Eco.Scripts.Trees
         }
 
         public void OnSpawn() => ResetGrowth();
-        public void OnDespawn() => ResetGrowth();
+        public void OnDespawn()
+        {
+            ResetGrowth();
+            if (Bearer != null) Bearer.Clear();
+        }
+
         private void OnDisable() => ResetGrowth();
         private void OnDestroy() => ResetGrowth();
     }

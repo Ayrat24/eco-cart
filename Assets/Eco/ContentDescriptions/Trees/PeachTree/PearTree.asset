@@ -30,6 +30,10 @@ MonoBehaviour:
     magnitude: 1
   placementRadius: 1.5
   growthSettings: {fileID: 11400000, guid: 106e9fe5828e230438c11cd1f3645116, type: 2}
+  fruit: {fileID: 3313710558656827814, guid: bd28d17c730efdb42acef0c8979acf2f, type: 3}
+  fruitInterval: 45
+  maxFruits: 4
+  ripenDuration: 1.5
   references:
     version: 2
     RefIds: []

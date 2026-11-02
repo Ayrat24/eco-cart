@@ -371,6 +371,38 @@ MonoBehaviour:
     m_Key: effect-trail-width
     m_Metadata:
       m_Items: []
+  - m_Id: 153637619997835264
+    m_Key: effect-unlock-fruit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806784
+    m_Key: effect-fruit-speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806785
+    m_Key: scrap-apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806786
+    m_Key: scrap-pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806787
+    m_Key: upgrade-apple-fruit-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806788
+    m_Key: upgrade-apple-fruit-speed-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806789
+    m_Key: upgrade-pear-fruit-name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806790
+    m_Key: upgrade-pear-fruit-speed-name
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

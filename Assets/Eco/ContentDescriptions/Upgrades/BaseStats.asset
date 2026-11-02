@@ -16,6 +16,8 @@ MonoBehaviour:
   limbCount: 2
   limbRange: 2.38
   moveSpeed: 8
+  wetnessCapacity: 100
+  wetnessFillSpeed: 35
   comboMultiplier: 0.5
   scrapScores:
   - type: 0
@@ -30,6 +32,12 @@ MonoBehaviour:
   - type: 3
     score: 5
     color: {r: 0.3921569, g: 0.5843138, b: 0.9294118, a: 1}
+  - type: 4
+    score: 50
+    color: {r: 0.95, g: 0.35, b: 0.3, a: 1}
+  - type: 5
+    score: 2000
+    color: {r: 0.85, g: 0.85, b: 0.35, a: 1}
   digPower: 3
   pileScore: 2700
   flowersBonus: 0.5

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Eco.Scripts.Scrap;
+using Eco.Scripts.Trees;
 using LargeNumbers;
 using R3;
 using UnityEngine;
@@ -25,6 +26,7 @@ namespace Eco.Scripts.Upgrades
         private readonly ReactiveProperty<float> _comboMultiplier = new();
         private readonly Dictionary<ScrapType, AlphabeticNotation> _scrapScores = new();
         private readonly Dictionary<ScrapType, Color> _scrapColors = new();
+        private readonly Dictionary<TreeDefinition, float> _fruitIntervals = new();
         // Unlocks that came from upgrades, so a refund can take them back
         private readonly HashSet<UnlockableUpgradeType> _grantedUnlocks = new();
 
@@ -101,6 +103,12 @@ namespace Eco.Scripts.Upgrades
                 _scrapScores[pair.Key] = new AlphabeticNotation(pair.Value);
             }
 
+            _fruitIntervals.Clear();
+            foreach (var tree in sheet.FruitTrees)
+            {
+                _fruitIntervals[tree] = sheet.GetFruitInterval(tree);
+            }
+
             foreach (var unlock in _grantedUnlocks)
             {
                 if (!sheet.Unlocks.Contains(unlock))
@@ -133,6 +141,12 @@ namespace Eco.Scripts.Upgrades
         public AlphabeticNotation GetScoreForScrap(ScrapType type)
         {
             return _scrapScores.TryGetValue(type, out var score) ? score : new AlphabeticNotation(0);
+        }
+
+        /// <summary>Seconds to grow one fruit on this tree type; false until its fruit is unlocked.</summary>
+        public bool TryGetFruitInterval(TreeDefinition tree, out float seconds)
+        {
+            return _fruitIntervals.TryGetValue(tree, out seconds);
         }
 
         /// <summary>Combo bonus per earlier item of the same type in a load; 0 until the combo is unlocked.</summary>

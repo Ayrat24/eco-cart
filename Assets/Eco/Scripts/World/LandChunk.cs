@@ -267,7 +267,7 @@ namespace Eco.Scripts.World
                         }
                         break;
                     case TileObjectType.Tree:
-                        _context.TreePlanter.PlantTree(savedData.objectId, tile, this);
+                        _context.TreePlanter.PlantTree(savedData.objectId, tile, this, savedData);
                         break;
                 }
             }

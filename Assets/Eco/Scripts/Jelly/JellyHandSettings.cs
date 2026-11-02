@@ -37,6 +37,8 @@ namespace Eco.Scripts.Jelly
         [SerializeField, Min(0f)] private float swaySpeed = 5f;
 
         [Header("Pickup")]
+        [Tooltip("How far straight up a collector finds items, on top of its reach: fruit up in a tree's crown.")]
+        [SerializeField, Min(0f)] private float reachUp = 8f;
         [Tooltip("Seconds to grow out and reach the item.")]
         [SerializeField, Min(0.01f)] private float reachDuration = 0.3f;
         [Tooltip("Seconds to carry it round to the front of the mouth.")]
@@ -66,6 +68,7 @@ namespace Eco.Scripts.Jelly
         public float EmbedDepth => embedDepth;
         public float SwayAmplitude => swayAmplitude;
         public float SwaySpeed => swaySpeed;
+        public float ReachUp => reachUp;
         public float ReachDuration => reachDuration;
         public float CarryDuration => carryDuration;
         public float PushDuration => pushDuration;

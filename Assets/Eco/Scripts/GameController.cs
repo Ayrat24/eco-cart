@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using Eco.Scripts.Helpers;
 using Eco.Scripts.Pooling;
 using Eco.Scripts.ProgressionScreen;
+using Eco.Scripts.Trees;
 using Eco.Scripts.UI;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
@@ -26,13 +27,14 @@ namespace Eco.Scripts
         private Player _player;
         private UpgradeManager _upgradeManager;
         private CurrencyManager _currencyManager;
+        private FruitGrowth _fruitGrowth;
 
         public bool Initialized { get; private set; }
 
         [Inject]
         void Initialize(SaveManager saveManager, WorldController worldController, Settings settings,
             HelperManager helperManager, Player player, UpgradeManager upgradeManager,
-            CurrencyManager currencyManager)
+            CurrencyManager currencyManager, FruitGrowth fruitGrowth)
         {
             _saveManager = saveManager;
             _worldController = worldController;
@@ -41,6 +43,7 @@ namespace Eco.Scripts
             _player = player;
             _upgradeManager = upgradeManager;
             _currencyManager = currencyManager;
+            _fruitGrowth = fruitGrowth;
         }
 
         private void Start()
@@ -65,6 +68,7 @@ namespace Eco.Scripts
 
             _settings.Load();
             _upgradeManager.Load(_saveManager);
+            _fruitGrowth.Load(_worldController.Trees, _saveManager);
 
             scoreGainedPopup.Init();
 
@@ -108,6 +112,7 @@ namespace Eco.Scripts
             _helperManager.Save(_saveManager);
             _currencyManager.Save(_saveManager);
             _upgradeManager.Save(_saveManager);
+            _fruitGrowth.Save(_saveManager);
 
             _worldController.SaveWorld();
 

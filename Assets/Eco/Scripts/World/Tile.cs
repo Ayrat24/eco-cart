@@ -1,4 +1,5 @@
 using Eco.Scripts.Pooling;
+using Eco.Scripts.Trees;
 
 namespace Eco.Scripts.World
 {
@@ -33,6 +34,11 @@ namespace Eco.Scripts.World
             }
 
             data.ground = (int)groundType;
+
+            if (item is Tree { Bearer: not null } tree)
+            {
+                tree.Bearer.Save(ref data);
+            }
 
             return data;
         }

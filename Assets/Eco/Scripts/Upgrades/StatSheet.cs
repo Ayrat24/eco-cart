@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Eco.Scripts.Scrap;
+using Eco.Scripts.Trees;
 
 namespace Eco.Scripts.Upgrades
 {
@@ -21,6 +22,9 @@ namespace Eco.Scripts.Upgrades
         public float ComboMultiplier;
         public readonly Dictionary<ScrapType, double> ScrapScores = new();
         public readonly HashSet<UnlockableUpgradeType> Unlocks = new();
+        // Tree types whose fruit is unlocked, and how much faster it grows: 1 means twice as fast
+        public readonly HashSet<TreeDefinition> FruitTrees = new();
+        public readonly Dictionary<TreeDefinition, float> FruitSpeedBonus = new();
 
         public StatSheet(BaseStats baseStats)
         {
@@ -41,6 +45,12 @@ namespace Eco.Scripts.Upgrades
         public double GetScrapScore(ScrapType type)
         {
             return ScrapScores.GetValueOrDefault(type, 0d);
+        }
+
+        /// <summary>Seconds to grow one fruit on this tree type.</summary>
+        public float GetFruitInterval(TreeDefinition tree)
+        {
+            return tree.FruitInterval / (1f + FruitSpeedBonus.GetValueOrDefault(tree, 0f));
         }
     }
 }

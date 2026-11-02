@@ -142,6 +142,7 @@ namespace Eco.Scripts
             public Vector3Serializable? playerPosition;
             public float wetness;
             public Dictionary<string, int> UpgradeLevels = new();
+            public Dictionary<string, double> FruitClocks = new();
         }
 
         [System.Serializable]

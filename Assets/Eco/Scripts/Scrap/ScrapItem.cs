@@ -77,6 +77,14 @@ namespace Eco.Scripts.Scrap
             rb.Sleep();
         }
 
+        // Held up by the spot instead of physics. It keeps its collider, which is how the collector finds it.
+        public void Hang(Transform spot)
+        {
+            transform.SetParent(spot, false);
+            transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            rb.isKinematic = true;
+        }
+
         public void OnPickUp(Transform parent)
         {
             if (_isCollected)

@@ -5,6 +5,8 @@ namespace Eco.Scripts.Scrap
         Food,
         Paper,
         Plastic,
-        Glass
+        Glass,
+        Apple,
+        Pear
     }
 }

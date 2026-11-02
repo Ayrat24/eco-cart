@@ -25,6 +25,7 @@ namespace Eco.Scripts.Profiling
         public static readonly ProfilerMarker PaintTerrain = Create("Eco.TerrainPainter.PaintPending");
         public static readonly ProfilerMarker PlantPreview = Create("Eco.TreePlantingMenu.Preview");
         public static readonly ProfilerMarker PlantTree = Create("Eco.TreePlanter.PlantTree");
+        public static readonly ProfilerMarker GrowFruit = Create("Eco.FruitGrowth.Tick");
         public static readonly ProfilerMarker ScanForItems = Create("Eco.ItemCollector.ScanForItems");
         public static readonly ProfilerMarker ReserveInStomach = Create("Eco.Stomach.Reserve");
         public static readonly ProfilerMarker StomachFloat = Create("Eco.Stomach.Float");

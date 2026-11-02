@@ -111,6 +111,19 @@ namespace Eco.Scripts.Pooling
             return pool.Get();
         }
 
+        // Fruit only ever comes from its tree: it stays out of _ids, the random world scrap
+        public ScrapItem GetFruit(ScrapItem fruit)
+        {
+            var id = fruit.GetPrefabId();
+            if (!_scrapPools.TryGetValue(id, out var pool))
+            {
+                pool = new ObjectPool<ScrapItem>(fruit, 0, transform);
+                _scrapPools.Add(id, pool);
+            }
+
+            return pool.Get();
+        }
+
         public ScrapItem GetRandomScrap()
         {
             var randomIndex = Random.Range(0, _ids.Count);

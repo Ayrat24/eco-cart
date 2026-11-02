@@ -1,4 +1,5 @@
 using Eco.Scripts.Helpers;
+using Eco.Scripts.Trees;
 using Eco.Scripts.Upgrades;
 using Eco.Scripts.World;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Eco.Scripts
             builder.Register<CurrencyManager>(Lifetime.Scoped);
             builder.Register<PlayerStats>(Lifetime.Scoped);
             builder.Register<UpgradeManager>(Lifetime.Scoped);
+            builder.Register<FruitGrowth>(Lifetime.Scoped);
 
             builder.RegisterComponentInHierarchy<GameController>();
             builder.RegisterComponentInHierarchy<WorldController>();

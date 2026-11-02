@@ -42,6 +42,10 @@ namespace Eco.Scripts.EditorTools
                             null => "Effect type is missing (renamed or deleted class?)",
                             UnlockTreeEffect { Tree: null } => "Unlock Tree has no tree",
                             UnlockPetEffect { Pet: null } => "Unlock Pet has no pet",
+                            UnlockFruitEffect { Tree: null } => "Unlock Fruit has no tree",
+                            FruitSpeedEffect { Tree: null } => "Fruit Speed has no tree",
+                            UnlockFruitEffect { Tree: { Fruit: null } } => "That tree bears no fruit",
+                            FruitSpeedEffect { Tree: { Fruit: null } } => "That tree bears no fruit",
                             _ => null
                         };
 

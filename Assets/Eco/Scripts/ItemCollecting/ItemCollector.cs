@@ -81,12 +81,13 @@ namespace Eco.Scripts.ItemCollecting
         {
             using var marker = EcoProfilerMarkers.ScanForItems.Auto();
 
-            // Reach grows with the body
+            // Reach grows with the body and goes straight up, for the fruit in a tree's crown above
             float growth = _stomach.Body.Growth;
             var localCenter = sphereCollider.center;
             localCenter.z *= growth;
             Vector3 center = sphereCollider.transform.TransformPoint(localCenter);
-            int count = Physics.OverlapSphereNonAlloc(center, _range * growth, _colliders, layerMask);
+            Vector3 top = center + Vector3.up * (_stomach.Body.Hands.ReachUp * growth);
+            int count = Physics.OverlapCapsuleNonAlloc(center, top, _range * growth, _colliders, layerMask);
 
             if (count == 0)
             {

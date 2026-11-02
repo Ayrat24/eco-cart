@@ -384,6 +384,38 @@ MonoBehaviour:
     m_Localized: 'Trail width: {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 153637619997835264
+    m_Localized: '{0} bears fruit: one every {1} s, up to {2}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806784
+    m_Localized: '{0} fruit time: {1} s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806785
+    m_Localized: Apples
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806786
+    m_Localized: Pears
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806787
+    m_Localized: Apple Harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806788
+    m_Localized: Quick Apples
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806789
+    m_Localized: Pear Harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153637620018806790
+    m_Localized: Quick Pears
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

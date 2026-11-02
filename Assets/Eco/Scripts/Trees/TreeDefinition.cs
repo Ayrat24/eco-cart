@@ -1,3 +1,4 @@
+using Eco.Scripts.Scrap;
 using Eco.Scripts.Upgrades;
 using LargeNumbers;
 using UnityEngine;
@@ -28,7 +29,22 @@ namespace Eco.Scripts.Trees
         [SerializeField, Min(0.1f)] private float placementRadius = 1.5f;
 
         [SerializeField] private TreeGrowthSettings growthSettings;
+
+        [Header("Fruit")]
+        [Tooltip("What this tree bears once the upgrade tree unlocks it. Its prefab needs a FruitBearer with spots.")]
+        [SerializeField] private ScrapItem fruit;
+        [Tooltip("Seconds to grow one fruit, before upgrades.")]
+        [SerializeField, Min(1f)] private float fruitInterval = 30f;
+        [Tooltip("Most fruit one tree holds; the prefab's fruit spots are a limit as well.")]
+        [SerializeField, Min(1)] private int maxFruits = 4;
+        [Tooltip("Seconds a new fruit takes to swell to full size. Tentacles can't take it until then.")]
+        [SerializeField, Min(0f)] private float ripenDuration = 1.5f;
+
         public TreeGrowthSettings GrowthSettings => growthSettings;
+        public ScrapItem Fruit => fruit;
+        public float FruitInterval => fruitInterval;
+        public int MaxFruits => maxFruits;
+        public float RipenDuration => ripenDuration;
 
         public float PlacementRadius => Mathf.Max(0.1f, placementRadius);
         public string Id => id;

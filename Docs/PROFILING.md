@@ -74,7 +74,7 @@ For each phase the report lists:
 - scene counts at the end of the phase: chunks, scrap, trees, rigidbodies awake
 - every marker that ran, with its total ms, worst frame, frames it ran in, and call count
 
-The markers live in `EcoProfilerMarkers` and wrap the known heavy paths: save load/save, pools, terrain reset/paint, NavMesh build, world update, chunk spawn/despawn, land chunk init, `SaveTiles`, tree planting, collector scan, stomach reserve and floating, jelly body and tentacle updates, the slime trail, and scrap recycle. They also appear in the Profiler window. To instrument something new, add a marker there; the report picks it up automatically.
+The markers live in `EcoProfilerMarkers` and wrap the known heavy paths: save load/save, pools, terrain reset/paint, NavMesh build, world update, chunk spawn/despawn, land chunk init, `SaveTiles`, tree planting, fruit growth, collector scan, stomach reserve and floating, jelly body and tentacle updates, the slime trail, and scrap recycle. They also appear in the Profiler window. To instrument something new, add a marker there; the report picks it up automatically.
 
 Editor numbers include editor overhead such as Game view `OnGUI`. For absolute numbers, run a development build with `-ecoStressTest`. Compare runs on the same machine; run-to-run variation is small (the first two baseline runs were within a few percent).
 

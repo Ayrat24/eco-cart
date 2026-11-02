@@ -665,6 +665,130 @@ MonoBehaviour:
     - slime-trail
     effects:
     - rid: 3845993405026927140
+  - id: apple-fruit
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 153637620018806787
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: d75b537edb4f6914d94bac18db2bfa7a, type: 3}
+    position: {x: -960, y: 660}
+    maxLevel: 1
+    baseCost:
+      coefficient: 1000
+      magnitude: 0
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - apple-seeds
+    effects:
+    - rid: 6829139342763229508
+  - id: apple-fruit-speed
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 153637620018806788
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: 63ca65882d9a82542af119abd181e734, type: 3}
+    position: {x: -1200, y: 660}
+    maxLevel: 5
+    baseCost:
+      coefficient: 800
+      magnitude: 0
+    costGrowth: 1.7
+    requirement: 0
+    requires:
+    - apple-fruit
+    effects:
+    - rid: 6829139342763229509
+  - id: pear-fruit
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 153637620018806789
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: c6114c15e004b064a99aa5944b2dbad8, type: 3}
+    position: {x: -960, y: 880}
+    maxLevel: 1
+    baseCost:
+      coefficient: 5
+      magnitude: 1
+    costGrowth: 1.5
+    requirement: 0
+    requires:
+    - pear-seeds
+    effects:
+    - rid: 6829139342763229510
+  - id: pear-fruit-speed
+    title:
+      m_TableReference:
+        m_TableCollectionName: GUID:b958da43275a91c46a38f0b71faa67b2
+      m_TableEntryReference:
+        m_KeyId: 153637620018806790
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    description:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    icon: {fileID: 21300000, guid: e14d8a140e77a5047a51229d7673f836, type: 3}
+    position: {x: -1200, y: 880}
+    maxLevel: 5
+    baseCost:
+      coefficient: 4
+      magnitude: 1
+    costGrowth: 1.7
+    requirement: 0
+    requires:
+    - pear-fruit
+    effects:
+    - rid: 6829139342763229511
   references:
     version: 2
     RefIds:
@@ -755,3 +879,21 @@ MonoBehaviour:
       type: {class: TrailWidthEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
       data:
         widthPerLevel: 0.25
+    - rid: 6829139342763229508
+      type: {class: UnlockFruitEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}
+    - rid: 6829139342763229509
+      type: {class: FruitSpeedEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: 1740cf85dd0373f45a057edff0844ef3, type: 2}
+        speedPerLevel: 0.25
+    - rid: 6829139342763229510
+      type: {class: UnlockFruitEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: f7504cbf56c1e39459908e8aaf696323, type: 2}
+    - rid: 6829139342763229511
+      type: {class: FruitSpeedEffect, ns: Eco.Scripts.Upgrades.Effects, asm: Assembly-CSharp}
+      data:
+        tree: {fileID: 11400000, guid: f7504cbf56c1e39459908e8aaf696323, type: 2}
+        speedPerLevel: 0.25

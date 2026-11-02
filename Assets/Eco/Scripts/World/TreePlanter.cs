@@ -4,6 +4,7 @@ using Eco.Scripts.Pooling;
 using Eco.Scripts.Trees;
 using R3;
 using UnityEngine;
+using Tree = Eco.Scripts.Trees.Tree;
 
 namespace Eco.Scripts.World
 {
@@ -13,15 +14,17 @@ namespace Eco.Scripts.World
         public const int PileGrassRadius = 6;
         private readonly Transform _player;
         private readonly WorldController _world;
+        private readonly FruitGrowth _fruitGrowth;
         private readonly Dictionary<int, TreeDefinition> _definitions = new();
         private readonly HashSet<(Vector2Int chunk, int tile)> _reserved = new();
         public PlacementSpace Placement { get; } = new();
         public readonly Subject<int> OnTreePlanted = new();
 
-        public TreePlanter(Transform player, WorldController world, SaveManager saves)
+        public TreePlanter(Transform player, WorldController world, SaveManager saves, FruitGrowth fruitGrowth)
         {
             _player = player;
             _world = world;
+            _fruitGrowth = fruitGrowth;
             foreach (var definition in world.Trees)
             {
                 if (definition != null) _definitions[definition.PrefabId] = definition;
@@ -119,14 +122,28 @@ namespace Eco.Scripts.World
 
         private bool PlantNew(int id, Tile tile)
         {
-            PlantTree(id, tile, tile.parentChunk, true);
+            var tree = PlaceTree(id, tile, tile.parentChunk);
+            if (_definitions.TryGetValue(id, out var definition))
+            {
+                tree.ShowPlantAnimation(definition.GrowthSettings);
+                // Up to half a fruit's head start, so trees planted together don't bear in step
+                if (tree.Bearer != null)
+                    tree.Bearer.Begin(definition, _fruitGrowth, 0, _fruitGrowth.GetClock(definition) - Random.value * 0.5f);
+            }
             tile.parentChunk.SaveTiles();
             OnTreePlanted.OnNext(id);
             return true;
         }
 
         // Save restoration bypasses grass/unlock/cost checks; old trees remain in place.
-        public void PlantTree(int prefabId, Tile tile, Chunk parent, bool isNewlyPlanted = false)
+        public void PlantTree(int prefabId, Tile tile, Chunk parent, TileData saved)
+        {
+            var tree = PlaceTree(prefabId, tile, parent);
+            if (tree.Bearer != null && _definitions.TryGetValue(prefabId, out var definition))
+                tree.Bearer.Begin(definition, _fruitGrowth, saved.fruits, saved.fruitCycle);
+        }
+
+        private Tree PlaceTree(int prefabId, Tile tile, Chunk parent)
         {
             var tree = PoolManager.Instance.GetTree(prefabId);
             tree.transform.parent = parent.transform;
@@ -135,8 +152,7 @@ namespace Eco.Scripts.World
             tile.objectType = TileObjectType.Tree;
             Reserve(Hex.FromWorld(parent.transform.position, _world.HexRadius), tile.index,
                 tree.transform.position, prefabId);
-            if (isNewlyPlanted && _definitions.TryGetValue(prefabId, out var definition))
-                tree.ShowPlantAnimation(definition.GrowthSettings);
+            return tree;
         }
 
         private void Reserve(Vector2Int chunk, int tile, Vector3 position, int id)
