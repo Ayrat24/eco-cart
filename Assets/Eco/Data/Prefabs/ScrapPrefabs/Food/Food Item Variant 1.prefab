@@ -173,6 +173,7 @@ GameObject:
   - component: {fileID: 6272244744961851877}
   - component: {fileID: 5484698834941378176}
   - component: {fileID: 6318755415385518288}
+  - component: {fileID: 4978888140733016318}
   m_Layer: 0
   m_Name: Food Item Variant 1
   m_TagString: Untagged
@@ -216,6 +217,7 @@ MonoBehaviour:
   color: {r: 1, g: 0.7206769, b: 0, a: 1}
   weight: 1
   rb: {fileID: 6272244744961851877}
+  navObstacle: {fileID: 4978888140733016318}
   particleEffect: {fileID: 8789553599633901821}
   trailRenderer: {fileID: 588014602246953468}
 --- !u!54 &6272244744961851877
@@ -280,6 +282,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25b5b5b73458f354a8bc0bed427ef401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Eco.Scripts.World.CurvedWorldBounds
+--- !u!208 &4978888140733016318
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8001417500736216246}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &1831882621365088561
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ using Eco.Scripts.World;
 using PrimeTween;
 using R3;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UIElements;
 
 namespace Eco.Scripts.Scrap
@@ -18,6 +19,7 @@ namespace Eco.Scripts.Scrap
         [SerializeField] private Color color = Color.wheat;
         [SerializeField] private int weight = 1;
         [SerializeField] private Rigidbody rb;
+        [SerializeField] private NavMeshObstacle navObstacle;
         [SerializeField] ParticleSystem particleEffect;
         [SerializeField] TrailRenderer trailRenderer;
 
@@ -42,7 +44,7 @@ namespace Eco.Scripts.Scrap
         public bool IsBeingPickedUp
         {
             get => _isBeingPickedUp;
-            set => _isBeingPickedUp = value;
+            set => SetPickedUpStatus(value);
         }
         
         public void Initialize(Tile tile)
@@ -83,6 +85,7 @@ namespace Eco.Scripts.Scrap
             transform.SetParent(spot, false);
             transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             rb.isKinematic = true;
+            UpdateObstacle();
         }
 
         public void OnPickUp(Transform parent)
@@ -229,11 +232,19 @@ namespace Eco.Scripts.Scrap
         {
             rb.isKinematic = isKinematic;
             rb.detectCollisions = !isKinematic;
+            UpdateObstacle();
         }
 
         public void SetPickedUpStatus(bool status)
         {
             _isBeingPickedUp = status;
+            UpdateObstacle();
+        }
+
+        // Only loose scrap blocks the way: whoever has reserved an item must be able to walk up to it
+        private void UpdateObstacle()
+        {
+            navObstacle.enabled = CanBeRecycled && !rb.isKinematic;
         }
 
         public StyleColor GetColor()
@@ -270,6 +281,7 @@ namespace Eco.Scripts.Scrap
 
             _isBeingPickedUp = false;
             _isCollected = false;
+            UpdateObstacle();
         }
 
         public void OnDespawn()

@@ -183,7 +183,21 @@ The stress test's Collect phase now empties the cart before it starts. Scrap tha
 2. **Load.** A single GC.Collect of about 390 ms right after the scene loads, plus the first spawn of 121 chunks (about 210 ms). The load allocates about 106 MB. The fade-in hides it, but it adds to load time.
 3. **Chunk crossing: up to about 20 ms.** This is `GameObject` activation (about 3 ms of `ActivateAwakeRecursively`) and the drop of scrap seen for the first time. Occasionally an `Instantiate` adds to it when a scrap pool runs dry, since scrap pools still start at one item per prefab. `Chunk.Setup` still allocates 100 `Tile`s per spawn. Reusing them isn't safe as long as scrap in the cart keeps a reference to its old tile.
 4. **GC.Collect of about 19 ms every 12–25 s while moving.** In the editor, about 80% of the idle 11 KB per frame is Game view `OnGUI`, not game code (Traverse capture, 2026-10-25). Measure a development build before chasing the rest.
-5. **`NavMeshObstacle` on every tree:** about 0.15 ms per frame in `NavMeshObstacle.Transform`.
+5. **`NavMeshObstacle` on every tree and loose scrap item:** about 0.15 ms per frame in `NavMeshObstacle.Transform` for 280 trees, and about 1 ms for 1,441 scrap items (see below).
+
+### Scrap obstacles (2026-11-02)
+
+Baseline `stress_20261102_164151`; non-carving `_164357`; carving (`carveOnlyStationary`, not kept) `_164657`. Default config, 1,441 scrap loaded, 3840×2160 / High. Avg (p95) frame ms:
+
+| Phase | baseline | non-carving | carving |
+|---|---|---|---|
+| Idle | 7.84 (10.0) | 9.29 (12.4) | 10.20 (14.1) |
+| Plant | 7.45 (9.1) | 9.95 (12.0) | 10.32 (18.7) |
+| Collect | 9.05 (11.1) | 10.00 (12.0) | 10.59 (19.6) |
+| Traverse | 7.77 (10.1) | 8.73 (10.8) | failed, 5 crossings |
+| Churn | 6.74 (7.9) | 7.13 (8.2) | 7.25 (10.6) |
+
+Non-carving costs about 1 ms at this density, which is three times the game's. Carving almost doubles p95 while anything moves, and Traverse failed within a second with 6 warps. Non-carving obstacles only steer agents, and paths still run through them, so at the stress config's 10 scrap per chunk and 15 m/s the jelly jams: Traverse fell from 44 crossings and 0 warps to 17 and 6, which makes that report's Traverse line a different workload from the baseline. The jam is intended gameplay, not a bug to fix: heavy scrap regions are meant to be hard to push through, and clearing them makes the jelly faster. Warps in Traverse at the default config are expected. At the game's density and speed (`scrapPerChunk` 3, `moveSpeed` 8, `stress_20261102_164835`, 436 scrap loaded) it made 47 crossings with 0 warps. That run has no baseline at the same settings, so scale the 1 ms by scrap count (about 0.3 ms) rather than treating it as measured.
 
 
 ### Tree planting menu (2026-10-31)
