@@ -27,7 +27,8 @@ Shader "Eco/Jelly"
         _WaterWaveHeight("Waterline Wave Height (fraction of body)", Range(0, 0.08)) = 0.045
         _WaterSlosh("Water Wobble Follow", Range(0, 2)) = 1.2
         _WaterWaveSpeed("Water Wave Speed", Range(0, 5)) = 1.8
-        _WaterUpperClarity("Upper Jelly Clarity", Range(0, 1)) = 0.75
+        _WaterTextureStrength("Water Texture Strength", Range(0, 1)) = 0.12
+        _WaterTextureScale("Water Texture Scale", Range(1, 20)) = 12
         _WaterSurfaceOpacity("Interior Water Visibility", Range(0, 1)) = 0.75
         _WaterFoamStrength("Water Foam Brightness", Range(0, 1)) = 0.25
         _WaterTintStrength("Water Tint Strength", Range(0, 1)) = 0.3
@@ -207,6 +208,7 @@ Shader "Eco/Jelly"
                 float waterSurfaceMask = 0.0;
                 float waterInteriorDepth = 0.0;
                 float waterSurfaceEdge = 0.0;
+                float waterTexture = 0.0;
             #if defined(_JELLY_BODY)
                 // Follow the body height and use its spring wobble to rock the water surface.
                 float bodyHeight = max(0.001, _JellyHeight * max(0.2, 1.0 + _Squash) - _Sink + _Wobble.y);
@@ -271,6 +273,23 @@ Shader "Eco/Jelly"
                     + 0.08 * pow(saturate(dot(waterNormal, normalize(l + v))), 16.0));
 
 
+                // Map only the interior water plane. Never project this pattern onto the curved skin.
+                float2 texturePoint = surfaceHit.xz - surfaceCentre;
+                float2 q = texturePoint * _WaterTextureScale;
+                float flowTime = waveTime * 0.45;
+                float field = sin(q.x + sin(q.y * 0.7 + flowTime))
+                    + sin(q.y - flowTime * 0.8)
+                    + sin(dot(q, float2(0.7, 0.7)) + flowTime * 1.2);
+                float textureAA = max(fwidth(field), 0.04);
+                float caustic = 1.0 - smoothstep(0.0, 0.65 + textureAA, abs(field));
+                float rippleShade = 0.5 + 0.5 * sin(dot(q, float2(0.45, -0.65))
+                    + sin(q.x * 0.5 + flowTime) - flowTime);
+                float textureEdgeFade = 1.0 - smoothstep(0.65, 1.0,
+                    radialDistance / max(_WaterSurfaceRadius, 0.001));
+                waterTexture = (caustic * 0.5 + rippleShade * 0.5)
+                    * waterSurfaceMask * textureEdgeFade * _WaterTextureStrength
+                    * smoothstep(0.0, 0.08, fill);
+
                 // Intersect the view ray with a few spheres suspended in the body volume.
                 // Their centres never live on the mesh: camera movement gives real interior parallax,
                 // and the water between the skin and each bubble softens its contrast.
@@ -314,11 +333,7 @@ Shader "Eco/Jelly"
 
                 float3 absorb = -log(max(lerp(_TransmitColor.rgb, _WaterTransmitColor.rgb, waterMask), 0.01)) * _Density;
                 float viewThickness = _Thickness * max(nDotV, 0.1);
-            #if defined(_JELLY_BODY)
-                // Keep the empty bank's original look. With water, the dry dome becomes a clear shell.
-                float upperClarity = _WaterUpperClarity * (1.0 - waterMask) * step(0.0001, _WaterFill);
-                absorb *= 1.0 - upperClarity;
-            #endif
+
 
                 float contactLine = 0.0;
             #if defined(_JELLY_BODY)
@@ -351,11 +366,7 @@ Shader "Eco/Jelly"
                 float2 uv = screenUV;
                 float3 transmittance = exp(-absorb * viewThickness);
                 color = scatter;
-                float minAlpha = _MinAlpha;
-            #if defined(_JELLY_BODY)
-                minAlpha *= 1.0 - upperClarity;
-            #endif
-                alpha = max(minAlpha, 1.0 - dot(transmittance, 1.0 / 3.0));
+                alpha = max(_MinAlpha, 1.0 - dot(transmittance, 1.0 / 3.0));
             #endif
 
             #if defined(_JELLY_BODY)
@@ -370,7 +381,7 @@ Shader "Eco/Jelly"
                 interiorWater *= 1.0 - waterSurfaceEdge * 0.18;
                 color = lerp(color, interiorWater, waterSurfaceMask * _WaterSurfaceOpacity);
                 color += _WaterlineColor.rgb * waterSurfaceLight;
-                alpha = max(alpha, waterSurfaceMask * _WaterSurfaceOpacity);
+                color += _WaterlineColor.rgb * waterTexture * (0.35 + ambient * 0.35 + lightColor * 0.2);
 
                 // Swallowed items, drawn on their own by JellyInsidePass (premultiplied colour, alpha = coverage), so
                 // transparent ones show too and nothing outside the body is drawn. They are tinted by the jelly in

@@ -20,7 +20,8 @@ CBUFFER_START(UnityPerMaterial)
     float _WaterWaveSpeed;
     float _WaterSlosh;
     float _WaterTintStrength;
-    float _WaterUpperClarity;
+    float _WaterTextureStrength;
+    float _WaterTextureScale;
     float _WaterSurfaceOpacity;
     float _WaterFoamStrength;
     float4 _WaterFoamColor;
