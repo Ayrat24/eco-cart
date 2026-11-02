@@ -27,6 +27,9 @@ namespace Eco.Scripts.Trees
 
         [SerializeField, Min(0.1f)] private float placementRadius = 1.5f;
 
+        [SerializeField] private TreeGrowthSettings growthSettings;
+        public TreeGrowthSettings GrowthSettings => growthSettings;
+
         public float PlacementRadius => Mathf.Max(0.1f, placementRadius);
         public string Id => id;
         public Sprite Icon => icon;

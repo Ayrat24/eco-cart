@@ -146,9 +146,9 @@ namespace Eco.Scripts.UI
                 _preview.Hide();
                 return;
             }
-            bool valid = _world.TreePlanter.TryGetSpot(_pressed.PrefabId, point, out _, out var snapped) &&
+            bool valid = _world.TreePlanter.TryGetSpot(_pressed.PrefabId, point, out _, out _) &&
                          _pressed.Unlocked && _currency.CurrentMoney.Value >= _pressed.Price;
-            _preview.Show(_pressed, snapped, valid);
+            _preview.Show(_pressed, point, valid);
         }
 
         private void OnWheel(WheelEvent evt)

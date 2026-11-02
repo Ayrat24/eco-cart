@@ -47,41 +47,61 @@ namespace Eco.Scripts.World
         public bool PlantTree(int id)
         {
             using var marker = EcoProfilerMarkers.PlantTree.Auto();
-            if (!_definitions.TryGetValue(id, out var definition)) return false;
-            Tile closest = null;
-            float best = float.MaxValue;
-            foreach (var chunk in _world.ActiveChunks.Values)
-            {
-                if (chunk is not LandChunk) continue;
-                foreach (var tile in chunk.Tiles)
-                {
-                    if (tile.objectType != TileObjectType.Empty || tile.groundType == TileGroundType.Water) continue;
-                    var local = chunk.Layout.LocalPosition(tile.index);
-                    var position = chunk.transform.position + new Vector3(local.x, 0, local.y);
-                    float dx = position.x - _player.position.x;
-                    float dz = position.z - _player.position.z;
-                    float distance = dx * dx + dz * dz;
-                    if (distance >= best || !CanPlant(definition, tile, position)) continue;
-                    closest = tile;
-                    best = distance;
-                }
-            }
-            return closest != null && PlantNew(id, closest);
+            return TryFindNearest(id, _player.position, out var tile, out _) && PlantNew(id, tile);
         }
 
+        /// <summary>Find the nearest free grass cell to a drop without moving the preview to that cell.</summary>
         public bool TryGetSpot(int id, Vector3 point, out Tile tile, out Vector3 position)
         {
             tile = null;
             position = point;
-            if (!_definitions.TryGetValue(id, out var definition)) return false;
+            // A drop must still be over dry, grown grass; never redirect a drop from water or bare soil.
             var coord = Hex.FromWorld(point, _world.HexRadius);
-            if (!_world.ActiveChunks.TryGetValue(coord, out var chunk) || chunk is not LandChunk) return false;
+            if (!_world.ActiveChunks.TryGetValue(coord, out var chunk) || chunk is not LandChunk ||
+                !TerrainPainter.IsGrownGrass(point)) return false;
             var local = point - chunk.transform.position;
             int index = chunk.Layout.IndexAt(new Vector2(local.x, local.z));
-            if (index < 0) return false;
-            tile = chunk.Tiles[index];
-            position = chunk.GetTileWorldPosition(tile);
-            return CanPlant(definition, tile, position);
+            if (index < 0 || chunk.Tiles[index].groundType == TileGroundType.Water ||
+                chunk.Tiles[index].groundType == TileGroundType.Pile) return false;
+            return TryFindNearest(id, point, out tile, out position);
+        }
+
+        private bool TryFindNearest(int id, Vector3 point, out Tile tile, out Vector3 position)
+        {
+            tile = null;
+            position = point;
+            if (!_definitions.TryGetValue(id, out var definition)) return false;
+            float best = float.MaxValue;
+            // Seed the distance bound locally so the rest of the world can usually be skipped.
+            _world.ActiveChunks.TryGetValue(Hex.FromWorld(point, _world.HexRadius), out var localChunk);
+            if (localChunk is LandChunk local) Search(local, definition, point, ref tile, ref best);
+            foreach (var chunk in _world.ActiveChunks.Values)
+            {
+                if (chunk == localChunk || chunk is not LandChunk land) continue;
+                var delta = chunk.transform.position - point;
+                float nearest = Mathf.Max(0f, Mathf.Sqrt(delta.x * delta.x + delta.z * delta.z) - _world.HexRadius);
+                if (nearest * nearest > best) continue;
+                Search(land, definition, point, ref tile, ref best);
+            }
+            if (tile == null) return false;
+            position = tile.parentChunk.GetTileWorldPosition(tile);
+            return true;
+        }
+
+        private void Search(LandChunk chunk, TreeDefinition definition, Vector3 point, ref Tile closest, ref float best)
+        {
+            foreach (var candidate in chunk.Tiles)
+            {
+                if (candidate.objectType != TileObjectType.Empty || candidate.groundType == TileGroundType.Water) continue;
+                var local = chunk.Layout.LocalPosition(candidate.index);
+                var position = chunk.transform.position + new Vector3(local.x, 0, local.y);
+                float dx = position.x - point.x;
+                float dz = position.z - point.z;
+                float distance = dx * dx + dz * dz;
+                if (distance >= best || !CanPlant(definition, candidate, position)) continue;
+                closest = candidate;
+                best = distance;
+            }
         }
 
         public bool PlantTreeAt(int id, Vector3 point)
@@ -115,7 +135,8 @@ namespace Eco.Scripts.World
             tile.objectType = TileObjectType.Tree;
             Reserve(Hex.FromWorld(parent.transform.position, _world.HexRadius), tile.index,
                 tree.transform.position, prefabId);
-            if (isNewlyPlanted) tree.ShowPlantAnimation();
+            if (isNewlyPlanted && _definitions.TryGetValue(prefabId, out var definition))
+                tree.ShowPlantAnimation(definition.GrowthSettings);
         }
 
         private void Reserve(Vector2Int chunk, int tile, Vector3 position, int id)

@@ -11,6 +11,23 @@ CBUFFER_START(UnityPerMaterial)
     float _Thickness;
     float _Refraction;
     float _InsideMinDepth;
+    float _WaterFill;
+    float _WaterSurfaceRadius;
+    float4 _WaterColor;
+    float4 _WaterTransmitColor;
+    float4 _WaterlineColor;
+    float _WaterWaveHeight;
+    float _WaterWaveSpeed;
+    float _WaterSlosh;
+    float _WaterTintStrength;
+    float _WaterUpperClarity;
+    float _WaterSurfaceOpacity;
+    float _WaterFoamStrength;
+    float4 _WaterFoamColor;
+    float _WaterFoamWidth;
+    float _WaterBubbleStrength;
+    float _WaterBubbleRadius;
+    float _WaterBubbleSpeed;
 
     float _Wrap;
     float _SpecPower;

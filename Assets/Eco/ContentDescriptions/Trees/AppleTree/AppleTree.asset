@@ -29,6 +29,7 @@ MonoBehaviour:
     coefficient: 1450
     magnitude: 0
   placementRadius: 1.5
+  growthSettings: {fileID: 11400000, guid: 106e9fe5828e230438c11cd1f3645116, type: 2}
   references:
     version: 2
     RefIds: []

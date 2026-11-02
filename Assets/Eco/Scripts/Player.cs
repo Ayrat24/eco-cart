@@ -53,6 +53,7 @@ namespace Eco.Scripts
             _stats.MaxWeight.Subscribe(SetCapacity).AddTo(ref builder);
             _stats.MoveSpeed.Subscribe(speed => agent.speed = speed).AddTo(ref builder);
             wetness.Unlocked.Subscribe(SetWading).AddTo(ref builder);
+            wetness.Fill.Subscribe(stomach.Body.SetWaterFill).AddTo(ref builder);
             _subscription = builder.Build();
 
             _hatController = new HatController(hats, hatParent);

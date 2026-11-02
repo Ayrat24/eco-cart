@@ -92,6 +92,8 @@ namespace Eco.Scripts.Jelly
         private static readonly int RippleAmpId = Shader.PropertyToID("_RippleAmp");
         private static readonly int RippleShapeId = Shader.PropertyToID("_RippleShape");
         private static readonly int DigestId = Shader.PropertyToID("_Digest");
+        private static readonly int WaterFillId = Shader.PropertyToID("_WaterFill");
+        private static readonly int WaterSurfaceRadiusId = Shader.PropertyToID("_WaterSurfaceRadius");
         private static readonly int[] RippleIds =
         {
             Shader.PropertyToID("_Ripple0"), Shader.PropertyToID("_Ripple1"),
@@ -134,6 +136,13 @@ namespace Eco.Scripts.Jelly
         private readonly List<Vector2> _mouthRequests = new();
         private float _digest;
         private bool _digesting;
+        private float _waterFill;
+
+        /// <summary>Matches the visible water level to the bank, including saved fill and capacity changes.</summary>
+        public void SetWaterFill(float fill)
+        {
+            _waterFill = Mathf.Clamp01(fill);
+        }
 
         public float Growth => _growth;
         public float WorldScale => baseScale * _growth;
@@ -663,6 +672,11 @@ namespace Eco.Scripts.Jelly
             _material.SetVector(MouthRotationId,
                 new Vector4(Mathf.Sin(_deform.MouthAngle), Mathf.Cos(_deform.MouthAngle), 0f, 0f));
             _material.SetFloat(DigestId, _digest);
+            _material.SetFloat(WaterFillId, _waterFill);
+            float waterHeight = _waterFill * (shape.Height * Stretch - sink + _deform.Wobble.y);
+            float waterRestHeight = (waterHeight + sink - _deform.Wobble.y * Mathf.SmoothStep(0f, 1f, _waterFill))
+                / (shape.Height * Stretch);
+            _material.SetFloat(WaterSurfaceRadiusId, shape.RadiusAtHeightFast(waterRestHeight) / Mathf.Sqrt(Stretch));
             _material.SetVector(RippleAmpId, _rippleAmplitudes);
             for (int i = 0; i < RippleCount; i++)
             {

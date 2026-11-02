@@ -207,3 +207,23 @@ visually inspected. Unity compilation and runtime console reported zero errors.
 Baseline `stress_20261031_004727`, final `stress_20261031_110006`. Average frame times (ms): Load 46.12 -> 49.09, Idle 7.44 -> 7.09, Plant 7.58 -> 6.72, Collect 8.80 -> 8.20, Traverse 7.89 -> 7.36, Churn 6.77 -> 6.46. Both planted 10 trees; final traversal crossed 44 chunks with no warps. The automated run covers the menu at rest; active preview rendering was checked separately in the sandbox.
 
 Validated icon-and-price-only entries, hidden scrollbars, horizontal wheel scrolling, valid and blocked ghost colors for all three trees, alpha-clipped foliage, one LOD per tree, no gameplay components on previews, cancellation cleanup, and successful pointer drag/release with one charge. Shader and C# compilation succeeded; final runtime console had zero errors.
+
+### Free tree preview and growth (2026-10-31)
+
+Baseline `stress_20261031_114150`; final runs `stress_20261031_194705` and
+`stress_20261031_194937`. All planted 10 trees and completed traversal without warps.
+The planting marker decreased from 21.7 ms total (4.26 ms maximum) to 9.2 ms
+(3.48 ms maximum) and 9.9 ms (4.12 ms maximum).
+
+Overall performance is **not signed off**: baseline average Idle/Plant/Traverse/Churn
+was 7.50/8.56/7.74/6.98 ms; final runs measured 9.01/9.72/16.45/96.91 ms and
+79.28/111.25/64.09/38.10 ms. These runs were hours apart and the later measurements
+show substantial variation even during idle. The cause of the frame-time degradation
+has not been isolated; the planting marker alone does not establish overall performance.
+
+Sandbox checks verified that the ghost exactly matches the unsnapped terrain hit,
+release plants the chosen cell and charges once, and nearest-cell selection matches
+an exhaustive search at 40 positions (including redirecting from an occupied cell).
+Water drops are rejected. All tree prefabs have zero particle systems. Growth starts
+small, settles to the authored scale/rotation and resets when interrupted by pooling.
+Unity reported no compilation or runtime errors in the completed stress runs.

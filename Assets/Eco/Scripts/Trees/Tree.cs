@@ -1,59 +1,66 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Eco.Scripts.Pooling;
 using Eco.Scripts.World;
-using PrimeTween;
 using UnityEngine;
 
 namespace Eco.Scripts.Trees
 {
-    public class Tree : MonoBehaviour, ITileItem
+    public class Tree : MonoBehaviour, ITileItem, IPooledObject
     {
         [SerializeField] private int prefabId;
-        [SerializeField] private GameObject particleHolder;
-        [SerializeField] ParticleSystem particle;
         [SerializeField] private Transform model;
 
-        private const float ParticleAnimationDuration = 0.3f;
-        private const float ModelAnimationDuration = 0.4f;
+        private Vector3 _restScale;
+        private Quaternion _restRotation;
+        private CancellationTokenSource _growthCancellation;
 
-        private CancellationTokenSource _cancellationTokenSource;
-        
         public Transform Model => model;
-
-        public int GetPrefabId()
-        {
-            return prefabId;
-        }
-
-        public void ShowPlantAnimation()
-        {
-            _cancellationTokenSource = new CancellationTokenSource();
-            PlayPlantAnimationAsync(_cancellationTokenSource.Token).Forget();
-        }
-
-        private async UniTask PlayPlantAnimationAsync(CancellationToken token)
-        {
-            model.transform.localScale = Vector3.zero;
-            particleHolder.transform.localScale = Vector3.zero;
-            particleHolder.SetActive(true);
-            
-            await UniTask.NextFrame(token);
-            
-            particle.Play();
-            
-            Tween.Scale(particleHolder.transform, Vector3.one, ParticleAnimationDuration);
-            
-            await UniTask.WaitForSeconds(ParticleAnimationDuration / 2, cancellationToken: token);
-
-            Tween.Scale(model.transform, Vector3.one, ModelAnimationDuration, Ease.OutBack);
-
-            await UniTask.WaitForSeconds(ParticleAnimationDuration / 2, cancellationToken: token);
-            Tween.Scale(particleHolder.transform, Vector3.zero, ParticleAnimationDuration);
-            await UniTask.WaitForSeconds(ParticleAnimationDuration, cancellationToken: token);
-            
-            particleHolder.SetActive(false);            
-        }
-        
         public bool CanBeRecycled => true;
+        public int GetPrefabId() => prefabId;
+
+        private void Awake()
+        {
+            _restScale = model.localScale;
+            _restRotation = model.localRotation;
+        }
+
+        public void ShowPlantAnimation(TreeGrowthSettings settings)
+        {
+            ResetGrowth();
+            if (settings == null) return;
+            _growthCancellation = new CancellationTokenSource();
+            PlayGrowthAsync(settings, _growthCancellation.Token).Forget();
+        }
+
+        private async UniTask PlayGrowthAsync(TreeGrowthSettings settings, CancellationToken token)
+        {
+            float elapsed = 0f;
+            while (elapsed < settings.Duration)
+            {
+                float progress = elapsed / settings.Duration;
+                model.localScale = Vector3.Scale(_restScale, settings.ScaleAt(progress));
+                model.localRotation = _restRotation * Quaternion.Euler(0f, 0f, settings.SwayAt(progress));
+                await UniTask.NextFrame(cancellationToken: token);
+                elapsed += Time.deltaTime;
+            }
+            ResetGrowth();
+        }
+
+        // Streaming or restarting an animation must never leave a pooled tree tiny or tilted.
+        private void ResetGrowth()
+        {
+            _growthCancellation?.Cancel();
+            _growthCancellation?.Dispose();
+            _growthCancellation = null;
+            if (model == null) return;
+            model.localScale = _restScale;
+            model.localRotation = _restRotation;
+        }
+
+        public void OnSpawn() => ResetGrowth();
+        public void OnDespawn() => ResetGrowth();
+        private void OnDisable() => ResetGrowth();
+        private void OnDestroy() => ResetGrowth();
     }
 }
