@@ -162,6 +162,26 @@ terrain. The texture is generated offline; there is no runtime texture generatio
 render pass. Normal/mask/height-blend terrain variants compiled without shader messages,
 and on/off captures at gameplay distance checked pores and the grass boundary.
 
+Scrap ground stains and static scrap, 2,790 seeded scrap, 1,441 loaded, same setup as above.
+Three runs: dropped scrap with no stains (`stress_20261102_190019`), dropped scrap with stains
+(`stress_20261102_185650`), and the final static scrap with stains (`stress_20261102_191915`).
+
+| Phase | no stains avg ms | stains avg ms | static + stains avg ms |
+|---|---|---|---|
+| Idle | 9.95 | 10.25 | 8.62 |
+| Plant | 9.18 | 9.80 | 8.25 |
+| Collect | 10.46 | 11.47 | 9.86 |
+| Traverse | 9.14 | 9.67 | 8.70 |
+| Churn | 6.98 | 7.47 | 6.98 |
+
+Stains cost 0.3 to 1 ms a frame, and taking scrap out of the simulation more than pays for them:
+physics time about halves (Traverse 3,721 to 1,858 ms in total). One run each, at this density and
+resolution. Every terrain pixel pays for one noise sample and four texel loads; stained pixels add
+two more samples. `Eco.ScrapStainMap.Upload` only runs in frames where stains changed: at most
+7 ms at load and 4 ms in Churn, because a stain of the default 2.2 m radius is about 15 cells per
+map. A larger `scrapStainRadius` costs more there. The two maps add about 8 MiB.
+Compare runs by seeded scrap count: the stress config's density has changed before.
+
 ## Fixed bottlenecks
 
 These were found by the first baseline and fixed on 2026-10-25.
@@ -171,7 +191,7 @@ These were found by the first baseline and fixed on 2026-10-25.
 3. **`Map` saving the whole world per recycled item and per planted tree.** The map no longer calls `SaveWorld()`. It subscribes to `SaveManager.OnChunkUpdated` and redraws only those chunks, once per frame. When it scrolls, only the fields that come into or go out of view change, instead of all 100 being rebuilt. `MapField` reuses its color buffer and returns its tree icons before redrawing; before this, every redraw stacked another icon per tree.
 4. **Redundant `SaveTiles` on spawn.** A chunk loaded from its save no longer saves on spawn (its tiles already match), and new field and pile chunks save once.
 5. **Load spikes.** The NavMesh is baked over the plateau and its 50 m slope (`CollectObjects.Volume`) instead of the whole 1,050 m terrain. Chunk pools are sized at load for the most chunks of each type visible from anywhere in the world, so walking to the coast doesn't instantiate chunks mid-game. `field_tiles_*.json` is written unindented, which makes the file smaller and quicker to parse. `ClearTerrain` writes fresh maps without reading the old ones first. In the editor, play mode paints and flattens a copy of the TerrainData, so `New Terrain 1.asset` is no longer modified.
-6. **Scrap physics on spawn.** When a field chunk despawns, `ScrapRestingPoses` records each sleeping scrap item's local pose. When the chunk respawns, those items go back to that pose and `Sleep()`, after `Physics.SyncTransforms()` so the transform sync doesn't wake them. The pose is taken before the chunk goes back to the pool, because `ObjectPool.ReturnToPool` deactivates it before `OnDespawn`. Chunks are now placed before `Init`, so scrap spawns at its final position. Scrap in a chunk that has never been loaded this session still drops and settles.
+6. **Scrap physics on spawn.** (Superseded: scrap is no longer simulated at all, and `ScrapRestingPoses` is gone.) When a field chunk despawns, `ScrapRestingPoses` records each sleeping scrap item's local pose. When the chunk respawns, those items go back to that pose and `Sleep()`, after `Physics.SyncTransforms()` so the transform sync doesn't wake them. The pose is taken before the chunk goes back to the pool, because `ObjectPool.ReturnToPool` deactivates it before `OnDespawn`. Chunks are now placed before `Init`, so scrap spawns at its final position. Scrap in a chunk that has never been loaded this session still drops and settles.
 7. **GC churn while moving.** `UpdateWorld` reuses its collections, `SaveTiles` overwrites the chunk's existing save array, and the per-tree terrain arrays and progress JSON are gone. Moving now allocates about 14 KB per frame, against 11 KB standing still (before: 18 KB and 11 KB).
 8. **Minor.** `TreePlanter.PlantTree` no longer builds a LINQ dictionary. `Map.Update` writes `anchoredPosition` only when the player moved or the follow position changed. `FieldChunk` creates its debug `GUIStyle` lazily in `OnDrawGizmos` instead of on every spawn.
 

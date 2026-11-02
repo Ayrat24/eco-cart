@@ -371,8 +371,8 @@ namespace Eco.Scripts.Helpers
                 mb.transform.localRotation = Quaternion.identity;
             }
 
-            // Make item physical again and available for collectors
-            target.MakeKinematic(false);
+            // Put the item down and make it available for collectors
+            target.SetHeld(false);
             target.SetPickedUpStatus(false);
             target.SetInCartState(false);
 
@@ -400,10 +400,10 @@ namespace Eco.Scripts.Helpers
                 Debug.Log($"DogHelper: parented '{target.GetName()}' to hold point");
             }
 
-            target.MakeKinematic(true);
+            target.SetHeld(true);
             //target.SetPickedUpStatus(true);
 
-            Debug.Log($"DogHelper: made '{target.GetName()}' kinematic and marked as being picked up");
+            Debug.Log($"DogHelper: holding '{target.GetName()}' and marked as being picked up");
         }
 
         private void ReleaseTarget(ScrapItem target)
@@ -411,7 +411,7 @@ namespace Eco.Scripts.Helpers
             if (target == null) return;
 
             target.SetPickedUpStatus(false);
-            target.MakeKinematic(false);
+            target.SetHeld(false);
             var mb = target as MonoBehaviour;
             if (mb != null)
             {

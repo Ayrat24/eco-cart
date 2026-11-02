@@ -7,16 +7,13 @@ namespace Eco.Scripts.World
     {
         public WorldData World { get; }
         public TreePlanter TreePlanter { get; }
-        public ScrapRestingPoses RestingPoses { get; }
         public CurrencyManager Currency { get; }
         public PlayerStats Stats { get; }
 
-        public ChunkContext(WorldData world, TreePlanter treePlanter, ScrapRestingPoses restingPoses,
-            CurrencyManager currency, PlayerStats stats)
+        public ChunkContext(WorldData world, TreePlanter treePlanter, CurrencyManager currency, PlayerStats stats)
         {
             World = world;
             TreePlanter = treePlanter;
-            RestingPoses = restingPoses;
             Currency = currency;
             Stats = stats;
         }

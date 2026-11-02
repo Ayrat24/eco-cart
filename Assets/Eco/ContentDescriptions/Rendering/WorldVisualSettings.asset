@@ -31,3 +31,14 @@ MonoBehaviour:
   soilCavityStrength: 0.22
   soilDetailSize: 2.4
   soilDetailFadeDistance: 35
+  scrapGroundTexture: {fileID: 2800000, guid: c26e81541d8910243acfa5a024e82dac, type: 3}
+  scrapGroundDark: {r: 0.45, g: 0.45, b: 0.46, a: 1}
+  scrapGroundLight: {r: 0.97, g: 0.97, b: 0.97, a: 1}
+  scrapGroundTint: 0.85
+  scrapGroundStrength: 0.95
+  scrapStainRadius: 2.2
+  scrapStainSoftness: 1
+  scrapGroundWarp: 0.35
+  scrapGroundSize: 4
+  scrapGroundSmoothness: 0.05
+  scrapGroundHealTime: 1.2

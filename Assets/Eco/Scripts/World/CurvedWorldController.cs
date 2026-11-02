@@ -21,6 +21,12 @@ namespace Eco.Scripts.World
         private static readonly int SoilDetailId = Shader.PropertyToID("_EcoSoilDetail");
         private static readonly int SoilDetailMapId = Shader.PropertyToID("_EcoSoilDetailMap");
         private static readonly int SoilLayerMaskId = Shader.PropertyToID("_EcoSoilLayerMask");
+        private static readonly int ScrapGroundId = Shader.PropertyToID("_EcoScrapGround");
+        private static readonly int ScrapGroundMapId = Shader.PropertyToID("_EcoScrapGroundMap");
+        private static readonly int ScrapGroundFadeId = Shader.PropertyToID("_EcoScrapGroundFade");
+        private static readonly int ScrapGroundDarkId = Shader.PropertyToID("_EcoScrapGroundDark");
+        private static readonly int ScrapGroundLightId = Shader.PropertyToID("_EcoScrapGroundLight");
+        private static readonly int ScrapGroundTintId = Shader.PropertyToID("_EcoScrapGroundTint");
         private Vector4 _current;
         private Vector4 _previous;
         private int _lastFrame = -1;
@@ -116,6 +122,12 @@ namespace Eco.Scripts.World
             Shader.SetGlobalVector(SoilDetailId, settings != null ? settings.SoilDetail : new Vector4(0, 0, 1, 1));
             Shader.SetGlobalTexture(SoilDetailMapId, settings != null ? settings.SoilDetailTexture : null);
             Shader.SetGlobalVector(SoilLayerMaskId, settings != null ? settings.SoilLayerMask : Vector4.zero);
+            Shader.SetGlobalVector(ScrapGroundId, settings != null ? settings.ScrapGround : Vector4.zero);
+            Shader.SetGlobalTexture(ScrapGroundMapId, settings != null ? settings.ScrapGroundTexture : null);
+            Shader.SetGlobalVector(ScrapGroundFadeId, settings != null ? settings.ScrapGroundFade : Vector4.one);
+            Shader.SetGlobalVector(ScrapGroundDarkId, settings != null ? settings.ScrapGroundDark : Vector4.zero);
+            Shader.SetGlobalVector(ScrapGroundLightId, settings != null ? settings.ScrapGroundLight : Vector4.zero);
+            Shader.SetGlobalFloat(ScrapGroundTintId, settings != null ? settings.ScrapGroundTint : 0);
         }
 
         private static void PublishTerrainVariation(Vector4 variation)
@@ -161,6 +173,8 @@ namespace Eco.Scripts.World
             Shader.SetGlobalVector(SoilDetailId, new Vector4(0, 0, 1, 1));
             Shader.SetGlobalTexture(SoilDetailMapId, null);
             Shader.SetGlobalVector(SoilLayerMaskId, Vector4.zero);
+            Shader.SetGlobalVector(ScrapGroundId, Vector4.zero);
+            Shader.SetGlobalTexture(ScrapGroundMapId, null);
         }
     }
 }

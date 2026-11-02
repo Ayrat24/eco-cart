@@ -23,9 +23,21 @@ namespace Eco.Scripts.Scrap
         [SerializeField] ParticleSystem particleEffect;
         [SerializeField] TrailRenderer trailRenderer;
 
+        // Items taller than this share of their footprint would stand upright, so they get tipped over
+        private const float TallItemRatio = 1.2f;
+        // Metres an item sinks into the ground, which hides small gaps on uneven terrain
+        private const float RestSink = 0.03f;
+
         private bool _isCollected;
         private Tile _tile;
         private bool _isBeingPickedUp;
+        private bool _onGround;
+        private bool _restPoseKnown;
+        private Quaternion _restRotation;
+        private float _restHeight;
+        private bool _stainsGround;
+        private Vector3 _stainPosition;
+        private MeshFilter[] _meshes;
         private Renderer[] _renderers;
         private int[] _rendererLayers;
 
@@ -47,7 +59,8 @@ namespace Eco.Scripts.Scrap
             set => SetPickedUpStatus(value);
         }
         
-        public void Initialize(Tile tile)
+        /// <summary>Lays the item at its current XZ, turned by <paramref name="yaw"/> degrees.</summary>
+        public void Initialize(Tile tile, float yaw)
         {
             _tile = tile;
 
@@ -55,37 +68,101 @@ namespace Eco.Scripts.Scrap
             vfx.startColor = color;
             ChangeState(false);
 
-            transform.rotation = Quaternion.Euler(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
-            var pos = transform.localPosition;
-            pos.y += 0.9f;
-            transform.localPosition = pos;
+            LayOnGround(yaw);
         }
 
-        // Puts the item back where it last came to rest instead of dropping it; Sleep() follows once physics has
-        // the new transform (see LandChunk.SleepRestingScrap)
-        public void PlaceAtRest(Pose localPose)
+        // Nothing moves an item on the ground until it is taken, so it is posed once and its stain never moves.
+        // Scrap on a tile kills the ground under it; fruit that gets dropped doesn't.
+        private void LayOnGround(float yaw)
         {
-            transform.SetLocalPositionAndRotation(localPose.position, localPose.rotation);
+            if (!_restPoseKnown)
+            {
+                FindRestPose();
+            }
+
+            var ground = WorldTerrain.OnGround(transform.position);
+            var slope = Quaternion.FromToRotation(Vector3.up, WorldTerrain.GroundNormal(ground));
+            transform.SetPositionAndRotation(ground + Vector3.up * _restHeight,
+                slope * Quaternion.Euler(0f, yaw, 0f) * _restRotation);
+
+            _onGround = true;
+            UpdateObstacle();
+
+            if (_tile != null)
+            {
+                _stainsGround = true;
+                _stainPosition = MeshBounds().center;
+                ScrapStainMap.Add(_stainPosition, color);
+            }
         }
 
-        public bool TryGetRestingPose(out Pose localPose)
+        // Lies on its flattest side the way the art is modelled, or on its side if that would leave it standing up
+        private void FindRestPose()
         {
-            localPose = new Pose(transform.localPosition, transform.localRotation);
-            return CanBeRecycled && !rb.isKinematic && rb.IsSleeping();
+            _meshes = GetComponentsInChildren<MeshFilter>();
+
+            _restRotation = Quaternion.identity;
+            transform.rotation = _restRotation;
+            var bounds = MeshBounds();
+            if (bounds.size.y > Mathf.Max(bounds.size.x, bounds.size.z) * TallItemRatio)
+            {
+                _restRotation = Quaternion.Euler(90f, 0f, 0f);
+                transform.rotation = _restRotation;
+                bounds = MeshBounds();
+            }
+
+            _restHeight = transform.position.y - bounds.min.y - RestSink;
+            _restPoseKnown = true;
         }
 
-        public void Sleep()
+        // Renderer bounds won't do: CurvedWorldBounds widens them for culling
+        private Bounds MeshBounds()
         {
-            rb.Sleep();
+            var bounds = new Bounds(transform.position, Vector3.zero);
+            bool any = false;
+            foreach (var filter in _meshes)
+            {
+                if (filter.sharedMesh == null)
+                {
+                    continue;
+                }
+
+                var local = filter.sharedMesh.bounds;
+                var matrix = filter.transform.localToWorldMatrix;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var offset = new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f,
+                        (corner & 4) == 0 ? -1f : 1f);
+                    var point = matrix.MultiplyPoint3x4(local.center + Vector3.Scale(local.extents, offset));
+                    if (any)
+                    {
+                        bounds.Encapsulate(point);
+                    }
+                    else
+                    {
+                        bounds = new Bounds(point, Vector3.zero);
+                        any = true;
+                    }
+                }
+            }
+
+            return bounds;
         }
 
-        // Held up by the spot instead of physics. It keeps its collider, which is how the collector finds it.
+        private void RemoveStain()
+        {
+            if (_stainsGround)
+            {
+                _stainsGround = false;
+                ScrapStainMap.Remove(_stainPosition);
+            }
+        }
+
+        // Held up by the spot. It keeps its collider, which is how the collector finds it.
         public void Hang(Transform spot)
         {
             transform.SetParent(spot, false);
             transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            rb.isKinematic = true;
-            UpdateObstacle();
         }
 
         public void OnPickUp(Transform parent)
@@ -97,7 +174,7 @@ namespace Eco.Scripts.Scrap
 
             _isCollected = true;
             transform.parent = parent;
-            MakeKinematic(true);
+            SetHeld(true);
         }
 
         private void ChangeState(bool inCart)
@@ -117,7 +194,7 @@ namespace Eco.Scripts.Scrap
 
         public async UniTask RecycleAsync()
         {
-            MakeKinematic(true);
+            SetHeld(true);
             SetPickedUpStatus(false);
 
             ResetTile();
@@ -157,7 +234,7 @@ namespace Eco.Scripts.Scrap
         {
             const float duration = 0.7f;
 
-            MakeKinematic(true);
+            SetHeld(true);
             SetPickedUpStatus(false);
             ResetTile();
             gameObject.layer = 0;
@@ -227,12 +304,24 @@ namespace Eco.Scripts.Scrap
             ChangeState(inCart);
         }
 
-        // Held, swallowed or flying items don't bump into anything
-        public void MakeKinematic(bool isKinematic)
+        /// <summary>
+        /// Taken off the ground, or put back on it where it is now. Held, swallowed or flying items don't bump into
+        /// anything. Every way of taking an item comes through here, and its ground heals the moment it leaves.
+        /// </summary>
+        public void SetHeld(bool held)
         {
-            rb.isKinematic = isKinematic;
-            rb.detectCollisions = !isKinematic;
-            UpdateObstacle();
+            rb.detectCollisions = !held;
+            if (held)
+            {
+                _onGround = false;
+                RemoveStain();
+                UpdateObstacle();
+            }
+            else if (!_onGround)
+            {
+                transform.localScale = Vector3.one;
+                LayOnGround(Random.Range(0f, 360f));
+            }
         }
 
         public void SetPickedUpStatus(bool status)
@@ -244,7 +333,7 @@ namespace Eco.Scripts.Scrap
         // Only loose scrap blocks the way: whoever has reserved an item must be able to walk up to it
         private void UpdateObstacle()
         {
-            navObstacle.enabled = CanBeRecycled && !rb.isKinematic;
+            navObstacle.enabled = CanBeRecycled && _onGround;
         }
 
         public StyleColor GetColor()
@@ -276,16 +365,22 @@ namespace Eco.Scripts.Scrap
             
             transform.localScale = Vector3.one;
             ChangeState(false);
-            MakeKinematic(false);
+            // Physics never moves scrap; the kinematic body keeps its collider cheap to carry around
+            rb.isKinematic = true;
+            rb.detectCollisions = true;
             RestoreRendererLayers();
 
             _isBeingPickedUp = false;
             _isCollected = false;
+            _onGround = false;
+            _tile = null;
             UpdateObstacle();
         }
 
         public void OnDespawn()
         {
+            RemoveStain();
+
             // Notify owner that this item has been returned to a pool.
             // Use null-conditional invocation instead of swallowing exceptions with try/catch.
             OnReturnedToPool?.Invoke(this);

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -11,8 +9,7 @@ namespace Eco.Scripts.World
     /// different cells: the blades map is read by the terrain grass shader, which scales each blade by its cell's
     /// growth (0, never stamped, is grown); the ground map by the terrain shader, which grows the grass layer into
     /// the ground of stamped cells until <see cref="TerrainPainter"/> writes it into the alphamap
-    /// (<c>GrassGrowth.hlsl</c>). The maps live only on the GPU: stamps go up through a small staging row and a GPU
-    /// copy per cell, so stamping a few cells never uploads a whole map, and nothing runs per frame.
+    /// (<c>GrassGrowth.hlsl</c>). Both are <see cref="CellMap{T}"/>s of times, so nothing runs per frame.
     /// </summary>
     public static class GrassGrowthMap
     {
@@ -22,101 +19,19 @@ namespace Eco.Scripts.World
         /// </summary>
         public const float GroundCommitInterval = 2f;
 
-        private const int StagingSize = 256;
-
         private static readonly int TransformId = Shader.PropertyToID("_EcoGrassGrowthMapTransform");
         private static readonly int GrowthId = Shader.PropertyToID("_EcoGrassGrowth");
         private static readonly int GroundMaskId = Shader.PropertyToID("_EcoGrassGroundMask");
 
-        private static readonly GrowthLayer Blades = new("_EcoGrassGrowthMap", "Grass Growth Map");
-        private static readonly GrowthLayer Ground = new("_EcoGroundGrowthMap", "Ground Growth Map");
+        private static readonly CellMap<float> Blades =
+            new("_EcoGrassGrowthMap", "Grass Growth Map", TextureFormat.RFloat);
+        private static readonly CellMap<float> Ground =
+            new("_EcoGroundGrowthMap", "Ground Growth Map", TextureFormat.RFloat);
         private static float _inverseDuration;
         private static float _lastGrownAt;
         private static int _width;
         private static int _height;
         private static bool _supported;
-
-        // One map and the stamps waiting for it
-        private sealed class GrowthLayer
-        {
-            private readonly int _mapId;
-            private readonly string _name;
-            private readonly List<(int x, int z, float grownAt)> _pending = new();
-            private Texture2D _map;
-            private Texture2D _staging;
-
-            public GrowthLayer(string property, string name)
-            {
-                _mapId = Shader.PropertyToID(property);
-                _name = name;
-            }
-
-            public void Reset(int width, int height)
-            {
-                _pending.Clear();
-                if (_map != null)
-                {
-                    Object.Destroy(_map);
-                }
-
-                // All zero (a new texture's memory isn't). The map is never read back, so the CPU copy goes once
-                // it is uploaded.
-                _map = new Texture2D(width, height, TextureFormat.RFloat, false, true)
-                {
-                    name = _name,
-                    filterMode = FilterMode.Point,
-                    wrapMode = TextureWrapMode.Clamp
-                };
-                var pixels = _map.GetPixelData<float>(0);
-                // A cleared native buffer copies in about a fifth of the time of writing each texel
-                using (var zeros = new NativeArray<float>(pixels.Length, Allocator.Temp))
-                {
-                    pixels.CopyFrom(zeros);
-                }
-                _map.Apply(false, true);
-
-                if (_staging == null)
-                {
-                    _staging = new Texture2D(StagingSize, 1, TextureFormat.RFloat, false, true)
-                    {
-                        name = _name + " Staging",
-                        filterMode = FilterMode.Point
-                    };
-                }
-
-                Shader.SetGlobalTexture(_mapId, _map);
-            }
-
-            public void Stamp(int x, int z, float grownAt) => _pending.Add((x, z, grownAt));
-
-            public bool Upload()
-            {
-                if (_pending.Count == 0)
-                {
-                    return false;
-                }
-
-                var staging = _staging.GetPixelData<float>(0);
-                for (int start = 0; start < _pending.Count; start += StagingSize)
-                {
-                    int count = Mathf.Min(StagingSize, _pending.Count - start);
-                    for (int i = 0; i < count; i++)
-                    {
-                        staging[i] = _pending[start + i].grownAt;
-                    }
-                    _staging.Apply(false);
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        var stamp = _pending[start + i];
-                        Graphics.CopyTexture(_staging, 0, 0, i, 0, 1, 1, _map, 0, 0, stamp.x, stamp.z);
-                    }
-                }
-
-                _pending.Clear();
-                return true;
-            }
-        }
 
         /// <summary>
         /// Fresh maps for a new game on <paramref name="data"/>: everything grown. The ground grows terrain layer

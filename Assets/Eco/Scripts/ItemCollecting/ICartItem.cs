@@ -13,7 +13,7 @@ namespace Eco.Scripts.ItemCollecting
         // Moves the item's renderers to a layer until it next spawns from its pool
         void SetRendererLayer(int layer);
         void SetInCartState(bool inCart);
-        void MakeKinematic(bool isKinematic);
+        void SetHeld(bool held);
         bool IsBeingPickedUp { get; set; }
         void SetPickedUpStatus(bool status);
         StyleColor GetColor();

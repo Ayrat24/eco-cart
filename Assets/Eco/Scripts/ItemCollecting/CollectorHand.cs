@@ -88,7 +88,7 @@ namespace Eco.Scripts.ItemCollecting
             {
                 // Step 2: grab it and carry it to the mouth, squeezing it down to its swallowed size
                 grabbed = true;
-                item.MakeKinematic(true);
+                item.SetHeld(true);
                 itemTransform.SetParent(tentacle.Tip, true);
                 _body.Poke(tentacle.SurfacePosition, 0.03f);
 
@@ -162,7 +162,7 @@ namespace Eco.Scripts.ItemCollecting
                 if (grabbed && IsAlive(itemTransform))
                 {
                     itemTransform.SetParent(null, true);
-                    item.MakeKinematic(false);
+                    item.SetHeld(false);
                 }
 
                 RollbackItem(item);

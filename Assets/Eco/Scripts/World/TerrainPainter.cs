@@ -95,6 +95,7 @@ namespace Eco.Scripts.World
             ClaimBakedGrass(data);
 
             GrassGrowthMap.Reset(data, _terrainPosition, _grassLayer);
+            ScrapStainMap.Reset(data, _terrainPosition);
         }
 
         // Ground the World Editor baked as the grass layer is grass already

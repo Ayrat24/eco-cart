@@ -175,14 +175,18 @@ namespace Eco.Scripts.EditorTools
                     "    EcoGrassGroundGrowth(splatControl, splatUV, _Control_TexelSize.zw);\n#endif");
             passes = passes.Replace(lastInclude, lastInclude + "\n#include \"" + Folder + "TerrainVariation.hlsl\"");
             passes = passes.Replace(lastInclude, lastInclude + "\n#include \"" + Folder + "TerrainSoilDetail.hlsl\"");
+            passes = passes.Replace(lastInclude, lastInclude + "\n#include \"" + Folder + "TerrainScrapStain.hlsl\"");
             passes = AddTerrainSampling(passes);
             const string initializeInput = "    InitializeInputData(IN, normalTS, inputData);";
             if (!passes.Contains(initializeInput))
                 throw new InvalidOperationException("URP terrain fragment changed: macro colour hook missing.");
+            // Dead ground under scrap goes over the finished layers and gets the soil's pores for relief
             passes = passes.Replace(initializeInput,
-                "    albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);\n" + initializeInput +
+                "    albedo = EcoTerrainMacroColour(albedo, IN.positionWS.xz);\n" +
+                "#if !defined(TERRAIN_SPLAT_BASEPASS) && !defined(TERRAIN_SPLAT_ADDPASS)\n" +
+                "    half ecoScrapStain = EcoApplyScrapStain(IN.positionWS.xz, albedo, smoothness);\n#endif\n" + initializeInput +
                 "\n#if !defined(TERRAIN_SPLAT_BASEPASS) && !defined(TERRAIN_SPLAT_ADDPASS)\n" +
-                "    EcoApplySoilDetail(IN.positionWS, saturate(dot(splatControl, _EcoSoilLayerMask)), inputData.normalWS, albedo);\n#endif");
+                "    EcoApplySoilDetail(IN.positionWS, max(saturate(dot(splatControl, _EcoSoilLayerMask)), ecoScrapStain), inputData.normalWS, albedo);\n#endif");
             Write("CurvedTerrainLitPasses.hlsl", passes);
 
             // Generate the distant colour/metallic cache using the same random samples as

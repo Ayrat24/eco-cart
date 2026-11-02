@@ -28,13 +28,11 @@ namespace Eco.Scripts.World
 
         private readonly Dictionary<Vector2Int, Chunk> _spawnedChunks = new();
         private readonly Dictionary<ChunkDefinition, ObjectPool<Chunk>> _pools = new();
-        private readonly ScrapRestingPoses _scrapRestingPoses = new();
 
         // Reused by UpdateWorld on every chunk crossing
         private readonly HashSet<Vector2Int> _neededChunks = new();
         private readonly List<Vector2Int> _inRange = new();
         private readonly List<Vector2Int> _chunksToRemove = new();
-        private readonly List<LandChunk> _spawnedLand = new();
 
         private Vector2Int _currentPlayerChunkCoord;
         private SaveManager _saveManager;
@@ -93,7 +91,7 @@ namespace Eco.Scripts.World
 
             _layout = HexTileLayout.Get(worldData.HexRadius);
             _treePlanter = new TreePlanter(player, this, _saveManager, _fruitGrowth);
-            _context = new ChunkContext(worldData, _treePlanter, _scrapRestingPoses, _currencyManager, _stats);
+            _context = new ChunkContext(worldData, _treePlanter, _currencyManager, _stats);
 
             CreatePools();
             RebuildNavMesh();
@@ -262,7 +260,6 @@ namespace Eco.Scripts.World
 
             var neededChunks = _neededChunks;
             neededChunks.Clear();
-            _spawnedLand.Clear();
 
             Hex.Range(center, renderRadius, _inRange);
             foreach (var coord in _inRange)
@@ -272,19 +269,6 @@ namespace Eco.Scripts.World
                 {
                     SpawnChunk(coord);
                 }
-            }
-
-            // Scrap that rested before goes straight back to sleep. The new transforms have to reach physics
-            // first, or the sync on the next step would wake the bodies again.
-            if (_spawnedLand.Count > 0)
-            {
-                Physics.SyncTransforms();
-                foreach (var land in _spawnedLand)
-                {
-                    land.SleepRestingScrap();
-                }
-
-                _spawnedLand.Clear();
             }
 
             //remove far-away chunks
@@ -331,11 +315,6 @@ namespace Eco.Scripts.World
             chunk.Setup(coord, definition, _saveManager, _layout);
             chunk.Init(_context);
 
-            if (chunk is LandChunk land)
-            {
-                _spawnedLand.Add(land);
-            }
-
             chunk.name = $"{definition.name}_{coord.x}_{coord.y}";
             _spawnedChunks[coord] = chunk;
             EcoProfilerMarkers.SpawnChunk.End();
@@ -346,10 +325,6 @@ namespace Eco.Scripts.World
             EcoProfilerMarkers.DespawnChunk.Begin();
             var chunk = _spawnedChunks[coord];
             chunk.SaveTiles();
-            if (chunk is LandChunk land)
-            {
-                land.StoreRestingScrap();
-            }
 
             _pools[chunk.Definition].ReturnToPool(chunk);
             _spawnedChunks.Remove(coord);

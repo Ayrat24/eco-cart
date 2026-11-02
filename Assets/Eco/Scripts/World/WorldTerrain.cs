@@ -28,6 +28,20 @@ namespace Eco.Scripts.World
             return position;
         }
 
+        /// <summary>The terrain's surface normal under <paramref name="position"/> (up without a terrain).</summary>
+        public static Vector3 GroundNormal(Vector3 position)
+        {
+            var terrain = Terrain.activeTerrain;
+            if (terrain == null)
+            {
+                return Vector3.up;
+            }
+
+            var data = terrain.terrainData;
+            var local = position - terrain.GetPosition();
+            return data.GetInterpolatedNormal(local.x / data.size.x, local.z / data.size.z);
+        }
+
         /// <summary>
         /// Whether the terrain goes below <paramref name="height"/> at <paramref name="position"/> or anywhere within
         /// <paramref name="radius"/> metres of it.

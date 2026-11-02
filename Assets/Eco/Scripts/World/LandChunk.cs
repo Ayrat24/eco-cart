@@ -22,11 +22,16 @@ namespace Eco.Scripts.World
         // Piles sit up to this share of the hex radius off its centre, so they don't line up on the grid
         private const float PileJitter = 0.3f;
 
+        // Scrap lies up to this many metres off its tile's centre, so it doesn't line up on the tile grid
+        private const float ScrapJitter = 0.35f;
+
+        // First salt of Hex.Random01 for scrap; each tile takes the next three
+        private const int ScrapSalt = 10;
+
         private ChunkContext _context;
         private PileSite _pileSite;
         private Tile _pileTile;
         private bool _pileCleared;
-        private readonly List<ScrapItem> _restingScrap = new();
         private readonly List<int> _scrapTiles = new();
 
         private bool HasPileSite => _pileSite != null && Definition.Scrap.HasPile;
@@ -234,7 +239,6 @@ namespace Eco.Scripts.World
                     continue;
                 }
 
-                _restingScrap.Remove(scrap);
                 PoolManager.Instance.ReturnItem(scrap);
                 tile.item = null;
                 tile.objectType = TileObjectType.Empty;
@@ -259,12 +263,7 @@ namespace Eco.Scripts.World
                 switch ((TileObjectType)savedData.objectType)
                 {
                     case TileObjectType.Scrap:
-                        var scrap = SpawnScrapAtTile(tile, savedData.objectId, savedData.containedScrap);
-                        if (_context.RestingPoses.TryTake(Position, index, out var pose))
-                        {
-                            scrap.PlaceAtRest(pose);
-                            _restingScrap.Add(scrap);
-                        }
+                        SpawnScrapAtTile(tile, savedData.objectId, savedData.containedScrap);
                         break;
                     case TileObjectType.Tree:
                         _context.TreePlanter.PlantTree(savedData.objectId, tile, this, savedData);
@@ -302,41 +301,16 @@ namespace Eco.Scripts.World
 
         private ScrapItem PlaceScrap(ScrapItem scrap, Tile tile, bool contained)
         {
+            // Fixed per tile, so a chunk that respawns looks the same
+            int salt = ScrapSalt + tile.index * 3;
+            var offset = new Vector3(Hex.Random01(Position, salt) - 0.5f, 0f, Hex.Random01(Position, salt + 1) - 0.5f);
             scrap.transform.parent = transform;
-            scrap.transform.position = GetTileWorldPosition(tile);
-            scrap.Initialize(tile);
+            scrap.transform.position = GetTileWorldPosition(tile) + offset * (ScrapJitter * 2f);
+            scrap.Initialize(tile, Hex.Random01(Position, salt + 2) * 360f);
             tile.item = scrap;
             tile.objectType = TileObjectType.Scrap;
             tile.containedScrap = contained;
             return scrap;
-        }
-
-        /// <summary>
-        /// Called by WorldController once the spawned chunks' transforms have reached physics.
-        /// </summary>
-        public void SleepRestingScrap()
-        {
-            foreach (var scrap in _restingScrap)
-            {
-                scrap.Sleep();
-            }
-
-            _restingScrap.Clear();
-        }
-
-        /// <summary>
-        /// Called by WorldController before the chunk goes back to the pool: the pool deactivates it before
-        /// OnDespawn, and an inactive rigidbody no longer reports whether it was asleep.
-        /// </summary>
-        public void StoreRestingScrap()
-        {
-            for (var i = 0; i < tiles.Length; i++)
-            {
-                if (tiles[i].item is ScrapItem scrap && scrap.TryGetRestingPose(out var pose))
-                {
-                    _context.RestingPoses.Store(Position, i, pose);
-                }
-            }
         }
 
         public override void OnDespawn()
@@ -347,7 +321,6 @@ namespace Eco.Scripts.World
                 _pileSite.Clear();
             }
 
-            _restingScrap.Clear();
             base.OnDespawn();
         }
     }
